@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: q-mate
+  config:
+    import: "optional:classpath:application-local.yml"
