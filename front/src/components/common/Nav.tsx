@@ -72,8 +72,8 @@ export default function Nav() {
               onClick={() => setActive("home")}
               className={
                 active === "home"
-                  ? "font-bold  bg-primary rounded-xl py-2 px-3 text-secondary "
-                  : "font-bold hover:opacity-70"
+                  ? "font-bold text-lg  bg-primary rounded-xl py-2 px-3 text-secondary "
+                  : "font-bold text-lg hover:opacity-70"
               }
             >
               홈
@@ -85,8 +85,8 @@ export default function Nav() {
               onClick={() => setActive("record")}
               className={
                 active === "record"
-                  ? "font-bold  bg-primary rounded-xl py-2 px-3 text-secondary "
-                  : "font-bold hover:opacity-70"
+                  ? "font-bold text-lg bg-primary rounded-xl py-2 px-3 text-secondary "
+                  : "font-bold text-lg hover:opacity-70"
               }
             >
               우리의 기록
@@ -98,8 +98,8 @@ export default function Nav() {
               onClick={() => setActive("schedule")}
               className={
                 active === "schedule"
-                  ? "font-bold  bg-primary rounded-xl py-2 px-3 text-secondary "
-                  : "font-bold hover:opacity-70"
+                  ? "font-bold text-lg  bg-primary rounded-xl py-2 px-3 text-secondary "
+                  : "font-bold text-lg hover:opacity-70"
               }
             >
               캘린더
@@ -111,8 +111,8 @@ export default function Nav() {
               onClick={() => setActive("settings")}
               className={
                 active === "settings"
-                  ? "font-bold  bg-primary rounded-xl py-2 px-3 text-secondary "
-                  : "font-bold hover:opacity-70"
+                  ? "font-bold text-lg bg-primary rounded-xl py-2 px-3 text-secondary "
+                  : "font-bold text-lg hover:opacity-70"
               }
             >
               설정
