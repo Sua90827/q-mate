@@ -7,12 +7,12 @@ import React from 'react';
 const page = () => {
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gradient-main">
-      <div className="pointer-events-none z-0">
+      <div className="absolute inset-0 pointer-events-none z-0">
         <Image
           src="/images/light.png"
           alt="빛 효과 이미지"
           fill
-          className="object-contain object-top"
+          className="object-contain object-top -translate-x-5"
           priority
         />
         <Image
