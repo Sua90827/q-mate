@@ -1,11 +1,12 @@
-import type { Metadata } from 'next';
-import './globals.css';
+import type { Metadata } from "next";
+import "./globals.css";
+import Nav from "@/components/common/Nav";
 
 export const metadata: Metadata = {
-  title: 'Q-mate',
-  description: '친구 또는 커플을 위한 일일 질문 기반 기록',
+  title: "Q-mate",
+  description: "매일의 질문으로 관계를 기록하는 친구·커플 전용 서비스",
   icons: {
-    icon: '/favicon.svg',
+    icon: "/favicon.svg",
   },
 };
 
@@ -15,8 +16,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="ko">
+      <body className="flex flex-col h-screen">
+        <div className="order-last sm:order-1">
+          <Nav />
+        </div>
+        <main className="flex-1 order-1 sm:order-last">{children}</main>
+      </body>
     </html>
   );
 }
