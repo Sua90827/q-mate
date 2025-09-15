@@ -36,4 +36,12 @@ out/
 ### VS Code ###
 .vscode/
 
-src/main/resources/application-local.yml
+back/src/main/resources/application-local.yml
+
+### Back ###
+back/.gradle/
+back/build/
+back/out/
+back/.classpath
+back/.project
+back/.settings/
