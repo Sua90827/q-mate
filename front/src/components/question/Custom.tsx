@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '../common/Button';
+import Link from 'next/link';
 
 export default function Custom() {
   return (
@@ -11,8 +12,8 @@ export default function Custom() {
           className="md:w-[600px] w-[310px]  h-[175px] rounded-md shadow-md p-3 bg-secondary border-border-gray"
         />
         <div className="pt-5 flex gap-7  justify-end">
-          <Button variant="outline" size="lg">
-            삭제하기
+          <Button variant="outline" size="lg" asChild>
+            <Link href="/record">취소하기</Link>
           </Button>
           <Button size="lg">등록하기</Button>
         </div>
