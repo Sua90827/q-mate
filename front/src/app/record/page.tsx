@@ -1,7 +1,8 @@
+import Record from '@/components/record/Record';
 import React from 'react';
 
 const page = () => {
-  return <div>우리의 기록</div>;
+  return <Record />;
 };
 
 export default page;

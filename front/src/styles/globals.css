@@ -1,6 +1,14 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import './font.css';
+
+@font-face {
+  font-family: 'YeogiOttaeJalnan';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff')
+    format('woff');
+  font-weight: normal;
+  font-display: swap;
+}
 
 /*---break---*/
 @custom-variant dark (&: is(.dark *));
@@ -10,7 +18,8 @@
   --font-jalnan: 'YeogiOttaeJalnan', sans-serif;
 
   /*text*/
-  --text-lg: 16px;
+  --text-lg: 1rem;
+  --text-24: 1.5rem;
 
   /*color*/
   --color-main-top: #bbf4ff;
@@ -132,6 +141,8 @@
 @layer base {
   html,
   body {
+    width: 100%;
+    height: 100%;
     font-family: 'Pretendard', sans-serif;
     font-weight: 600;
     font-size: 0.875rem;
