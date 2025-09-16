@@ -36,11 +36,7 @@ export default function Nav() {
                 aria-label="일정"
                 size={48}
                 onClick={() => setActive('schedule')}
-                className={
-                  active === "schedulegit branch -d 'feature/EXPBar'"
-                    ? 'text-primary '
-                    : 'hover:opacity-70'
-                }
+                className={active === 'schedule' ? 'text-primary ' : 'hover:opacity-70'}
               />
             </Link>
           </li>
