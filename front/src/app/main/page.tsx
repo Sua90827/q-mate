@@ -9,7 +9,7 @@ const page = () => {
     <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gradient-main">
       <div className="absolute inset-0 pointer-events-none z-0">
         <Image
-          src="/images/light.png"
+          src="/images/light2.png"
           alt="빛 효과 이미지"
           fill
           className="object-contain object-top -translate-x-5 invisible md:visible"
