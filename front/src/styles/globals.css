@@ -1,13 +1,13 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "./font.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import './font.css';
 
 /*---break---*/
 @custom-variant dark (&: is(.dark *));
 
 @theme inline {
   /*font*/
-  --font-jalnan: "YeogiOttaeJalnan", sans-serif;
+  --font-jalnan: 'YeogiOttaeJalnan', sans-serif;
 
   /*text*/
   --text-lg: 16px;
@@ -19,6 +19,7 @@
   --color-sub-bottom: #d4eeff;
   --color-primary: #13c8ec;
   --color-secondary: #fffdfd;
+  --color-border-gray: #f0f1f3;
   --color-naver: #02c659;
   --color-text-primary: #292929;
   --color-text-secondary: #79808d;
@@ -131,8 +132,9 @@
 @layer base {
   html,
   body {
-    font-family: "Pretendard", sans-serif;
+    font-family: 'Pretendard', sans-serif;
     font-weight: 600;
     font-size: 0.875rem;
+    color: #292929;
   }
 }
