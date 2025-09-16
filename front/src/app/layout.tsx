@@ -21,7 +21,7 @@ export default function RootLayout({
         <div className="order-last sm:order-1 z-10">
           <Nav />
         </div>
-        <main className="flex-1 order-1 sm:order-last">{children}</main>
+        <main className="flex-1 order-1 sm:order-last ">{children}</main>
       </body>
     </html>
   );
