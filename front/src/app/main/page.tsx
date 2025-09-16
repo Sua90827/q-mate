@@ -12,17 +12,25 @@ const page = () => {
           src="/images/light.png"
           alt="빛 효과 이미지"
           fill
-          className="object-contain object-top -translate-x-5"
+          className="object-contain object-top -translate-x-5 invisible md:visible"
           priority
         />
-        <Image
-          src="/images/deco.png"
-          alt="배경 장식 이미지"
-          priority
-          fill
-          sizes="100vw"
-          className="object-fill object-bottom"
-        />
+
+        <picture>
+          <source
+            media="(max-width: 768px) "
+            srcSet="/images/deco_mobile.png"
+          />
+
+          <Image
+            src="/images/deco.png"
+            alt="배경 장식 이미지"
+            priority
+            fill
+            sizes="100vw"
+            className="object-fill object-bottom "
+          />
+        </picture>
       </div>
 
       <div className="relative z-1 flex flex-col items-center justify-center w-[252px] h-[358px]">
