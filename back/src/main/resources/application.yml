@@ -3,3 +3,5 @@ spring:
     name: q-mate
   config:
     import: "optional:classpath:application-local.yml"
+  profiles:
+    active: local
