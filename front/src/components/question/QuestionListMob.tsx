@@ -3,6 +3,7 @@ import SearchInput from './ui/SearchInput';
 import { ListFilter, Trash2 } from 'lucide-react';
 import { QuestionInstance } from './QuestionListWeb';
 import axios from 'axios';
+import Link from 'next/link';
 
 export default function QuestionListMob() {
   const [query, setQuery] = useState('');
@@ -46,11 +47,15 @@ export default function QuestionListMob() {
             className={`py-4 pl-5 cursor-pointer ${
               active === list.questionInstanceId ? 'bg-list-active font-bold' : ''
             } ${list.status === 'PENDING' ? 'text-primary font-bold' : ''}`}
-            onClick={() => setActive(list.questionInstanceId)}
           >
-            {list.question.text.length > 17
-              ? list.question.text.slice(0, 16) + '...'
-              : list.question.text}
+            <Link
+              href={`/question/list/detail/${list.questionInstanceId}`}
+              onClick={() => setActive(list.questionInstanceId)}
+            >
+              {list.question.text.length > 17
+                ? list.question.text.slice(0, 16) + '...'
+                : list.question.text}
+            </Link>
           </li>
         ))}
       </ul>

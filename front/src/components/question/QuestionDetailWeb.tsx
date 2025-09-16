@@ -16,7 +16,7 @@ interface Question {
   text: string;
 }
 
-interface Answer {
+export interface Answer {
   answerId: number;
   userId: number;
   isMine: boolean;
@@ -64,13 +64,13 @@ export default function QuestionDetailWeb({ id, data }: { id: number; data: Ques
         <div className="mt-10 ">
           {/* 내 답변 */}
           <div className="pb-6">
-            <p className="text-20">조용한 유령</p>
+            <p className="text-18">조용한 유령</p>
             <p className=" text-gray-500 text-16">{answers.find((a) => a.isMine)?.content}</p>
           </div>
 
           {/* 상대방 답변 */}
           <div>
-            <p className="text-20">활기찬 고래</p>
+            <p className="text-18">활기찬 고래</p>
             <p className="text-gray-500 text-16">{answers.find((a) => !a.isMine)?.content}</p>
           </div>
         </div>
