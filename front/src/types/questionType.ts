@@ -48,3 +48,13 @@ export interface CustomQuestion {
   isEditable: boolean;
   createdAt: string;
 }
+
+export interface TodayQuestion {
+  questionInstanceId: number;
+  matchId: number;
+  deliveredAt: string;
+  status: 'PENDING' | 'COMPLETED' | 'EXPIRED';
+  question: Question;
+  myAnswer: string | null;
+  partnerAnswer: string | null;
+}
