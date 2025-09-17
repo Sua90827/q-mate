@@ -1,7 +1,8 @@
+import CalendarRegister from '@/components/calendar/CalendarRegister';
 import React from 'react';
 
 const page = () => {
-  return <div>기념일등록</div>;
+  return <CalendarRegister />;
 };
 
 export default page;
