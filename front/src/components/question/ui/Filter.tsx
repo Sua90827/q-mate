@@ -1,11 +1,25 @@
+'use client';
 import { ListFilter } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
+import { QuestionInstance } from '../QuestionListWeb';
 
-export default function Filter() {
+export default function Filter({
+  setShowCustomOnly,
+}: {
+  setShowCustomOnly: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const [active, setActive] = useState(false);
   return (
-    <div className="flex justify-between items-center">
-      <span className="inline-block text-20 font-bold py-4 pl-4 cursor-none">질문 리스트</span>
-      <ListFilter className="mr-4 !w-[20px]" />
-    </div>
+    <button
+      className={`mr-4  hover:rounded-md hover:bg-primary p-2 hover:text-secondary ${
+        active ? 'rounded-md p-2 bg-primary text-secondary' : ''
+      }`}
+      onClick={() => {
+        setActive((prev) => !prev);
+        setShowCustomOnly((prev) => !prev);
+      }}
+    >
+      <ListFilter className="!w-[20px] !h-[20px] " />
+    </button>
   );
 }

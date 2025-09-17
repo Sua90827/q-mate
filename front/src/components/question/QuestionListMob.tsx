@@ -1,37 +1,40 @@
-import React, { useEffect, useState } from 'react';
+'use client';
+import React, { useMemo, useState } from 'react';
 import SearchInput from './ui/SearchInput';
-import { ListFilter, Trash2 } from 'lucide-react';
-import { QuestionInstance } from './QuestionListWeb';
-import axios from 'axios';
+import { Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import Filter from './ui/Filter';
+import { useQuestions, useCustomQuestions } from '@/hooks/useQuestions';
+import { QuestionInstance } from '@/types/questionType';
 
 export default function QuestionListMob() {
   const [query, setQuery] = useState('');
-  const [data, setData] = useState<QuestionInstance[]>([]);
   const [active, setActive] = useState<number | null>(null);
+  const [showCustomOnly, setShowCustomOnly] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await axios.get<QuestionInstance[]>('http://localhost:3001/content');
-      const questions = res.data;
-      setData(questions);
+  const { data: questions = [] } = useQuestions();
+  const { data: customData = [] } = useCustomQuestions();
 
-      if (questions.length > 0) {
-        setActive(questions[0].questionInstanceId);
-      }
-    };
+  const normalizedCustomData: QuestionInstance[] = customData.map((c) => ({
+    questionInstanceId: -c.questionId,
+    deliveredAt: c.createdAt,
+    status: 'EDITABLE',
+    completedAt: '',
+    question: { questionId: c.questionId, text: c.text },
+  }));
 
-    fetchData();
-  }, []);
-
-  const filtered = data.filter((list) =>
-    list.question.text.toLowerCase().includes(query.toLowerCase()),
+  const totalData = useMemo(
+    () => [...questions, ...normalizedCustomData],
+    [questions, normalizedCustomData],
   );
+  const filtered = totalData
+    .filter((list) => list.question.text.toLowerCase().includes(query.toLowerCase()))
+    .filter((list) => (showCustomOnly ? list.status === 'EDITABLE' : true));
 
   return (
-    <div className="bg-gradient-sub w-full h-screen  py-5">
+    <div className="bg-gradient-sub w-full h-screen py-5">
       <div className="flex justify-between items-center px-10">
-        <ListFilter className="!w-[20px] !h-[20px]" />
+        <Filter setShowCustomOnly={setShowCustomOnly} />
         <p className="text-20 font-jalnan">질문 리스트</p>
         <Trash2 className="!w-[20px] !h-[20px]" />
       </div>
@@ -46,7 +49,9 @@ export default function QuestionListMob() {
             key={list.questionInstanceId}
             className={`py-4 pl-5 cursor-pointer ${
               active === list.questionInstanceId ? 'bg-list-active font-bold' : ''
-            } ${list.status === 'PENDING' ? 'text-primary font-bold' : ''}`}
+            } ${list.status === 'PENDING' ? 'text-primary font-bold' : ''} ${
+              list.status === 'EDITABLE' ? 'text-text-secondary bg-gray font-bold' : ''
+            }`}
           >
             <Link
               href={`/question/list/detail/${list.questionInstanceId}`}
