@@ -1,4 +1,9 @@
-import { CustomQuestion, QuestionDetail, QuestionInstance } from '@/types/questionType';
+import {
+  CustomQuestion,
+  QuestionDetail,
+  QuestionInstance,
+  TodayQuestion,
+} from '@/types/questionType';
 import axios from 'axios';
 
 export const fetchQuestions = async (): Promise<QuestionInstance[]> => {
@@ -13,5 +18,11 @@ export const fetchQuestionDetail = async (id: number): Promise<QuestionDetail | 
 
 export const fetchCustomQuestions = async (): Promise<CustomQuestion[]> => {
   const res = await axios.get('http://localhost:3001/customs');
+  return res.data;
+};
+
+// 오늘의 질문 가져오기
+export const fetchTodayQuestion = async (): Promise<TodayQuestion> => {
+  const res = await axios.get('http://localhost:4000/todayQuestion');
   return res.data;
 };
