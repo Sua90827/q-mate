@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import '../styles/globals.css';
 import Nav from '@/components/common/Nav';
+import Providers from './providers';
 
 export const metadata: Metadata = {
   title: 'Q-mate',
@@ -21,7 +22,9 @@ export default function RootLayout({
         <div className="order-last sm:order-1 z-10">
           <Nav />
         </div>
-        <main className="flex-1 order-1 sm:order-last ">{children}</main>
+        <Providers>
+          <main className="flex-1 order-1 sm:order-last ">{children}</main>
+        </Providers>
       </body>
     </html>
   );
