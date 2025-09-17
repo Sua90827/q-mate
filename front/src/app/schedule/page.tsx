@@ -1,7 +1,8 @@
+import AddBtn from '@/components/calendar/ui/AddBtn';
 import React from 'react';
 
 const page = () => {
-  return <div>기념일선택화면</div>;
+  return <AddBtn />;
 };
 
 export default page;

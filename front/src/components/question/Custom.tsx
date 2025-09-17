@@ -20,7 +20,7 @@ export default function Custom({ value }: { value?: string }) {
             placeholder="내용을 입력해주세요"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="md:w-[600px] w-[310px] h-[175px] rounded-md shadow-md p-3 bg-secondary border border-gray"
+            className="md:w-[600px] w-[310px] h-[175px] rounded-md shadow-md p-3 bg-secondary border border-gray resize-none"
           />
           <div className="pt-5 flex gap-7 justify-end">
             <Button variant="outline" size="lg" asChild>

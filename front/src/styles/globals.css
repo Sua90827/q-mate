@@ -18,6 +18,7 @@
   --font-jalnan: 'YeogiOttaeJalnan', sans-serif;
 
   /*text*/
+  --text-14: 14px;
   --text-16: 16px;
   --text-18: 18px;
   --text-20: 20px;
@@ -30,7 +31,7 @@
   --color-sub-bottom: #d4eeff;
   --color-primary: #13c8ec;
   --color-secondary: #fffdfd;
-  --color-gray: #d9d9da;
+  --color-gray: #f0f1f3;
   --color-list-active: #d0ebfc;
   --color-naver: #02c659;
   --color-text-primary: #292929;
