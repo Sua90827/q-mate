@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { QuestionInstance } from './QuestionListWeb';
 import axios from 'axios';
 import ShareBtn from './ui/ShareBtn';
+import Custom from './Custom';
 
 interface Category {
   id: number;
@@ -36,8 +37,12 @@ export interface QuestionDetail {
 }
 
 export default function QuestionDetailWeb({ id, data }: { id: number; data: QuestionInstance[] }) {
+  const customItem = data.find((q) => q.status === 'CUSTOM' && q.questionInstanceId === id);
+
   const item = data.find((q) => q.questionInstanceId === id);
   const [answers, setAnswers] = useState<Answer[]>([]);
+
+  const hasAnswer = answers.some((a) => a.content && a.content.trim() !== '');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,30 +58,33 @@ export default function QuestionDetailWeb({ id, data }: { id: number; data: Ques
     fetchData();
   }, [id, item]);
 
-  if (!item) return <div className="p-6">선택된 질문이 없습니다.</div>;
+  if (!item) return <div>선택된 질문이 없습니다.</div>;
 
   return (
-    <div className="relative p-10 flex flex-col items-center lg:w-[500px]  md:w-[450px] w-[350px] h-[500px] bg-secondary rounded-md shadow-md ">
-      <p className="text-text-secondary">#01</p>
-      <h2 className="text-24 font-bold">{item.question.text}</h2>
+    <>
+      {hasAnswer ? (
+        <div className="relative p-10 flex flex-col items-center lg:w-[500px]  md:w-[450px] w-[350px] h-[550px] bg-secondary rounded-md shadow-md ">
+          <p className="text-text-secondary pt-5">#01</p>
+          <h2 className="text-24 font-bold">{item.question.text}</h2>
+          <div className="mt-16 ">
+            {/* 내 답변 */}
+            <div className="pb-6">
+              <p className="text-18">조용한 유령</p>
+              <p className=" text-gray-500 text-16">{answers.find((a) => a.isMine)?.content}</p>
+            </div>
 
-      {answers.length === 2 && (
-        <div className="mt-10 ">
-          {/* 내 답변 */}
-          <div className="pb-6">
-            <p className="text-18">조용한 유령</p>
-            <p className=" text-gray-500 text-16">{answers.find((a) => a.isMine)?.content}</p>
-          </div>
+            {/* 상대방 답변 */}
+            <div>
+              <p className="text-18">활기찬 고래</p>
+              <p className="text-gray-500 text-16">{answers.find((a) => !a.isMine)?.content}</p>
+            </div>
 
-          {/* 상대방 답변 */}
-          <div>
-            <p className="text-18">활기찬 고래</p>
-            <p className="text-gray-500 text-16">{answers.find((a) => !a.isMine)?.content}</p>
+            <ShareBtn />
           </div>
         </div>
+      ) : (
+        <Custom value={customItem?.question.text} />
       )}
-
-      <ShareBtn />
-    </div>
+    </>
   );
 }

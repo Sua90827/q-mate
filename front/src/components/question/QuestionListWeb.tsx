@@ -18,8 +18,20 @@ export interface QuestionInstance {
   completedAt: string;
 }
 
+export interface CustomQuestion {
+  questionId: number;
+  sourceType: string;
+  relationType: string;
+  category: Question;
+  text: string;
+  isActive: boolean;
+  isEditable: boolean;
+  createdAt: string;
+}
+
 export default function QuestionListWeb() {
   const [data, setData] = useState<QuestionInstance[]>([]);
+  const [customData, setCustomData] = useState<CustomQuestion[]>([]);
   const [active, setActive] = useState<number | null>(null);
   const [query, setQuery] = useState('');
 
@@ -33,18 +45,35 @@ export default function QuestionListWeb() {
         setActive(questions[0].questionInstanceId);
       }
     };
+
+    const fetchCustomData = async () => {
+      const res = await axios.get<CustomQuestion[]>('http://localhost:3001/customs');
+      const questions = res.data;
+      setCustomData(questions);
+    };
+
     fetchData();
+    fetchCustomData();
   }, []);
 
-  const filtered = data.filter((list) =>
+  const normalizedCustomData = customData.map((c) => ({
+    questionInstanceId: -c.questionId,
+    deliveredAt: c.createdAt,
+    status: 'CUSTOM',
+    completedAt: '',
+    question: { questionId: c.questionId, text: c.text },
+  }));
+
+  const totalData = [...data, ...normalizedCustomData];
+
+  const filtered = totalData.filter((list) =>
     list.question.text.toLowerCase().includes(query.toLowerCase()),
   );
-
   return (
     <div className=" w-full h-screen bg-gradient-sub ">
       <div className="mx-5 md:mx-7 h-screen flex items-center">
         {/* 좌측 리스트 */}
-        <div className="bg-secondary rounded-md shadow-md lg:w-[350px] w-[220px]  h-[500px]  flex flex-col ">
+        <div className="bg-secondary rounded-md shadow-md lg:w-[350px] w-[220px]  h-[550px]  flex flex-col ">
           <div className="mt-6">
             <SearchInput query={query} setQuery={setQuery} />
           </div>
@@ -55,7 +84,9 @@ export default function QuestionListWeb() {
                 key={list.questionInstanceId}
                 className={`py-5 pl-4 cursor-pointer ${
                   active === list.questionInstanceId ? 'bg-list-active font-bold' : ''
-                } ${list.status === 'PENDING' ? 'text-primary font-bold' : ''}`}
+                } ${list.status === 'PENDING' ? 'text-primary font-bold' : ''} ${
+                  list.status === 'CUSTOM' ? 'text-text-secondary bg-gray font-bold' : ''
+                }`}
                 onClick={() => setActive(list.questionInstanceId)}
               >
                 {list.question.text.length > 17
@@ -68,7 +99,7 @@ export default function QuestionListWeb() {
 
         {/* 우측 상세 */}
         <div className="flex justify-center flex-1 ">
-          {active !== null && <QuestionDetailWeb id={active} data={data} />}
+          {active !== null && <QuestionDetailWeb id={active} data={totalData} />}
         </div>
       </div>
     </div>
