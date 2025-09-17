@@ -24,4 +24,7 @@ public class RegisterRequest {
 
   @NotNull
   private LocalDate birthDate;
+
+  @NotBlank
+  private String emailVerifiedToken; //verify 성공 후 받은 토큰
 }
