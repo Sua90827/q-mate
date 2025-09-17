@@ -25,6 +25,7 @@ export default function Record() {
               <Link href="/question/custom ">질문 작성하기</Link>
             </Button>
           </div>
+
         </div>
       </div>
     </>

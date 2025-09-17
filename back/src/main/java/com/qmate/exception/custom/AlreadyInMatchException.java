@@ -1,0 +1,12 @@
+package com.qmate.exception.custom;
+
+import com.qmate.exception.BusinessGlobalException;
+import com.qmate.exception.ErrorCode;
+
+//이미 매칭 참여 예외
+public class AlreadyInMatchException extends BusinessGlobalException {
+  public AlreadyInMatchException(){
+    super(ErrorCode.ALREADY_IN_MATCH);
+  }
+
+}
