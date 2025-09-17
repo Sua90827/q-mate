@@ -8,7 +8,10 @@ import Link from 'next/link';
 export default function CalendarRegister() {
   return (
     <div className="w-full h-screen bg-gradient-sub flex justify-center items-center">
-      <form className="flex w-[400px]  flex-col gap-5" onSubmit={(e) => e.preventDefault()}>
+      <form
+        className="flex w-[310px]  sm:px-0 sm:w-[400px]  flex-col gap-5"
+        onSubmit={(e) => e.preventDefault()}
+      >
         <DatePicker />
         <input
           type="text"
@@ -33,11 +36,11 @@ export default function CalendarRegister() {
           option3="3일전"
           option4="당일"
         />
-        <div className="flex gap-10 mt-3">
-          <Button variant="outline" size="lg" asChild className="w-[180px]">
+        <div className="flex gap-6 sm:gap-10 mt-3">
+          <Button variant="outline" size="lg" asChild className="w-[142px] sm:w-[180px]">
             <Link href="/schedule">취소하기</Link>
           </Button>
-          <Button size="lg" className="w-[180px]">
+          <Button size="lg" className="w-[142px] sm:w-[180px]">
             등록하기
           </Button>
         </div>
