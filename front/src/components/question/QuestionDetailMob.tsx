@@ -33,7 +33,7 @@ export default function QuestionDetailMob() {
   if (!item) return <div className="p-6">선택된 질문이 없습니다.</div>;
 
   return (
-    <div className="w-full h-screen bg-gradient-sub relative p-10 flex flex-col items-center md:hidden">
+    <div className="w-full h-screen bg-gradient-sub relative p-10 flex flex-col items-center">
       <Link href={'/question/list'}>
         <X className="absolute right-3 top-3" />
       </Link>

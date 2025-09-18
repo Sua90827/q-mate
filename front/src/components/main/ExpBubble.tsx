@@ -15,6 +15,7 @@ export default function ExpBubble() {
         alt="경험치 버블"
         fill
         className="rounded-full object-contain"
+        sizes="100%"
       />
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center gap-1">
         <span className="font-jalnan text-[24px] font-regular">EXP</span>

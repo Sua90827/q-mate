@@ -1,5 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchQuestions, fetchCustomQuestions, fetchQuestionDetail } from '../api/questions';
+import {
+  fetchQuestions,
+  fetchCustomQuestions,
+  fetchQuestionDetail,
+  fetchTodayQuestion,
+} from '../api/questions';
 
 export const useQuestions = () => {
   return useQuery({
@@ -28,3 +33,13 @@ export const useQuestionDetail = (id: number) => {
     enabled: !!id,
   });
 };
+
+//오늘의 질문 hook
+export function useTodayQuestion() {
+  return useQuery({
+    queryKey: ['todayQuestion'],
+    queryFn: fetchTodayQuestion,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+  });
+}
