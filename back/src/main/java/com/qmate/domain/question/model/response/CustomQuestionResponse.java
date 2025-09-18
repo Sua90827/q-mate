@@ -10,18 +10,17 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuestionResponse {
+public class CustomQuestionResponse {
 
-  private Long questionId;
+  private Long customQuestionId;
   private String sourceType;     // "ADMIN" | "CUSTOM"
   private String relationType;   // "COUPLE" | "FRIEND" | "BOTH"
-
-  private CategoryInfo category;
+  private Long matchId;
 
   private String text;
 
-  @JsonProperty("isActive") // api 명세 맞춤
-  private boolean active;
+  @JsonProperty("isEditable") // api 명세 맞춤
+  private boolean editable;
 
   private String createdAt;
   private String updatedAt;

@@ -43,7 +43,7 @@ public class QuestionService {
     Question saved = questionRepository.save(question);
 
     // Response 변환
-    return QuestionMapper.toResponseWithCategory(saved, category);
+    return QuestionMapper.toAdminResponse(saved, category);
   }
 
   /**
@@ -67,9 +67,18 @@ public class QuestionService {
     // 엔티티 수정 반영
     QuestionMapper.updateEntity(question, request, category);
 
-    return QuestionMapper.toResponseWithCategory(question, category != null ? category : question.getCategory());
+    return QuestionMapper.toAdminResponse(question, category != null ? category : question.getCategory());
   }
 
+  /**
+   * 질문 목록 조회 (페이징)
+   *
+   * @param relationType 관계 유형 필터 (null 가능)
+   * @param categoryId   카테고리 ID 필터 (null 가능)
+   * @param active       활성 상태 필터 (null 가능)
+   * @param pageable     페이징 정보
+   * @return 필터링된 질문 목록 (페이징)
+   */
   @Transactional(readOnly = true)
   public Page<QuestionResponse> getQuestions(RelationType relationType, Long categoryId, Boolean active,
       Pageable pageable) {
@@ -78,7 +87,7 @@ public class QuestionService {
         .and(QuestionSpecs.activeEq(active));
 
     Page<Question> page = questionRepository.findAll(spec, pageable);
-    return page.map(QuestionMapper::toResponse);
+    return page.map(QuestionMapper::toAdminResponse);
   }
 
   // 존재하지 않는 질문 조회 시 예외 발생

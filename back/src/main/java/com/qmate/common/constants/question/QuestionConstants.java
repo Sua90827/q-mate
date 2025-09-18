@@ -17,5 +17,9 @@ public class QuestionConstants {
 
   // 예외 메시지
   public static final String QUESTION_NOT_FOUND_MESSAGE = "질문을 찾을 수 없습니다.";
-  public static final String QUESTION_ALREADY_EXISTS_MESSAGE = "이미 존재하는 질문입니다.";
+  // 커스텀 질문 관련
+  public static final String CUSTOM_QUESTION_NOT_FOUND_MESSAGE = "커스텀 질문을 찾을 수 없습니다.";
+  public static final String CUSTOM_QUESTION_FORBIDDEN_MESSAGE = "본인이 생성한 질문만 수정/삭제할 수 있습니다.";
+  public static final String CUSTOM_QUESTION_NOT_EDITABLE_MESSAGE = "해당 질문은 수정할 수 없습니다.";
+  public static final String CUSTOM_QUESTION_NOT_DELETABLE_MESSAGE = "해당 질문은 삭제할 수 없습니다.";
 }
