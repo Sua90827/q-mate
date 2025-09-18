@@ -21,7 +21,6 @@ type Props = {
 export default function RatingModal({ open, onLike, onDislike }: Props) {
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogOverlay className="fixed inset-0 bg-black/10 backdrop-blur-[2px] z-40" />
       <DialogContent
         showCloseButton={false}
         //키보드 이벤트와 바깥 영역 클릭 방지로 평가를 하지 않으면 닫히지 않도록 설정
