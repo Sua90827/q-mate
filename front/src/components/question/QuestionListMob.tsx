@@ -33,10 +33,10 @@ export default function QuestionListMob() {
 
   return (
     <div className="bg-gradient-sub w-full h-screen py-5">
-      <div className="flex justify-between items-center px-10">
+      <div className="flex justify-between items-center h-[70px]">
         <Filter setShowCustomOnly={setShowCustomOnly} />
-        <p className="text-20 font-jalnan">질문 리스트</p>
-        <Trash2 className="!w-[20px] !h-[20px]" />
+        <p className="text-20 font-Gumi">질문 리스트</p>
+        <Trash2 className="!w-[24px] !h-[24px]" />
       </div>
 
       <div className="pt-10">

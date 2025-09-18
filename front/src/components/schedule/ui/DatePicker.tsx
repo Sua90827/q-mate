@@ -4,7 +4,7 @@ import * as React from 'react';
 import { ChevronDownIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import Calendar01 from '../calendar-01';
+import Calendar from '../CalendarCustom';
 
 export function DatePicker() {
   const [open, setOpen] = React.useState(false);
@@ -28,7 +28,7 @@ export function DatePicker() {
           align="end"
           style={{ width: 'var(--radix-popover-trigger-width)' }}
         >
-          <Calendar01
+          <Calendar
             value={date}
             onChange={(d) => {
               setDate(d);

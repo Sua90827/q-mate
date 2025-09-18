@@ -56,7 +56,7 @@ export default function Nav() {
         <Link href="/main">
           <Image src="/logo.svg" alt="큐메이트" width={109} height={35} className="mx-7" />
         </Link>
-        <nav className="w-full h-[70px] sm:flex sm:justify-end  items-center hidden absolute ">
+        <nav className="w-full h-[70px] sm:flex sm:justify-end  items-center hidden sticky top-0 ">
           <ul className="w-[425px] gap-14 hidden sm:flex ">
             <li>
               <Link

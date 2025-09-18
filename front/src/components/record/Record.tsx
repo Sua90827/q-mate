@@ -9,7 +9,7 @@ export default function Record() {
     <>
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden px-4">
         <div className="w-6" />
-        <span className="flex-1 font-jalnan text-center text-20">우리의 기록</span>
+        <span className="flex-1 font-Gumi text-center text-20">우리의 기록</span>
         <Button size={'icon'} className="w-6 h-6 bg-transparent text-black">
           <BellIcon className="!w-6 !h-6 stroke-2" />
         </Button>

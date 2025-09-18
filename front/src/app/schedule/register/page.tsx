@@ -1,8 +1,8 @@
-import CalendarRegister from '@/components/calendar/CalendarRegister';
+import ScheduleRegister from '@/components/schedule/ScheduleRegister';
 import React from 'react';
 
 const page = () => {
-  return <CalendarRegister />;
+  return <ScheduleRegister />;
 };
 
 export default page;

@@ -23,7 +23,7 @@ export default function RootLayout({
           <Nav />
         </div>
         <Providers>
-          <main className="flex-1 order-1 sm:order-last ">{children}</main>
+          <main className="flex-1 order-1 sm:order-last">{children}</main>
         </Providers>
       </body>
     </html>
