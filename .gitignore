@@ -44,4 +44,4 @@ back/build/
 back/out/
 back/.classpath
 back/.project
-back/.settings/
+back/.settings/back/src/main/resources/application-local.yml

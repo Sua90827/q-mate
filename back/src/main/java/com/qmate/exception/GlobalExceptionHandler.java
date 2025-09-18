@@ -18,9 +18,11 @@ public class GlobalExceptionHandler {
   // 비즈니스 로직에서 던지는 커스텀 예외는 여기서 처리
   @ExceptionHandler(BusinessGlobalException.class)
   public ResponseEntity<ErrorResponse> handleBusinessException(BusinessGlobalException ex) {
+    ErrorCode errorCode = ex.getErrorCode();
+    log.warn("Business Exception: {}", errorCode.getMessage());
     return new ResponseEntity<>(
-        new ErrorResponse(ex.getErrorCode().getCode(), ex.getMessage()),
-        ex.getErrorCode().getHttpStatus()
+        new ErrorResponse(errorCode.getCode(), errorCode.getMessage()),
+        errorCode.getHttpStatus()
     );
   }
 
@@ -30,6 +32,8 @@ public class GlobalExceptionHandler {
       MethodArgumentNotValidException ex) {
     log.warn("유효성 검사 실패: {}", ex.getMessage());
 
+    ErrorCode errorCode = CommonErrorCode.invalidInput();
+
     // FieldError를 추출하여 상세 에러 목록을 만듭니다.
     List<ErrorResponse.FieldErrorDetail> errors = ex.getBindingResult()
         .getFieldErrors()
@@ -38,11 +42,11 @@ public class GlobalExceptionHandler {
             fieldError.getDefaultMessage()))
         .toList();
     // 400 BAD_REQUEST와 함께 상세 에러 목록을 반환
-    return ResponseEntity.badRequest().body(new ErrorResponse(
-        ErrorCode.INVALID_INPUT.getCode(),
-        ErrorCode.INVALID_INPUT.getMessage(),
-        errors
-    ));
+    return new ResponseEntity<>(
+        new ErrorResponse(errorCode.getCode(), errorCode.getMessage(), errors),
+        errorCode.getHttpStatus()
+
+    );
 
   }
 
@@ -50,11 +54,12 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(AuthenticationException.class)
   public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex) {
     log.warn("인증 실패: {}", ex.getMessage());
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(
-        ErrorCode.UNAUTHORIZED.getCode(),
-        ErrorCode.UNAUTHORIZED.getMessage(),
-        null
-    ));
+    ErrorCode errorCode = CommonErrorCode.unauthorized();
+
+    return new ResponseEntity<>(
+        new ErrorResponse(errorCode.getCode(), errorCode.getMessage())
+        , errorCode.getHttpStatus()
+    );
   }
 
   // 접근 권한 관련 예외를 처리하는 핸들러
@@ -62,31 +67,31 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleAuthorizationDeniedException(
       AuthorizationDeniedException ex) {
     log.warn("권한이 없는 접근 시도: {}", ex.getMessage());
+    ErrorCode errorCode = CommonErrorCode.forbidden();
 
     // 403 FORBIDDEN 상태를 반환
-    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(
-        ErrorCode.FORBIDDEN.getCode(),
-        ErrorCode.FORBIDDEN.getMessage(),
-        null
-    ));
+    return new ResponseEntity<>(
+        new ErrorResponse(errorCode.getCode(), errorCode.getMessage()),
+        errorCode.getHttpStatus()
+    );
   }
 
   //자주 발생하는 일반 예외들 처리(400,404)
   @ExceptionHandler({IllegalArgumentException.class, NoSuchElementException.class})
   public ResponseEntity<ErrorResponse> handleArgumentException(Exception ex) {
-    log.warn("유효하지 않은 인자: {}", ex.getMessage());
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(
-        ErrorCode.INVALID_INPUT.getCode(),
-        ex.getMessage(),
-        null
-    ));
+    log.warn("유효하지 않은 인자 또는 없는 요소: {}", ex.getMessage());
+    ErrorCode errorCode = CommonErrorCode.invalidInput();
+    return new ResponseEntity<>(
+        new ErrorResponse(errorCode.getCode(), ex.getMessage()),
+        errorCode.getHttpStatus()
+    );
   }
 
   // 예상치 못한 모든 예외를 처리 500 에러
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
     log.error("알 수 없는 에러 발생", ex);
-    ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+    ErrorCode errorCode = CommonErrorCode.internalServerError();
     return new ResponseEntity<>(
         new ErrorResponse(errorCode.getCode(), errorCode.getMessage()),
         errorCode.getHttpStatus()
