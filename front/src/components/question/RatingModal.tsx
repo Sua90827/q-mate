@@ -5,8 +5,6 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogOverlay,
-  DialogTitle,
 } from '../ui/dialog';
 import { Button } from '../common/Button';
 import { ThumbsDownIcon, ThumbsUpIcon } from 'lucide-react';

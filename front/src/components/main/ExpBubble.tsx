@@ -18,8 +18,8 @@ export default function ExpBubble() {
         sizes="100%"
       />
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center gap-1">
-        <span className="font-jalnan text-[24px] font-regular">EXP</span>
-        <span className="font-jalnan text-[14px] font-regular ">+ 10</span>
+        <span className="font-Gumi text-[24px] font-regular">EXP</span>
+        <span className="font-Gumi text-[14px] font-regular ">+ 10</span>
       </div>
     </div>
   );

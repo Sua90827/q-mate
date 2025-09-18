@@ -1,11 +1,11 @@
 'use client';
 import React from 'react';
-import { DatePicker } from './DatePicker';
+import { DatePicker } from './ui/DatePicker';
 import RepeatSelector from './ui/RepeatSelector';
 import { Button } from '../common/Button';
 import Link from 'next/link';
 
-export default function CalendarRegister() {
+export default function ScheduleRegister() {
   return (
     <div className="w-full h-screen bg-gradient-sub flex justify-center items-center">
       <form

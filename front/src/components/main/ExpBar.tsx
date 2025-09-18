@@ -21,7 +21,7 @@ export function ExpBar({
 
   return (
     <div className="flex flex-col ">
-      <span className="font-jalnan pb-2">EXP</span>
+      <span className="font-Gumi pb-2">EXP</span>
       <SliderPrimitive.Root
         data-slot="slider"
         defaultValue={defaultValue}

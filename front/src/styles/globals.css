@@ -3,19 +3,18 @@
 @import 'tw-animate-css';
 
 @font-face {
-  font-family: 'YeogiOttaeJalnan';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff')
-    format('woff');
+  font-family: 'RomanticGumi';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/GumiRomanceTTF.woff2')
+    format('woff2');
   font-weight: normal;
   font-display: swap;
 }
-
 /*---break---*/
 @custom-variant dark (&: is(.dark *));
 
 @theme inline {
   /*font*/
-  --font-jalnan: 'YeogiOttaeJalnan', sans-serif;
+  --font-Gumi: 'RomanticGumi', sans-serif;
 
   /*text*/
   --text-14: 14px;

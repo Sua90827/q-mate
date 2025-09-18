@@ -1,0 +1,22 @@
+{
+  "question": [
+    {
+      "relationType": "COUPLE",
+      "categoryId ": "1",
+      "text": "#01 상대방의 첫 인상은 어땠나요?",
+      "active": "true"
+    },
+    {
+      "relationType": "COUPLE",
+      "categoryId ": "1",
+      "text": "#02 우리가 우주 여행을 간다면?",
+      "active": "true"
+    },
+    {
+      "relationType": "COUPLE",
+      "categoryId ": "1",
+      "text": "#03 처음 만난 날을 다시 돌아간다면 어떤 말을 할건가요?",
+      "active": "true"
+    }
+  ]
+}
