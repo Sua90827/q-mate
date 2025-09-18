@@ -20,7 +20,7 @@ export default function Detail() {
       {status === 'PENDING' && myAnswer !== null && (
         <AnswerForm mode="edit" questionText={question.text} />
       )}
-      {status === 'COMPLETED' && <AnswerView />}
+      {/* {status === 'COMPLETED' && <AnswerView />} */}
     </>
   );
 }
