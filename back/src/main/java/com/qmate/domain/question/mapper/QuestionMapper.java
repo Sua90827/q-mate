@@ -1,7 +1,7 @@
 package com.qmate.domain.question.mapper;
 
+import com.qmate.domain.match.Match;
 import com.qmate.domain.question.entity.CustomQuestion;
-import com.qmate.domain.question.entity.Match;
 import com.qmate.domain.question.entity.Question;
 import com.qmate.domain.question.entity.QuestionCategory;
 import com.qmate.domain.question.model.request.CustomQuestionTextRequest;
@@ -81,7 +81,7 @@ public class QuestionMapper {
         cq.getId(),
         "CUSTOM",
         match.getRelationType().name(),
-        match.getId(),
+        match.getMatchId(),
         cq.getText(),
         isEditable,
         cq.getCreatedAt().format(ISO),

@@ -1,5 +1,6 @@
 package com.qmate.domain.question.entity;
 
+import com.qmate.domain.match.Match;
 import com.qmate.domain.user.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
