@@ -1,7 +1,7 @@
 'use client';
 import React, { useMemo, useState } from 'react';
 import SearchInput from './ui/SearchInput';
-import { Trash2 } from 'lucide-react';
+import { Trash2, X } from 'lucide-react';
 import Link from 'next/link';
 import Filter from './ui/Filter';
 import { useQuestions, useCustomQuestions } from '@/hooks/useQuestions';
@@ -11,6 +11,7 @@ export default function QuestionListMob() {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState<number | null>(null);
   const [showCustomOnly, setShowCustomOnly] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
 
   const { data: questions = [] } = useQuestions();
   const { data: customData = [] } = useCustomQuestions();
@@ -36,7 +37,7 @@ export default function QuestionListMob() {
       <div className="flex justify-between items-center h-[70px]">
         <Filter setShowCustomOnly={setShowCustomOnly} />
         <p className="text-20 font-Gumi">질문 리스트</p>
-        <Trash2 className="!w-[24px] !h-[24px]" />
+        <Trash2 className="!w-[24px] !h-[24px]" onClick={() => setIsDelete((prev) => !prev)} />
       </div>
 
       <div className="pt-10">
@@ -56,10 +57,14 @@ export default function QuestionListMob() {
             <Link
               href={`/question/list/detail/${list.questionInstanceId}`}
               onClick={() => setActive(list.questionInstanceId)}
+              className="flex justify-between"
             >
-              {list.question.text.length > 17
-                ? list.question.text.slice(0, 16) + '...'
-                : list.question.text}
+              <p>
+                {list.question.text.length > 17
+                  ? list.question.text.slice(0, 16) + '...'
+                  : list.question.text}
+              </p>
+              {isDelete && <X className="text-text-secondary ml-4 !w-4 !h-4" />}
             </Link>
           </li>
         ))}

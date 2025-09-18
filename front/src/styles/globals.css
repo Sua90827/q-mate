@@ -15,6 +15,7 @@
 @theme inline {
   /*font*/
   --font-Gumi: 'RomanticGumi', sans-serif;
+  --font-Pre: 'Pretendard', sans-serif;
 
   /*text*/
   --text-14: 14px;

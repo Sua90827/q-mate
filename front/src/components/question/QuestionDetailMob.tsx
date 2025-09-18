@@ -20,7 +20,7 @@ export default function QuestionDetailMob() {
     return (
       <div className="w-full h-screen bg-gradient-sub relative p-10 flex flex-col items-center md:hidden">
         <Link href={'/question/list'}>
-          <X className="absolute right-3 top-3" />
+          <X className="absolute right-3 top-3 !w-4 !h-4" />
         </Link>
         <p className="text-text-secondary pt-10">#01</p>
         <Custom value={customItem.text} />

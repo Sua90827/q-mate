@@ -13,10 +13,10 @@ export default function page() {
         </div>
         <Image src="/images/bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
         <div className="mt-10 flex flex-col gap-5">
-          <Button variant="invite" className="w-[300px] ">
+          <Button variant="invite" className="w-[300px] z-10">
             연인
           </Button>
-          <Button variant="invite" className="w-[300px] ">
+          <Button variant="invite" className="w-[300px] z-10">
             친구
           </Button>
         </div>
