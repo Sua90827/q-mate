@@ -6,7 +6,7 @@ import React from 'react';
 
 const page = () => {
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gradient-main">
+    <div className="relative w-full min-h-screen flex flex-col items-center justify-center bg-gradient-main">
       <div className="absolute inset-0 pointer-events-none z-0">
         <Image
           src="/images/light2.png"
@@ -17,10 +17,7 @@ const page = () => {
         />
 
         <picture>
-          <source
-            media="(max-width: 768px) "
-            srcSet="/images/deco_mobile.png"
-          />
+          <source media="(max-width: 768px) " srcSet="/images/deco_mobile.png" />
 
           <Image
             src="/images/deco.png"
@@ -33,7 +30,7 @@ const page = () => {
         </picture>
       </div>
 
-      <div className="relative z-1 flex flex-col items-center justify-center w-[252px] h-[358px]">
+      <div className="relative z-10 flex flex-col items-center justify-center w-[252px] h-[358px] mt-15">
         <ExpBubble />
         {/** TODO: API 연동 후 경험치 값 props로 받기 */}
         <Bubbley exp={0} className="mb-6" />
