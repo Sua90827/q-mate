@@ -1,8 +1,9 @@
 import React from 'react';
-import ShareBtn from './ui/ShareBtn';
 import Custom from './Custom';
 import { Answer, QuestionInstance } from '@/types/questionType';
 import { useQuestionDetail } from '@/hooks/useQuestions';
+import AnswerForm from './AnswerForm';
+import AnswerView from './AnswerView';
 
 export default function QuestionDetailWeb({ id, data }: { id: number; data: QuestionInstance[] }) {
   const customItem = data.find((q) => q.status === 'EDITABLE' && q.questionInstanceId === id);
@@ -18,41 +19,40 @@ export default function QuestionDetailWeb({ id, data }: { id: number; data: Ques
 
   if (!detail) return <div>선택된 질문이 없습니다.</div>;
 
-  const hasAnswer = detail.answers.some((a: Answer) => a.content && a.content.trim() !== '');
+  const my = detail.answers.find((a: Answer) => a.isMine);
+  const partner = detail.answers.find((a: Answer) => !a.isMine);
+
+  const hasMy = my?.content?.trim() !== '';
+  const hasPartner = partner?.visible === true && partner?.content?.trim() !== '';
 
   return (
     <>
-      {hasAnswer ? (
-        <div className="relative p-10 flex flex-col items-center lg:w-[500px] md:w-[450px] w-[350px] h-[550px] bg-secondary rounded-md shadow-md">
-          <p className="text-text-secondary pt-5">#01</p>
-          <h2 className="text-24 font-bold">{detail.question.text}</h2>
-          <div className="mt-16">
-            {/* 내 답변 */}
-            <div className="pb-6">
-              <p className="text-18">조용한 유령</p>
-              <p className="text-gray-500 text-16">
-                {detail.answers.find((a) => a.isMine)?.content}
-              </p>
-            </div>
+      {/* PENDING이고 내 답변이 존재(상대방/미답변) */}
+      {detail.status === 'PENDING' && hasMy ? (
+        <AnswerForm
+          mode="edit"
+          questionText={detail.question.text}
 
-            {/* 상대방 답변 */}
-            <div>
-              <p className="text-18">활기찬 고래</p>
-              <p className="text-gray-500 text-16">
-                {detail.answers.find((a) => !a.isMine)?.content}
-              </p>
-            </div>
+          // TODO: onUpdate 구현 (PUT /answers/{answerId})
+        />
+      ) : null}
 
-            <ShareBtn />
-          </div>
-        </div>
-      ) : (
-        <div className="relative p-10 flex flex-col items-center lg:w-[500px] md:w-[450px] w-[350px] h-[550px] bg-secondary rounded-md shadow-md">
-          <p className="text-text-secondary pt-5">#01</p>
-          <h2 className="text-24 font-bold">{detail.question.text}</h2>
-          <Custom value={detail.question.text} />
-        </div>
-      )}
+      {/* PENDING이고 내 답변이 없음 */}
+      {detail.status === 'PENDING' && !hasMy ? (
+        <AnswerForm
+          mode="create"
+          questionText={detail.question.text}
+          // TODO: onCreate 구현 (POST /answers)
+        />
+      ) : null}
+      {/* COMPLETED 또는 양측 답변 존재 */}
+      {detail.status === 'COMPLETED' || (hasMy && hasPartner) ? (
+        <AnswerView
+          questionText={detail.question.text}
+          myContent={my?.content ?? ''}
+          partnerContent={partner?.content ?? ''}
+        />
+      ) : null}
     </>
   );
 }
