@@ -14,7 +14,7 @@ export default function Record() {
           <BellIcon className="w-6 h-6 stroke-2" />
         </Button>
       </div>
-      <div className="w-full h-screen bg-gradient-sub flex items-center justify-center">
+      <div className="w-full min-h-screen bg-gradient-sub flex items-center justify-center">
         <div className="w-[320px] h-[481px] flex flex-col justify-center ">
           <QuestionCard />
           <div className="pt-5 flex gap-6 ">
