@@ -1,8 +1,8 @@
 package com.qmate.domain.question.service;
 
 import com.qmate.common.constants.question.QuestionConstants;
+import com.qmate.domain.match.Match;
 import com.qmate.domain.question.entity.CustomQuestion;
-import com.qmate.domain.question.entity.Match;
 import com.qmate.domain.question.entity.RelationType;
 import com.qmate.domain.question.mapper.QuestionMapper;
 import com.qmate.domain.question.model.request.CustomQuestionTextRequest;
@@ -109,7 +109,7 @@ public class CustomQuestionService {
 
   private Match loadMatchOrThrow(Long matchId) {
     // TODO MatchRepository 연동
-    return new Match(matchId, RelationType.COUPLE); // 임시 반환
+    return null; // 임시 반환
   }
 
   private CustomQuestion loadOrThrow(Long id) {
