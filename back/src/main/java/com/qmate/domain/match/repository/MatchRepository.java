@@ -1,6 +1,6 @@
 package com.qmate.domain.match.repository;
 
-import com.qmate.domain.match.Match;
+import com.qmate.domain.match.entity.Match;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

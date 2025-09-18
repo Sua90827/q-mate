@@ -1,5 +1,7 @@
-package com.qmate.domain.match;
+package com.qmate.domain.match.entity;
 
+import com.qmate.domain.match.MatchStatus;
+import com.qmate.domain.match.RelationType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

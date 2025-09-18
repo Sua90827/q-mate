@@ -1,6 +1,6 @@
 package com.qmate.domain.match.repository;
 
-import com.qmate.domain.match.MatchMember;
+import com.qmate.domain.match.entity.MatchMember;
 import com.qmate.domain.match.MatchStatus;
 import java.util.List;
 import java.util.Optional;

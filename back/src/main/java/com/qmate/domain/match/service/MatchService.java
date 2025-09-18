@@ -1,8 +1,8 @@
 package com.qmate.domain.match.service;
 
 import com.qmate.common.redis.RedisHelper;
-import com.qmate.domain.match.Match;
-import com.qmate.domain.match.MatchMember;
+import com.qmate.domain.match.entity.Match;
+import com.qmate.domain.match.entity.MatchMember;
 import com.qmate.domain.match.MatchStatus;
 import com.qmate.domain.match.RelationType;
 import com.qmate.domain.match.model.request.MatchCreationRequest;
@@ -15,6 +15,7 @@ import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
 import com.qmate.exception.custom.AlreadyInMatchException;
 import com.qmate.exception.custom.InvalidStartDateForCoupleException;
+import com.qmate.exception.custom.InviteAttemptLockedException;
 import com.qmate.exception.custom.InviteCodeExpiredException;
 import com.qmate.exception.custom.MatchNotFoundException;
 import com.qmate.exception.custom.PartnerNotFoundException;
@@ -63,33 +64,48 @@ public class MatchService {
   //초대 코드를 사용하여 기존 매칭에 참여 로직.
   @Transactional
   public MatchJoinResponse joinMatch(MatchJoinRequest request, Long joinerId) {
+    //사용자가 잠금 상태인지 먼저 확인
+    if (redisHelper.isLocked(joinerId)){
+      throw new InviteAttemptLockedException();
+    }
     // 사전 조건 검증
     User joiner = findUserById(joinerId);
     validateUserNotInActiveMatch(joinerId);
 
-    // 초대 코드 및 매칭 정보 검증
     String inviteCode = request.getInviteCode();
-    Long matchId = getMatchIdByInviteCode(inviteCode);
-    Match match = findMatchById(matchId);
-    validateMatchIsWaiting(match);
 
-    // 매칭 참여 처리
-    MatchMember joinerMember = MatchMember.create(joiner, match);
-    matchMemberRepository.save(joinerMember);
-    match.setStatus(MatchStatus.ACTIVE);
+    try {
+      // 초대 코드 및 매칭 정보 검증
+      Long matchId = getMatchIdByInviteCode(inviteCode);
+      Match match = findMatchById(matchId);
+      validateMatchIsWaiting(match);
 
-    // 파트너 정보 조회 (헬퍼 메서드 사용)
-    MatchMember partner = findPartner(matchId, joinerId);
+      // 매칭 참여 처리
+      MatchMember joinerMember = MatchMember.create(joiner, match);
+      matchMemberRepository.save(joinerMember);
+      match.setStatus(MatchStatus.ACTIVE);
 
-    // 사용한 초대 코드 삭제
-    redisHelper.deleteInviteCode(inviteCode);
+      // 파트너 정보 조회 (헬퍼 메서드 사용)
+      MatchMember partner = findPartner(matchId, joinerId);
 
-    // 결과 반환
-    return MatchJoinResponse.builder()
-        .matchId(matchId)
-        .message("매칭에 성공적으로 참여했습니다.")
-        .partnerNickname(partner.getUser().getNickname())
-        .build();
+      // 사용한 초대 코드 삭제
+      redisHelper.deleteInviteCode(inviteCode);
+
+      // 결과 반환
+      return MatchJoinResponse.builder()
+          .matchId(matchId)
+          .message("매칭에 성공적으로 참여했습니다.")
+          .partnerNickname(partner.getUser().getNickname())
+          .build();
+    }catch (InviteCodeExpiredException e){
+      //초대 코드가 틀렸을 때 실행되는 실패 로직
+      long attempCount = redisHelper.incrementAttemptCount(joinerId);
+      if (attempCount >= 5){
+        redisHelper.lockUser(joinerId);
+        throw new InviteAttemptLockedException();//5번 실패 시 발생
+      }
+      throw e; //5번 미만 실패 시 기존의 '유효하지 않은 코드' 예외 발생
+    }
   }
 
 

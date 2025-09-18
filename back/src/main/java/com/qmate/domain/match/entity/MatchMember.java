@@ -1,4 +1,4 @@
-package com.qmate.domain.match;
+package com.qmate.domain.match.entity;
 
 import com.qmate.domain.user.User;
 import jakarta.persistence.Column;
