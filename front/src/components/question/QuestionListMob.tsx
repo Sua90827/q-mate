@@ -33,7 +33,7 @@ export default function QuestionListMob() {
     .filter((list) => (showCustomOnly ? list.status === 'EDITABLE' : true));
 
   return (
-    <div className="bg-gradient-sub w-full h-screen py-5">
+    <div className="bg-gradient-sub w-full min-h-screen py-5">
       <div className="flex justify-between items-center h-[70px]">
         <Filter setShowCustomOnly={setShowCustomOnly} />
         <p className="text-20 font-Gumi">질문 리스트</p>
