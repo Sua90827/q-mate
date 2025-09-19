@@ -1,5 +1,5 @@
 import { Button } from '@/components/common/Button';
-import InviteLayout from '@/components/invite/InviteLayout';
+import InviteLayout from '@/components/invite/ui/InviteLayout';
 import Image from 'next/image';
 import React from 'react';
 

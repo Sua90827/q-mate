@@ -1,6 +1,7 @@
 import ScheduleListWeb from '@/components/schedule/ScheduleListWeb';
 import AddBtn from '@/components/schedule/ui/AddBtn';
-import { CalendarDays, Link } from 'lucide-react';
+import { CalendarDays } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react';
 
 export default function page() {
