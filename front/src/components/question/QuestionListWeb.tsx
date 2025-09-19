@@ -68,7 +68,7 @@ export default function QuestionListWeb() {
                   {list.question.text.length > 17
                     ? list.question.text.slice(0, 16) + '...'
                     : list.question.text}
-                  {list.status === 'EDITABLE' && <X className="mx-4" />}
+                  {list.status === 'EDITABLE' && <X className="mx-4 !w-4 !h-4" />}
                 </div>
               </li>
             ))}

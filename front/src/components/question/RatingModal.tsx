@@ -1,13 +1,9 @@
 'use client';
 import React from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-} from '../ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader } from '../ui/dialog';
 import { Button } from '../common/Button';
 import { ThumbsDownIcon, ThumbsUpIcon } from 'lucide-react';
+import { DialogTitle } from '@radix-ui/react-dialog';
 
 type Props = {
   open: boolean;

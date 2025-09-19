@@ -6,6 +6,7 @@ import {
   fetchTodayQuestion,
 } from '../api/questions';
 
+//전체 질문 조회
 export const useQuestions = () => {
   return useQuery({
     queryKey: ['questions'],
@@ -15,6 +16,7 @@ export const useQuestions = () => {
   });
 };
 
+//커스텀 질문 조회
 export const useCustomQuestions = () => {
   return useQuery({
     queryKey: ['customQuestions'],
@@ -24,6 +26,7 @@ export const useCustomQuestions = () => {
   });
 };
 
+//질문 상세 조회
 export const useQuestionDetail = (id: number) => {
   return useQuery({
     queryKey: ['questionDetail', id],
