@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as SliderPrimitive from '@radix-ui/react-slider';
 
 import { cn } from '@/lib/utils';
+import { useThemeByTime } from '@/hooks/useThemeByTime';
 
 export function ExpBar({
   className,
@@ -14,6 +15,8 @@ export function ExpBar({
   step = 10,
   ...props
 }: React.ComponentProps<typeof SliderPrimitive.Root>) {
+  const theme = useThemeByTime();
+
   const _values = React.useMemo(
     () => (Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max]),
     [value, defaultValue, min, max],
@@ -21,7 +24,7 @@ export function ExpBar({
 
   return (
     <div className="flex flex-col ">
-      <span className="font-Gumi pb-2">EXP</span>
+      <span className={`font-Gumi pb-2 ${theme === 'night' ? 'text-secondary' : ''}`}>EXP</span>
       <SliderPrimitive.Root
         data-slot="slider"
         defaultValue={defaultValue}

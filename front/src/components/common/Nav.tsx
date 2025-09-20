@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import BellBtn from './BellBtn';
+import { useThemeByTime } from '@/hooks/useThemeByTime';
 
 const NAV_ITEMS = [
   { key: 'home', label: '홈', href: '/main', Icon: House },
@@ -14,6 +15,7 @@ const NAV_ITEMS = [
 
 export default function Nav() {
   const [active, setActive] = useState('home');
+  const theme = useThemeByTime();
 
   return (
     <>
@@ -41,7 +43,7 @@ export default function Nav() {
           <Image src="/logo.svg" alt="큐메이트" width={109} height={35} className="mx-7" />
         </Link>
         <nav className="w-full h-[70px] sm:flex sm:justify-end items-center hidden sticky top-0">
-          <ul className="gap-14 hidden sm:flex">
+          <ul className={`gap-14 hidden sm:flex ${theme === 'night' ? 'text-secondary' : ''}`}>
             {NAV_ITEMS.map(({ key, href, label }) => (
               <li key={key}>
                 <Link

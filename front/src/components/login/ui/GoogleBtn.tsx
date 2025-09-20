@@ -7,7 +7,7 @@ export default function GoogleBtn() {
   return (
     <Button variant="outline" className="text-text-secondary border border-gray w-[295px]" asChild>
       <Link href="/signup/onboarding">
-        <Image src="/images/googleLogo.png" width={20} height={20} alt="구글 로그인" />
+        <Image src="/images/social/googleLogo.png" width={20} height={20} alt="구글 로그인" />
         구글 로그인
       </Link>
     </Button>

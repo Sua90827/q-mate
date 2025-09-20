@@ -46,6 +46,10 @@
   --color-chart-first: #13ecec;
   --color-chart-second: #a0f6f6;
   --color-chart-third: #cdffff;
+  --color-sunset-top: #ff9263;
+  --color-sunset-bottom: #fadb5e;
+  --color-night-top: #171940;
+  --color-night-bottom: #2d3367;
 
   /* shadcn 토큰 */
   --color-sidebar-ring: var(--sidebar-ring);
@@ -95,6 +99,21 @@
       to bottom,
       var(--color-sub-top) 40%,
       var(--color-sub-bottom) 100%
+    );
+  }
+  .bg-gradient-sunset {
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-sunset-top) 40%,
+      var(--color-sunset-bottom) 100%
+    );
+  }
+
+  .bg-gradient-night {
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-night-top) 40%,
+      var(--color-night-bottom) 100%
     );
   }
 }
