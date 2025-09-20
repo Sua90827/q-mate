@@ -7,16 +7,29 @@ import { Button } from '../common/Button';
 import Link from 'next/link';
 import Image from 'next/image';
 
+/* .test() -> true/false 반환 */
+const validateEmail = (v: string) => /\S+@\S+\.\S+/.test(v);
+const validatePassword = (v: string) =>
+  v.length >= 8 && /[0-9]/.test(v) && /[a-zA-Z]/.test(v) && /[^a-zA-Z0-9]/.test(v);
+
 export default function Login() {
-  const [active, setActive] = useState(false);
+  const [isEmailValid, setEmailValid] = useState(false);
+  const [isPasswordValid, setPasswordValid] = useState(false);
+  const isFormValid = isEmailValid && isPasswordValid;
+
   return (
-    <div className="bg-gradient-sub w-full min-h-screen flex flex-col gap-3 items-center justify-center ">
+    <div className=" w-full min-h-screen flex flex-col gap-3 items-center justify-center ">
       <Image src="/logo.svg" alt="큐메이트" width={173} height={55} />
 
       <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">
-        <TextInput label="이메일" type="email" setActive={setActive} />
-        <TextInput label="비밀번호" type="password" setActive={setActive} />
-        <Button className="w-[295px]" disabled={active ? false : true}>
+        <TextInput label="이메일" validate={validateEmail} setActive={setEmailValid} />
+        <TextInput
+          label="비밀번호"
+          type="password"
+          validate={validatePassword}
+          setActive={setPasswordValid}
+        />
+        <Button className="w-[295px]" disabled={!isFormValid}>
           로그인
         </Button>
       </form>

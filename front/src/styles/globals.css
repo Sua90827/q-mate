@@ -31,6 +31,7 @@
   --color-sub-bottom: #d4eeff;
   --color-primary: #13c8ec;
   --color-secondary: #fffdfd;
+  --color-bg-auth: #f2faff;
   --color-gray: #f0f1f3;
   --color-dash: #c0c0c0;
   --color-list-active: #d0ebfc;
@@ -97,6 +98,11 @@
     );
   }
 }
+
+.shadow-box {
+  @apply bg-secondary rounded-md border border-gray shadow-sm;
+}
+
 /*---break---*/
 :root {
   --radius: 0.625rem;

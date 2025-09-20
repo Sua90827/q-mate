@@ -4,9 +4,9 @@ import * as React from 'react';
 import { ChevronDownIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import Calendar from '../CalendarCustom';
+import Calendar from '../schedule/CalendarCustom';
 
-export function DatePicker() {
+export function DatePicker({ label, schedule }: { label: string; schedule?: boolean }) {
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(undefined);
 
@@ -15,17 +15,18 @@ export function DatePicker() {
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
             id="date"
-            className="w-full shadow-md py-2 bg-secondary justify-between font-normal text-14"
+            className={`w-full border-gray h-[37px]   font-semibold bg-secondary justify-between  text-14 hover:bg-secondary ${
+              schedule ? 'shadow-box  ' : '!text-text-secondary/60'
+            }`}
           >
-            {date ? date.toLocaleDateString() : '날짜를 선택해주세요'}
+            {date ? date.toLocaleDateString() : label}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
         <PopoverContent
           className="overflow-hidden p-0"
-          align="end"
+          align="start"
           style={{ width: 'var(--radix-popover-trigger-width)' }}
         >
           <Calendar

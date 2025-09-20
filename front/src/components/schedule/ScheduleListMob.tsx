@@ -20,7 +20,7 @@ export default function ScheduleListMob() {
   });
 
   return (
-    <div className="bg-gradient-sub w-full min-h-screen ">
+    <div className=" w-full min-h-screen ">
       <div className="flex justify-center items-center h-[70px] relative">
         <p className="text-20 font-Gumi select-none">일정</p>
         <Trash2
