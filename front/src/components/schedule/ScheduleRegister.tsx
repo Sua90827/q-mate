@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { DatePicker } from './ui/DatePicker';
+import { DatePicker } from '../common/DatePicker';
 import RepeatSelector from './ui/RepeatSelector';
 import { Button } from '../common/Button';
 import Link from 'next/link';
@@ -12,15 +12,15 @@ export default function ScheduleRegister() {
         className="flex w-[310px]  sm:px-0 sm:w-[400px]  flex-col gap-5"
         onSubmit={(e) => e.preventDefault()}
       >
-        <DatePicker />
+        <DatePicker label="날짜를 선택해주세요." schedule />
         <input
           type="text"
           placeholder="일정을 입력해주세요."
-          className="bg-secondary border border-gray shadow-md rounded-md py-2 pl-3 w-full"
+          className="shadow-box py-2 pl-3 w-full "
         />
         <textarea
           placeholder="설명을 입력해주세요"
-          className="w-full h-[130px] bg-secondary border border-gray shadow-md rounded-md pt-3 pl-3 resize-none"
+          className="w-full h-[130px] shadow-box pt-3 pl-3 resize-none"
         />
         <RepeatSelector
           titleLabel="반복 선택"

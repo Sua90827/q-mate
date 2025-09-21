@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react';
 
 export default function InviteLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gradient-main">
+    <div className="w-full min-h-screen flex flex-col items-center justify-center ">
       <div className="absolute inset-0 pointer-events-none z-0">
         <picture>
           <source media="(max-width: 768px) " srcSet="/images/background_deco_M.png" />

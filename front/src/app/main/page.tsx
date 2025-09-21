@@ -6,7 +6,7 @@ import React from 'react';
 
 const page = () => {
   return (
-    <div className="relative w-full min-h-screen flex flex-col items-center justify-center bg-gradient-main">
+    <div className="relative w-full min-h-screen flex flex-col items-center justify-center ">
       <div className="absolute inset-0 pointer-events-none z-0">
         <Image
           src="/images/light2.png"
