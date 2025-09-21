@@ -2,6 +2,7 @@ package com.qmate.domain.questioninstance.model.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.qmate.domain.questioninstance.entity.InstanceStatus;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,6 +62,8 @@ public class QIDetailResponse {
     private Long answerId;                // 미제출이면 null
     private Long userId;
     private String nickname;
+
+    @JsonProperty("isMine")               // api 명세 맞춤
     private boolean isMine;               // 요청자 본인 여부
     private boolean visible;              // 공개 여부(PENDING 시 상대 답변 false)
     private String content;               // visible=false면 null
