@@ -6,6 +6,7 @@ import Filter from './ui/Filter';
 import { X } from 'lucide-react';
 import { useQuestions, useCustomQuestions } from '@/hooks/useQuestions';
 import { QuestionInstance } from '@/types/questionType';
+import { useThemeStore } from '@/store/useThemeStore';
 
 export default function QuestionListWeb() {
   const [query, setQuery] = useState('');
@@ -39,8 +40,24 @@ export default function QuestionListWeb() {
     .filter((list) => list.question.text.toLowerCase().includes(query.toLowerCase()))
     .filter((list) => (showCustomOnly ? list.status === 'EDITABLE' : true));
 
+  const theme = useThemeStore((state) => state.theme);
+
+  let activeClass = '';
+
+  if (active) {
+    if (theme === 'sunset') activeClass = 'bg-sunset-list';
+    else if (theme === 'night') activeClass = 'bg-night-list';
+    else activeClass = 'bg-day-list';
+  }
+
+  let colorClass = '';
+
+  if (theme === 'sunset') colorClass = '!text-primary';
+  else if (theme === 'night') colorClass = '!text-night-active';
+  else colorClass = '!bg-sunset-active';
+
   return (
-    <div className="w-full h-screen bg-gradient-sub">
+    <div className="w-full h-screen">
       <div className="mx-5 md:mx-7 h-screen flex items-center">
         {/* 좌측 리스트 */}
         <div className="bg-secondary rounded-md shadow-md lg:w-[350px] w-[220px] h-[550px] flex flex-col">
@@ -58,9 +75,9 @@ export default function QuestionListWeb() {
               <li
                 key={list.questionInstanceId}
                 className={`py-5 pl-4 cursor-pointer ${
-                  active === list.questionInstanceId ? 'bg-list-active font-bold' : ''
-                } ${list.status === 'PENDING' ? 'text-primary font-bold' : ''} ${
-                  list.status === 'EDITABLE' ? 'text-text-secondary bg-gray font-bold' : ''
+                  active === list.questionInstanceId ? activeClass : ''
+                } ${list.status === 'PENDING' ? colorClass : ''} ${
+                  list.status === 'EDITABLE' ? `!text-text-secondary bg-list-custom` : ''
                 }`}
                 onClick={() => setActive(list.questionInstanceId)}
               >

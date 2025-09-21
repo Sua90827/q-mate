@@ -28,8 +28,6 @@
   /*color*/
   --color-main-top: #bbf4ff;
   --color-main-bottom: #5ee0fa;
-  --color-sub-top: #f2faff;
-  --color-sub-bottom: #d4eeff;
   --color-primary: #13c8ec;
   --color-secondary: #fffdfd;
   --color-bg-auth: #f2faff;
@@ -42,15 +40,21 @@
   --color-error: #da7173;
   --color-blur: #e5e7eb;
   --color-exp: #fbc76a;
-  --color-list-active: #e8f6fe;
+  --color-day-list: #e8f6fe;
   --color-list-custom: #eaf0f4;
   --color-chart-first: #13ecec;
   --color-chart-second: #a0f6f6;
   --color-chart-third: #cdffff;
   --color-sunset-top: #ff9263;
   --color-sunset-bottom: #fadb5e;
+  --color-sunset-active: #ff8736;
+  --color-sunset-text: #717886;
+  --color-sunset-list: #fef4e6;
   --color-night-top: #171940;
   --color-night-bottom: #2d3367;
+  --color-night-active: #020433;
+  --color-night-active2: #8f93cf;
+  --color-night-list: #d3d5ff;
 
   /* shadcn 토큰 */
   --color-sidebar-ring: var(--sidebar-ring);
@@ -93,13 +97,6 @@
       to bottom,
       var(--color-main-top) 40%,
       var(--color-main-bottom) 100%
-    );
-  }
-  .bg-gradient-sub {
-    background-image: linear-gradient(
-      to bottom,
-      var(--color-sub-top) 40%,
-      var(--color-sub-bottom) 100%
     );
   }
   .bg-gradient-sunset {

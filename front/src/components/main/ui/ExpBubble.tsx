@@ -2,14 +2,15 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { useThemeByTime } from '@/hooks/useThemeByTime';
+import { useThemeStore } from '@/store/useThemeStore';
 //TODO: API 연동 후 경험치 값 props로 받기
 // 사용자가 main에 접근하고 exp가 오를때 ExpBubble 컴포넌트가 나타나도록 구현
 type ExpBubbleProps = {
   exp: number;
 };
 export default function ExpBubble() {
-  const theme = useThemeByTime();
+  const theme = useThemeStore((state) => state.theme);
+
   return (
     <div className="relative w-[132px] h-[132px]">
       <Image

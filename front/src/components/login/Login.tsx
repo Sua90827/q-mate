@@ -19,7 +19,7 @@ export default function Login() {
 
   return (
     <div className=" w-full min-h-screen flex flex-col gap-3 items-center justify-center ">
-      <Image src="/logo.svg" alt="큐메이트" width={173} height={55} />
+      <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={173} height={55} />
 
       <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">
         <TextInput label="이메일" validate={validateEmail} setActive={setEmailValid} />

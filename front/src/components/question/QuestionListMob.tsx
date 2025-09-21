@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Filter from './ui/Filter';
 import { useQuestions, useCustomQuestions } from '@/hooks/useQuestions';
 import { QuestionInstance } from '@/types/questionType';
+import { useThemeStore } from '@/store/useThemeStore';
 
 export default function QuestionListMob() {
   const [query, setQuery] = useState('');
@@ -32,12 +33,33 @@ export default function QuestionListMob() {
     .filter((list) => list.question.text.toLowerCase().includes(query.toLowerCase()))
     .filter((list) => (showCustomOnly ? list.status === 'EDITABLE' : true));
 
+  const theme = useThemeStore((state) => state.theme);
+
+  let activeClass = '';
+
+  if (active) {
+    if (theme === 'sunset') activeClass = 'bg-sunset-list';
+    else if (theme === 'night') activeClass = 'bg-night-list';
+    else activeClass = 'bg-day-list';
+  }
+
+  let colorClass = '';
+  if (theme === 'sunset') colorClass = 'text-primary';
+  else if (theme === 'night') colorClass = 'text-night-active2';
+  else colorClass = 'bg-sunset-active';
+
+  let whiteClass = '';
+  if (theme === 'night') whiteClass = 'text-secondary';
+
   return (
-    <div className="-sub w-full min-h-screen py-5">
-      <div className="flex justify-between items-center h-[70px]">
+    <div className="w-full min-h-screen py-5">
+      <div className="flex justify-between items-center h-[70px] px-5">
         <Filter setShowCustomOnly={setShowCustomOnly} />
-        <p className="text-20 font-Gumi">질문 리스트</p>
-        <Trash2 className="!w-[24px] !h-[24px]" onClick={() => setIsDelete((prev) => !prev)} />
+        <p className={`text-20 font-Gumi ${whiteClass}`}>질문 리스트</p>
+        <Trash2
+          className={`!w-[24px] !h-[24px] ${whiteClass}`}
+          onClick={() => setIsDelete((prev) => !prev)}
+        />
       </div>
 
       <div className="pt-10">
@@ -48,11 +70,17 @@ export default function QuestionListMob() {
         {filtered.map((list) => (
           <li
             key={list.questionInstanceId}
-            className={`py-4 pl-5 cursor-pointer ${
-              active === list.questionInstanceId ? 'bg-list-active font-bold' : ''
-            } ${list.status === 'PENDING' ? 'text-primary font-bold' : ''} ${
-              list.status === 'EDITABLE' ? 'text-text-secondary bg-gray font-bold' : ''
-            }`}
+            className={`py-4 pl-5 cursor-pointer
+          ${active === list.questionInstanceId ? `font-bold ${activeClass}` : ''}
+          ${
+            list.status === 'EDITABLE'
+              ? 'text-text-secondary bg-gray font-bold'
+              : list.status === 'PENDING'
+              ? colorClass
+              : theme === 'night'
+              ? 'text-secondary'
+              : ''
+          }`}
           >
             <Link
               href={`/question/list/detail/${list.questionInstanceId}`}

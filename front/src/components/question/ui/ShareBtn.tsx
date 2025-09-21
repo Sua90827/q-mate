@@ -1,4 +1,7 @@
 'use client';
+import { Button } from '@/components/common/Button';
+import { useThemeStore } from '@/store/useThemeStore';
+
 import { Share2 } from 'lucide-react';
 import React, { useState, useRef } from 'react';
 import {
@@ -82,14 +85,15 @@ export default function ShareBtn({ targetId, title, text, className }: Props) {
 
   return (
     <>
-      <button
+      <Button
         type="button"
         onClick={handleShare}
         aria-label="공유"
+        theme={theme}
         className={`bg-primary w-16 h-16 rounded-full flex items-center justify-center absolute bottom-4 right-4 cursor-pointer ${className}`}
       >
         <Share2 className="text-secondary" />
-      </button>
+      </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>

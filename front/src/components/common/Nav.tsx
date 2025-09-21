@@ -4,7 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import BellBtn from './BellBtn';
-import { useThemeByTime } from '@/hooks/useThemeByTime';
+import { useThemeStore } from '@/store/useThemeStore';
+import { Theme } from '@/types/theme';
 
 const NAV_ITEMS = [
   { key: 'home', label: '홈', href: '/main', Icon: House },
@@ -13,9 +14,27 @@ const NAV_ITEMS = [
   { key: 'settings', label: '설정', href: '/settings', Icon: Settings },
 ];
 
+const activeClassWeb: Record<Theme, string> = {
+  day: 'bg-primary',
+  sunset: 'bg-sunset-active',
+  night: 'bg-night-active',
+};
+
+const activeClassMob: Record<Theme, string> = {
+  day: 'text-primary',
+  sunset: 'text-sunset-active',
+  night: 'text-night-active',
+};
+
+const changeLogo = {
+  day: '/images/logo/day_logo.svg',
+  sunset: '/images/logo/sunset_logo.svg',
+  night: '/images/logo/night_logo.svg',
+};
+
 export default function Nav() {
   const [active, setActive] = useState('home');
-  const theme = useThemeByTime();
+  const theme = useThemeStore((state) => state.theme);
 
   return (
     <>
@@ -29,7 +48,9 @@ export default function Nav() {
                   aria-label={label}
                   size={48}
                   onClick={() => setActive(key)}
-                  className={active === key ? 'text-primary' : 'hover:opacity-70'}
+                  className={
+                    active === key ? activeClassMob[theme] : 'hover:opacity-70 text-text-primary'
+                  }
                 />
               </Link>
             </li>
@@ -40,7 +61,13 @@ export default function Nav() {
       {/* 데스크탑 */}
       <header className="hidden sm:flex h-[70px] items-center w-full ">
         <Link href="/main">
-          <Image src="/logo.svg" alt="큐메이트" width={109} height={35} className="mx-7" />
+          <Image
+            src={changeLogo[theme] || '/images/logo/day_logo.svg'}
+            alt="큐메이트"
+            width={109}
+            height={35}
+            className="mx-7"
+          />
         </Link>
         <nav className="w-full h-[70px] sm:flex sm:justify-end items-center hidden sticky top-0">
           <ul className={`gap-14 hidden sm:flex ${theme === 'night' ? 'text-secondary' : ''}`}>
@@ -49,11 +76,12 @@ export default function Nav() {
                 <Link
                   href={href}
                   onClick={() => setActive(key)}
-                  className={
-                    active === key
-                      ? 'font-bold text-lg bg-primary rounded-xl py-2 px-3 text-secondary'
-                      : 'font-bold text-lg hover:opacity-70'
-                  }
+                  className={`font-bold text-16
+                   ${
+                     active === key
+                       ? `rounded-2xl px-3 py-2 text-secondary ${activeClassWeb[theme]}`
+                       : 'hover:opacity-70'
+                   }`}
                 >
                   {label}
                 </Link>

@@ -5,6 +5,7 @@ import { ChevronRight } from 'lucide-react';
 import { Switch } from '../ui/switch';
 import { Button } from '../common/Button';
 import NicknameModal from './ui/NicknameModal';
+import { useThemeStore } from '@/store/useThemeStore';
 
 type SettingItem =
   | { id: string; label: string; subLabel?: string; type: 'modal'; onClick: () => void }
@@ -12,12 +13,18 @@ type SettingItem =
 
 export default function Settings() {
   const [modal, setModal] = useState<string | null>(null);
+  const theme = useThemeStore((state) => state.theme);
+
+  let colorClass = '';
+  if (theme === 'sunset') colorClass = 'bg-sunset-active';
+  else if (theme === 'night') colorClass = 'bg-night-active ';
+  else colorClass = 'bg-primary ';
 
   const settings: SettingItem[] = [
     {
       id: 'profile',
       label: '조용한 유령',
-      subLabel: '프로필 수정하기',
+      subLabel: '닉네임 수정하기',
       type: 'modal',
       onClick: () => setModal('profile'),
     },
@@ -40,12 +47,15 @@ export default function Settings() {
     },
   ];
 
+  let whiteClass = '';
+  if (theme === 'night') whiteClass = 'text-secondary';
+
   return (
-    <div className="w-full min-h-screen flex flex-col justify-center items-center">
+    <div className="w-full min-h-screen flex flex-col justify-center items-center sm:pt-0 pt-[70px]">
       {/* 모바일 상단바 */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden px-4">
+      <div className="fixed top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden px-4 ">
         <div className="w-6" />
-        <span className="flex-1 font-Gumi text-center text-20">설정</span>
+        <span className={`flex-1 font-Gumi flex justify-center text-20 ${whiteClass}`}>설정 </span>
         <BellBtn />
       </div>
 
@@ -65,7 +75,7 @@ export default function Settings() {
                 )}
               </div>
               {item.type === 'switch' ? (
-                <Switch />
+                <Switch color={colorClass} />
               ) : (
                 <ChevronRight className="text-text-secondary !w-4 !h-4" />
               )}
@@ -73,7 +83,9 @@ export default function Settings() {
           ))}
         </ul>
       </div>
-      <Button className="w-[295px] mt-10">로그아웃</Button>
+      <Button className="w-[295px] mt-10" theme={theme}>
+        로그아웃
+      </Button>
 
       {modal === 'profile' && <NicknameModal open={modal} setIsOpen={setModal} />}
     </div>

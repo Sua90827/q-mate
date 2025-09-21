@@ -1,12 +1,16 @@
+'use client';
 import Image from 'next/image';
 import React from 'react';
 import ExpBubble from './ui/ExpBubble';
 import Bubbley from './ui/Bubbley';
 import { ExpBar } from './ui/ExpBar';
-import { useThemeByTime } from '@/hooks/useThemeByTime';
+import ChartModal from '../charts/ChartModal';
+import { useThemeStore } from '@/store/useThemeStore';
+import { motion, AnimatePresence } from 'motion/react';
+import { Theme } from '@/types/theme';
 
 export default function Main() {
-  const theme = useThemeByTime();
+  const { theme, hasHydrated } = useThemeStore();
 
   const paths = {
     day: {
@@ -26,32 +30,45 @@ export default function Main() {
     },
   };
 
-  const web = paths[theme].web;
-  const mobile = paths[theme].mobile;
-  const light = paths[theme].light;
+  const key: Theme = hasHydrated && theme in paths ? (theme as Theme) : 'day';
+
+  const { web, mobile, light } = paths[key];
+
+  const MotionImage = motion(Image);
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center">
       <div className="fixed inset-0 pointer-events-none z-0">
-        <Image
-          src={light}
-          alt="빛 효과 이미지"
-          fill
-          className="object-contain object-top -translate-x-5 invisible md:visible"
-          priority
-        />
-
-        <picture>
-          <source media="(max-width: 768px)" srcSet={mobile} />
-          <Image
-            src={web}
-            alt="배경 장식 이미지"
-            priority
+        <AnimatePresence mode="wait">
+          <MotionImage
+            key={`${theme}-light`}
+            src={light}
+            alt="빛 효과 이미지"
             fill
-            sizes="100vw"
-            className="object-fill object-bottom"
+            className="object-contain object-top -translate-x-5 invisible md:visible"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            priority
           />
-        </picture>
+          <picture>
+            <source media="(max-width: 768px)" srcSet={mobile} />
+            <MotionImage
+              key={`${theme}-web`}
+              src={web}
+              alt="배경 장식 이미지"
+              fill
+              sizes="100vw"
+              className="object-fill object-bottom"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8 }}
+              priority
+            />
+          </picture>
+        </AnimatePresence>
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center w-[252px] h-[358px] mt-15">
@@ -59,6 +76,7 @@ export default function Main() {
         <Bubbley exp={0} className="mb-6" />
         <ExpBar />
       </div>
+      <ChartModal />
     </div>
   );
 }
