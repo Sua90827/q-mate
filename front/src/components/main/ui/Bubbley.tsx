@@ -7,17 +7,17 @@ type BubbleyProps = {
 };
 
 export default function Bubbley({ exp, className }: BubbleyProps) {
-  let src = '/images/bubbley_baby.png';
+  let src = '/images/bubbley/bubbley_baby.png';
   if (exp < 300) {
-    src = '/images/bubbley_baby.png';
+    src = '/images/bubbley/bubbley_baby.png';
   } else if (exp < 500) {
-    src = '/images/bubbley_child.png';
+    src = '/images/bubbley/bubbley_child.png';
   } else {
-    src = '/images/bubbley_adult.png';
+    src = '/images/bubbley/bubbley_adult.png';
   }
   return (
     <div className={className}>
-      <Image src={src} alt="버블리 캐릭터" width={120} height={167} />
+      <Image src={src} alt="버블리 캐릭터" width={120} height={167} className="opacity-90" />
     </div>
   );
 }
