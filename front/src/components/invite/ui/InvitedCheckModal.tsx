@@ -1,12 +1,6 @@
 import { fetchInvitedCheck } from '@/api/invite';
 import { Button } from '@/components/common/Button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { InvitedCheck } from '@/types/InviteType';
 import React, { useEffect, useState } from 'react';
 
