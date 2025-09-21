@@ -1,4 +1,5 @@
 'use client';
+
 import { CalendarMinus2, House, MessageSquareText, Settings } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -38,9 +39,9 @@ export default function Nav() {
 
   return (
     <>
-      {/* 모바일 */}
-      <nav className="w-full h-[70px] bg-secondary flex justify-center items-center sm:hidden">
-        <ul className="w-[320px] gap-12 flex sm:hidden">
+      {/* 모바일 (하단 고정) */}
+      <nav className="sm:hidden fixed bottom-0 left-0 w-full h-[70px] bg-secondary flex justify-center items-center z-50">
+        <ul className="w-[320px] gap-12 flex">
           {NAV_ITEMS.map(({ key, href, Icon, label }) => (
             <li key={key}>
               <Link href={href}>
@@ -49,7 +50,7 @@ export default function Nav() {
                   size={48}
                   onClick={() => setActive(key)}
                   className={
-                    active === key ? activeClassMob[theme] : 'hover:opacity-70 text-text-primary'
+                    active === key ? activeClassMob[theme] : 'hover:opacity-70 text-text-primary '
                   }
                 />
               </Link>
@@ -58,8 +59,8 @@ export default function Nav() {
         </ul>
       </nav>
 
-      {/* 데스크탑 */}
-      <header className="hidden sm:flex h-[70px] items-center w-full ">
+      {/* 데스크탑 (상단 고정, sticky) */}
+      <header className="hidden sm:flex h-[70px] items-center w-full fixed top-0 z-40">
         <Link href="/main">
           <Image
             src={changeLogo[theme] || '/images/logo/day_logo.svg'}
@@ -69,8 +70,8 @@ export default function Nav() {
             className="mx-7"
           />
         </Link>
-        <nav className="w-full h-[70px] sm:flex sm:justify-end items-center hidden sticky top-0">
-          <ul className={`gap-14 hidden sm:flex ${theme === 'night' ? 'text-secondary' : ''}`}>
+        <nav className="w-full flex justify-end items-center">
+          <ul className={`gap-12 flex ${theme === 'night' ? 'text-secondary' : ''}`}>
             {NAV_ITEMS.map(({ key, href, label }) => (
               <li key={key}>
                 <Link
@@ -79,8 +80,8 @@ export default function Nav() {
                   className={`font-bold text-16
                    ${
                      active === key
-                       ? `rounded-2xl px-3 py-2 text-secondary ${activeClassWeb[theme]}`
-                       : 'hover:opacity-70'
+                       ? `rounded-2xl px-4 py-2 text-secondary ${activeClassWeb[theme]}`
+                       : 'hover:opacity-70 px-4 py-2'
                    }`}
                 >
                   {label}

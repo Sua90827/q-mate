@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import '../styles/globals.css';
 import Providers from './providers';
-import NavGuard from '@/components/common/NavGuard';
+import Nav from '@/components/common/Nav';
 import BodyWrapper from './BodyWrapper';
 
 export const metadata: Metadata = {
@@ -12,20 +12,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
-      <body>
+    <html lang="ko" className="h-full">
+      <body className="h-full">
         <BodyWrapper>
-          <div className="order-last sm:order-1 z-10">
-            <NavGuard />
-          </div>
           <Providers>
-            <main className="flex-1 order-1 sm:order-last">{children}</main>
+            <div className="flex flex-col h-full">
+              <Nav />
+              <main className="flex-1 min-h-[calc(100dvh-70px)] pt-[70px] sm:pt-0 pb-[70px] sm:pb-0">
+                {children}
+              </main>
+            </div>
           </Providers>
         </BodyWrapper>
       </body>

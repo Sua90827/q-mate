@@ -120,6 +120,12 @@
   @apply bg-secondary rounded-md border border-gray shadow-sm;
 }
 
+@supports (-webkit-touch-callout: none) {
+  body {
+    min-height: -webkit-fill-available;
+  }
+}
+
 /*---break---*/
 :root {
   --radius: 0.625rem;
@@ -175,5 +181,9 @@
     font-weight: 600;
     font-size: 14px;
     color: #292929;
+  }
+  #__next,
+  body > div:first-child {
+    height: 100%;
   }
 }
