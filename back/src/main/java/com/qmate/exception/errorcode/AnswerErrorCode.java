@@ -20,7 +20,7 @@ public class AnswerErrorCode extends ErrorCode {
   }
 
   public static ErrorCode answerCannotModify() {
-    return new AnswerErrorCode(HttpStatus.BAD_REQUEST, "ANSWER_003", ANSWER_CANNOT_MODIFY);
+    return new AnswerErrorCode(HttpStatus.LOCKED, "ANSWER_003", ANSWER_CANNOT_MODIFY);
   }
 
   protected AnswerErrorCode(HttpStatus httpStatus, String code, String message) {
