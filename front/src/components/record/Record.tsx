@@ -15,9 +15,10 @@ export default function Record() {
     <>
       <div className="fixed top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden ">
         <div className="w-6" />
-        <span className={`flex-1 font-Gumi flex justify-center text-20 ${whiteClass}`}>
+        <span className={`absolute left-1/2 -translate-x-1/2 font-Gumi text-20  ${whiteClass}`}>
           우리의 기록
         </span>
+
         <BellBtn />
       </div>
       <div className="w-full min-h-screen flex items-center justify-center">
