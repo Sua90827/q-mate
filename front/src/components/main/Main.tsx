@@ -1,9 +1,11 @@
+'use client';
 import Image from 'next/image';
 import React from 'react';
 import ExpBubble from './ui/ExpBubble';
 import Bubbley from './ui/Bubbley';
 import { ExpBar } from './ui/ExpBar';
 import { useThemeByTime } from '@/hooks/useThemeByTime';
+import ChartModal from '../charts/ChartModal';
 
 export default function Main() {
   const theme = useThemeByTime();
@@ -59,6 +61,7 @@ export default function Main() {
         <Bubbley exp={0} className="mb-6" />
         <ExpBar />
       </div>
+      <ChartModal />
     </div>
   );
 }
