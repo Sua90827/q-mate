@@ -40,7 +40,7 @@ export default function QuestionListWeb() {
     .filter((list) => (showCustomOnly ? list.status === 'EDITABLE' : true));
 
   return (
-    <div className="w-full h-screen bg-gradient-sub">
+    <div className="w-full h-screen">
       <div className="mx-5 md:mx-7 h-screen flex items-center">
         {/* 좌측 리스트 */}
         <div className="bg-secondary rounded-md shadow-md lg:w-[350px] w-[220px] h-[550px] flex flex-col">

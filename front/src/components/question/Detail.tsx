@@ -2,7 +2,6 @@
 import { useTodayQuestion } from '@/hooks/useQuestions';
 import React from 'react';
 import AnswerForm from './AnswerForm';
-import AnswerView from './AnswerView';
 
 export default function Detail() {
   const { data, isLoading, isError } = useTodayQuestion();

@@ -1,10 +1,14 @@
+'use client';
 import React from 'react';
 import { Button } from '../common/Button';
 import Link from 'next/link';
 import QuestionCard from '../question/QuestionCard';
 import { BellIcon } from 'lucide-react';
+import { useThemeStore } from '@/store/useThemeStore';
 
 export default function Record() {
+  const theme = useThemeStore((state) => state.theme);
+
   return (
     <>
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden px-4">
@@ -18,10 +22,10 @@ export default function Record() {
         <div className="w-[320px] h-[481px] flex flex-col justify-center ">
           <QuestionCard />
           <div className="pt-5 flex gap-6 ">
-            <Button variant="outline" size="lg" className="!w-[150px]">
+            <Button theme={theme} variant="outline" size="lg" className="!w-[150px]">
               <Link href="/question/list">질문 리스트 보기</Link>
             </Button>
-            <Button size="lg" className="!w-[150px]">
+            <Button theme={theme} size="lg" className="!w-[150px]">
               <Link href="/question/custom ">질문 작성하기</Link>
             </Button>
           </div>

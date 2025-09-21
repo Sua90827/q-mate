@@ -5,6 +5,7 @@ import { ChevronRight } from 'lucide-react';
 import { Switch } from '../ui/switch';
 import { Button } from '../common/Button';
 import NicknameModal from './ui/NicknameModal';
+import { useThemeStore } from '@/store/useThemeStore';
 
 type SettingItem =
   | { id: string; label: string; subLabel?: string; type: 'modal'; onClick: () => void }
@@ -12,6 +13,7 @@ type SettingItem =
 
 export default function Settings() {
   const [modal, setModal] = useState<string | null>(null);
+  const theme = useThemeStore((state) => state.theme);
 
   const settings: SettingItem[] = [
     {
@@ -73,7 +75,9 @@ export default function Settings() {
           ))}
         </ul>
       </div>
-      <Button className="w-[295px] mt-10">로그아웃</Button>
+      <Button className="w-[295px] mt-10" theme={theme}>
+        로그아웃
+      </Button>
 
       {modal === 'profile' && <NicknameModal open={modal} setIsOpen={setModal} />}
     </div>

@@ -3,15 +3,17 @@ import React, { useState } from 'react';
 import { Button } from '../common/Button';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useThemeStore } from '@/store/useThemeStore';
 
 export default function Custom({ value }: { value?: string }) {
   const [text, setText] = useState(value ?? '');
+  const theme = useThemeStore((state) => state.theme);
 
   return (
     <>
       <div className="flex justify-center  ">
         <Link href="/main" className="absolute py-5 block sm:hidden">
-          <Image src="/logo.svg" alt="큐메이트" width={94} height={30} />
+          <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={94} height={30} />
         </Link>
       </div>
       <div className="flex items-center justify-center h-screen ">
@@ -24,10 +26,18 @@ export default function Custom({ value }: { value?: string }) {
             className="md:w-[600px] w-[310px] h-[175px] rounded-md shadow-md p-3 bg-secondary border border-gray resize-none"
           />
           <div className="pt-5 flex gap-7 justify-end">
-            <Button variant="outline" size="lg" asChild>
+            <Button variant="outline" theme={theme} size="lg" asChild>
               <Link href="/record">취소하기</Link>
             </Button>
-            {value ? <Button size="lg">수정하기</Button> : <Button size="lg">등록하기</Button>}
+            {value ? (
+              <Button size="lg" theme={theme}>
+                수정하기
+              </Button>
+            ) : (
+              <Button size="lg" theme={theme}>
+                등록하기
+              </Button>
+            )}
           </div>
         </div>
       </div>

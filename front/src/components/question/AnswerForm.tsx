@@ -4,6 +4,7 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { Button } from '../common/Button';
 import RatingModal from './RatingModal';
+import { useThemeStore } from '@/store/useThemeStore';
 
 type AnswerFormProps = {
   mode: 'create' | 'edit';
@@ -11,11 +12,13 @@ type AnswerFormProps = {
 };
 export default function AnswerForm({ questionText, mode }: AnswerFormProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const theme = useThemeStore((state) => state.theme);
+
   return (
     <>
       <div className="flex justify-center">
         <Link href="/main" className="absolute py-5 block sm:hidden">
-          <Image src="/logo.svg" alt="큐메이트" width={94} height={30} />
+          <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={94} height={30} />
         </Link>
       </div>
       <div className="flex flex-col items-center justify-center h-screen bg-gradient-sub gap-10">
@@ -30,6 +33,7 @@ export default function AnswerForm({ questionText, mode }: AnswerFormProps) {
               size={'lg'}
               className="w-[310px] sm:w-[200px]"
               onClick={() => setIsModalOpen(true)}
+              theme={theme}
             >
               {mode === 'create' ? '답변하기' : '수정하기'}
             </Button>
