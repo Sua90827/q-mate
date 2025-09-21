@@ -20,8 +20,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Providers>
             <div className="flex flex-col h-full">
               <NavGuard />
-              <main className="flex-1 pt-[70px] sm:pt-0 pb-[70px] sm:pb-0">{children}</main>
-            </div>
+<main className="flex-1 pt-0 sm:pt-[70px] pb-[env(safe-area-inset-bottom,70px)] sm:pb-0">
+  {children}
+</main>            </div>
           </Providers>
         </BodyWrapper>
       </body>
