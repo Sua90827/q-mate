@@ -38,7 +38,7 @@ public class Answer {
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "question_instance_id", nullable = false)
-  private QuestionInstance instance;
+  private QuestionInstance questionInstance;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_id", nullable = false)
