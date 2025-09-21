@@ -15,8 +15,8 @@ export default function Filter({
   let activeClass = '';
 
   if (active) {
-    if (theme === 'sunset') activeClass = 'bg-sunset-active text-white';
-    else if (theme === 'night') activeClass = 'bg-night-active text-white';
+    if (theme === 'sunset') activeClass = 'bg-sunset-active text-secondary';
+    else if (theme === 'night') activeClass = 'bg-night-active text-secondary';
     else activeClass = 'bg-primary text-secondary';
   }
 

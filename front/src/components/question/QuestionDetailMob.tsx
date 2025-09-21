@@ -6,10 +6,20 @@ import { X } from 'lucide-react';
 import Link from 'next/link';
 import { useQuestionDetail, useCustomQuestions } from '@/hooks/useQuestions';
 import Custom from './Custom';
+import { useThemeStore } from '@/store/useThemeStore';
 
 export default function QuestionDetailMob() {
   const { id } = useParams<{ id: string }>();
   const questionId = Number(id);
+
+  const theme = useThemeStore((state) => state.theme);
+  let whiteClass = '';
+  if (theme === 'night') whiteClass = 'text-secondary';
+
+  let colorClass = '';
+  if (theme === 'sunset') colorClass = 'text-sunset-text';
+  else if (theme === 'night') colorClass = 'text-gray';
+  else colorClass = 'text-text-secondary';
 
   const { data: item, isLoading, isError } = useQuestionDetail(questionId);
 
@@ -41,19 +51,21 @@ export default function QuestionDetailMob() {
       {item.answers.length === 2 && (
         <>
           <p className="text-text-secondary pt-10">#01</p>
-          <h2 className="text-24 font-bold">{item.question.text}</h2>
+          <h2 className={`text-24 font-bold ${whiteClass}`}>{item.question.text}</h2>
 
           <div className="mt-10">
             {/* 내 답변 */}
             <div className="pb-6">
-              <p className="text-18">조용한 유령</p>
-              <p className="text-gray-500 text-16">{item.answers.find((a) => a.isMine)?.content}</p>
+              <p className={`text-18 font-bold ${whiteClass}`}>조용한 유령</p>
+              <p className={`text-16 ${colorClass}`}>
+                {item.answers.find((a) => a.isMine)?.content}
+              </p>
             </div>
 
             {/* 상대방 답변 */}
             <div>
-              <p className="text-18">활기찬 고래</p>
-              <p className="text-gray-500 text-16">
+              <p className={`text-18 font-bold ${whiteClass}`}>활기찬 고래</p>
+              <p className={`text-16 ${colorClass}`}>
                 {item.answers.find((a) => !a.isMine)?.content}
               </p>
             </div>

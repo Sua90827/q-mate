@@ -15,9 +15,15 @@ export default function BellBtn() {
     else activeClass = 'bg-primary text-secondary';
   }
 
+  let colorClass = '';
+
+  if (theme === 'sunset') colorClass = 'text-text-primary';
+  else if (theme === 'night') colorClass = 'text-secondary';
+  else colorClass = 'text-text-primary';
+
   return (
     <Bell
-      className={`mr-7 !w-10 !h-10 relative  hover:opacity-80 hover:rounded-md p-2 ${
+      className={`mr-7 !w-10 !h-10 relative  hover:opacity-80 rounded-md p-2 ${colorClass} ${
         active ? activeClass : ''
       }`}
       onClick={() => setActive((prev) => !prev)}

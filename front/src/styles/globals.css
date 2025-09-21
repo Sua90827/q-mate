@@ -48,10 +48,12 @@
   --color-sunset-top: #ff9263;
   --color-sunset-bottom: #fadb5e;
   --color-sunset-active: #ff8736;
+  --color-sunset-text: #717886;
   --color-sunset-list: #fef4e6;
   --color-night-top: #171940;
   --color-night-bottom: #2d3367;
   --color-night-active: #020433;
+  --color-night-active2: #8f93cf;
   --color-night-list: #d3d5ff;
 
   /* shadcn 토큰 */

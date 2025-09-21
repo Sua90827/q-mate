@@ -14,10 +14,16 @@ const NAV_ITEMS = [
   { key: 'settings', label: '설정', href: '/settings', Icon: Settings },
 ];
 
-const activeClass: Record<Theme, string> = {
+const activeClassWeb: Record<Theme, string> = {
   day: 'bg-primary',
   sunset: 'bg-sunset-active',
   night: 'bg-night-active',
+};
+
+const activeClassMob: Record<Theme, string> = {
+  day: 'text-primary',
+  sunset: 'text-sunset-active',
+  night: 'text-night-active',
 };
 
 const changeLogo = {
@@ -42,7 +48,9 @@ export default function Nav() {
                   aria-label={label}
                   size={48}
                   onClick={() => setActive(key)}
-                  className={active === key ? activeClass[theme] : 'hover:opacity-70'}
+                  className={
+                    active === key ? activeClassMob[theme] : 'hover:opacity-70 text-text-primary'
+                  }
                 />
               </Link>
             </li>
@@ -71,7 +79,7 @@ export default function Nav() {
                   className={`font-bold text-16
                    ${
                      active === key
-                       ? `rounded-2xl px-3 py-2 text-secondary ${activeClass[theme]}`
+                       ? `rounded-2xl px-3 py-2 text-secondary ${activeClassWeb[theme]}`
                        : 'hover:opacity-70'
                    }`}
                 >
