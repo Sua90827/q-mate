@@ -50,7 +50,7 @@ export default function Nav() {
                   size={48}
                   onClick={() => setActive(key)}
                   className={
-                    active === key ? activeClassMob[theme] : 'hover:opacity-70 text-text-primary '
+                    active === key ? activeClassMob[theme] : 'hover:opacity-70 text-text-primary'
                   }
                 />
               </Link>
@@ -59,8 +59,8 @@ export default function Nav() {
         </ul>
       </nav>
 
-      {/* 데스크탑 (상단 고정, sticky) */}
-      <header className="hidden sm:flex h-[70px] items-center w-full fixed top-0 z-40">
+      {/* 데스크탑 (상단 고정) */}
+      <header className="hidden sm:flex fixed top-0 left-0 w-full h-[70px] items-center z-40 bg-transparent">
         <Link href="/main">
           <Image
             src={changeLogo[theme] || '/images/logo/day_logo.svg'}

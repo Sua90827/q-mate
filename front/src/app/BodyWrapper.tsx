@@ -21,5 +21,5 @@ export default function BodyWrapper({ children }: { children: React.ReactNode })
     else if (theme === 'night') bgClass = 'bg-gradient-night';
   }
 
-  return <div className={`flex flex-col min-h-screen w-full ${bgClass}`}>{children}</div>;
+  return <div className={`flex flex-col h-full w-full ${bgClass}`}>{children}</div>;
 }
