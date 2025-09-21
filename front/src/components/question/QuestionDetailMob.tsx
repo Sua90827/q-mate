@@ -71,7 +71,7 @@ export default function QuestionDetailMob() {
             </div>
           </div>
 
-          <ShareBtn />
+          {/* <ShareBtn /> */}
         </>
       )}
     </div>

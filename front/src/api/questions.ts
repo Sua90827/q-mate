@@ -14,13 +14,13 @@ export const fetchQuestions = async (): Promise<QuestionInstance[]> => {
 
 // 답변 상세 가져오기
 export const fetchQuestionDetail = async (id: number): Promise<QuestionDetail | null> => {
-  const res = await axios.get<QuestionDetail[]>('http://localhost:3004/contents');
+  const res = await axios.get<QuestionDetail[]>('http://localhost:3003/contents');
   return res.data.find((q) => q.questionInstanceId === id) ?? null;
 };
 
 // 커스텀 질문 가져오기
 export const fetchCustomQuestions = async (): Promise<CustomQuestion[]> => {
-  const res = await axios.get('http://localhost:3005/customs');
+  const res = await axios.get('http://localhost:3003/customs');
   return res.data;
 };
 
