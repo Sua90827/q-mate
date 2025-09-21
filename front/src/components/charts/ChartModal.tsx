@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Button } from '../common/Button';
 import { Chart } from './Chart';
 
 export default function ChartModal() {
