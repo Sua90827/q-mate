@@ -16,15 +16,10 @@ export default function BodyWrapper({ children }: { children: React.ReactNode })
     bgClass = 'bg-bg-auth';
   } else if (pathname.startsWith('/invite')) {
     bgClass = 'bg-gradient-main';
-  } else {
-    if (hasHydrated) {
-      if (theme === 'sunset') bgClass = 'bg-gradient-sunset';
-      else if (theme === 'night') bgClass = 'bg-gradient-night';
-      else bgClass = 'bg-gradient-main';
-    } else {
-      bgClass = 'bg-gradient-main';
-    }
+  } else if (hasHydrated) {
+    if (theme === 'sunset') bgClass = 'bg-gradient-sunset';
+    else if (theme === 'night') bgClass = 'bg-gradient-night';
   }
 
-  return <div className={`flex flex-col w-full min-h-screen ${bgClass}`}>{children}</div>;
+  return <div className={`flex flex-col h-full w-full ${bgClass}`}>{children}</div>;
 }

@@ -17,8 +17,8 @@ export default function Settings() {
 
   let colorClass = '';
   if (theme === 'sunset') colorClass = 'bg-sunset-active';
-  else if (theme === 'night') colorClass = 'bg-night-active ';
-  else colorClass = 'bg-primary ';
+  else if (theme === 'night') colorClass = 'bg-night-active';
+  else colorClass = 'bg-primary';
 
   const settings: SettingItem[] = [
     {
@@ -55,7 +55,10 @@ export default function Settings() {
       {/* 모바일 상단바 */}
       <div className="fixed top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden px-4 ">
         <div className="w-6" />
-        <span className={`flex-1 font-Gumi flex justify-center text-20 ${whiteClass}`}>설정 </span>
+        <span className={`absolute left-1/2 -translate-x-1/2 font-Gumi text-20  ${whiteClass}`}>
+          설정
+        </span>
+
         <BellBtn />
       </div>
 

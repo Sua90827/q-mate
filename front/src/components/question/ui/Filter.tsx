@@ -22,11 +22,14 @@ export default function Filter({
 
   return (
     <Button
-      className={`mr-4 hover:rounded-md hover:opacity-80 ${active ? activeClass : ''}`}
+      className={`bg-transparent text-black shadow-none ${
+        active ? activeClass : ''
+      } mr-4 hover:rounded-md hover:opacity-80   `}
       onClick={() => {
         setActive((prev) => !prev);
         setShowCustomOnly((prev) => !prev);
       }}
+      theme={theme}
     >
       <ListFilter className="!w-[20px] !h-[20px] " />
     </Button>

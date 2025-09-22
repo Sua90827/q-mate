@@ -22,7 +22,7 @@ export function useCheckTheme() {
 
     // 시간 체크
     const hours = new Date().getHours();
-    setTheme(getThemeByHour(21));
+    setTheme(getThemeByHour(hours));
 
     // 5분마다 시간 체크
     const timer = setInterval(() => {

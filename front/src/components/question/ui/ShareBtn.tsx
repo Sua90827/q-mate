@@ -12,7 +12,6 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/common/Button';
 
 type Props = {
   targetId: string;
@@ -24,6 +23,7 @@ type Props = {
 export default function ShareBtn({ targetId, title, text, className }: Props) {
   const [open, setOpen] = useState(false);
   const blobRef = useRef<Blob | null>(null);
+  const { theme } = useThemeStore();
 
   const handleShare = async () => {
     const el = document.getElementById(targetId);

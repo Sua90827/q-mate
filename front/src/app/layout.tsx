@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import '../styles/globals.css';
 import Providers from './providers';
-import NavGuard from '@/components/common/NavGuard';
 import BodyWrapper from './BodyWrapper';
+import NavGuard from '@/components/common/NavGuard';
 
 export const metadata: Metadata = {
   title: 'Q-mate',
@@ -12,20 +12,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
-      <body>
+    <html lang="ko" className="h-full">
+      <body className="h-full">
         <BodyWrapper>
-          <div className="order-last sm:order-1 z-10">
-            <NavGuard />
-          </div>
           <Providers>
-            <main className="flex-1 order-1 sm:order-last">{children}</main>
+            <div className="flex flex-col h-full">
+              <NavGuard />
+<main className="flex-1 pt-0 sm:pt-[70px] pb-[env(safe-area-inset-bottom,70px)] sm:pb-0">
+  {children}
+</main>            </div>
           </Providers>
         </BodyWrapper>
       </body>
