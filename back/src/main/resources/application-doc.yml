@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  main:
+    banner-mode: off
+  datasource:
+    url: jdbc:h2:mem:doc;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+
+# 필요 시 springdoc 커스터마이즈(옵션)
+# springdoc:
+#   api-docs:
+#     enabled: true
+#   swagger-ui:
+#     enabled: true
