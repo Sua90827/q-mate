@@ -52,7 +52,7 @@ export default function QuestionListMob() {
   if (theme === 'night') whiteClass = 'text-secondary';
 
   return (
-    <div className="w-full min-h-screen py-5">
+    <div className="w-full h-full py-5">
       <div className="flex justify-between items-center h-[70px] px-5">
         <Filter setShowCustomOnly={setShowCustomOnly} />
         <p className={`text-20 font-Gumi ${whiteClass}`}>질문 리스트</p>

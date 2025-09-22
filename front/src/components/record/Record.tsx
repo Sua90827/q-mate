@@ -21,7 +21,7 @@ export default function Record() {
 
         <BellBtn />
       </div>
-      <div className="w-full min-h-screen flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center">
         <div className="w-[320px] h-[481px] flex flex-col justify-center ">
           <QuestionCard />
           <div className="pt-5 flex gap-6 ">

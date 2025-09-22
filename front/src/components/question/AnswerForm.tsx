@@ -21,7 +21,7 @@ export default function AnswerForm({ questionText, mode }: AnswerFormProps) {
           <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={94} height={30} />
         </Link>
       </div>
-      <div className="flex flex-col items-center justify-center h-screen bg-gradient-sub gap-10">
+      <div className="flex flex-col items-center justify-center h-full bg-gradient-sub gap-10">
         <div className="flex flex-col h-[246px] gap-8">
           <span className="font-bold text-24 text-center pb-5">{questionText}</span>
           <textarea

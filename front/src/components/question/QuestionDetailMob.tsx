@@ -28,7 +28,7 @@ export default function QuestionDetailMob() {
 
   if (customItem) {
     return (
-      <div className="w-full h-screen  relative p-10 flex flex-col items-center md:hidden">
+      <div className="w-full h-full  relative p-10 flex flex-col items-center md:hidden">
         <Link href={'/question/list'}>
           <X className="absolute right-3 top-3 !w-4 !h-4" />
         </Link>
@@ -43,7 +43,7 @@ export default function QuestionDetailMob() {
   if (!item) return <div className="p-6">선택된 질문이 없습니다.</div>;
 
   return (
-    <div className="w-full h-screen  relative p-10 flex flex-col items-center">
+    <div className="w-full h-full  relative p-10 flex flex-col items-center">
       <Link href={'/question/list'}>
         <X className="absolute right-3 top-3" />
       </Link>
