@@ -5,7 +5,7 @@ import com.qmate.domain.questioninstance.entity.InstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.mapper.AnswerMapper;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
-import com.qmate.domain.questioninstance.model.response.AnswerCreateResponse;
+import com.qmate.domain.questioninstance.model.response.AnswerResponse;
 import com.qmate.domain.questioninstance.repository.AnswerRepository;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
 import com.qmate.domain.user.User;
@@ -16,11 +16,8 @@ import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +30,7 @@ public class AnswerService {
   private final AnswerRepository answerRepository;
 
   @Transactional
-  public AnswerCreateResponse create(Long questionInstanceId, Long userId, AnswerContentRequest req) {
+  public AnswerResponse create(Long questionInstanceId, Long userId, AnswerContentRequest req) {
 
     // 1) 로드
     QuestionInstance qi = questionInstanceRepository.findById(questionInstanceId)

@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class AnswerCreateResponse {
+public class AnswerResponse {
 
   private Long answerId;
   private Long questionInstanceId;
-  private Long userId;
   private String content;
   private LocalDateTime submittedAt;
+  private LocalDateTime updatedAt;
 }

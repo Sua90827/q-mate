@@ -3,7 +3,7 @@ package com.qmate.domain.questioninstance.mapper;
 import com.qmate.domain.questioninstance.entity.Answer;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
-import com.qmate.domain.questioninstance.model.response.AnswerCreateResponse;
+import com.qmate.domain.questioninstance.model.response.AnswerResponse;
 import com.qmate.domain.user.User;
 import lombok.NoArgsConstructor;
 
@@ -19,13 +19,13 @@ public class AnswerMapper {
         .build();
   }
 
-  public static AnswerCreateResponse toResponse(Answer a) {
-    return AnswerCreateResponse.builder()
+  public static AnswerResponse toResponse(Answer a) {
+    return AnswerResponse.builder()
         .answerId(a.getId())
         .questionInstanceId(a.getQuestionInstance().getId())
-        .userId(a.getUser().getId())
         .content(a.getContent())
         .submittedAt(a.getSubmittedAt())
+        .updatedAt(a.getUpdatedAt())
         .build();
   }
 
