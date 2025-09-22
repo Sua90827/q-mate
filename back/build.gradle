@@ -54,6 +54,8 @@ dependencies {
     testImplementation 'org.mockito:mockito-junit-jupiter:5.12.0'
     testImplementation 'org.mockito:mockito-inline:5.2.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
