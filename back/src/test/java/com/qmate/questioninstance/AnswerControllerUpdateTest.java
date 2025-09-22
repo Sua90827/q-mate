@@ -18,6 +18,7 @@ import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
 import com.qmate.domain.questioninstance.model.response.AnswerResponse;
 import com.qmate.domain.questioninstance.service.AnswerService;
 import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
+import com.qmate.exception.custom.questioninstance.AnswerForbiddenException;
 import com.qmate.exception.custom.questioninstance.AnswerNotFoundException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import java.time.LocalDateTime;
@@ -124,7 +125,7 @@ class AnswerControllerUpdateTest {
     // given
     Long answerId = 13L;
     var req = new AnswerContentRequest("ok");
-    willThrow(new QuestionInstanceForbiddenException())
+    willThrow(new AnswerForbiddenException())
         .given(answerService).update(eq(answerId), anyLong(), any(AnswerContentRequest.class));
 
     // expect

@@ -13,6 +13,7 @@ import com.qmate.domain.questioninstance.repository.AnswerRepository;
 import com.qmate.domain.questioninstance.service.AnswerService;
 import com.qmate.domain.user.User;
 import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
+import com.qmate.exception.custom.questioninstance.AnswerForbiddenException;
 import com.qmate.exception.custom.questioninstance.AnswerNotFoundException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import java.time.LocalDate;
@@ -77,6 +78,7 @@ class AnswerServiceUpdateTest {
 
       // then: 리포지토리 호출 검증
       then(answerRepository).should(times(1)).findById(answerId);
+      then(answerRepository).should(times(1)).saveAndFlush(answer);
       then(answerRepository).shouldHaveNoMoreInteractions();
 
       // 엔티티 자체가 수정되었는지(정규화 반영) + 응답 스펙 확인
@@ -130,7 +132,7 @@ class AnswerServiceUpdateTest {
       given(answerRepository.findById(answerId)).willReturn(Optional.of(answer));
 
       // when / then
-      assertThrows(QuestionInstanceForbiddenException.class,
+      assertThrows(AnswerForbiddenException.class,
           () -> answerService.update(answerId, otherId, new AnswerContentRequest("x")));
 
       then(answerRepository).should(times(1)).findById(answerId);

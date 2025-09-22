@@ -13,6 +13,7 @@ import com.qmate.domain.user.UserRepository;
 import com.qmate.exception.custom.UserNotFoundException;
 import com.qmate.exception.custom.questioninstance.AnswerAlreadyExistsException;
 import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
+import com.qmate.exception.custom.questioninstance.AnswerForbiddenException;
 import com.qmate.exception.custom.questioninstance.AnswerNotFoundException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
@@ -64,6 +65,8 @@ public class AnswerService {
       throw new AnswerAlreadyExistsException();
     }
 
+    // TODO matchMember의 lastAnsweredAt 갱신
+
     // 5) 두 사람 모두 답하면 QI 완료 전이
     if (answerRepository.countByQuestionInstance_Id(questionInstanceId) >= 2L) {
       qi.markCompleted(LocalDateTime.now());
@@ -83,7 +86,7 @@ public class AnswerService {
 
     // 2) 권한 검증: 작성자만 가능
     if (!answer.getUser().getId().equals(userId)) {
-      throw new QuestionInstanceForbiddenException();
+      throw new AnswerForbiddenException();
     }
 
     // 3) 상태 검증
@@ -97,7 +100,12 @@ public class AnswerService {
     String normalized = AnswerMapper.normalize(req.getContent());
     answer.setContent(normalized);
 
-    // 5) 응답 매핑
+    // TODO matchMember의 lastAnsweredAt 갱신
+
+    // 5) updatedAt(@LastModifiedDate) 보장
+    answerRepository.saveAndFlush(answer);
+
+    // 6) 응답 매핑
     return AnswerMapper.toResponse(answer);
   }
 }
