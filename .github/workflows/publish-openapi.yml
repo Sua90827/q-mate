@@ -1,0 +1,107 @@
+name: Publish OpenAPI docs
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-${{ github.ref_name }}"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Grant execute permission for gradlew (root)
+        run: chmod +x ./gradlew
+
+      - name: Build (bootJar, skip tests)
+        run: ./gradlew -p back bootJar -x test
+
+      - name: Start app (doc profile) and wait for /v3/api-docs
+        env:
+          JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75"
+        run: |
+          JAR_FILE=$(ls back/build/libs/*.jar | head -n 1)
+          echo "Using JAR: $JAR_FILE"
+          nohup java -jar "$JAR_FILE" --spring.profiles.active=doc > back/build/app.log 2>&1 &
+          APP_PID=$!
+          echo "App PID: $APP_PID"
+
+          for i in {1..90}; do
+            if curl -fsS http://localhost:8080/v3/api-docs >/dev/null; then
+              echo "OpenAPI endpoint is up"; READY=1; break
+            fi
+            if ! ps -p $APP_PID >/dev/null; then
+              echo "App exited early. Recent logs:"; tail -n 200 back/build/app.log || true; exit 1
+            fi
+            echo "Waiting for app... ($i)"; sleep 2
+          done
+
+          if [ -z "$READY" ]; then
+            echo "Timeout waiting for /v3/api-docs"; tail -n 300 back/build/app.log || true; exit 1
+          fi
+
+      - name: Export OpenAPI JSON
+        run: |
+          mkdir -p back/build/docs
+          curl -fsS http://localhost:8080/v3/api-docs > back/build/docs/openapi.json
+          test -s back/build/docs/openapi.json
+
+      - name: Create static Swagger UI
+        run: |
+          mkdir -p back/build/docs
+          cat > back/build/docs/index.html <<'HTML'
+          <!doctype html><html><head>
+            <meta charset="utf-8"/>
+            <title>API Docs</title>
+            <meta name="viewport" content="width=device-width,initial-scale=1"/>
+            <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css"/>
+          </head><body>
+            <div id="swagger-ui"></div>
+            <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
+            <script>
+              window.onload = () => {
+                window.ui = SwaggerUIBundle({ url: 'openapi.json', dom_id: '#swagger-ui' });
+              };
+            </script>
+          </body></html>
+          HTML
+
+      - name: Upload artifact for Pages
+        if: github.ref_name == 'dev'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: back/build/docs
+
+      - name: Upload preview artifact (openapi.json + index.html)
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-docs-preview
+          path: back/build/docs
+
+  deploy:
+    needs: build
+    if: github.ref_name == 'dev'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

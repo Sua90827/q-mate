@@ -14,6 +14,11 @@ spring:
     hibernate:
       ddl-auto: none
 
+  mail:
+    host: smtp.example.com
+    port: 587
+    test-connection: false
+
 # 필요 시 springdoc 커스터마이즈(옵션)
 # springdoc:
 #   api-docs:
