@@ -7,6 +7,7 @@ import Filter from './ui/Filter';
 import { useQuestions, useCustomQuestions } from '@/hooks/useQuestions';
 import { QuestionInstance } from '@/types/questionType';
 import { useThemeStore } from '@/store/useThemeStore';
+import TrashCan from '../common/TrashCan';
 
 export default function QuestionListMob() {
   const [query, setQuery] = useState('');
@@ -44,9 +45,9 @@ export default function QuestionListMob() {
   }
 
   let colorClass = '';
-  if (theme === 'sunset') colorClass = 'text-primary';
+  if (theme === 'sunset') colorClass = 'text-sunset-active';
   else if (theme === 'night') colorClass = 'text-night-active2';
-  else colorClass = 'bg-sunset-active';
+  else colorClass = 'text-primary';
 
   let whiteClass = '';
   if (theme === 'night') whiteClass = 'text-secondary';
@@ -56,12 +57,8 @@ export default function QuestionListMob() {
       <div className="flex justify-between items-center h-[70px] px-5">
         <Filter setShowCustomOnly={setShowCustomOnly} />
         <p className={`text-20 font-Gumi ${whiteClass}`}>질문 리스트</p>
-        <Trash2
-          className={`!w-[24px] !h-[24px] ${whiteClass}`}
-          onClick={() => setIsDelete((prev) => !prev)}
-        />
+        <TrashCan onClick={() => setIsDelete((prev) => !prev)} />
       </div>
-
       <div className="pt-10">
         <SearchInput query={query} setQuery={setQuery} />
       </div>
@@ -92,7 +89,7 @@ export default function QuestionListMob() {
                   ? list.question.text.slice(0, 16) + '...'
                   : list.question.text}
               </p>
-              {isDelete && <X className="text-text-secondary ml-4 !w-4 !h-4" />}
+              {isDelete && <X className="text-text-secondary mr-4 !w-4 !h-4" />}
             </Link>
           </li>
         ))}

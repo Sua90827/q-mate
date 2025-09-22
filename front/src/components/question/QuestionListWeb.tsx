@@ -52,9 +52,9 @@ export default function QuestionListWeb() {
 
   let colorClass = '';
 
-  if (theme === 'sunset') colorClass = '!text-primary';
-  else if (theme === 'night') colorClass = '!text-night-active';
-  else colorClass = '!bg-sunset-active';
+  if (theme === 'sunset') colorClass = 'text-sunset-active';
+  else if (theme === 'night') colorClass = 'text-night-active2';
+  else colorClass = 'text-primary';
 
   return (
     <div className="w-full h-full">
