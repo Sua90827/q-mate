@@ -10,7 +10,7 @@ export default function ScheduleRegister() {
   const theme = useThemeStore((state) => state.theme);
 
   return (
-    <div className="w-full h-screen  flex justify-center items-center">
+    <div className="w-full h-full flex justify-center items-center">
       <form
         className="flex w-[310px]  sm:px-0 sm:w-[400px]  flex-col gap-5"
         onSubmit={(e) => e.preventDefault()}

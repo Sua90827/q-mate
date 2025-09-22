@@ -37,7 +37,7 @@ export default function Main() {
   const MotionImage = motion(Image);
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center">
+    <div className="w-full h-full flex flex-col items-center justify-center">
       <div className="fixed inset-0 pointer-events-none z-0">
         <AnimatePresence mode="wait">
           <MotionImage

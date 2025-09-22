@@ -18,7 +18,7 @@ export default function Login() {
   const isFormValid = isEmailValid && isPasswordValid;
 
   return (
-    <div className=" w-full min-h-screen flex flex-col gap-3 items-center justify-center ">
+    <div className=" w-full h-full flex flex-col gap-3 items-center justify-center ">
       <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={173} height={55} />
 
       <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">

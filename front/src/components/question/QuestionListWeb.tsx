@@ -57,8 +57,8 @@ export default function QuestionListWeb() {
   else colorClass = '!bg-sunset-active';
 
   return (
-    <div className="w-full h-screen">
-      <div className="mx-5 md:mx-7 h-screen flex items-center">
+    <div className="w-full h-full">
+      <div className="mx-5 md:mx-7 h-full flex items-center">
         {/* 좌측 리스트 */}
         <div className="bg-secondary rounded-md shadow-md lg:w-[350px] w-[220px] h-[550px] flex flex-col">
           <div className="mt-6">
