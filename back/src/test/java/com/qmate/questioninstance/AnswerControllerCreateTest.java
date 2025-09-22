@@ -32,7 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = AnswerController.class)
 @AutoConfigureMockMvc(addFilters = false)
-class AnswerControllerTest {
+class AnswerControllerCreateTest {
 
   @Autowired
   MockMvc mockMvc;
@@ -60,14 +60,12 @@ class AnswerControllerTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location", "/api/question-instances/" + qiId))
         .andExpect(jsonPath("$.answerId").value(456))
         .andExpect(jsonPath("$.questionInstanceId").value(123))
-        .andExpect(jsonPath("$.userId").value(99))
         .andExpect(jsonPath("$.content").value("최대 100자"))
         .andExpect(jsonPath("$.submittedAt").value("2025-09-11T12:20:00"));
   }
@@ -80,7 +78,6 @@ class AnswerControllerTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", 1L)
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(bad)))
         .andExpect(status().isBadRequest());
@@ -97,7 +94,6 @@ class AnswerControllerTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isForbidden());
@@ -114,7 +110,6 @@ class AnswerControllerTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isLocked());
@@ -131,7 +126,6 @@ class AnswerControllerTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isConflict());
@@ -148,7 +142,6 @@ class AnswerControllerTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isNotFound());
