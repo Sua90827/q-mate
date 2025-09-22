@@ -6,11 +6,10 @@ import Nav from './Nav';
 
 export default function NavGuard() {
   const pathName = usePathname();
-  const cleanPath = pathName.replace(/\/$/, '');
   const hideNav =
-    cleanPath.startsWith('/login') ||
-    cleanPath.startsWith('/signup') ||
-    cleanPath.startsWith('/invite');
+    pathName.startsWith('/login') ||
+    pathName.startsWith('/signup') ||
+    pathName.startsWith('/invite');
 
   if (hideNav) return null;
   return <Nav />;

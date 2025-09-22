@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import InviteLayout from './ui/InviteLayout';
 import Image from 'next/image';
 import { Button } from '../common/Button';
 import InvitedCheckModal from './ui/InvitedCheckModal';
@@ -9,7 +8,7 @@ export default function Invited() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <InviteLayout>
+    <>
       <div className="mb-10 text-center">
         <p className="font-Gumi text-24">초대 코드를</p>
         <p className="font-Gumi text-24">등록해주세요</p>
@@ -25,6 +24,6 @@ export default function Invited() {
         등록하기
       </Button>
       <InvitedCheckModal open={isOpen} setIsOpen={setIsOpen} />
-    </InviteLayout>
+    </>
   );
 }
