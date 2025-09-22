@@ -1,7 +1,5 @@
-package com.qmate.domain.match.entity;
+package com.qmate.domain.match;
 
-import com.qmate.domain.match.MatchStatus;
-import com.qmate.domain.match.RelationType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,7 +32,7 @@ public class Match {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long matchId;
+  private Long id;
 
   @Enumerated(EnumType.STRING)
   private RelationType relationType;

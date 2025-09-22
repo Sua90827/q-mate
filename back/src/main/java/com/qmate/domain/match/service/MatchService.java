@@ -1,8 +1,8 @@
 package com.qmate.domain.match.service;
 
 import com.qmate.common.redis.RedisHelper;
-import com.qmate.domain.match.entity.Match;
-import com.qmate.domain.match.entity.MatchMember;
+import com.qmate.domain.match.Match;
+import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.match.MatchStatus;
 import com.qmate.domain.match.RelationType;
 import com.qmate.domain.match.model.request.MatchCreationRequest;
@@ -19,10 +19,12 @@ import com.qmate.exception.custom.InviteAttemptLockedException;
 import com.qmate.exception.custom.InviteCodeExpiredException;
 import com.qmate.exception.custom.MatchNotFoundException;
 import com.qmate.exception.custom.PartnerNotFoundException;
+import com.qmate.exception.custom.SelfMatchNotAllowedException;
 import com.qmate.exception.custom.UserNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,23 +42,21 @@ public class MatchService {
   @Transactional
   public MatchCreationResponse createMatch(MatchCreationRequest request, Long inviterId) {
     //사용자 정보 조회
-    User inviter = findUserById(inviterId);
-    //이미 활성화된 매칭 확인
+    User inviter = userRepository.findById(inviterId)
+        .orElseThrow(UserNotFoundException::new);
+
     validateUserNotInActiveMatch(inviterId);
-
+    //요청 데이터 처리 및 엔티티 생성
     LocalDateTime startDateTime = parseStartDate(request.getRelationType(), request.getStartDate());
-
-    //매치,매치멤버 정적 팩토리 사용
     Match newMatch = Match.create(request.getRelationType(), startDateTime);
     MatchMember inviterMember = MatchMember.create(inviter, newMatch);
 
-    //엔티티 저장
     matchRepository.save(newMatch);
     matchMemberRepository.save(inviterMember);
 
-    String inviteCode = generateUniqueInviteCode(newMatch.getMatchId());
+    String inviteCode = generateUniqueInviteCode(newMatch.getId());
     return MatchCreationResponse.builder()
-        .matchId(newMatch.getMatchId())
+        .matchId(newMatch.getId())
         .inviteCode(inviteCode)
         .build();
   }
@@ -64,34 +64,33 @@ public class MatchService {
   //초대 코드를 사용하여 기존 매칭에 참여 로직.
   @Transactional
   public MatchJoinResponse joinMatch(MatchJoinRequest request, Long joinerId) {
-    //사용자가 잠금 상태인지 먼저 확인
     if (redisHelper.isLocked(joinerId)){
       throw new InviteAttemptLockedException();
     }
-    // 사전 조건 검증
-    User joiner = findUserById(joinerId);
+
+    User joiner = userRepository.findById(joinerId)
+            .orElseThrow(UserNotFoundException::new);
     validateUserNotInActiveMatch(joinerId);
 
     String inviteCode = request.getInviteCode();
-
     try {
-      // 초대 코드 및 매칭 정보 검증
-      Long matchId = getMatchIdByInviteCode(inviteCode);
-      Match match = findMatchById(matchId);
-      validateMatchIsWaiting(match);
 
-      // 매칭 참여 처리
+      Long matchId = redisHelper.getMatchIdByInviteCode(inviteCode)
+          .orElseThrow(InviteCodeExpiredException::new);
+
+      Match match = matchRepository.findById(matchId)
+              .orElseThrow(MatchNotFoundException::new);
+
+      validateJoinAttempt(match, joinerId);
+
       MatchMember joinerMember = MatchMember.create(joiner, match);
       matchMemberRepository.save(joinerMember);
       match.setStatus(MatchStatus.ACTIVE);
 
-      // 파트너 정보 조회 (헬퍼 메서드 사용)
       MatchMember partner = findPartner(matchId, joinerId);
-
-      // 사용한 초대 코드 삭제
       redisHelper.deleteInviteCode(inviteCode);
 
-      // 결과 반환
+
       return MatchJoinResponse.builder()
           .matchId(matchId)
           .message("매칭에 성공적으로 참여했습니다.")
@@ -110,18 +109,13 @@ public class MatchService {
 
 
   //가독성을 위한 private 헬퍼 메서드(초대 생성 관련)
-  private User findUserById(Long userId) {
-    return userRepository.findById(userId)
-        .orElseThrow(UserNotFoundException::new);
-  }
-
   private void validateUserNotInActiveMatch(Long userId) {
     matchMemberRepository.findByUser_IdAndMatch_Status(userId, MatchStatus.ACTIVE)
         .ifPresent(matchMember -> {
           throw new AlreadyInMatchException();
         });
   }
-
+  //커플이 아니라면 입력 필요 없어서 = return null
   private LocalDateTime parseStartDate(RelationType relationType, String startDateString) {
     if (relationType != RelationType.COUPLE) {
       return null;
@@ -129,40 +123,38 @@ public class MatchService {
     try {
       return LocalDate.parse(startDateString).atStartOfDay();
     } catch (DateTimeParseException | NullPointerException e) {
-      // startDateString이 null이거나 형식이 잘못된 경우
+      // 커플인데 startDate null이거나 형식이 잘못된 경우
       throw new InvalidStartDateForCoupleException();
     }
   }
 
   private String generateUniqueInviteCode(Long matchId) {
-    String inviteCode;
-    do {
-      inviteCode = redisHelper.generateRandomCode();
-    } while (!redisHelper.setInviteCode(inviteCode, matchId));
-    return inviteCode;
+    for (int i = 0; i < 10; i++) {
+
+      String inviteCode = redisHelper.generateRandomCode();
+      if (redisHelper.setInviteCode(inviteCode, matchId)) {
+        return inviteCode;
+      }
+    }
+    throw new RuntimeException("초대 코드 생성에 10회 이상 실패했습니다.");
   }
 
   //가독성을 위한 private 헬퍼 메서드(매칭 조인 관련)
-  private Long getMatchIdByInviteCode(String inviteCode) {
-    return redisHelper.getMatchIdByInviteCode(inviteCode)
-        .orElseThrow(InviteCodeExpiredException::new);
-  }
-
-  private Match findMatchById(Long matchId) {
-    return matchRepository.findById(matchId)
-        .orElseThrow(MatchNotFoundException::new);
-  }
-
-  private void validateMatchIsWaiting(Match match) {
-    if (match.getStatus() != MatchStatus.WAITING) {
-      // 이 경우는 전용 Exception 보다는 상세 메시지를 담는 것이 더 적합할 수 있습니다.
+  private void validateJoinAttempt(Match match, Long joinerId){
+    if (match.getStatus() != MatchStatus.WAITING){
       throw new AlreadyInMatchException();
+    }
+    List<MatchMember> members = matchMemberRepository.findAllByMatch_Id(match.getId());
+    if (members.size() != 1){
+      throw new AlreadyInMatchException(); // 꽉 찼거나 비정상적인 방
+    }
+    if (members.get(0).getUser().getId().equals(joinerId)){
+      throw new SelfMatchNotAllowedException();
     }
   }
 
-  //파트너 조회 헬퍼 메서드
   private MatchMember findPartner(Long matchId, Long joinerId) {
-    return matchMemberRepository.findAllByMatch_MatchId(matchId).stream()
+    return matchMemberRepository.findAllByMatch_Id(matchId).stream()
         .filter(member -> !member.getUser().getId().equals(joinerId))
         .findFirst()
         .orElseThrow(PartnerNotFoundException::new);

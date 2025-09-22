@@ -1,4 +1,4 @@
-package com.qmate.domain.match.entity;
+package com.qmate.domain.match;
 
 import com.qmate.domain.user.User;
 import jakarta.persistence.Column;
@@ -29,7 +29,7 @@ public class MatchMember {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long matchMemberId;
+  private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "match_id")
