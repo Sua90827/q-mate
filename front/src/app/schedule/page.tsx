@@ -6,7 +6,7 @@ import React from 'react';
 
 export default function page() {
   return (
-    <div className="w-full min-h-screen flex flex-col  justify-center">
+    <div className="w-full h-full flex flex-col  justify-center">
       <ScheduleListWeb />
       <Link href="/schedule/list">
         <CalendarDays />

@@ -16,7 +16,7 @@ export default function Custom({ value }: { value?: string }) {
           <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={94} height={30} />
         </Link>
       </div>
-      <div className="flex items-center justify-center h-screen ">
+      <div className="flex items-center justify-center h-full ">
         <div className="flex flex-col h-[246px]">
           <span className="font-bold text-[24px] pb-5">궁금한 질문 작성하기</span>
           <textarea
