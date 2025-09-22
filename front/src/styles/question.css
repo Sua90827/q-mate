@@ -1,0 +1,54 @@
+/* 테마별 포인트 색상 (accent) */
+.text-theme-accent {
+  color: var(--color-primary);
+}
+html[data-theme='sunset'] .text-theme-accent {
+  color: var(--color-sunset-active);
+}
+html[data-theme='night'] .text-theme-accent {
+  color: var(--color-night-active);
+}
+
+/* 테마별 리스트 배경 */
+html[data-theme='day'] .bg-theme-list-active {
+  background-color: var(--color-day-list);
+}
+html[data-theme='sunset'] .bg-theme-list-active {
+  background-color: var(--color-sunset-list);
+}
+html[data-theme='night'] .bg-theme-list-active {
+  background-color: var(--color-night-list);
+}
+
+/* PENDING 상태 텍스트 색상 */
+html[data-theme='day'] .text-theme-accent {
+  color: var(--color-primary);
+}
+html[data-theme='sunset'] .text-theme-accent {
+  color: var(--color-sunset-active);
+}
+html[data-theme='night'] .text-theme-accent {
+  color: var(--color-night-active2);
+}
+
+/* 포인트 색상 */
+.text-theme-accent {
+  color: var(--color-primary);
+}
+html[data-theme='sunset'] .text-theme-accent {
+  color: var(--color-sunset-active);
+}
+html[data-theme='night'] .text-theme-accent {
+  color: var(--color-night-active2);
+}
+
+/* 리스트 활성 배경 */
+.bg-theme-list-active {
+  background-color: var(--color-day-list);
+}
+html[data-theme='sunset'] .bg-theme-list-active {
+  background-color: var(--color-sunset-list);
+}
+html[data-theme='night'] .bg-theme-list-active {
+  background-color: var(--color-night-list);
+}

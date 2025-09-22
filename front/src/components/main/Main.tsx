@@ -1,71 +1,38 @@
 'use client';
-import Image from 'next/image';
 import React from 'react';
 import ExpBubble from './ui/ExpBubble';
 import Bubbley from './ui/Bubbley';
 import { ExpBar } from './ui/ExpBar';
 import ChartModal from '../charts/ChartModal';
-import { useThemeStore } from '@/store/useThemeStore';
 import { motion, AnimatePresence } from 'motion/react';
-import { Theme } from '@/types/theme';
 
 export default function Main() {
-  const { theme, hasHydrated } = useThemeStore();
-
-  const paths = {
-    day: {
-      web: '/images/day/day_deco_W.png',
-      mobile: '/images/day/day_deco_M.png',
-      light: '/images/day/day_light.png',
-    },
-    sunset: {
-      web: '/images/sunset/sunset_deco_W.png',
-      mobile: '/images/sunset/sunset_deco_M.png',
-      light: '/images/sunset/sunset_light.png',
-    },
-    night: {
-      web: '/images/night/night_deco_W.png',
-      mobile: '/images/night/night_deco_M.png',
-      light: '/images/night/night_light.png',
-    },
-  };
-
-  const key: Theme = hasHydrated && theme in paths ? (theme as Theme) : 'day';
-
-  const { web, mobile, light } = paths[key];
-
-  const MotionImage = motion(Image);
+  const MotionDiv = motion.div;
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
       <div className="fixed inset-0 pointer-events-none z-0">
         <AnimatePresence mode="wait">
-          <MotionImage
-            key={`${theme}-light`}
-            src={light}
-            alt="빛 효과 이미지"
-            fill
-            className="object-contain object-top -translate-x-5 invisible md:visible"
+          {/* 라이트 효과 (데스크탑 전용) */}
+          <MotionDiv
+            key="deco-light"
+            className="hidden md:block absolute inset-0 bg-deco-light"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
-            priority
           />
+
+          {/* 배경 장식: 모바일 / 웹 */}
           <picture>
-            <source media="(max-width: 768px)" srcSet={mobile} />
-            <MotionImage
-              key={`${theme}-web`}
-              src={web}
-              alt="배경 장식 이미지"
-              fill
-              sizes="100vw"
-              className="object-fill object-bottom"
+            <source media="(max-width: 768px)" />
+            <MotionDiv
+              key="deco-web"
+              className="absolute inset-0 bg-deco-web md:bg-deco-web sm:bg-deco-mobile"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.8 }}
-              priority
             />
           </picture>
         </AnimatePresence>

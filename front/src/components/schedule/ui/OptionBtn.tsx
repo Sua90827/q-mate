@@ -11,21 +11,16 @@ export default function OptionBtn({
 }) {
   const theme = useThemeStore((state) => state.theme);
 
-  let activeClass = '';
-
-  if (active) {
-    if (theme === 'sunset') activeClass = 'bg-sunset-active text-white';
-    else if (theme === 'night') activeClass = 'bg-night-active text-white';
-    else activeClass = 'bg-primary text-secondary';
-  }
-
   return (
     <button
       onClick={onClick}
       type="button"
-      className={`px-3 py-1 rounded-xl ${
-        active ? activeClass : 'border border-text-secondary text-text-secondary'
+      className={`px-3 py-1 rounded-xl transition-colors ${
+        active
+          ? 'bg-theme-primary text-white'
+          : 'border border-theme-secondary text-theme-secondary'
       }`}
+      data-theme={theme}
     >
       {label}
     </button>

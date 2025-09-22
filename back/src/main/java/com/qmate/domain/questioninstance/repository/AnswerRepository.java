@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
   Optional<Answer> findByQuestionInstance_IdAndUser_Id(Long questionInstanceId, Long userId);
+
+  long countByQuestionInstance_Id(Long questionInstanceId);
 }
