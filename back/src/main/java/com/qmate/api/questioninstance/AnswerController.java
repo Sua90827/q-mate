@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +21,7 @@ public class AnswerController {
 
   private final AnswerService answerService;
 
-  @PostMapping(value = "/question-instances/{questionInstanceId}/answers")
+  @PostMapping("/question-instances/{questionInstanceId}/answers")
   public ResponseEntity<AnswerResponse> create(
       @PathVariable Long questionInstanceId,
       // TODO: @AuthenticationPrincipal CustomUserDetails principal
@@ -33,5 +34,17 @@ public class AnswerController {
     // Location: 생성으로 인해 최신 상태가 된 QI 상세 리소스
     URI location = URI.create("/api/question-instances/" + questionInstanceId);
     return ResponseEntity.created(location).body(response);
+  }
+
+  @PatchMapping("/answers/{answerId}")
+  public ResponseEntity<AnswerResponse> update(
+      @PathVariable Long answerId,
+      // TODO: @AuthenticationPrincipal CustomUserDetails principal
+      @Valid @RequestBody AnswerContentRequest request
+  ) {
+    Long userId = 1L; // TODO: principal.getUserId();
+
+    AnswerResponse response = answerService.update(answerId, userId, request);
+    return ResponseEntity.ok(response);
   }
 }

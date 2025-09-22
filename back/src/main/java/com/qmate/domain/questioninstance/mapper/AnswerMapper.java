@@ -5,6 +5,7 @@ import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
 import com.qmate.domain.questioninstance.model.response.AnswerResponse;
 import com.qmate.domain.user.User;
+import java.time.LocalDateTime;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
@@ -29,7 +30,7 @@ public class AnswerMapper {
         .build();
   }
 
-  private static String normalize(String raw) {
+  public static String normalize(String raw) {
     if (raw == null) return null;
     return raw.trim().replace("\r\n", "\n");
   }

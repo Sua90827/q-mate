@@ -13,6 +13,7 @@ import com.qmate.domain.user.UserRepository;
 import com.qmate.exception.custom.UserNotFoundException;
 import com.qmate.exception.custom.questioninstance.AnswerAlreadyExistsException;
 import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
+import com.qmate.exception.custom.questioninstance.AnswerNotFoundException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
 import java.time.LocalDateTime;
@@ -71,5 +72,32 @@ public class AnswerService {
 
     // 6) 응답 매핑
     return AnswerMapper.toResponse(saved);
+  }
+
+  @Transactional
+  public AnswerResponse update(Long answerId, Long userId, AnswerContentRequest req) {
+
+    // 1) 로드
+    Answer answer = answerRepository.findById(answerId)
+        .orElseThrow(AnswerNotFoundException::new);
+
+    // 2) 권한 검증: 작성자만 가능
+    if (!answer.getUser().getId().equals(userId)) {
+      throw new QuestionInstanceForbiddenException();
+    }
+
+    // 3) 상태 검증
+    InstanceStatus status = answer.getQuestionInstance().getStatus();
+    // PENDING만 통과
+    if (status != InstanceStatus.PENDING) {
+      throw new AnswerCannotModifyException();
+    }
+
+    // 4) 수정
+    String normalized = AnswerMapper.normalize(req.getContent());
+    answer.setContent(normalized);
+
+    // 5) 응답 매핑
+    return AnswerMapper.toResponse(answer);
   }
 }
