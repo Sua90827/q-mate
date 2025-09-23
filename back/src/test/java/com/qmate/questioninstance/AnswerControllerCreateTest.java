@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qmate.api.questioninstance.AnswerController;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
-import com.qmate.domain.questioninstance.model.response.AnswerCreateResponse;
+import com.qmate.domain.questioninstance.model.response.AnswerResponse;
 import com.qmate.domain.questioninstance.service.AnswerService;
 import com.qmate.exception.custom.questioninstance.AnswerAlreadyExistsException;
 import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
@@ -32,10 +32,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = AnswerController.class)
 @AutoConfigureMockMvc(addFilters = false)
-class AnswerControllerTest {
+class AnswerControllerCreateTest {
 
-  @Autowired MockMvc mockMvc;
-  @Autowired ObjectMapper objectMapper;
+  @Autowired
+  MockMvc mockMvc;
+  @Autowired
+  ObjectMapper objectMapper;
 
   @MockitoBean
   AnswerService answerService;
@@ -47,8 +49,9 @@ class AnswerControllerTest {
     Long qiId = 123L;
     var req = new AnswerContentRequest("최대 100자");
     // userId는 컨트롤러 내부 구현(현재는 1L, 이후 principal)과 무관하게 anyLong()로 대응
-    var res = new AnswerCreateResponse(
-        456L, qiId, 99L, "최대 100자",
+    var res = new AnswerResponse(
+        456L, qiId, "최대 100자",
+        LocalDateTime.parse("2025-09-11T12:20:00"),
         LocalDateTime.parse("2025-09-11T12:20:00")
     );
 
@@ -57,14 +60,12 @@ class AnswerControllerTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location", "/api/question-instances/" + qiId))
         .andExpect(jsonPath("$.answerId").value(456))
         .andExpect(jsonPath("$.questionInstanceId").value(123))
-        .andExpect(jsonPath("$.userId").value(99))
         .andExpect(jsonPath("$.content").value("최대 100자"))
         .andExpect(jsonPath("$.submittedAt").value("2025-09-11T12:20:00"));
   }
@@ -77,7 +78,6 @@ class AnswerControllerTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", 1L)
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(bad)))
         .andExpect(status().isBadRequest());
@@ -94,7 +94,6 @@ class AnswerControllerTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isForbidden());
@@ -111,7 +110,6 @@ class AnswerControllerTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isLocked());
@@ -128,7 +126,6 @@ class AnswerControllerTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isConflict());
@@ -145,7 +142,6 @@ class AnswerControllerTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isNotFound());
