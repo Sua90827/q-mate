@@ -5,7 +5,6 @@ import { ChevronRight } from 'lucide-react';
 import { Switch } from '../ui/switch';
 import { Button } from '../common/Button';
 import NicknameModal from './ui/NicknameModal';
-import { useThemeStore } from '@/store/useThemeStore';
 
 type SettingItem =
   | { id: string; label: string; subLabel?: string; type: 'modal'; onClick: () => void }
@@ -13,12 +12,6 @@ type SettingItem =
 
 export default function Settings() {
   const [modal, setModal] = useState<string | null>(null);
-  const theme = useThemeStore((state) => state.theme);
-
-  let colorClass = '';
-  if (theme === 'sunset') colorClass = 'bg-sunset-active';
-  else if (theme === 'night') colorClass = 'bg-night-active';
-  else colorClass = 'bg-primary';
 
   const settings: SettingItem[] = [
     {
@@ -47,18 +40,14 @@ export default function Settings() {
     },
   ];
 
-  let whiteClass = '';
-  if (theme === 'night') whiteClass = 'text-secondary';
-
   return (
     <div className="w-full h-full flex flex-col justify-center items-center sm:pt-0 pt-[70px]">
       {/* 모바일 상단바 */}
-      <div className="fixed top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden px-4 ">
+      <div className="fixed top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden px-4">
         <div className="w-6" />
-        <span className={`absolute left-1/2 -translate-x-1/2 font-Gumi text-20  ${whiteClass}`}>
+        <span className="absolute left-1/2 -translate-x-1/2 font-Gumi text-20 text-theme-primary">
           설정
         </span>
-
         <BellBtn />
       </div>
 
@@ -72,23 +61,22 @@ export default function Settings() {
               onClick={item.type === 'modal' ? item.onClick : undefined}
             >
               <div>
-                <span className="block text-16">{item.label}</span>
+                <span className="block text-16 ">{item.label}</span>
                 {'subLabel' in item && item.subLabel && (
-                  <span className="text-text-secondary font-normal text-12">{item.subLabel}</span>
+                  <span className="text-theme-secondary font-normal text-12">{item.subLabel}</span>
                 )}
               </div>
               {item.type === 'switch' ? (
-                <Switch color={colorClass} />
+                <Switch />
               ) : (
-                <ChevronRight className="text-text-secondary !w-4 !h-4" />
+                <ChevronRight className="text-theme-secondary !w-4 !h-4" />
               )}
             </li>
           ))}
         </ul>
       </div>
-      <Button className="w-[295px] mt-10" theme={theme}>
-        로그아웃
-      </Button>
+
+      <Button className="w-[295px] mt-10">로그아웃</Button>
 
       {modal === 'profile' && <NicknameModal open={modal} setIsOpen={setModal} />}
     </div>

@@ -21,7 +21,7 @@ export default function RepeatSelector({
   return (
     <>
       <div className="flex flex-col gap-2 w-full">
-        <label className="text-18">{titleLabel}</label>
+        <label className="text-18 text-theme-primary">{titleLabel}</label>
         <div className="flex gap-x-3 sm:gap-x-5 shadow-box p-3 w-full">
           {[option1, option2, option3, option4].map((opt) => (
             <OptionBtn

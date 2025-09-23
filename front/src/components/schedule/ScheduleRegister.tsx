@@ -4,11 +4,8 @@ import { DatePicker } from '../common/DatePicker';
 import RepeatSelector from './ui/RepeatSelector';
 import { Button } from '../common/Button';
 import Link from 'next/link';
-import { useThemeStore } from '@/store/useThemeStore';
 
 export default function ScheduleRegister() {
-  const theme = useThemeStore((state) => state.theme);
-
   return (
     <div className="w-full h-full flex justify-center items-center">
       <form
@@ -40,16 +37,10 @@ export default function ScheduleRegister() {
           option4="당일"
         />
         <div className="flex gap-6 sm:gap-10 mt-3">
-          <Button
-            variant="outline"
-            theme={theme}
-            size="lg"
-            asChild
-            className="w-[142px] sm:w-[180px]"
-          >
+          <Button variant="outline" size="lg" asChild className="w-[142px] sm:w-[180px]">
             <Link href="/schedule">취소하기</Link>
           </Button>
-          <Button size="lg" className="w-[142px] sm:w-[180px]" theme={theme}>
+          <Button size="lg" className="w-[142px] sm:w-[180px]">
             등록하기
           </Button>
         </div>
