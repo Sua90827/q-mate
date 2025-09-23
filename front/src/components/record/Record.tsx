@@ -2,9 +2,10 @@
 import React from 'react';
 import { Button } from '../common/Button';
 import Link from 'next/link';
-import QuestionCard from '../question/QuestionCard';
+
 import { useThemeStore } from '@/store/useThemeStore';
 import BellBtn from '../common/BellBtn';
+import QuestionCard from '../question/ui/QuestionCard';
 
 export default function Record() {
   const theme = useThemeStore((state) => state.theme);
