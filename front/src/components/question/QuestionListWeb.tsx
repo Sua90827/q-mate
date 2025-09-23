@@ -6,6 +6,7 @@ import Filter from './ui/Filter';
 import { X } from 'lucide-react';
 import { useQuestions, useCustomQuestions } from '@/hooks/useQuestions';
 import { QuestionInstance } from '@/types/questionType';
+import { useThemeStore } from '@/store/useThemeStore';
 
 export default function QuestionListWeb() {
   const [query, setQuery] = useState('');
@@ -15,7 +16,7 @@ export default function QuestionListWeb() {
   const { data: questions = [] } = useQuestions();
   const { data: customData = [] } = useCustomQuestions();
 
-  // 커스텀 질문 일반 질문리스트와 포맷팅
+  // 커스텀 질문 일반 질문리스트와 포멧팅
   const normalizedCustomData: QuestionInstance[] = customData.map((c) => ({
     questionInstanceId: -c.questionId, // 충돌 방지용 음수 id
     deliveredAt: c.createdAt,
@@ -39,6 +40,22 @@ export default function QuestionListWeb() {
     .filter((list) => list.question.text.toLowerCase().includes(query.toLowerCase()))
     .filter((list) => (showCustomOnly ? list.status === 'EDITABLE' : true));
 
+  const theme = useThemeStore((state) => state.theme);
+
+  let activeClass = '';
+
+  if (active) {
+    if (theme === 'sunset') activeClass = 'bg-sunset-list';
+    else if (theme === 'night') activeClass = 'bg-night-list';
+    else activeClass = 'bg-day-list';
+  }
+
+  let colorClass = '';
+
+  if (theme === 'sunset') colorClass = 'text-sunset-active';
+  else if (theme === 'night') colorClass = 'text-night-active2';
+  else colorClass = 'text-primary';
+
   return (
     <div className="w-full h-full">
       <div className="mx-5 md:mx-7 h-full flex items-center">
@@ -53,14 +70,15 @@ export default function QuestionListWeb() {
             </span>
             <Filter setShowCustomOnly={setShowCustomOnly} />
           </div>
-          <ul className="flex flex-col divide-y divide-gray flex-1 overflow-y-auto">
+          <ul className="flex flex-col divide-y divide-gray border- flex-1 overflow-y-auto">
             {filtered.map((list) => (
               <li
                 key={list.questionInstanceId}
-                className={`py-5 pl-4 cursor-pointer
-                  ${active === list.questionInstanceId ? 'bg-theme-list-active' : ''}
-                  ${list.status === 'PENDING' ? 'text-theme-accent' : ''}
-                  ${list.status === 'EDITABLE' ? '!text-text-secondary bg-list-custom' : ''}`}
+                className={`py-5 pl-4 cursor-pointer ${
+                  active === list.questionInstanceId ? activeClass : ''
+                } ${list.status === 'PENDING' ? colorClass : ''} ${
+                  list.status === 'EDITABLE' ? `!text-text-secondary bg-list-custom` : ''
+                }`}
                 onClick={() => setActive(list.questionInstanceId)}
               >
                 <div className="flex justify-between">

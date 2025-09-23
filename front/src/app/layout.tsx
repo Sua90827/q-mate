@@ -1,9 +1,8 @@
-// app/layout.tsx
 import type { Metadata } from 'next';
 import '../styles/globals.css';
+import Providers from './providers';
 import BodyWrapper from './BodyWrapper';
 import NavGuard from '@/components/common/NavGuard';
-import Providers from './providers';
 
 export const metadata: Metadata = {
   title: 'Q-mate',
@@ -15,28 +14,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko" className="h-full" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                var hour = new Date().getHours();
-                var theme = (hour >= 6 && hour < 17) ? "day"
-                          : (hour >= 17 && hour < 21) ? "sunset"
-                          : "night";
-                document.documentElement.setAttribute("data-theme", theme);
-              })();
-            `,
-          }}
-        />
-      </head>
+    <html lang="ko" className="h-full">
       <body className="h-full">
         <BodyWrapper>
           <Providers>
             <div className="flex flex-col h-full">
               <NavGuard />
-              <main className="flex-1 pt-0 sm:pt-[70px] pb-[70px] sm:pb-0">{children}</main>
+              <main
+                className="
+                  flex-1
+                  sm:pt-[70px]   
+                  pb-[70px] sm:pb-0
+                "
+              >
+                {children}
+              </main>
             </div>
           </Providers>
         </BodyWrapper>

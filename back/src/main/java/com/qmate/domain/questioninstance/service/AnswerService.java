@@ -5,7 +5,7 @@ import com.qmate.domain.questioninstance.entity.InstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.mapper.AnswerMapper;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
-import com.qmate.domain.questioninstance.model.response.AnswerCreateResponse;
+import com.qmate.domain.questioninstance.model.response.AnswerResponse;
 import com.qmate.domain.questioninstance.repository.AnswerRepository;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
 import com.qmate.domain.user.User;
@@ -13,14 +13,13 @@ import com.qmate.domain.user.UserRepository;
 import com.qmate.exception.custom.UserNotFoundException;
 import com.qmate.exception.custom.questioninstance.AnswerAlreadyExistsException;
 import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
+import com.qmate.exception.custom.questioninstance.AnswerForbiddenException;
+import com.qmate.exception.custom.questioninstance.AnswerNotFoundException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +32,7 @@ public class AnswerService {
   private final AnswerRepository answerRepository;
 
   @Transactional
-  public AnswerCreateResponse create(Long questionInstanceId, Long userId, AnswerContentRequest req) {
+  public AnswerResponse create(Long questionInstanceId, Long userId, AnswerContentRequest req) {
 
     // 1) 로드
     QuestionInstance qi = questionInstanceRepository.findById(questionInstanceId)
@@ -66,6 +65,8 @@ public class AnswerService {
       throw new AnswerAlreadyExistsException();
     }
 
+    // TODO matchMember의 lastAnsweredAt 갱신
+
     // 5) 두 사람 모두 답하면 QI 완료 전이
     if (answerRepository.countByQuestionInstance_Id(questionInstanceId) >= 2L) {
       qi.markCompleted(LocalDateTime.now());
@@ -74,5 +75,37 @@ public class AnswerService {
 
     // 6) 응답 매핑
     return AnswerMapper.toResponse(saved);
+  }
+
+  @Transactional
+  public AnswerResponse update(Long answerId, Long userId, AnswerContentRequest req) {
+
+    // 1) 로드
+    Answer answer = answerRepository.findById(answerId)
+        .orElseThrow(AnswerNotFoundException::new);
+
+    // 2) 권한 검증: 작성자만 가능
+    if (!answer.getUser().getId().equals(userId)) {
+      throw new AnswerForbiddenException();
+    }
+
+    // 3) 상태 검증
+    InstanceStatus status = answer.getQuestionInstance().getStatus();
+    // PENDING만 통과
+    if (status != InstanceStatus.PENDING) {
+      throw new AnswerCannotModifyException();
+    }
+
+    // 4) 수정
+    String normalized = AnswerMapper.normalize(req.getContent());
+    answer.setContent(normalized);
+
+    // TODO matchMember의 lastAnsweredAt 갱신
+
+    // 5) updatedAt(@LastModifiedDate) 보장
+    answerRepository.saveAndFlush(answer);
+
+    // 6) 응답 매핑
+    return AnswerMapper.toResponse(answer);
   }
 }

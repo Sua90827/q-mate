@@ -9,7 +9,7 @@
     "lint": "eslint",
     "mock:list": "json-server --watch src/mocks/db.json --port 3003",
     "mock:today": "json-server --watch src/mocks/db_today.json --port 4000",
-    "mock:scheduleList": "json-server --watch src/mocks/db_schedule_list.json --port 3005",
+    "mock:scheduleList": "json-server --watch src/mocks/db_schedule_list.json --port 3001",
     "mock:invited": "json-server --watch src/mocks/db_invited.json --port 3004"
   },
   "dependencies": {
@@ -49,7 +49,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
-    "json-server": "^1.0.0-beta.3",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.8",
     "typescript": "^5"
