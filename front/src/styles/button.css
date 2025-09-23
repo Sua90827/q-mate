@@ -1,0 +1,121 @@
+/* default 버튼 */
+html[data-theme='day'] .btn-default {
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
+}
+html[data-theme='sunset'] .btn-default {
+  background-color: var(--color-sunset-active);
+  color: var(--color-secondary);
+}
+html[data-theme='night'] .btn-default {
+  background-color: var(--color-night-active);
+  color: var(--color-secondary);
+}
+
+/* outline 버튼 */
+html[data-theme='day'] .btn-outline {
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+}
+html[data-theme='sunset'] .btn-outline {
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-sunset-active);
+  color: var(--color-sunset-active);
+}
+html[data-theme='night'] .btn-outline {
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-night-active);
+  color: var(--color-night-active);
+}
+
+/* BellBtn 기본 색상 */
+.bell-btn {
+  color: var(--color-text-primary);
+}
+
+/* 테마별 기본 색상 */
+html[data-theme='sunset'] .bell-btn {
+  color: var(--color-text-primary);
+}
+html[data-theme='night'] .bell-btn {
+  color: var(--color-secondary);
+}
+
+/* active 상태 */
+html[data-theme='day'] .bell-btn.active {
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
+}
+html[data-theme='sunset'] .bell-btn.active {
+  background-color: var(--color-sunset-active);
+  color: white;
+}
+html[data-theme='night'] .bell-btn.active {
+  background-color: var(--color-night-active);
+  color: white;
+}
+
+/* Filter 버튼 기본 */
+.filter-btn {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  box-shadow: none;
+}
+
+/* 테마별 active */
+html[data-theme='day'] .filter-btn.active {
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
+}
+html[data-theme='sunset'] .filter-btn.active {
+  background-color: var(--color-sunset-active);
+  color: var(--color-secondary);
+}
+html[data-theme='night'] .filter-btn.active {
+  background-color: var(--color-night-active);
+  color: var(--color-secondary);
+}
+
+/* TrashCan 버튼 기본 */
+.trash-btn {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  box-shadow: none;
+}
+
+/* 테마별 active 상태 */
+html[data-theme='day'] .trash-btn.active {
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
+}
+html[data-theme='sunset'] .trash-btn.active {
+  background-color: var(--color-sunset-active);
+  color: var(--color-secondary);
+}
+html[data-theme='night'] .trash-btn.active {
+  background-color: var(--color-night-active);
+  color: var(--color-secondary);
+}
+
+/*일정 옵션*/
+@layer utilities {
+  /* 기본 보더/글씨 */
+  .border-theme-secondary {
+    border-color: var(--color-text-secondary) !important;
+  }
+  .text-theme-secondary {
+    color: var(--color-text-secondary) !important;
+  }
+
+  /* 활성 배경 (공통 클래스) */
+  .bg-theme-primary {
+    background-color: var(--color-primary) !important;
+  }
+  html[data-theme='sunset'] .bg-theme-primary {
+    background-color: var(--color-sunset-active) !important;
+  }
+  html[data-theme='night'] .bg-theme-primary {
+    background-color: var(--color-night-active) !important;
+  }
+}

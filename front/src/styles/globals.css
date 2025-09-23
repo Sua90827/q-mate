@@ -2,118 +2,19 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* css분리 */
+@import './theme.css';
+@import './main.css';
+@import './nav.css';
+@import './button.css';
+@import './question.css';
+
 @font-face {
   font-family: 'RomanticGumi';
   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/GumiRomanceTTF.woff2')
     format('woff2');
   font-weight: normal;
   font-display: swap;
-}
-/*---break---*/
-@custom-variant dark (&: is(.dark *));
-
-@theme inline {
-  /*font*/
-  --font-Gumi: 'RomanticGumi', sans-serif;
-  --font-Pre: 'Pretendard', sans-serif;
-
-  /*text*/
-  --text-12: 12px;
-  --text-14: 14px;
-  --text-16: 16px;
-  --text-18: 18px;
-  --text-20: 20px;
-  --text-24: 24px;
-
-  /*color*/
-  --color-main-top: #bbf4ff;
-  --color-main-bottom: #5ee0fa;
-  --color-primary: #13c8ec;
-  --color-secondary: #fffdfd;
-  --color-bg-auth: #f2faff;
-  --color-gray: #f0f1f3;
-  --color-dash: #c0c0c0;
-  --color-list-active: #d0ebfc;
-  --color-naver: #02c659;
-  --color-text-primary: #292929;
-  --color-text-secondary: #79808d;
-  --color-error: #da7173;
-  --color-blur: #e5e7eb;
-  --color-exp: #fbc76a;
-  --color-day-list: #e8f6fe;
-  --color-list-custom: #eaf0f4;
-  --color-chart-first: #13ecec;
-  --color-chart-second: #a0f6f6;
-  --color-chart-third: #cdffff;
-  --color-sunset-top: #ff9263;
-  --color-sunset-bottom: #fadb5e;
-  --color-sunset-active: #ff8736;
-  --color-sunset-text: #717886;
-  --color-sunset-list: #fef4e6;
-  --color-night-top: #171940;
-  --color-night-bottom: #2d3367;
-  --color-night-active: #020433;
-  --color-night-active2: #8f93cf;
-  --color-night-list: #d3d5ff;
-
-  /* shadcn 토큰 */
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-foreground: var(--foreground);
-  --color-background: var(--background);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-}
-@layer utilities {
-  .bg-gradient-main {
-    background-image: linear-gradient(
-      to bottom,
-      var(--color-main-top) 40%,
-      var(--color-main-bottom) 100%
-    );
-  }
-  .bg-gradient-sunset {
-    background-image: linear-gradient(
-      to bottom,
-      var(--color-sunset-top) 40%,
-      var(--color-sunset-bottom) 100%
-    );
-  }
-
-  .bg-gradient-night {
-    background-image: linear-gradient(
-      to bottom,
-      var(--color-night-top) 40%,
-      var(--color-night-bottom) 100%
-    );
-  }
 }
 
 .shadow-box {
@@ -126,7 +27,7 @@
   }
 }
 
-/*---break---*/
+/* Root tokens */
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -162,7 +63,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-/*---break---*/
+/* Base */
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -171,7 +72,6 @@
     @apply bg-background text-foreground;
   }
 }
-
 @layer base {
   html,
   body {

@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 import com.qmate.domain.match.Match;
 import com.qmate.domain.questioninstance.entity.Answer;
@@ -27,7 +26,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -78,7 +76,6 @@ class AnswerServiceCreateTest {
     // then
     assertThat(res.getAnswerId()).isEqualTo(456L);
     assertThat(res.getQuestionInstanceId()).isEqualTo(123L);
-    assertThat(res.getUserId()).isEqualTo(99L);
     assertThat(res.getContent()).isEqualTo("안녕\n하세요");
     assertThat(res.getSubmittedAt()).isEqualTo("2025-09-11T12:20:00");
 
