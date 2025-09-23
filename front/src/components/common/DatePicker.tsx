@@ -1,12 +1,19 @@
 'use client';
 
 import * as React from 'react';
-import { ChevronDownIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import Calendar from '../schedule/CalendarCustom';
 
-export function DatePicker({ label, schedule }: { label: string; schedule?: boolean }) {
+export function DatePicker({
+  label,
+  schedule,
+  anniversary,
+}: {
+  label: string;
+  schedule?: boolean;
+  anniversary?: boolean;
+}) {
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(undefined);
 
@@ -16,12 +23,15 @@ export function DatePicker({ label, schedule }: { label: string; schedule?: bool
         <PopoverTrigger asChild>
           <Button
             id="date"
-            className={`w-full border-gray h-[37px]   font-semibold bg-secondary justify-between  text-14 hover:bg-secondary ${
+            className={`w-full border-gray h-[37px] font-semibold bg-secondary justify-between  text-14 hover:bg-secondary ${
               schedule ? 'shadow-box  ' : '!text-text-secondary/60'
+            } ${
+              anniversary
+                ? 'h-[45px] w-[300px] !text-primary font-bold flex justify-center text-16'
+                : ''
             }`}
           >
             {date ? date.toLocaleDateString() : label}
-            <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
         <PopoverContent
