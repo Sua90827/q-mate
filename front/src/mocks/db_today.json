@@ -8,7 +8,6 @@
       "questionId": 777,
       "sourceType": "ADMIN",
       "relationType": "COUPLE",
-      "category": { "id": 3, "name": "취향" },
       "text": "연인이 가장 좋아하는 음식은?"
     },
     "myAnswer": null,

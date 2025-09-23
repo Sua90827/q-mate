@@ -1,0 +1,148 @@
+@custom-variant dark (&: is(.dark *));
+
+@theme inline {
+  /* font */
+  --font-Gumi: 'RomanticGumi', sans-serif;
+  --font-Pre: 'Pretendard', sans-serif;
+
+  /* text */
+  --text-12: 12px;
+  --text-14: 14px;
+  --text-16: 16px;
+  --text-18: 18px;
+  --text-20: 20px;
+  --text-24: 24px;
+
+  /* color */
+  --color-main-top: #bbf4ff;
+  --color-main-bottom: #5ee0fa;
+  --color-primary: #13c8ec;
+  --color-secondary: #fffdfd;
+  --color-bg-auth: #f2faff;
+  --color-gray: #f0f1f3;
+  --color-dash: #c0c0c0;
+  --color-list-active: #d0ebfc;
+  --color-naver: #02c659;
+  --color-text-primary: #292929;
+  --color-text-secondary: #79808d;
+  --color-error: #da7173;
+  --color-blur: #e5e7eb;
+  --color-exp: #fbc76a;
+  --color-day-list: #e8f6fe;
+  --color-list-custom: #eaf0f4;
+  --color-chart-first: #13ecec;
+  --color-chart-second: #a0f6f6;
+  --color-chart-third: #cdffff;
+  --color-sunset-top: #ff9263;
+  --color-sunset-bottom: #fadb5e;
+  --color-sunset-active: #ff8736;
+  --color-sunset-text: #717886;
+  --color-sunset-list: #fef4e6;
+  --color-night-top: #171940;
+  --color-night-bottom: #2d3367;
+  --color-night-active: #020433;
+  --color-night-active2: #8f93cf;
+  --color-night-list: #d3d5ff;
+
+  /* shadcn 토큰 */
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+html[data-theme='day'] {
+  --color-gradient-top: var(--color-main-top);
+  --color-gradient-bottom: var(--color-main-bottom);
+}
+html[data-theme='sunset'] {
+  --color-gradient-top: var(--color-sunset-top);
+  --color-gradient-bottom: var(--color-sunset-bottom);
+}
+html[data-theme='night'] {
+  --color-gradient-top: var(--color-night-top);
+  --color-gradient-bottom: var(--color-night-bottom);
+}
+
+@layer utilities {
+  .bg-gradient-main {
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-main-top) 40%,
+      var(--color-main-bottom) 100%
+    );
+  }
+  .bg-gradient-theme {
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-gradient-top) 40%,
+      var(--color-gradient-bottom) 100%
+    );
+  }
+}
+
+/* 기본 글자색 (낮/노을) */
+.text-theme-primary {
+  color: var(--color-text-primary);
+}
+
+/* night 테마에서 흰색으로 변경 */
+html[data-theme='night'] .text-theme-primary {
+  color: var(--color-secondary);
+}
+
+.text-theme-secondary {
+  color: var(--color-text-secondary);
+}
+
+/* night 테마에서 흰색으로 변경 */
+html[data-theme='night'] .text-theme-secondary {
+  color: var(--color-dash);
+}
+
+/* 테마별 스위치 활성 배경 */
+@layer utilities {
+  /* 기본 (day) */
+  .bg-theme-primary[data-state='checked'] {
+    background-color: var(--color-primary) !important;
+  }
+
+  /* sunset 테마 */
+  html[data-theme='sunset'] .bg-theme-primary[data-state='checked'] {
+    background-color: var(--color-sunset-active) !important;
+  }
+
+  /* night 테마 */
+  html[data-theme='night'] .bg-theme-primary[data-state='checked'] {
+    background-color: var(--color-night-active) !important;
+  }
+}

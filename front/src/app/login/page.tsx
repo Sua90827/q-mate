@@ -1,7 +1,6 @@
+import Login from '@/components/login/Login';
 import React from 'react';
 
-const page = () => {
-  return <div>login 화면</div>;
-};
-
-export default page;
+export default function page() {
+  return <Login />;
+}

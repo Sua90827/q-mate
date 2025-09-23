@@ -35,6 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+!front/.vscode/
 
 back/src/main/resources/application-local.yml
 
@@ -45,3 +46,4 @@ back/out/
 back/.classpath
 back/.project
 back/.settings/back/src/main/resources/application-local.yml
+back/src/main/resources/application-test.yml
