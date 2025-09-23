@@ -7,6 +7,7 @@ import com.qmate.domain.questioninstance.service.QuestionInstanceService;
 import com.qmate.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -78,6 +79,8 @@ public class QuestionInstanceController {
       responses = {
           @ApiResponse(responseCode = "200", description = "성공",
               content = @Content(schema = @Schema(implementation = QIListItem.class))),
+          @ApiResponse(responseCode = "400", description = "미지원 sort 키 사용",
+              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
           @ApiResponse(responseCode = "401", description = "인증 실패",
               content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
           @ApiResponse(responseCode = "403", description = "권한 없음",
@@ -91,6 +94,20 @@ public class QuestionInstanceController {
               example = "2025-09-01T00:00:00"),
           @Parameter(name = "to", description = "deliveredAt 종료 범위 (exclusive, optional)",
               example = "2025-10-01T00:00:00"),
+          @Parameter(
+              name = "sort",
+              description = """
+              정렬 키와 방향(여러 개 지정 가능).
+              - 형식: sort=`key`[,`dir`]  (dir 기본값: asc)
+              - 허용 key: deliveredAt | completedAt | status
+              - 예: sort=deliveredAt,desc&sort=status,asc
+              """,
+              array = @ArraySchema(
+                  schema = @Schema(implementation = String.class,
+                      allowableValues = {"deliveredAt","completedAt","status"})
+              ),
+              example = "deliveredAt,desc"
+          ),
       }
   )
   @GetMapping("/matches/{matchId}/question-instances")
