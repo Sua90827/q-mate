@@ -22,8 +22,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `
               (function() {
                 var hour = new Date().getHours();
-                var theme = (hour >= 6 && hour < 16) ? "day"
-                          : (hour >= 16 && hour < 21) ? "night"
+                var theme = (hour >= 6 && hour < 18) ? "day"
+                          : (hour >= 18 && hour < 21) ? "sunset"
                           : "night";
                 document.documentElement.setAttribute("data-theme", theme);
               })();

@@ -19,7 +19,7 @@ export default function Invited() {
         />
       </div>
 
-      <Image src="/images/bubbley/ bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
+      <Image src="/images/bubbley/bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
       <Button variant="invite" className="w-[300px] mt-10 z-10" onClick={() => setIsOpen(true)}>
         등록하기
       </Button>
