@@ -90,7 +90,7 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
         .leftJoin(questionInstance.question, question)
         .leftJoin(questionInstance.customQuestion, customQuestion)
         .where(
-            questionInstance.match.matchId.eq(matchId),
+            questionInstance.match.id.eq(matchId),
             statusEq(status),
             deliveredFrom(from),
             deliveredTo(to)
@@ -105,7 +105,7 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
         .select(questionInstance.id.count())
         .from(questionInstance)
         .where(
-            questionInstance.match.matchId.eq(matchId),
+            questionInstance.match.id.eq(matchId),
             statusEq(status),
             deliveredFrom(from),
             deliveredTo(to)
