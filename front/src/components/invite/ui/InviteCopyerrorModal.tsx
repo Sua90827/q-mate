@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import React from 'react';
 
-export default function InviteCopyerrorModal({
+export default function InviteCopyErrorModal({
   open,
   setOpen,
 }: {

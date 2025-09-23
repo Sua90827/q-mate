@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '../common/Button';
 import { Copy } from 'lucide-react';
-import InviteCopyerrorModal from './ui/InviteCopyerrorModal';
+import InviteCopyErrorModal from './ui/InviteCopyErrorModal';
 
 export default function Invite() {
   const [code, setCode] = useState();
@@ -25,18 +25,19 @@ export default function Invite() {
         <p className="font-Gumi text-24">함께할 사람에게</p>
         <p className="font-Gumi text-24">초대코드를 공유해주세요!</p>
         <div className="relative">
-          <input
-            type="text"
-            value={code}
-            className="rounded-md pl-4 bg-secondary font-Pre text-14 py-4 mt-7 w-[250px] select-none"
-            readOnly
-          />
-          <Copy
-            className="!w-5 !h-5 text-text-secondary absolute top-12 right-8 cursor-pointer"
+          <div
             onClick={() => {
               handleCopyClipBoard(code!);
             }}
-          />
+          >
+            <input
+              type="text"
+              value={code}
+              className="rounded-md pl-4 bg-secondary font-Pre text-14 py-4 mt-7 w-[250px] select-none"
+              readOnly
+            />
+            <Copy className="!w-5 !h-5 text-text-secondary absolute top-12 right-8 cursor-pointer" />
+          </div>
         </div>
       </div>
 
@@ -45,7 +46,7 @@ export default function Invite() {
         등록하기
       </Button>
 
-      <InviteCopyerrorModal open={open} setOpen={setOpen} />
+      <InviteCopyErrorModal open={open} setOpen={setOpen} />
     </>
   );
 }
