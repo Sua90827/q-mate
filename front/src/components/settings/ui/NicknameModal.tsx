@@ -1,6 +1,5 @@
 import { Button } from '@/components/common/Button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useThemeStore } from '@/store/useThemeStore';
 
 interface nicknameModal {
   open: string;
@@ -8,8 +7,6 @@ interface nicknameModal {
 }
 
 export default function NicknameModal({ open, setIsOpen }: nicknameModal) {
-  const theme = useThemeStore((state) => state.theme);
-
   return (
     <Dialog open={open === 'profile' ? true : false} onOpenChange={() => {}}>
       <DialogContent
@@ -31,7 +28,6 @@ export default function NicknameModal({ open, setIsOpen }: nicknameModal) {
         <div className="flex justify-center gap-4 py-3">
           <Button
             variant="outline"
-            theme={theme}
             className="w-30 h-9.5 hover:opacity-80"
             onClick={() => setIsOpen(null)}
           >
@@ -39,7 +35,6 @@ export default function NicknameModal({ open, setIsOpen }: nicknameModal) {
           </Button>
           <Button
             variant="default"
-            theme={theme}
             className="w-30 h-9.5 hover:opacity-80 "
             onClick={() => setIsOpen(null)}
           >
