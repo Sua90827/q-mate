@@ -1,5 +1,6 @@
 /* 테마별 포인트 색상 (accent) */
-.text-theme-accent {
+/* 글자 강조 커스텀/ 오늘의질문 / 일반 구분 */
+html[data-theme='day'] .text-theme-accent {
   color: var(--color-primary);
 }
 html[data-theme='sunset'] .text-theme-accent {
@@ -10,6 +11,7 @@ html[data-theme='night'] .text-theme-accent {
 }
 
 /* 테마별 리스트 배경 */
+/* 선택된 상태 */
 html[data-theme='day'] .bg-theme-list-active {
   background-color: var(--color-day-list);
 }
@@ -31,14 +33,14 @@ html[data-theme='night'] .text-theme-accent {
   color: var(--color-night-active2);
 }
 
-/* 포인트 색상 */
-.text-theme-accent {
+/* 포인트 색상 2*/
+html[data-theme='day'] .text-theme-accent2 {
   color: var(--color-primary);
 }
-html[data-theme='sunset'] .text-theme-accent {
+html[data-theme='sunset'] .text-theme-accent2 {
   color: var(--color-sunset-active);
 }
-html[data-theme='night'] .text-theme-accent {
+html[data-theme='night'] .text-theme-accent2 {
   color: var(--color-night-active2);
 }
 

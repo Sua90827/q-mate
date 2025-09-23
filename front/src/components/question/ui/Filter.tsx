@@ -12,9 +12,8 @@ export default function Filter({
 
   return (
     <Button
-      className={`bg-transparent text-black shadow-none filter-btn ${
-        active ? 'active' : ''
-      } mr-4 hover:rounded-md hover:opacity-80`}
+      variant={'icon'}
+      className={`p-3 shadow-none filter-btn ${active ? 'active p-3 rounded-md' : ''} `}
       onClick={() => {
         setActive((prev) => !prev);
         setShowCustomOnly((prev) => !prev);

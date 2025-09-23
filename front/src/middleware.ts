@@ -5,8 +5,8 @@ export function middleware(req: NextRequest) {
   const hour = new Date().getHours();
   let theme: 'day' | 'sunset' | 'night' = 'day';
 
-  if (hour >= 6 && hour < 18) theme = 'day';
-  else if (hour >= 18 && hour < 20) theme = 'sunset';
+  if (hour >= 6 && hour < 16) theme = 'day';
+  else if (hour >= 16 && hour < 20) theme = 'sunset';
   else theme = 'night';
 
   const res = NextResponse.next();
