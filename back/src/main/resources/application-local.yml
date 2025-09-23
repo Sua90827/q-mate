@@ -35,8 +35,14 @@ spring:
 
 app:
   email-verification:
-    jwt-secret: "random0jwt0secret0keyaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!!!!!!!!!11111111!@#$"
+    jwt-secret: "random0jwt0secret0keyaaaaaaaaaaaaaa!!!!!!!!!11111111!@#$"
     ttl-minutes: 10
+
+security:
+  jwt:
+    secret: "this-is-a-DEV-secret-with-at-least-32-characters-OKaaaaaaaa!!!!!!!"
+    access-ttl-seconds: 900       # 15분
+    refresh-ttl-seconds: 1209600  # 14일
 
 server:
   port: 8080
