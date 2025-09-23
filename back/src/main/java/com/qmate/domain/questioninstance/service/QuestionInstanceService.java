@@ -6,6 +6,7 @@ import com.qmate.domain.questioninstance.entity.InstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.mapper.QIDetailMapper;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse;
+import com.qmate.domain.questioninstance.model.response.QIListItem;
 import com.qmate.domain.questioninstance.repository.AnswerRepository;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
 import com.qmate.domain.user.User;
@@ -13,7 +14,11 @@ import com.qmate.domain.user.UserRepository;
 import com.qmate.exception.custom.UserNotFoundException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
+import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,5 +71,18 @@ public class QuestionInstanceService {
     return QIDetailMapper.toResponse(
         qi, match, me, partner, myAnswer, partnerAnswer, myVisible, partnerVisible
     );
+  }
+
+  @Transactional(readOnly = true)
+  public Page<QIListItem> list(Long userId, Long matchId, InstanceStatus status,
+      LocalDateTime from, LocalDateTime to, Pageable pageable) {
+
+    // 1) 요청자 조회 및 권한 확인: 현재 매치 == 조회 매치
+    Long myCurrentMatchId = userRepository.findCurrentMatchIdById(userId).orElseThrow(UserNotFoundException::new);
+    if (!Objects.equals(myCurrentMatchId, matchId)) {
+      throw new QuestionInstanceForbiddenException();
+    }
+
+    return qiRepository.findList(matchId, status, from, to, pageable);
   }
 }
