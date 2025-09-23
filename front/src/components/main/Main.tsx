@@ -24,17 +24,14 @@ export default function Main() {
           />
 
           {/* 배경 장식: 모바일 / 웹 */}
-          <picture>
-            <source media="(max-width: 768px)" />
-            <MotionDiv
-              key="deco-web"
-              className="absolute inset-0 bg-deco-web md:bg-deco-web sm:bg-deco-mobile"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.8 }}
-            />
-          </picture>
+          <MotionDiv
+            key="deco"
+            className="absolute inset-0 bg-deco"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+          />
         </AnimatePresence>
       </div>
 

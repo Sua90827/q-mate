@@ -4,6 +4,7 @@ import { CalendarMinus2, House, MessageSquareText, Settings } from 'lucide-react
 import Link from 'next/link';
 import React, { useState } from 'react';
 import BellBtn from './BellBtn';
+import { useSelectedStore } from '@/store/useSelectedStore';
 
 const NAV_ITEMS = [
   { key: 'home', label: '홈', href: '/main', Icon: House },
@@ -14,6 +15,8 @@ const NAV_ITEMS = [
 
 export default function Nav() {
   const [active, setActive] = useState('home');
+  const selectedMenu = useSelectedStore((state) => state.selectedMenu);
+  const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
 
   return (
     <>
@@ -22,11 +25,17 @@ export default function Nav() {
         <ul className="w-[320px] gap-12 flex">
           {NAV_ITEMS.map(({ key, href, Icon, label }) => (
             <li key={key}>
-              <Link href={href} onClick={() => setActive(key)}>
+              <Link
+                href={href}
+                onClick={() => {
+                  setActive(key);
+                  setSelectedMenu(key);
+                }}
+              >
                 <Icon
                   aria-label={label}
                   size={48}
-                  className={`nav-item-mob ${active === key ? 'active' : ''}`}
+                  className={`nav-item-mob ${selectedMenu === key ? 'active' : ''}`}
                 />
               </Link>
             </li>
@@ -45,8 +54,11 @@ export default function Nav() {
               <li key={key}>
                 <Link
                   href={href}
-                  onClick={() => setActive(key)}
-                  className={`nav-item nav-item-web ${active === key ? 'active' : ''}`}
+                  onClick={() => {
+                    setActive(key);
+                    setSelectedMenu(key);
+                  }}
+                  className={`nav-item nav-item-web ${selectedMenu === key ? 'active' : ''}`}
                 >
                   {label}
                 </Link>

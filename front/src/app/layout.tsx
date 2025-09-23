@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 var hour = new Date().getHours();
                 var theme = (hour >= 6 && hour < 18) ? "day"
                           : (hour >= 18 && hour < 21) ? "sunset"
-                          : "night";
+                          : "day";
                 document.documentElement.setAttribute("data-theme", theme);
               })();
             `,
