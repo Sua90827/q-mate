@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qmate.config.SecurityConfig;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.service.MatchService;
-import com.qmate.exception.custom.InviteAttemptLockedException;
+import com.qmate.exception.custom.matchinstance.InviteAttemptLockedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

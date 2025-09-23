@@ -7,17 +7,12 @@ import static org.mockito.Mockito.verify;
 
 import com.qmate.common.redis.RedisHelper;
 import com.qmate.domain.match.MatchStatus;
-import com.qmate.domain.match.Match;
-import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
-import com.qmate.exception.custom.InviteAttemptLockedException;
-import com.qmate.exception.custom.InviteCodeExpiredException;
-import java.util.Collections;
-import java.util.List;
+import com.qmate.exception.custom.matchinstance.InviteAttemptLockedException;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
