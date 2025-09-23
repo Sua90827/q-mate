@@ -28,7 +28,7 @@ public class MatchController {
       // @AuthenticationPrincipal UserDetailsImpl userDetails => spring Security가 로그인한 사용자의 정보를 자동으로 주입
   ) {
     // (임시) 로그인 기능 구현 전이므로, 사용자 ID를 1L로 가정
-    Long currentUserId = 1L;
+    Long currentUserId = 3L;
     // Long currentUserId = userDetails.getUser().getUserId(); // 나중에는 이렇게 ID를 가져올 예정.
 
     MatchCreationResponse response = matchService.createMatch(request, currentUserId);
@@ -45,7 +45,7 @@ public class MatchController {
       // @AuthenticationPrincipal UserDetailsImpl userDetails //  나중에 로그인 기능 연동
   ) {
     // 임시로 참여자 ID를 2L로 가정 (1L은 이미 방을 만들었으므로)
-    Long currentUserId = 2L;
+    Long currentUserId = 4L;
     // Long currentUserId = userDetails.getUser().getUserId();
 
     MatchJoinResponse response = matchService.joinMatch(request, currentUserId);

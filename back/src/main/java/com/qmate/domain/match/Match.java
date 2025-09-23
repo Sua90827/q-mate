@@ -32,7 +32,7 @@ public class Match {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long matchId;
+  private Long id;
 
   @Enumerated(EnumType.STRING)
   private RelationType relationType;

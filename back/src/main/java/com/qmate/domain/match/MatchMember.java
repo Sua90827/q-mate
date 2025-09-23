@@ -29,7 +29,7 @@ public class MatchMember {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long matchMemberId;
+  private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "match_id")

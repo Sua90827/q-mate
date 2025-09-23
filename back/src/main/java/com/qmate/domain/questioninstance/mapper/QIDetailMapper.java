@@ -41,7 +41,7 @@ public class QIDetailMapper {
   ) {
     return QIDetailResponse.builder()
         .questionInstanceId(qi.getId())
-        .matchId(match.getMatchId())
+        .matchId(match.getId())
         .deliveredAt(qi.getDeliveredAt())
         .status(qi.getStatus())
         .completedAt(qi.getCompletedAt())
