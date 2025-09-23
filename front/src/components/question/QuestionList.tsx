@@ -7,7 +7,6 @@ import Filter from './ui/Filter';
 import { X } from 'lucide-react';
 import { useQuestions, useCustomQuestions } from '@/hooks/useQuestions';
 import { QuestionInstance } from '@/types/questionType';
-import { useThemeStore } from '@/store/useThemeStore';
 import TrashCan from '../common/TrashCan';
 
 export default function QuestionList() {
@@ -36,20 +35,6 @@ export default function QuestionList() {
     .filter((instance) => instance.question.text.toLowerCase().includes(queryText.toLowerCase()))
     .filter((instance) => (showCustomOnly ? instance.status === 'EDITABLE' : true));
 
-  const theme = useThemeStore((state) => state.theme);
-
-  const activeBackgroundClass =
-    theme === 'sunset' ? 'bg-sunset-list' : theme === 'night' ? 'bg-night-list' : 'bg-day-list';
-
-  const pendingColorClass =
-    theme === 'sunset'
-      ? 'text-sunset-active'
-      : theme === 'night'
-      ? 'text-night-active2'
-      : 'text-primary';
-
-  const whiteTextClass = theme === 'night' ? 'text-secondary' : '';
-
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -69,24 +54,22 @@ export default function QuestionList() {
       <div className="sm:hidden w-full h-full py-5">
         <div className="flex justify-between items-center h-[70px] px-4">
           <Filter setShowCustomOnly={setShowCustomOnly} />
-          <p className={`text-20 font-Gumi ${whiteTextClass}`}>질문 리스트</p>
+          <p className={`text-20 font-Gumi text-theme-primary`}>질문 리스트</p>
           <TrashCan onClick={() => setIsDeleteMode((prev) => !prev)} />
         </div>
-        <div className="pt-10 px-4">
+        <div className="pt-10">
           <SearchInput query={queryText} setQuery={setQueryText} />
         </div>
-        <ul className="mt-10 flex flex-col divide-y divide-gray border-y overflow-y-auto px-4">
+        <ul className="mt-10 flex flex-col divide-y divide-text-secondary text-theme-primary border-y border-text-secondary overflow-y-auto">
           {filteredInstances.map((instance) => {
             const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
             const itemClassName = [
               'py-4 cursor-pointer',
-              isSelected ? `font-bold ${activeBackgroundClass}` : '',
+              isSelected ? `font-bold bg-theme-list-active` : '',
               instance.status === 'EDITABLE'
                 ? 'text-text-secondary bg-gray font-bold'
                 : instance.status === 'PENDING'
-                ? pendingColorClass
-                : theme === 'night'
-                ? 'text-secondary'
+                ? 'text-theme-accent2'
                 : '',
             ]
               .filter(Boolean)
@@ -94,7 +77,7 @@ export default function QuestionList() {
             return (
               <li
                 key={instance.questionInstanceId}
-                className={itemClassName}
+                className={`${itemClassName} px-4`}
                 onClick={() => openDetailByQuery(instance.questionInstanceId)}
               >
                 <div className="flex justify-between">
@@ -112,7 +95,7 @@ export default function QuestionList() {
       </div>
 
       {/* 데스크탑 레이아웃 */}
-      <div className="mt-[70px] hidden sm:flex bg-secondary rounded-md shadow-md lg:w-[320px] w-[220px] h-[550px] flex-col">
+      <div className="hidden sm:flex bg-secondary rounded-md shadow-md w-[320px] h-full flex-col">
         <div className="mt-6 px-4">
           <SearchInput query={queryText} setQuery={setQueryText} />
         </div>
@@ -120,13 +103,13 @@ export default function QuestionList() {
           <span className="inline-block text-20 font-bold py-4 cursor-default">질문 리스트</span>
           <Filter setShowCustomOnly={setShowCustomOnly} />
         </div>
-        <ul className=" px-4 flex flex-col divide-y divide-gray flex-1 overflow-y-auto">
+        <ul className="flex flex-col divide-y divide-gray flex-1 overflow-y-auto">
           {filteredInstances.map((instance) => {
             const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
             const itemClassName = [
               'py-5 cursor-pointer',
-              isSelected ? activeBackgroundClass : '',
-              instance.status === 'PENDING' ? pendingColorClass : '',
+              isSelected ? 'bg-theme-list-active' : '',
+              instance.status === 'PENDING' ? 'text-theme-accent' : '',
               instance.status === 'EDITABLE' ? '!text-text-secondary bg-list-custom' : '',
             ]
               .filter(Boolean)
@@ -134,7 +117,7 @@ export default function QuestionList() {
             return (
               <li
                 key={instance.questionInstanceId}
-                className={itemClassName}
+                className={`${itemClassName} px-4`}
                 onClick={() => openDetailByQuery(instance.questionInstanceId)}
               >
                 <div className="flex justify-between">

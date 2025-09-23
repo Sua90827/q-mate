@@ -26,10 +26,10 @@ export default function Record() {
         <div className="w-[320px] h-[481px] flex flex-col justify-center ">
           <QuestionCard />
           <div className="pt-5 flex gap-6 ">
-            <Button theme={theme} variant="outline" size="lg" className="!w-[150px]">
+            <Button variant="outline" size="lg" className="!w-[150px]">
               <Link href="/question/list">질문 리스트 보기</Link>
             </Button>
-            <Button theme={theme} size="lg" className="!w-[150px]">
+            <Button size="lg" className="!w-[150px]">
               <Link href="/question/custom ">질문 작성하기</Link>
             </Button>
           </div>

@@ -14,21 +14,29 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko" className="h-full">
+    <html lang="ko" className="h-full" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            //테마 시간 설정
+            __html: `
+              (function() {
+                var hour = new Date().getHours();
+                var theme = (hour >= 6 && hour < 16) ? "day"
+                          : (hour >= 16 && hour < 21) ? "night"
+                          : "night";
+                document.documentElement.setAttribute("data-theme", theme);
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="h-full">
         <BodyWrapper>
           <Providers>
             <div className="flex flex-col h-full">
               <NavGuard />
-              <main
-                className="
-                  flex-1
-                  sm:pt-[70px]   
-                  pb-[70px] sm:pb-0
-                "
-              >
-                {children}
-              </main>
+              <main className="h-full flex-1 pt-0 sm:pt-[70px] pb-[70px] sm:pb-0">{children}</main>
             </div>
           </Providers>
         </BodyWrapper>

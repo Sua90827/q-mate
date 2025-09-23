@@ -8,6 +8,8 @@ import Custom from './Custom';
 import { Answer } from '@/types/questionType';
 import { X } from 'lucide-react';
 import AnswerForm from './ui/AnswerForm';
+import { Button } from '../common/Button';
+import CloseButton from '../common/CloseButton';
 
 export default function QuestionDetail() {
   const searchParams = useSearchParams();
@@ -40,15 +42,10 @@ export default function QuestionDetail() {
   if (isCustom && customItem) {
     return (
       <div className="w-full h-full relative p-6 flex flex-col items-center">
-        <button
-          className="absolute right-3 top-3 sm:hidden"
-          onClick={() => router.push(pathname)}
-          aria-label="목록으로"
-          type="button"
-        >
-          <X className="!w-4 !h-4" />
-        </button>
-        <p className="text-text-secondary pt-10">#Custom</p>
+        <div className="absolute top-0 right-5">
+          <CloseButton onClick={() => router.push(pathname)} />
+        </div>
+
         <Custom value={customItem.text} />
       </div>
     );
@@ -66,31 +63,25 @@ export default function QuestionDetail() {
   const hasPartner = partner?.visible === true && (partner?.content ?? '').trim() !== '';
 
   return (
-    <div className="w-full h-full relative flex flex-col items-center pt-[70px]">
-      <button
-        className="absolute right-3 top-3 sm:hidden"
-        onClick={() => router.push(pathname)}
-        aria-label="목록으로"
-        type="button"
-      >
-        <X className="!w-4 !h-4" />
-      </button>
+    <div className="w-full h-[550px] justify-center flex flex-col items-center">
+      {/* <CloseButton onClick={() => router.push(pathname)} /> */}
+      <div className="h-[550px]">
+        {detail.status === 'PENDING' && hasMy ? (
+          <AnswerForm mode="edit" questionText={detail.question.text} />
+        ) : null}
 
-      {detail.status === 'PENDING' && hasMy ? (
-        <AnswerForm mode="edit" questionText={detail.question.text} />
-      ) : null}
+        {detail.status === 'PENDING' && !hasMy ? (
+          <AnswerForm mode="create" questionText={detail.question.text} />
+        ) : null}
 
-      {detail.status === 'PENDING' && !hasMy ? (
-        <AnswerForm mode="create" questionText={detail.question.text} />
-      ) : null}
-
-      {detail.status === 'COMPLETED' || (hasMy && hasPartner) ? (
-        <AnswerView
-          questionText={detail.question.text}
-          myContent={my?.content ?? ''}
-          partnerContent={partner?.content ?? ''}
-        />
-      ) : null}
+        {detail.status === 'COMPLETED' || (hasMy && hasPartner) ? (
+          <AnswerView
+            questionText={detail.question.text}
+            myContent={my?.content ?? ''}
+            partnerContent={partner?.content ?? ''}
+          />
+        ) : null}
+      </div>
     </div>
   );
 }

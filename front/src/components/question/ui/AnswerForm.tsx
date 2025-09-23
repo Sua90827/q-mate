@@ -28,7 +28,7 @@ export default function AnswerForm({ questionText, mode }: AnswerFormProps) {
           </span>
           <textarea
             placeholder="오늘의 질문에 답변을 해보세요!"
-            className="md:w-[600px] w-[310px] h-[175px] rounded-md shadow-md p-3 bg-secondary border border-gray text-[14px]"
+            className="md:w-[400px] w-[310px] h-[175px] rounded-md shadow-md p-3 bg-secondary border border-gray text-[14px]"
           />
           <div className="w-full flex justify-center md:justify-end">
             <Button
