@@ -1,16 +1,22 @@
+// src/app/(with-tabs)/question/list/page.tsx
 'use client';
-import QuestionListMob from '@/components/question/QuestionListMob';
-import QuestionListWeb from '@/components/question/QuestionListWeb';
-import { useMediaQuery } from 'react-responsive';
 
-export default function QuestionPage() {
-  const isMobile = useMediaQuery({ maxWidth: 639.2 });
+import React from 'react';
+import { useSearchParams } from 'next/navigation';
+import QuestionList from '@/components/question/QuestionList';
+import QuestionDetail from '@/components/question/QuestionDetail';
 
-  if (isMobile) {
-    // 모바일: 리스트
-    return <QuestionListMob />;
-  }
+export default function QuestionListPage() {
+  const searchParams = useSearchParams();
+  const idParam = searchParams.get('id');
 
-  //웹: 리스트 + 상세
-  return <QuestionListWeb />;
+  return (
+    <div className="w-full" suppressHydrationWarning>
+      <div className="sm:hidden">{idParam ? <QuestionDetail /> : <QuestionList />}</div>
+
+      <div className="hidden sm:flex flex-1">
+        <QuestionDetail />
+      </div>
+    </div>
+  );
 }
