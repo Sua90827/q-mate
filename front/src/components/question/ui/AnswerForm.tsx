@@ -2,9 +2,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import { Button } from '../common/Button';
-import RatingModal from './RatingModal';
+
 import { useThemeStore } from '@/store/useThemeStore';
+import { Button } from '@/components/common/Button';
+import RatingModal from '../RatingModal';
 
 type AnswerFormProps = {
   mode: 'create' | 'edit';
