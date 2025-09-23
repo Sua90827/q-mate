@@ -42,7 +42,7 @@ public class AnswerService {
         .orElseThrow(UserNotFoundException::new);
 
     // 2) 권한 검증: 같은 매치인지 확인
-    Long qiMatchId = qi.getMatch().getMatchId();
+    Long qiMatchId = qi.getMatch().getId();
     Long userCurrentMatchId = user.getCurrentMatchId();
     if (qiMatchId == null || !qiMatchId.equals(userCurrentMatchId)) {
       throw new QuestionInstanceForbiddenException();

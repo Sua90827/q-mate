@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MatchMemberRepository extends JpaRepository<MatchMember, Long> {
 
-  Optional<MatchMember> findByMatch_MatchIdAndUser_Id(Long matchId, Long id);
+  Optional<MatchMember> findByMatch_IdAndUser_Id(Long matchId, Long id);
 
-  List<MatchMember> findAllByMatch_MatchId(Long matchId);
+  List<MatchMember> findAllByMatch_Id(Long matchId);
 
   Optional<MatchMember> findByUser_IdAndMatch_Status(Long id, MatchStatus status);
 

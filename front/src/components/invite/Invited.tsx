@@ -15,11 +15,11 @@ export default function Invited() {
         <input
           type="text"
           placeholder="초대 코드 입력"
-          className="rounded-md pl-4 bg-secondary font-Pre text-14 py-3 mt-7 w-[250px]"
+          className="rounded-md pl-4 bg-secondary font-Pre text-14 py-4 mt-7 w-[250px]"
         />
       </div>
 
-      <Image src="/images/bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
+      <Image src="/images/bubbley/bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
       <Button variant="invite" className="w-[300px] mt-10 z-10" onClick={() => setIsOpen(true)}>
         등록하기
       </Button>

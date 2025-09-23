@@ -1,16 +1,23 @@
 'use client';
-import QuestionListMob from '@/components/question/QuestionListMob';
-import QuestionListWeb from '@/components/question/QuestionListWeb';
-import { useMediaQuery } from 'react-responsive';
 
-export default function QuestionPage() {
-  const isMobile = useMediaQuery({ maxWidth: 639.2 });
+import React from 'react';
+import { useSearchParams } from 'next/navigation';
+import QuestionList from '@/components/question/QuestionList';
+import QuestionDetail from '@/components/question/QuestionDetail';
 
-  if (isMobile) {
-    // 모바일: 리스트
-    return <QuestionListMob />;
-  }
+export default function QuestionListPage() {
+  const searchParams = useSearchParams();
+  const idParam = searchParams.get('id');
 
-  //웹: 리스트 + 상세
-  return <QuestionListWeb />;
+  return (
+    <div className="w-full h-full flex flex-row items-center justify-center">
+      <div className="md:hidden w-full h-full">
+        {idParam ? <QuestionDetail /> : <QuestionList />}
+      </div>
+
+      <div className="hidden md:flex flex-1 h-full">
+        <QuestionDetail />
+      </div>
+    </div>
+  );
 }

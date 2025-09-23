@@ -1,7 +1,7 @@
 'use client';
 import { useTodayQuestion } from '@/hooks/useQuestions';
 import React from 'react';
-import AnswerForm from './AnswerForm';
+import AnswerForm from './ui/AnswerForm';
 
 export default function Detail() {
   const { data, isLoading, isError } = useTodayQuestion();
