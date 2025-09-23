@@ -3,17 +3,19 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '../common/Button';
 import { Copy } from 'lucide-react';
+import InviteCopyerrorModal from './ui/InviteCopyerrorModal';
 
 export default function Invite() {
   const [code, setCode] = useState();
+  const [open, setOpen] = useState(false);
 
-  //Clipboard API를 이용한 복사
+  // Clipboard API를 이용한 복사
   const handleCopyClipBoard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      alert('클립보드에 링크가 복사되었습니다.');
     } catch (e) {
-      alert('복사에 실패하였습니다');
+      // 실패 시 모달 오픈
+      setOpen(true);
     }
   };
 
@@ -26,12 +28,14 @@ export default function Invite() {
           <input
             type="text"
             value={code}
-            className="rounded-md pl-4 bg-secondary font-Pre text-14 py-4 mt-7 w-[250px]"
+            className="rounded-md pl-4 bg-secondary font-Pre text-14 py-4 mt-7 w-[250px] select-none"
             readOnly
           />
           <Copy
-            className="!w-5 !h-5 text-text-secondary absolute top-12 right-8"
-            onClick={() => handleCopyClipBoard(code!)}
+            className="!w-5 !h-5 text-text-secondary absolute top-12 right-8 cursor-pointer"
+            onClick={() => {
+              handleCopyClipBoard(code!);
+            }}
           />
         </div>
       </div>
@@ -40,6 +44,8 @@ export default function Invite() {
       <Button variant="invite" className="w-[300px] mt-10 z-10">
         등록하기
       </Button>
+
+      <InviteCopyerrorModal open={open} setOpen={setOpen} />
     </>
   );
 }
