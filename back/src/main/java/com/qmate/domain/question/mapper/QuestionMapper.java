@@ -81,7 +81,7 @@ public class QuestionMapper {
         cq.getId(),
         "CUSTOM",
         match.getRelationType().name(),
-        match.getMatchId(),
+        match.getId(),
         cq.getText(),
         isEditable,
         cq.getCreatedAt().format(ISO),

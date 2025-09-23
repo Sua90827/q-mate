@@ -33,7 +33,7 @@ public class QuestionInstanceService {
         .orElseThrow(QuestionInstanceNotFoundException::new);
 
     Match match = qi.getMatch();
-    Long matchId = match.getMatchId();
+    Long matchId = match.getId();
 
     // 2) 요청자 조회 및 권한 확인: 현재 매치 == QI 매치
     User me = userRepository.findById(requesterId)
