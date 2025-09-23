@@ -9,7 +9,7 @@
     "lint": "eslint",
     "mock:list": "json-server --watch src/mocks/db.json --port 3003",
     "mock:today": "json-server --watch src/mocks/db_today.json --port 4000",
-    "mock:scheduleList": "json-server --watch src/mocks/db_schedule_list.json --port 3001",
+    "mock:scheduleList": "json-server --watch src/mocks/db_schedule_list.json --port 3005",
     "mock:invited": "json-server --watch src/mocks/db_invited.json --port 3004"
   },
   "dependencies": {
