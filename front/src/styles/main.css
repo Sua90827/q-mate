@@ -1,0 +1,34 @@
+/* main 이미지 */
+
+html[data-theme='day'] {
+  --deco-web: url('/images/day/day_deco_W.png');
+  --deco-mobile: url('/images/day/day_deco_M.png');
+  --deco-light: url('/images/day/day_light.png');
+}
+html[data-theme='sunset'] {
+  --deco-web: url('/images/sunset/sunset_deco_W.png');
+  --deco-mobile: url('/images/sunset/sunset_deco_M.png');
+  --deco-light: url('/images/sunset/sunset_light.png');
+}
+html[data-theme='night'] {
+  --deco-web: url('/images/night/night_deco_W.png');
+  --deco-mobile: url('/images/night/night_deco_M.png');
+  --deco-light: url('/images/night/night_light.png');
+}
+
+.bg-deco-web {
+  background-image: var(--deco-web);
+  background-size: cover;
+  background-position: bottom;
+}
+.bg-deco-mobile {
+  background-image: var(--deco-mobile);
+  background-size: cover;
+  background-position: bottom;
+}
+.bg-deco-light {
+  background-image: var(--deco-light);
+  background-size: contain;
+  background-position: top;
+  background-repeat: no-repeat;
+}

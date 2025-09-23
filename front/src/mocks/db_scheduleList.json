@@ -1,0 +1,36 @@
+{
+  "schedule": [
+    {
+      "eventId": "100",
+      "title": "점심 약속",
+      "eventAt": "2025-08-22",
+      "repeatType": "none",
+      "isAnniversary": false
+    },
+    {
+      "eventId": "123",
+      "title": "저녁 약속",
+      "eventAt": "2025-09-27",
+      "repeatType": "none",
+      "isAnniversary": false
+    },
+    {
+      "eventId": "200",
+      "title": "파트너 생일",
+      "eventAt": "2025-09-27",
+      "repeatType": "yearly",
+      "isAnniversary": true
+    },
+    {
+      "eventId": "201",
+      "title": "본인 생일",
+      "eventAt": "2025-09-30",
+      "repeatType": "yearly",
+      "isAnniversary": true
+    }
+  ],
+  "page": 0,
+  "size": 10,
+  "totalElements": 2,
+  "totalPages": 1
+}

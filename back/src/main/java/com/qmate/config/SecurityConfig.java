@@ -26,6 +26,12 @@ public class SecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
+  private static final String[] SWAGGER_WHITELIST = {
+      "/v3/api-docs/**",
+      "/swagger-ui/**",
+      "/swagger-ui.html"
+  };
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
@@ -34,6 +40,7 @@ public class SecurityConfig {
         .httpBasic(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authz -> authz
             .requestMatchers("/auth/register", "/auth/login", "/auth/logout").permitAll()
+            .requestMatchers(SWAGGER_WHITELIST).permitAll()
             .anyRequest().authenticated()  // 나머지 모든 요청은 인증 필요
         )
         .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);  // JWT 필터 추가

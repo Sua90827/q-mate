@@ -1,6 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchQuestions, fetchCustomQuestions, fetchQuestionDetail } from '../api/questions';
+import {
+  fetchQuestions,
+  fetchCustomQuestions,
+  fetchQuestionDetail,
+  fetchTodayQuestion,
+} from '../api/questions';
 
+//전체 질문 조회
 export const useQuestions = () => {
   return useQuery({
     queryKey: ['questions'],
@@ -10,6 +16,7 @@ export const useQuestions = () => {
   });
 };
 
+//커스텀 질문 조회
 export const useCustomQuestions = () => {
   return useQuery({
     queryKey: ['customQuestions'],
@@ -19,6 +26,7 @@ export const useCustomQuestions = () => {
   });
 };
 
+//질문 상세 조회
 export const useQuestionDetail = (id: number) => {
   return useQuery({
     queryKey: ['questionDetail', id],
@@ -28,3 +36,13 @@ export const useQuestionDetail = (id: number) => {
     enabled: !!id,
   });
 };
+
+//오늘의 질문 hook
+export function useTodayQuestion() {
+  return useQuery({
+    queryKey: ['todayQuestion'],
+    queryFn: fetchTodayQuestion,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+  });
+}

@@ -1,0 +1,56 @@
+/* nav.css */
+
+/* 공통 스타일 */
+.nav-item {
+  @apply font-bold text-16 px-4 py-2 hover:opacity-70;
+}
+
+/* 모바일 아이콘 active */
+html[data-theme='day'] .nav-item-mob.active {
+  color: var(--color-primary);
+}
+html[data-theme='sunset'] .nav-item-mob.active {
+  color: var(--color-sunset-active);
+}
+html[data-theme='night'] .nav-item-mob.active {
+  color: var(--color-night-active);
+}
+
+/* 데스크탑 active 배경 */
+html[data-theme='day'] .nav-item-web.active {
+  @apply rounded-2xl text-secondary;
+  background-color: var(--color-primary);
+}
+html[data-theme='sunset'] .nav-item-web.active {
+  @apply rounded-2xl text-secondary;
+  background-color: var(--color-sunset-active);
+}
+html[data-theme='night'] .nav-item-web.active {
+  @apply rounded-2xl text-secondary;
+  background-color: var(--color-night-active);
+}
+
+/* 데스크탑 기본 글씨색 → night일 때만 흰색 */
+html[data-theme='night'] .nav-item-web {
+  color: var(--color-secondary);
+}
+
+/* 로고 */
+html[data-theme='day'] .site-logo {
+  content: url('/images/logo/day_logo.svg');
+}
+html[data-theme='sunset'] .site-logo {
+  content: url('/images/logo/sunset_logo.svg');
+}
+html[data-theme='night'] .site-logo {
+  content: url('/images/logo/night_logo.svg');
+}
+
+/* Record 제목 */
+.record-title {
+  color: var(--color-text-primary);
+}
+
+html[data-theme='night'] .record-title {
+  color: var(--color-secondary); /* 흰색 */
+}

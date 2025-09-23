@@ -2,101 +2,32 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* css분리 */
+@import './theme.css';
+@import './main.css';
+@import './nav.css';
+@import './button.css';
+@import './question.css';
+
 @font-face {
-  font-family: 'YeogiOttaeJalnan';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff')
-    format('woff');
+  font-family: 'RomanticGumi';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/GumiRomanceTTF.woff2')
+    format('woff2');
   font-weight: normal;
   font-display: swap;
 }
 
-/*---break---*/
-@custom-variant dark (&: is(.dark *));
-
-@theme inline {
-  /*font*/
-  --font-jalnan: 'YeogiOttaeJalnan', sans-serif;
-
-  /*text*/
-  --text-14: 14px;
-  --text-16: 16px;
-  --text-18: 18px;
-  --text-20: 20px;
-  --text-24: 24px;
-
-  /*color*/
-  --color-main-top: #bbf4ff;
-  --color-main-bottom: #5ee0fa;
-  --color-sub-top: #f2faff;
-  --color-sub-bottom: #d4eeff;
-  --color-primary: #13c8ec;
-  --color-secondary: #fffdfd;
-  --color-gray: #f0f1f3;
-  --color-list-active: #d0ebfc;
-  --color-naver: #02c659;
-  --color-text-primary: #292929;
-  --color-text-secondary: #79808d;
-  --color-error: #da7173;
-  --color-blur: #e5e7eb;
-  --color-exp: #fbc76a;
-  --color-list-active: #e8f6fe;
-  --color-list-custom: #eaf0f4;
-  --color-chart-first: #13ecec;
-  --color-chart-second: #a0f6f6;
-  --color-chart-third: #cdffff;
-
-  /* shadcn 토큰 */
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-foreground: var(--foreground);
-  --color-background: var(--background);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+.shadow-box {
+  @apply bg-secondary rounded-md border border-gray shadow-sm;
 }
-@layer utilities {
-  .bg-gradient-main {
-    background-image: linear-gradient(
-      to bottom,
-      var(--color-main-top) 40%,
-      var(--color-main-bottom) 100%
-    );
-  }
-  .bg-gradient-sub {
-    background-image: linear-gradient(
-      to bottom,
-      var(--color-sub-top) 40%,
-      var(--color-sub-bottom) 100%
-    );
+
+@supports (-webkit-touch-callout: none) {
+  body {
+    min-height: -webkit-fill-available;
   }
 }
-/*---break---*/
+
+/* Root tokens */
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -132,7 +63,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-/*---break---*/
+/* Base */
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -141,15 +72,20 @@
     @apply bg-background text-foreground;
   }
 }
-
 @layer base {
   html,
   body {
+    margin: 0;
+    padding: 0;
     width: 100%;
     height: 100%;
     font-family: 'Pretendard', sans-serif;
     font-weight: 600;
     font-size: 14px;
     color: #292929;
+  }
+  #__next,
+  body > div:first-child {
+    height: 100%;
   }
 }

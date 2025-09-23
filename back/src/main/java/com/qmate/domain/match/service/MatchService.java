@@ -1,0 +1,162 @@
+package com.qmate.domain.match.service;
+
+import com.qmate.common.redis.RedisHelper;
+import com.qmate.domain.match.Match;
+import com.qmate.domain.match.MatchMember;
+import com.qmate.domain.match.MatchStatus;
+import com.qmate.domain.match.RelationType;
+import com.qmate.domain.match.model.request.MatchCreationRequest;
+import com.qmate.domain.match.model.request.MatchJoinRequest;
+import com.qmate.domain.match.model.response.MatchCreationResponse;
+import com.qmate.domain.match.model.response.MatchJoinResponse;
+import com.qmate.domain.match.repository.MatchMemberRepository;
+import com.qmate.domain.match.repository.MatchRepository;
+import com.qmate.domain.user.User;
+import com.qmate.domain.user.UserRepository;
+import com.qmate.exception.custom.AlreadyInMatchException;
+import com.qmate.exception.custom.InvalidStartDateForCoupleException;
+import com.qmate.exception.custom.InviteAttemptLockedException;
+import com.qmate.exception.custom.InviteCodeExpiredException;
+import com.qmate.exception.custom.MatchNotFoundException;
+import com.qmate.exception.custom.PartnerNotFoundException;
+import com.qmate.exception.custom.SelfMatchNotAllowedException;
+import com.qmate.exception.custom.UserNotFoundException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class MatchService {
+
+  private final MatchRepository matchRepository;
+  private final MatchMemberRepository matchMemberRepository;
+  private final UserRepository userRepository;
+  private final RedisHelper redisHelper;
+
+  //초대 코드 생성 로직
+  @Transactional
+  public MatchCreationResponse createMatch(MatchCreationRequest request, Long inviterId) {
+    //사용자 정보 조회
+    User inviter = userRepository.findById(inviterId)
+        .orElseThrow(UserNotFoundException::new);
+
+    validateUserNotInActiveMatch(inviterId);
+    //요청 데이터 처리 및 엔티티 생성
+    LocalDateTime startDateTime = parseStartDate(request.getRelationType(), request.getStartDate());
+    Match newMatch = Match.create(request.getRelationType(), startDateTime);
+    MatchMember inviterMember = MatchMember.create(inviter, newMatch);
+
+    matchRepository.save(newMatch);
+    matchMemberRepository.save(inviterMember);
+
+    String inviteCode = generateUniqueInviteCode(newMatch.getId());
+    return MatchCreationResponse.builder()
+        .matchId(newMatch.getId())
+        .inviteCode(inviteCode)
+        .build();
+  }
+
+  //초대 코드를 사용하여 기존 매칭에 참여 로직.
+  @Transactional
+  public MatchJoinResponse joinMatch(MatchJoinRequest request, Long joinerId) {
+    if (redisHelper.isLocked(joinerId)){
+      throw new InviteAttemptLockedException();
+    }
+
+    User joiner = userRepository.findById(joinerId)
+            .orElseThrow(UserNotFoundException::new);
+    validateUserNotInActiveMatch(joinerId);
+
+    String inviteCode = request.getInviteCode();
+    try {
+
+      Long matchId = redisHelper.getMatchIdByInviteCode(inviteCode)
+          .orElseThrow(InviteCodeExpiredException::new);
+
+      Match match = matchRepository.findById(matchId)
+              .orElseThrow(MatchNotFoundException::new);
+
+      validateJoinAttempt(match, joinerId);
+
+      MatchMember joinerMember = MatchMember.create(joiner, match);
+      matchMemberRepository.save(joinerMember);
+      match.setStatus(MatchStatus.ACTIVE);
+
+      MatchMember partner = findPartner(matchId, joinerId);
+      redisHelper.deleteInviteCode(inviteCode);
+
+
+      return MatchJoinResponse.builder()
+          .matchId(matchId)
+          .message("매칭에 성공적으로 참여했습니다.")
+          .partnerNickname(partner.getUser().getNickname())
+          .build();
+    }catch (InviteCodeExpiredException e){
+      //초대 코드가 틀렸을 때 실행되는 실패 로직
+      long attempCount = redisHelper.incrementAttemptCount(joinerId);
+      if (attempCount >= 5){
+        redisHelper.lockUser(joinerId);
+        throw new InviteAttemptLockedException();//5번 실패 시 발생
+      }
+      throw e; //5번 미만 실패 시 기존의 '유효하지 않은 코드' 예외 발생
+    }
+  }
+
+
+  //가독성을 위한 private 헬퍼 메서드(초대 생성 관련)
+  private void validateUserNotInActiveMatch(Long userId) {
+    matchMemberRepository.findByUser_IdAndMatch_Status(userId, MatchStatus.ACTIVE)
+        .ifPresent(matchMember -> {
+          throw new AlreadyInMatchException();
+        });
+  }
+  //커플이 아니라면 입력 필요 없어서 = return null
+  private LocalDateTime parseStartDate(RelationType relationType, String startDateString) {
+    if (relationType != RelationType.COUPLE) {
+      return null;
+    }
+    try {
+      return LocalDate.parse(startDateString).atStartOfDay();
+    } catch (DateTimeParseException | NullPointerException e) {
+      // 커플인데 startDate null이거나 형식이 잘못된 경우
+      throw new InvalidStartDateForCoupleException();
+    }
+  }
+
+  private String generateUniqueInviteCode(Long matchId) {
+    for (int i = 0; i < 10; i++) {
+
+      String inviteCode = redisHelper.generateRandomCode();
+      if (redisHelper.setInviteCode(inviteCode, matchId)) {
+        return inviteCode;
+      }
+    }
+    throw new RuntimeException("초대 코드 생성에 10회 이상 실패했습니다.");
+  }
+
+  //가독성을 위한 private 헬퍼 메서드(매칭 조인 관련)
+  private void validateJoinAttempt(Match match, Long joinerId){
+    if (match.getStatus() != MatchStatus.WAITING){
+      throw new AlreadyInMatchException();
+    }
+    List<MatchMember> members = matchMemberRepository.findAllByMatch_Id(match.getId());
+    if (members.size() != 1){
+      throw new AlreadyInMatchException(); // 꽉 찼거나 비정상적인 방
+    }
+    if (members.get(0).getUser().getId().equals(joinerId)){
+      throw new SelfMatchNotAllowedException();
+    }
+  }
+
+  private MatchMember findPartner(Long matchId, Long joinerId) {
+    return matchMemberRepository.findAllByMatch_Id(matchId).stream()
+        .filter(member -> !member.getUser().getId().equals(joinerId))
+        .findFirst()
+        .orElseThrow(PartnerNotFoundException::new);
+  }
+}
