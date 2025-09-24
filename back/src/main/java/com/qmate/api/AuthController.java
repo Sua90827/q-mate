@@ -7,13 +7,14 @@ import com.qmate.domain.auth.model.response.LoginResponse;
 import com.qmate.domain.user.UserService;
 import com.qmate.domain.user.model.request.RegisterRequest;
 import com.qmate.domain.user.model.response.RegisterResponse;
-import com.qmate.security.context.UserContext;
+import com.qmate.security.UserPrincipal;
 import jakarta.validation.Valid;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,11 +50,11 @@ public class AuthController {
 
   @PreAuthorize("hasRole('ADMIN')")
   @GetMapping("/session")
-  public Map<String, String> session(){
-    return Map.of(
-        "userId", UserContext.getUserId(),
-        "role",   UserContext.getUserRole(),
-        "email", UserContext.getUserEmail()
-    );
+  public Map<String, Object> session(@AuthenticationPrincipal UserPrincipal me){
+    var map = new java.util.LinkedHashMap<String, Object>();
+    map.put("userId", me.userId());
+    map.put("role",   me.role());
+    if (me.email() != null) map.put("email", me.email());
+    return map;
   }
 }

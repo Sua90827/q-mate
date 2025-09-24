@@ -1,5 +1,6 @@
 package com.qmate.domain.auth;
 
+import com.qmate.security.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -68,14 +69,13 @@ public class JwtService {
     try {
       Jws<Claims> jws = Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(bearerToken);
       Claims c = jws.getBody();
-      String userId = c.getSubject();
+      Long userId = Long.valueOf(c.getSubject());
       String role = c.get("role", String.class); // "USER"/"ADMIN" 등 (접두사 없음)
       String email = c.get("email", String.class); // 없으면 null
 
+      var principal   = new UserPrincipal(userId, email, role);
       var authorities = java.util.List.of(new SimpleGrantedAuthority("ROLE_" + role));
-      var auth = new UsernamePasswordAuthenticationToken(userId, null, authorities);
-      auth.setDetails(email);
-      return auth;
+      return new UsernamePasswordAuthenticationToken(principal, null, authorities);
     } catch (Exception e) {
       return null; // 유효하지 않음 → 인증 미설정
     }
