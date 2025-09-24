@@ -5,12 +5,12 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class MatchMemberResponse {
+public class MatchMembersResponse {
 
   private final Long matchId;
   private final List<MatchMemberDetailResponse> members;
 
-  public MatchMemberResponse(Match match){
+  public MatchMembersResponse(Match match){
     this.matchId = match.getId();
     this.members = match.getMembers().stream()
         .map(matchMember -> new MatchMemberDetailResponse(matchMember.getUser()))

@@ -10,7 +10,7 @@ import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.model.response.MatchCreationResponse;
 import com.qmate.domain.match.model.response.MatchInfoResponse;
 import com.qmate.domain.match.model.response.MatchJoinResponse;
-import com.qmate.domain.match.model.response.MatchMemberResponse;
+import com.qmate.domain.match.model.response.MatchMembersResponse;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.user.User;
@@ -127,7 +127,7 @@ public class MatchService {
 
   //특정 매칭의 구성원 목록(상세 정보)을 조회합니다.
   @Transactional(readOnly = true)
-  public MatchMemberResponse getMatchMembers(Long matchId,Long userId){
+  public MatchMembersResponse getMatchMembers(Long matchId,Long userId){
     Match match = matchRepository.findWithMembersAndUsersById(matchId)
         .orElseThrow(MatchNotFoundException::new);
     boolean isMember = match.getMembers().stream()
@@ -135,7 +135,7 @@ public class MatchService {
     if (!isMember){
       throw new MatchForbiddenException();
     }
-    return new MatchMemberResponse(match);
+    return new MatchMembersResponse(match);
   }
 
 
