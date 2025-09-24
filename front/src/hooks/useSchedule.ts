@@ -1,12 +1,22 @@
 'use client';
-import { fetchScheduleList } from '@/api/schedule';
+import { fetchEventMonth, fetchScheduleList } from '@/api/schedule';
 import { ScheduleResponse } from '@/types/scheduleType';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 export const useScheduleList = () => {
   return useQuery<ScheduleResponse>({
     queryKey: ['schedule'],
     queryFn: fetchScheduleList,
+    staleTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60 * 60,
+  });
+};
+
+export const useEventMonth = (year: number, month: number) => {
+  return useQuery({
+    queryKey: ['eventMonth', year, month],
+    queryFn: () => fetchEventMonth(year, month),
+    placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 10,
     gcTime: 1000 * 60 * 60,
   });

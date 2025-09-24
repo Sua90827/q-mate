@@ -7,3 +7,14 @@ export interface Schedule {
 }
 
 export type ScheduleResponse = Schedule[];
+
+export type EventMonthResponse = {
+  year: number;
+  month: number;
+  days: EventDay[];
+};
+export type EventDay = {
+  eventId: number;
+  eventAt: string;
+  isAnniversary: boolean;
+};
