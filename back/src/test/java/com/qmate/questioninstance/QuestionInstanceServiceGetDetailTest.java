@@ -18,7 +18,7 @@ import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
 import com.qmate.domain.questioninstance.service.QuestionInstanceService;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
-import com.qmate.exception.custom.UserNotFoundException;
+import com.qmate.exception.custom.matchinstance.UserNotFoundException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
 import java.util.Optional;
