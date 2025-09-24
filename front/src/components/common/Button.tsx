@@ -14,7 +14,7 @@ const buttonVariants = cva(
         default: 'shadow-xs btn-default',
         outline: 'border-3 shadow-xs hover:bg-accent btn-outline',
         invite: 'bg-secondary text-primary py-4 shadow-md hover:bg-accent btn-invite',
-        primary: 'bg-primary text-secondary shadow-xs hover:bg-accent',
+        primary: 'bg-primary text-secondary shadow-xs hover:opacity-80',
         icon: 'hover:opacity-80',
       },
       size: {

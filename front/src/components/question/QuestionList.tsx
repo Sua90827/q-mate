@@ -4,37 +4,48 @@ import React, { useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import SearchInput from './ui/SearchInput';
 import Filter from './ui/Filter';
-import { X } from 'lucide-react';
-import { useQuestions, useCustomQuestions } from '@/hooks/useQuestions';
-import { QuestionInstance } from '@/types/questionType';
+import { useQuestions } from '@/hooks/useQuestions';
 import TrashCan from '../common/TrashCan';
+import type { QuestionList } from '@/types/questionType';
+import DeleteBtn from '../common/DeleteBtn';
+import axios from 'axios';
+import { useDeleteCustomQuestion, useFetchCustomQuestions } from '@/hooks/useCustom';
 
-export default function QuestionList() {
+export default function QuestionList({ id }: { id: number }) {
   const [queryText, setQueryText] = useState<string>('');
   const [showCustomOnly, setShowCustomOnly] = useState<boolean>(false);
   const [isDeleteMode, setIsDeleteMode] = useState<boolean>(false);
 
-  const { data: questionInstances = [] } = useQuestions();
-  const { data: customQuestions = [] } = useCustomQuestions();
+  // API 호출
+  const { data: questionResponse } = useQuestions();
+  const { data: customQuestions = [] } = useFetchCustomQuestions();
 
-  // 커스텀 질문을 일반 질문리스트 포맷으로 정규화
-  const normalizedCustomInstances: QuestionInstance[] = customQuestions.map((custom) => ({
-    questionInstanceId: -custom.questionId,
+  const questionInstances: QuestionList[] = useMemo(
+    () => questionResponse?.[0]?.content ?? [],
+    [questionResponse],
+  );
+
+  // 커스텀 질문을 QuestionList 포맷으로 변환
+  const normalizedCustomInstances: QuestionList[] = customQuestions.map((custom) => ({
+    questionInstanceId: -custom.customQuestionId, // id 충돌 방지
     deliveredAt: custom.createdAt,
     status: 'EDITABLE',
-    completedAt: '',
-    question: { questionId: custom.questionId, text: custom.text },
+    question: { questionId: custom.customQuestionId, text: custom.text },
+    completedAt: custom.updatedAt,
   }));
 
-  const totalInstances: QuestionInstance[] = useMemo(
+  // 질문 전체 합치기
+  const totalInstances: QuestionList[] = useMemo(
     () => [...questionInstances, ...normalizedCustomInstances],
     [questionInstances, normalizedCustomInstances],
   );
 
-  const filteredInstances: QuestionInstance[] = totalInstances
+  // 필터링
+  const filteredInstances: QuestionList[] = totalInstances
     .filter((instance) => instance.question.text.toLowerCase().includes(queryText.toLowerCase()))
     .filter((instance) => (showCustomOnly ? instance.status === 'EDITABLE' : true));
 
+  // 쿼리 파라미터 기반 선택 상태
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -48,13 +59,28 @@ export default function QuestionList() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
+  const {
+    mutate: deleteCustomMutate,
+    isPending: isDeleting,
+    isError: isDeleteError,
+  } = useDeleteCustomQuestion();
+
+  const handleDelete = async () => {
+    const id = 153;
+    deleteCustomMutate(id);
+    if (isDeleting) {
+    } else if (isDeleteError) {
+      //에러시 모달 추가 예정
+    }
+  };
+
   return (
     <div className="w-full h-full">
       {/* 모바일 레이아웃 */}
       <div className="sm:hidden w-full h-full py-5">
-        <div className="flex justify-between items-center h-[70px] px-4">
+        <div className="flex justify-between items-center h-[70px] px-4 ">
           <Filter setShowCustomOnly={setShowCustomOnly} />
-          <p className={`text-20 font-Gumi text-theme-primary`}>질문 리스트</p>
+          <p className="text-20 font-Gumi text-theme-primary">질문 리스트</p>
           <TrashCan onClick={() => setIsDeleteMode((prev) => !prev)} />
         </div>
         <div className="pt-10">
@@ -65,7 +91,7 @@ export default function QuestionList() {
             const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
             const itemClassName = [
               'py-4 cursor-pointer',
-              isSelected ? `font-bold bg-theme-list-active` : '',
+              isSelected ? 'font-bold bg-theme-list-active' : '',
               instance.status === 'EDITABLE'
                 ? 'text-text-secondary bg-gray font-bold'
                 : instance.status === 'PENDING'
@@ -86,7 +112,7 @@ export default function QuestionList() {
                       ? `${instance.question.text.slice(0, 16)}...`
                       : instance.question.text}
                   </p>
-                  {isDeleteMode && <X className="text-text-secondary mr-4 !w-4 !h-4" />}
+                  {isDeleteMode && <DeleteBtn onClick={handleDelete} />}
                 </div>
               </li>
             );
@@ -124,7 +150,7 @@ export default function QuestionList() {
                   {instance.question.text.length > 17
                     ? `${instance.question.text.slice(0, 16)}...`
                     : instance.question.text}
-                  {instance.status === 'EDITABLE' && <X className="mx-4 !w-4 !h-4" />}
+                  {instance.status === 'EDITABLE' && <DeleteBtn onClick={handleDelete} />}
                 </div>
               </li>
             );

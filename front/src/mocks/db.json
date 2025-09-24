@@ -1,32 +1,60 @@
 {
-  "content": [
+  "question": [
     {
-      "questionInstanceId": 1234,
-      "deliveredAt": "2025-09-11T12:00:00",
-      "status": "COMPLETED",
-      "question": { "questionId": 123, "text": "상대방의 첫 인상은 어땠나요?" },
-      "completedAt": "2025-09-11T12:45:00"
-    },
-    {
-      "questionInstanceId": 50,
-      "deliveredAt": "2025-09-11T12:00:00",
-      "status": "COMPLETED",
-      "question": { "questionId": 50, "text": "우리가 우주 여행을 간다면?" },
-      "completedAt": "2025-09-11T12:45:00"
-    },
-    {
-      "questionInstanceId": 123,
-      "deliveredAt": "2025-09-11T12:00:00",
-      "status": "PENDING",
-      "question": {
-        "questionId": 777,
-        "text": "처음 만난 날로 다시 돌아간다면 어떤 말을 할건가요?"
+      "totalElements": 3,
+      "totalPages": 1,
+      "pageable": {
+        "paged": true,
+        "pageNumber": 0,
+        "pageSize": 3,
+        "offset": 0,
+        "sort": {
+          "sorted": true,
+          "empty": false,
+          "unsorted": false
+        },
+        "unpaged": false
       },
-      "completedAt": "2025-09-11T12:45:00"
+      "size": 3,
+      "content": [
+        {
+          "questionInstanceId": 1234,
+          "deliveredAt": "2025-09-11T12:00:00",
+          "status": "COMPLETED",
+          "question": { "questionId": 123, "text": "상대방의 첫 인상은 어땠나요?" },
+          "completedAt": "2025-09-11T12:45:00"
+        },
+        {
+          "questionInstanceId": 50,
+          "deliveredAt": "2025-09-11T12:00:00",
+          "status": "COMPLETED",
+          "question": { "questionId": 50, "text": "우리가 우주 여행을 간다면?" },
+          "completedAt": "2025-09-11T12:45:00"
+        },
+        {
+          "questionInstanceId": 123,
+          "deliveredAt": "2025-09-11T12:00:00",
+          "status": "PENDING",
+          "question": {
+            "questionId": 777,
+            "text": "처음 만난 날로 다시 돌아간다면 어떤 말을 할건가요?"
+          },
+          "completedAt": "2025-09-11T12:45:00"
+        }
+      ],
+      "number": 0,
+      "sort": {
+        "sorted": true,
+        "empty": false,
+        "unsorted": false
+      },
+      "first": true,
+      "last": true,
+      "numberOfElements": 3,
+      "empty": false
     }
   ],
-
-  "contents": [
+  "answer": [
     {
       "questionInstanceId": 123,
       "matchId": 10,
@@ -37,25 +65,32 @@
         "questionId": 777,
         "sourceType": "ADMIN",
         "relationType": "COUPLE",
-        "category": { "id": 2, "name": "관계" },
+        "category": {
+          "id": 2,
+          "name": "관계"
+        },
         "text": "처음 만난 날로 다시 돌아간다면 어떤 말을 할건가요?"
       },
       "answers": [
         {
           "answerId": 456,
           "userId": 99,
-          "isMine": true,
+          "nickname": "string",
           "visible": true,
           "content": "그때 미처 말 못 했는데, 만나서 정말 반가웠어요. 다시 그 순간을 잡고 싶네요.",
-          "submittedAt": "2025-09-11T12:20:00"
+          "submittedAt": "2025-09-11T12:20:00",
+          "mine": true,
+          "isMine": true
         },
         {
           "answerId": 457,
           "userId": 100,
-          "isMine": false,
+          "nickname": "string",
           "visible": true,
           "content": "그날도 재밌었지만, 이번엔 더 신나게 놀아보자! 내가 간식까지 챙겨올게.",
-          "submittedAt": "2025-09-11T12:40:00"
+          "submittedAt": "2025-09-11T12:40:00",
+          "mine": false,
+          "isMine": false
         }
       ]
     },
@@ -69,25 +104,32 @@
         "questionId": 123,
         "sourceType": "ADMIN",
         "relationType": "COUPLE",
-        "category": { "id": 1, "name": "첫인상" },
+        "category": {
+          "id": 1,
+          "name": "첫인상"
+        },
         "text": "상대방의 첫 인상은 어땠나요?"
       },
       "answers": [
         {
           "answerId": 501,
           "userId": 99,
-          "isMine": true,
+          "nickname": "string",
           "visible": true,
           "content": "처음 봤을 때 너무 낯설었지만, 금방 편해질 거란 느낌이 들었어요.",
-          "submittedAt": "2025-09-11T12:15:00"
+          "submittedAt": "2025-09-11T12:15:00",
+          "mine": true,
+          "isMine": true
         },
         {
           "answerId": 502,
           "userId": 100,
-          "isMine": false,
+          "nickname": "string",
           "visible": true,
           "content": "처음엔 조용해 보였는데, 대화 나눠보니 유쾌해서 놀랐어요.",
-          "submittedAt": "2025-09-11T12:30:00"
+          "submittedAt": "2025-09-11T12:30:00",
+          "mine": false,
+          "isMine": false
         }
       ]
     },
@@ -101,40 +143,46 @@
         "questionId": 50,
         "sourceType": "ADMIN",
         "relationType": "COUPLE",
-        "category": { "id": 3, "name": "상상" },
+        "category": {
+          "id": 3,
+          "name": "상상"
+        },
         "text": "우리가 우주 여행을 간다면?"
       },
       "answers": [
         {
           "answerId": 503,
           "userId": 99,
-          "isMine": true,
+          "nickname": "string",
           "visible": true,
           "content": "지구를 한눈에 보는 순간 눈물이 날 것 같아요.",
-          "submittedAt": "2025-09-11T12:18:00"
+          "submittedAt": "2025-09-11T12:18:00",
+          "mine": true,
+          "isMine": true
         },
         {
           "answerId": 504,
           "userId": 100,
-          "isMine": false,
+          "nickname": "string",
           "visible": true,
           "content": "나는 우주식량보다 네가 준비한 간식이 더 기대돼.",
-          "submittedAt": "2025-09-11T12:35:00"
+          "submittedAt": "2025-09-11T12:35:00",
+          "mine": false,
+          "isMine": false
         }
       ]
     }
   ],
-
   "customs": [
     {
-      "questionId": 777,
+      "customQuestionId": 777,
       "sourceType": "CUSTOM",
       "relationType": "COUPLE",
-      "category": { "id": 3, "name": "취향" },
+      "matchId": 11,
       "text": "연인이 가장 좋아하는 음식은?",
-      "isActive": true,
-      "isEditable": true,
-      "createdAt": "2025-09-10T12:00:00"
+      "createdAt": "2025-09-10T12:00:00",
+      "updatedAt": "2025-09-10T12:00:00",
+      "isEditable": true
     }
   ]
 }

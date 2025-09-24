@@ -2,21 +2,48 @@
 import React, { useState } from 'react';
 import { Button } from '../common/Button';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/router';
+import { useCreateCustomQuestion, useUpdateCustomQuestion } from '@/hooks/useCustom';
 
 export default function Custom({ value }: { value?: string }) {
   const [text, setText] = useState(value ?? '');
   const pathName = usePathname();
   const hideLogo = pathName.startsWith('/question/list');
+  const router = useRouter();
+
+  const {
+    mutate: createCustomMutate,
+    isPending: isCreating,
+    isError: isCreateError,
+  } = useCreateCustomQuestion();
+
+  const {
+    mutate: updateCustomMutate,
+    isPending: isUpdating,
+    isError: isUpdateError,
+  } = useUpdateCustomQuestion();
+
+  const handleCreate = () => {
+    createCustomMutate({ text: text, matchId: 1 });
+    if (isCreateError) {
+    } else {
+      router.push('/record');
+    }
+  };
+
+  const handleUpdate = () => {
+    updateCustomMutate({ text: text, id: 1 });
+    if (isUpdateError) {
+    } else {
+      router.push('/question/list');
+    }
+  };
+
   return (
     <>
       {hideLogo ? null : (
         <div className="flex justify-center h-[70px] items-center sm:hidden">
-          {/* <Link href="/main" className="absolute py-5 block sm:hidden">
-          <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={94} height={30} />
-        </Link> */}
-
           <Link href="/main">
             <img alt="큐메이트" width={109} height={35} className="site-logo sm:hidden" />
           </Link>
@@ -32,13 +59,21 @@ export default function Custom({ value }: { value?: string }) {
             placeholder="내용을 입력해주세요"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="md:w-[400px] w-[310px] h-[175px] rounded-md shadow-md p-3 bg-secondary border border-gray resize-none"
+            className="md:w-[400px] w-[305px] h-[175px] rounded-md shadow-md p-3 bg-secondary border border-gray resize-none"
           />
-          <div className="pt-5 flex gap-7 justify-end">
-            <Button variant="outline" size="lg" asChild>
+          <div className="pt-5 flex gap-7 justify-end ">
+            <Button variant="outline" size="lg" asChild className="w-[140px]">
               <Link href="/record">취소하기</Link>
             </Button>
-            {value ? <Button size="lg">수정하기</Button> : <Button size="lg">등록하기</Button>}
+            {value ? (
+              <Button size="lg" className="w-[140px]" onClick={handleUpdate}>
+                수정하기
+              </Button>
+            ) : (
+              <Button size="lg" className="w-[140px]" onClick={handleCreate}>
+                등록하기
+              </Button>
+            )}
           </div>
         </div>
       </div>

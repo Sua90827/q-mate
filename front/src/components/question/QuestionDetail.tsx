@@ -1,15 +1,14 @@
 'use client';
 
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { useQuestionDetail, useCustomQuestions } from '@/hooks/useQuestions';
+import { useQuestionDetail } from '@/hooks/useQuestions';
 
 import AnswerView from './AnswerView';
 import Custom from './Custom';
-import { Answer } from '@/types/questionType';
-import { X } from 'lucide-react';
 import AnswerForm from './ui/AnswerForm';
-import { Button } from '../common/Button';
 import CloseButton from '../common/CloseButton';
+import { Answer } from '@/types/questionType';
+import { useFetchCustomQuestions } from '@/hooks/useCustom';
 
 export default function QuestionDetail() {
   const searchParams = useSearchParams();
@@ -19,13 +18,13 @@ export default function QuestionDetail() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { data: customQuestions = [] } = useCustomQuestions();
+  const { data: customQuestions = [] } = useFetchCustomQuestions();
 
   const customQuestionId =
     questionInstanceId !== null && questionInstanceId < 0 ? Math.abs(questionInstanceId) : null;
 
   const customItem = customQuestionId
-    ? customQuestions.find((q) => q.questionId === customQuestionId)
+    ? customQuestions.find((q) => q.customQuestionId === customQuestionId)
     : null;
 
   const isCustom = Boolean(customItem);
@@ -42,7 +41,7 @@ export default function QuestionDetail() {
   if (isCustom && customItem) {
     return (
       <div className="w-full h-full relative p-6 flex flex-col items-center">
-        <div className="absolute top-0 right-5">
+        <div className="absolute top-0 right-5 sm:hidden">
           <CloseButton onClick={() => router.push(pathname)} />
         </div>
 
