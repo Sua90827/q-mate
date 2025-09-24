@@ -57,8 +57,10 @@ public class MatchController {
 
 
   }
+
   /**
    * 특정 매칭의 상세 정보를 조회합니다.
+   *
    * @param matchId URL 경로에서 받아온 매칭 ID
    * @return 200 OK 상태 코드와 함께 매칭 정보 DTO를 반환
    */
@@ -66,10 +68,10 @@ public class MatchController {
   public ResponseEntity<MatchInfoResponse> getMatchInfo(
       @PathVariable Long matchId
       // @AuthenticationPrincipal UserDetailsImpl userDetails //  나중에 로그인 기능 연동
-  ){
+  ) {
     Long currentUserId = 5L;
     // 임시로 사용자 Id를 1L로 가정 Long currentUserId = userDetails.getUser().getId();
-    MatchInfoResponse response = matchService.getMatchInfo(matchId,currentUserId);
+    MatchInfoResponse response = matchService.getMatchInfo(matchId, currentUserId);
 
     return ResponseEntity.ok(response);
   }
