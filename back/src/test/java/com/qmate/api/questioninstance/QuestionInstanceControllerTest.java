@@ -1,11 +1,10 @@
-package com.qmate.questioninstance;
+package com.qmate.api.questioninstance;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.qmate.api.questioninstance.QuestionInstanceController;
 import com.qmate.domain.questioninstance.entity.InstanceStatus;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse.AnswerView;

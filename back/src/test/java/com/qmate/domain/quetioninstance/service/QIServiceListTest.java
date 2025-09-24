@@ -1,4 +1,4 @@
-package com.qmate.questioninstance;
+package com.qmate.domain.quetioninstance.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -8,7 +8,6 @@ import static org.mockito.BDDMockito.given;
 
 import com.qmate.domain.questioninstance.entity.InstanceStatus;
 import com.qmate.domain.questioninstance.model.response.QIListItem;
-import com.qmate.domain.questioninstance.repository.QuestionInstanceQueryRepository;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
 import com.qmate.domain.questioninstance.service.QuestionInstanceService;
 import com.qmate.domain.user.UserRepository;
@@ -20,7 +19,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
