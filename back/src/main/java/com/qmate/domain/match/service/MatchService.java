@@ -112,7 +112,7 @@ public class MatchService {
   //특정 매칭의 상세 정보를 조회합니다.
   @Transactional(readOnly = true)
   public MatchInfoResponse getMatchInfo(Long matchId, Long userId){
-    Match match = matchRepository.findById(matchId)
+    Match match = matchRepository.findWithMembersAndUsersById(matchId)
         .orElseThrow(MatchNotFoundException::new);
 
     boolean isMember = match.getMembers().stream()
