@@ -1,7 +1,5 @@
 package com.qmate.domain.questioninstance.model.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.qmate.domain.questioninstance.entity.InstanceStatus;
 import java.time.LocalDateTime;
@@ -15,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(Include.NON_NULL)
 public class QIDetailResponse {
 
   private Long questionInstanceId;
@@ -31,7 +28,6 @@ public class QIDetailResponse {
   @Builder
   @AllArgsConstructor
   @NoArgsConstructor
-  @JsonInclude(Include.NON_NULL)
   public static class QuestionInfo {
 
     private Long questionId;          // ADMIN 질문 id 또는 CUSTOM 질문 id
@@ -45,7 +41,6 @@ public class QIDetailResponse {
   @Builder
   @AllArgsConstructor
   @NoArgsConstructor
-  @JsonInclude(Include.NON_NULL)
   public static class CategoryInfo {
 
     private Long id;
@@ -56,7 +51,6 @@ public class QIDetailResponse {
   @Builder
   @AllArgsConstructor
   @NoArgsConstructor
-  @JsonInclude(Include.NON_NULL)
   public static class AnswerView {
 
     private Long answerId;                // 미제출이면 null

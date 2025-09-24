@@ -11,6 +11,7 @@ public class QuestionInstanceErrorCode extends ErrorCode {
   private static final String DELIVERED_AT_REQUIRED_MESSAGE = "delivered_at은 저장 전 반드시 설정되어야 합니다.";
   private static final String QUESTION_INSTANCE_NOT_FOUND_MESSAGE = "해당 질문 인스턴스를 찾을 수 없습니다.";
   private static final String FORBIDDEN_TO_ACCESS_MESSAGE = "해당 질문 인스턴스에 접근할 권한이 없습니다.";
+  private static final String INVALID_SORT_KEY_MESSAGE = "허용되지 않은 정렬 키 입니다.";
 
   public static ErrorCode invalidXor() {
     return new QuestionInstanceErrorCode(HttpStatus.BAD_REQUEST, "QI_001", INVALID_XOR_MESSAGE);
@@ -26,6 +27,10 @@ public class QuestionInstanceErrorCode extends ErrorCode {
 
   public static ErrorCode forbiddenToAccess() {
     return new QuestionInstanceErrorCode(HttpStatus.FORBIDDEN, "QI_004", FORBIDDEN_TO_ACCESS_MESSAGE);
+  }
+
+  public static ErrorCode invalidSortKey() {
+    return new QuestionInstanceErrorCode(HttpStatus.BAD_REQUEST, "QI_005", INVALID_SORT_KEY_MESSAGE);
   }
 
   private QuestionInstanceErrorCode(HttpStatus httpStatus, String code, String message) {
