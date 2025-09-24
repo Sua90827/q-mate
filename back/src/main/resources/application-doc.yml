@@ -19,6 +19,10 @@ spring:
     port: 587
     test-connection: false
 
+security:
+  jwt:
+    secret: dummy-doc-secret-32bytes-minimum-xxxxxxxxxxxxxxxx
+
 # 필요 시 springdoc 커스터마이즈(옵션)
 # springdoc:
 #   api-docs:

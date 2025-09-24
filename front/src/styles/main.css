@@ -16,16 +16,20 @@ html[data-theme='night'] {
   --deco-light: url('/images/night/night_light.png');
 }
 
-.bg-deco-web {
-  background-image: var(--deco-web);
-  background-size: cover;
-  background-position: bottom;
-}
-.bg-deco-mobile {
+.bg-deco {
   background-image: var(--deco-mobile);
   background-size: cover;
   background-position: bottom;
 }
+
+@media (min-width: 768px) {
+  .bg-deco {
+    background-image: var(--deco-web);
+    background-size: cover;
+    background-position: bottom;
+  }
+}
+
 .bg-deco-light {
   background-image: var(--deco-light);
   background-size: contain;
