@@ -4,19 +4,21 @@ import React, { useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import SearchInput from './ui/SearchInput';
 import Filter from './ui/Filter';
-import { X } from 'lucide-react';
-import { useQuestions, useCustomQuestions } from '@/hooks/useQuestions';
+import { useQuestions } from '@/hooks/useQuestions';
 import TrashCan from '../common/TrashCan';
 import type { QuestionList } from '@/types/questionType';
+import DeleteBtn from '../common/DeleteBtn';
+import axios from 'axios';
+import { useDeleteCustomQuestion, useFetchCustomQuestions } from '@/hooks/useCustom';
 
-export default function QuestionList() {
+export default function QuestionList({ id }: { id: number }) {
   const [queryText, setQueryText] = useState<string>('');
   const [showCustomOnly, setShowCustomOnly] = useState<boolean>(false);
   const [isDeleteMode, setIsDeleteMode] = useState<boolean>(false);
 
   // API 호출
   const { data: questionResponse } = useQuestions();
-  const { data: customQuestions = [] } = useCustomQuestions();
+  const { data: customQuestions = [] } = useFetchCustomQuestions();
 
   const questionInstances: QuestionList[] = useMemo(
     () => questionResponse?.[0]?.content ?? [],
@@ -57,11 +59,26 @@ export default function QuestionList() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
+  const {
+    mutate: deleteCustomMutate,
+    isPending: isDeleting,
+    isError: isDeleteError,
+  } = useDeleteCustomQuestion();
+
+  const handleDelete = async () => {
+    const id = 153;
+    deleteCustomMutate(id);
+    if (isDeleting) {
+    } else if (isDeleteError) {
+      //에러시 모달 추가 예정
+    }
+  };
+
   return (
     <div className="w-full h-full">
       {/* 모바일 레이아웃 */}
       <div className="sm:hidden w-full h-full py-5">
-        <div className="flex justify-between items-center h-[70px] px-4">
+        <div className="flex justify-between items-center h-[70px] px-4 ">
           <Filter setShowCustomOnly={setShowCustomOnly} />
           <p className="text-20 font-Gumi text-theme-primary">질문 리스트</p>
           <TrashCan onClick={() => setIsDeleteMode((prev) => !prev)} />
@@ -95,7 +112,7 @@ export default function QuestionList() {
                       ? `${instance.question.text.slice(0, 16)}...`
                       : instance.question.text}
                   </p>
-                  {isDeleteMode && <X className="text-text-secondary mr-4 !w-4 !h-4" />}
+                  {isDeleteMode && <DeleteBtn onClick={handleDelete} />}
                 </div>
               </li>
             );
@@ -133,7 +150,7 @@ export default function QuestionList() {
                   {instance.question.text.length > 17
                     ? `${instance.question.text.slice(0, 16)}...`
                     : instance.question.text}
-                  {instance.status === 'EDITABLE' && <X className="mx-4 !w-4 !h-4" />}
+                  {instance.status === 'EDITABLE' && <DeleteBtn onClick={handleDelete} />}
                 </div>
               </li>
             );

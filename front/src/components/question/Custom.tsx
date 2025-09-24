@@ -3,11 +3,43 @@ import React, { useState } from 'react';
 import { Button } from '../common/Button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/router';
+import { useCreateCustomQuestion, useUpdateCustomQuestion } from '@/hooks/useCustom';
 
 export default function Custom({ value }: { value?: string }) {
   const [text, setText] = useState(value ?? '');
   const pathName = usePathname();
   const hideLogo = pathName.startsWith('/question/list');
+  const router = useRouter();
+
+  const {
+    mutate: createCustomMutate,
+    isPending: isCreating,
+    isError: isCreateError,
+  } = useCreateCustomQuestion();
+
+  const {
+    mutate: updateCustomMutate,
+    isPending: isUpdating,
+    isError: isUpdateError,
+  } = useUpdateCustomQuestion();
+
+  const handleCreate = () => {
+    createCustomMutate({ text: text, matchId: 1 });
+    if (isCreateError) {
+    } else {
+      router.push('/record');
+    }
+  };
+
+  const handleUpdate = () => {
+    updateCustomMutate({ text: text, id: 1 });
+    if (isUpdateError) {
+    } else {
+      router.push('/question/list');
+    }
+  };
+
   return (
     <>
       {hideLogo ? null : (
@@ -34,11 +66,11 @@ export default function Custom({ value }: { value?: string }) {
               <Link href="/record">취소하기</Link>
             </Button>
             {value ? (
-              <Button size="lg" className="w-[140px]">
+              <Button size="lg" className="w-[140px]" onClick={handleUpdate}>
                 수정하기
               </Button>
             ) : (
-              <Button size="lg" className="w-[140px]">
+              <Button size="lg" className="w-[140px]" onClick={handleCreate}>
                 등록하기
               </Button>
             )}

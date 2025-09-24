@@ -1,13 +1,14 @@
 'use client';
 
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { useQuestionDetail, useCustomQuestions } from '@/hooks/useQuestions';
+import { useQuestionDetail } from '@/hooks/useQuestions';
 
 import AnswerView from './AnswerView';
 import Custom from './Custom';
 import AnswerForm from './ui/AnswerForm';
 import CloseButton from '../common/CloseButton';
 import { Answer } from '@/types/questionType';
+import { useFetchCustomQuestions } from '@/hooks/useCustom';
 
 export default function QuestionDetail() {
   const searchParams = useSearchParams();
@@ -17,7 +18,7 @@ export default function QuestionDetail() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { data: customQuestions = [] } = useCustomQuestions();
+  const { data: customQuestions = [] } = useFetchCustomQuestions();
 
   const customQuestionId =
     questionInstanceId !== null && questionInstanceId < 0 ? Math.abs(questionInstanceId) : null;
