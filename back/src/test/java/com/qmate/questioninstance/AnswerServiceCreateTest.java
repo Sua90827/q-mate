@@ -47,7 +47,7 @@ class AnswerServiceCreateTest {
     return QuestionInstance.builder()
         .id(qiId)
         .status(status)
-        .match(Match.builder().matchId(matchId).build())
+        .match(Match.builder().id(matchId).build())
         .build();
   }
 

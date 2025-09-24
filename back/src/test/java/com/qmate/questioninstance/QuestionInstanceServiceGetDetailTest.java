@@ -56,7 +56,7 @@ class QuestionInstanceServiceGetDetailTest {
       Long partnerId = 100L;
       Long matchId = 1L;
 
-      Match match = Match.builder().matchId(matchId).build();
+      Match match = Match.builder().id(matchId).build();
       QuestionInstance qi = QuestionInstance.builder()
           .id(qiId)
           .match(match)
@@ -100,7 +100,7 @@ class QuestionInstanceServiceGetDetailTest {
       Long partnerId = 100L;
       Long matchId = 2L;
 
-      Match match = Match.builder().matchId(matchId).build();
+      Match match = Match.builder().id(matchId).build();
       QuestionInstance qi = QuestionInstance.builder()
           .id(qiId)
           .match(match)
@@ -145,7 +145,7 @@ class QuestionInstanceServiceGetDetailTest {
       Long partnerId = 100L;
       Long matchId = 3L;
 
-      Match match = Match.builder().matchId(matchId).build();
+      Match match = Match.builder().id(matchId).build();
       QuestionInstance qi = QuestionInstance.builder()
           .id(qiId)
           .match(match)
@@ -201,7 +201,7 @@ class QuestionInstanceServiceGetDetailTest {
     void userNotFound() {
       Long qiId = 1L, matchId = 10L;
 
-      Match match = Match.builder().matchId(matchId).build();
+      Match match = Match.builder().id(matchId).build();
       QuestionInstance qi = QuestionInstance.builder()
           .id(qiId)
           .match(match)
@@ -223,7 +223,7 @@ class QuestionInstanceServiceGetDetailTest {
     void forbidden_hiddenAsNotFound() {
       Long qiId = 2L, matchId = 20L;
 
-      Match match = Match.builder().matchId(matchId).build();
+      Match match = Match.builder().id(matchId).build();
       QuestionInstance qi = QuestionInstance.builder()
           .id(qiId)
           .match(match)

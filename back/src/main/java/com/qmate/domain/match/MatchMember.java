@@ -60,6 +60,7 @@ public class MatchMember {
     return MatchMember.builder()
         .user(user)
         .match(match)
+        .lastAnsweredAt(LocalDateTime.now())
         .build();
   }
 }

@@ -63,11 +63,11 @@ public class MatchController {
    * @return 200 OK 상태 코드와 함께 매칭 정보 DTO를 반환
    */
   @GetMapping("{matchId}")
-  public ResponseEntity<MatchInfoResponse> getMatchIdfo(
+  public ResponseEntity<MatchInfoResponse> getMatchInfo(
       @PathVariable Long matchId
       // @AuthenticationPrincipal UserDetailsImpl userDetails //  나중에 로그인 기능 연동
   ){
-    Long currentUserId = 1L;
+    Long currentUserId = 5L;
     // 임시로 사용자 Id를 1L로 가정 Long currentUserId = userDetails.getUser().getId();
     MatchInfoResponse response = matchService.getMatchInfo(matchId,currentUserId);
 
