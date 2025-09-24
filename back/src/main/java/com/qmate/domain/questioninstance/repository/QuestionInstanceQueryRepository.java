@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface QuestionInstanceQueryRepository {
 
+  Optional<Long> findLatestNotifiedIdByMatch(Long matchId);
+
   Optional<QuestionInstance> findDetailWithQuestionAndMatch(Long qiId);
 
   Page<QIListItem> findList(
