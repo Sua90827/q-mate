@@ -2,7 +2,7 @@
 
 import { Schedule } from '@/types/scheduleType';
 
-// Date -> YYYY-MM-DD형태의 문자열로 변환
+// Date YYYY.MM.DD -> YYYY-MM-DD형태의 문자열로 변환
 // 캘린더 날짜클릭 시 일정리스트에 사용할 키값으로 사용 용도
 export const toKey = (d: Date) => {
   const y = d.getFullYear();
