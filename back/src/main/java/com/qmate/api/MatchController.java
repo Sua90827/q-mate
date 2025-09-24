@@ -5,6 +5,7 @@ import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.model.response.MatchCreationResponse;
 import com.qmate.domain.match.model.response.MatchInfoResponse;
 import com.qmate.domain.match.model.response.MatchJoinResponse;
+import com.qmate.domain.match.model.response.MatchMemberResponse;
 import com.qmate.domain.match.service.MatchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -69,10 +70,22 @@ public class MatchController {
       @PathVariable Long matchId
       // @AuthenticationPrincipal UserDetailsImpl userDetails //  나중에 로그인 기능 연동
   ) {
-    Long currentUserId = 5L;
+    Long currentUserId = 3L;
     // 임시로 사용자 Id를 1L로 가정 Long currentUserId = userDetails.getUser().getId();
     MatchInfoResponse response = matchService.getMatchInfo(matchId, currentUserId);
 
+    return ResponseEntity.ok(response);
+  }
+  //특정 매칭의 구성원 목록(상세정보)을 조회.
+  @GetMapping("/{matchId}/members")
+  public ResponseEntity<MatchMemberResponse> getMatchMembers(
+      @PathVariable Long matchId
+      // @AuthenticationPrincipal UserDetailsImpl userDetails
+  ){
+    Long currentUserId = 3L;
+    // Long currentUserId = userDetails.getUser().getId();
+
+    MatchMemberResponse response = matchService.getMatchMembers(matchId, currentUserId);
     return ResponseEntity.ok(response);
   }
 }
