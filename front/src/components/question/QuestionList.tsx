@@ -3,12 +3,12 @@
 import React, { useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import SearchInput from './ui/SearchInput';
-import Filter from './ui/Filter';
 import { useQuestions } from '@/hooks/useQuestions';
 import TrashCan from '../common/TrashCan';
 import type { QuestionList } from '@/types/questionType';
 import DeleteBtn from '../common/DeleteBtn';
 import { useDeleteCustomQuestion, useFetchCustomQuestions } from '@/hooks/useCustom';
+import FilterBtn from '../common/FilterBtn';
 
 export default function QuestionList() {
   const [queryText, setQueryText] = useState<string>('');
@@ -68,55 +68,59 @@ export default function QuestionList() {
     const id = 153;
     deleteCustomMutate(id);
     if (isDeleting) {
+      // 로딩 처리 가능
     } else if (isDeleteError) {
-      //에러시 모달 추가 예정
+      // 에러 모달 예정
     }
   };
 
   return (
-    <div className="w-full h-full  ">
+    <div className="w-full h-full">
       {/* 모바일 레이아웃 */}
-      <div className="sm:hidden w-full h-[calc(100vh-70px)]  ">
-        <div className="flex justify-between items-center h-[70px] px-4 ">
-          <Filter setShowCustomOnly={setShowCustomOnly} />
+      <div className="sm:hidden w-full h-[calc(100vh-70px)]">
+        <div className="flex justify-between items-center h-[70px] px-4">
+          <FilterBtn setShowCustomOnly={setShowCustomOnly} className="text-theme-primary" />
           <p className="text-20 font-Gumi text-theme-primary">질문 리스트</p>
           <TrashCan onClick={() => setIsDeleteMode((prev) => !prev)} />
         </div>
-        <div className="pt-10">
+        <div className="py-10">
           <SearchInput query={queryText} setQuery={setQueryText} />
         </div>
-        <ul className="mt-10 flex flex-col divide-y divide-text-secondary text-theme-primary border-y border-text-secondary overflow-y-auto">
-          {filteredInstances.map((instance) => {
-            const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
-            const itemClassName = [
-              'py-4 cursor-pointer',
-              isSelected ? 'font-bold bg-theme-list-active' : '',
-              instance.status === 'EDITABLE'
-                ? 'text-text-secondary bg-gray font-bold'
-                : instance.status === 'PENDING'
-                ? 'text-theme-accent2'
-                : '',
-            ]
-              .filter(Boolean)
-              .join(' ');
-            return (
-              <li
-                key={instance.questionInstanceId}
-                className={`${itemClassName} px-4`}
-                onClick={() => openDetailByQuery(instance.questionInstanceId)}
-              >
-                <div className="flex justify-between">
-                  <p>
-                    {instance.question.text.length > 17
-                      ? `${instance.question.text.slice(0, 16)}...`
-                      : instance.question.text}
-                  </p>
-                  {isDeleteMode && <DeleteBtn onClick={handleDelete} />}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+        <div className="bg-secondary h-[calc(100vh-177px)]">
+          <ul className="flex flex-col divide-y divide-text-secondary border-y border-text-secondary">
+            {filteredInstances.map((instance) => {
+              const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
+
+              let itemClassName = 'text-16 py-7 cursor-pointer';
+              if (isSelected) {
+                itemClassName += ' font-bold bg-theme-list-active';
+              }
+              if (instance.status === 'EDITABLE') {
+                itemClassName += ' text-text-secondary bg-gray font-bold';
+              }
+              if (instance.status === 'PENDING') {
+                itemClassName += ' text-theme-accent2';
+              }
+
+              return (
+                <li
+                  key={instance.questionInstanceId}
+                  className={`${itemClassName} px-4`}
+                  onClick={() => openDetailByQuery(instance.questionInstanceId)}
+                >
+                  <div className="flex justify-between">
+                    <p>
+                      {instance.question.text.length > 17
+                        ? `${instance.question.text.slice(0, 16)}...`
+                        : instance.question.text}
+                    </p>
+                    {isDeleteMode && <DeleteBtn onClick={handleDelete} />}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
 
       {/* 데스크탑 레이아웃 */}
@@ -126,19 +130,23 @@ export default function QuestionList() {
         </div>
         <div className="flex justify-between items-center px-4">
           <span className="inline-block text-20 font-bold py-4 cursor-default">질문 리스트</span>
-          <Filter setShowCustomOnly={setShowCustomOnly} />
+          <FilterBtn setShowCustomOnly={setShowCustomOnly} />
         </div>
-        <ul className="flex flex-col divide-y divide-gray flex-1 overflow-y-auto">
+        <ul className="flex flex-col divide-y divide-gray flex-1 overflow-y-auto border-y border-gray">
           {filteredInstances.map((instance) => {
             const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
-            const itemClassName = [
-              'py-5 cursor-pointer',
-              isSelected ? 'bg-theme-list-active' : '',
-              instance.status === 'PENDING' ? 'text-theme-accent' : '',
-              instance.status === 'EDITABLE' ? '!text-text-secondary bg-list-custom' : '',
-            ]
-              .filter(Boolean)
-              .join(' ');
+
+            let itemClassName = 'py-5 cursor-pointer';
+            if (isSelected) {
+              itemClassName += ' bg-theme-list-active';
+            }
+            if (instance.status === 'PENDING') {
+              itemClassName += ' text-theme-accent2';
+            }
+            if (instance.status === 'EDITABLE') {
+              itemClassName += ' !text-text-secondary bg-list-custom';
+            }
+
             return (
               <li
                 key={instance.questionInstanceId}
