@@ -8,19 +8,21 @@ import com.qmate.domain.match.RelationType;
 import com.qmate.domain.match.model.request.MatchCreationRequest;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.model.response.MatchCreationResponse;
+import com.qmate.domain.match.model.response.MatchInfoResponse;
 import com.qmate.domain.match.model.response.MatchJoinResponse;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
-import com.qmate.exception.custom.AlreadyInMatchException;
-import com.qmate.exception.custom.InvalidStartDateForCoupleException;
-import com.qmate.exception.custom.InviteAttemptLockedException;
-import com.qmate.exception.custom.InviteCodeExpiredException;
-import com.qmate.exception.custom.MatchNotFoundException;
-import com.qmate.exception.custom.PartnerNotFoundException;
-import com.qmate.exception.custom.SelfMatchNotAllowedException;
-import com.qmate.exception.custom.UserNotFoundException;
+import com.qmate.exception.custom.matchinstance.AlreadyInMatchException;
+import com.qmate.exception.custom.matchinstance.InvalidStartDateForCoupleException;
+import com.qmate.exception.custom.matchinstance.InviteAttemptLockedException;
+import com.qmate.exception.custom.matchinstance.InviteCodeExpiredException;
+import com.qmate.exception.custom.matchinstance.MatchForbiddenException;
+import com.qmate.exception.custom.matchinstance.MatchNotFoundException;
+import com.qmate.exception.custom.matchinstance.PartnerNotFoundException;
+import com.qmate.exception.custom.matchinstance.SelfMatchNotAllowedException;
+import com.qmate.exception.custom.matchinstance.UserNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -105,6 +107,21 @@ public class MatchService {
       }
       throw e; //5번 미만 실패 시 기존의 '유효하지 않은 코드' 예외 발생
     }
+  }
+
+  //특정 매칭의 상세 정보를 조회합니다.
+  @Transactional(readOnly = true)
+  public MatchInfoResponse getMatchInfo(Long matchId, Long userId){
+    Match match = matchRepository.findWithMembersAndUsersById(matchId)
+        .orElseThrow(MatchNotFoundException::new);
+
+    boolean isMember = match.getMembers().stream()
+        .anyMatch(matchMember -> matchMember.getUser().getId().equals(userId));
+
+    if (!isMember){
+      throw new MatchForbiddenException();
+    }
+    return new MatchInfoResponse(match);
   }
 
 
