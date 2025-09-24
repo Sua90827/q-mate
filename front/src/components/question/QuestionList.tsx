@@ -6,35 +6,44 @@ import SearchInput from './ui/SearchInput';
 import Filter from './ui/Filter';
 import { X } from 'lucide-react';
 import { useQuestions, useCustomQuestions } from '@/hooks/useQuestions';
-import { QuestionInstance } from '@/types/questionType';
 import TrashCan from '../common/TrashCan';
+import type { QuestionList } from '@/types/questionType';
 
 export default function QuestionList() {
   const [queryText, setQueryText] = useState<string>('');
   const [showCustomOnly, setShowCustomOnly] = useState<boolean>(false);
   const [isDeleteMode, setIsDeleteMode] = useState<boolean>(false);
 
-  const { data: questionInstances = [] } = useQuestions();
+  // API 호출
+  const { data: questionResponse } = useQuestions();
   const { data: customQuestions = [] } = useCustomQuestions();
 
-  // 커스텀 질문을 일반 질문리스트 포맷으로 정규화
-  const normalizedCustomInstances: QuestionInstance[] = customQuestions.map((custom) => ({
-    questionInstanceId: -custom.questionId,
+  const questionInstances: QuestionList[] = useMemo(
+    () => questionResponse?.[0]?.content ?? [],
+    [questionResponse],
+  );
+
+  // 커스텀 질문을 QuestionList 포맷으로 변환
+  const normalizedCustomInstances: QuestionList[] = customQuestions.map((custom) => ({
+    questionInstanceId: -custom.customQuestionId, // id 충돌 방지
     deliveredAt: custom.createdAt,
     status: 'EDITABLE',
-    completedAt: '',
-    question: { questionId: custom.questionId, text: custom.text },
+    question: { questionId: custom.customQuestionId, text: custom.text },
+    completedAt: custom.updatedAt,
   }));
 
-  const totalInstances: QuestionInstance[] = useMemo(
+  // 질문 전체 합치기
+  const totalInstances: QuestionList[] = useMemo(
     () => [...questionInstances, ...normalizedCustomInstances],
     [questionInstances, normalizedCustomInstances],
   );
 
-  const filteredInstances: QuestionInstance[] = totalInstances
+  // 필터링
+  const filteredInstances: QuestionList[] = totalInstances
     .filter((instance) => instance.question.text.toLowerCase().includes(queryText.toLowerCase()))
     .filter((instance) => (showCustomOnly ? instance.status === 'EDITABLE' : true));
 
+  // 쿼리 파라미터 기반 선택 상태
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -54,7 +63,7 @@ export default function QuestionList() {
       <div className="sm:hidden w-full h-full py-5">
         <div className="flex justify-between items-center h-[70px] px-4">
           <Filter setShowCustomOnly={setShowCustomOnly} />
-          <p className={`text-20 font-Gumi text-theme-primary`}>질문 리스트</p>
+          <p className="text-20 font-Gumi text-theme-primary">질문 리스트</p>
           <TrashCan onClick={() => setIsDeleteMode((prev) => !prev)} />
         </div>
         <div className="pt-10">
@@ -65,7 +74,7 @@ export default function QuestionList() {
             const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
             const itemClassName = [
               'py-4 cursor-pointer',
-              isSelected ? `font-bold bg-theme-list-active` : '',
+              isSelected ? 'font-bold bg-theme-list-active' : '',
               instance.status === 'EDITABLE'
                 ? 'text-text-secondary bg-gray font-bold'
                 : instance.status === 'PENDING'

@@ -1,20 +1,20 @@
 import {
+  AnswerResponseItem,
   CustomQuestion,
-  QuestionDetail,
-  QuestionInstance,
+  QuestionResponse,
   TodayQuestion,
 } from '@/types/questionType';
 import axios from 'axios';
 
 // 질문 리스트 가져오기
-export const fetchQuestions = async (): Promise<QuestionInstance[]> => {
-  const res = await axios.get('http://localhost:3003/content');
+export const fetchQuestions = async (): Promise<QuestionResponse[]> => {
+  const res = await axios.get('http://localhost:3003/question');
   return res.data;
 };
 
 // 답변 상세 가져오기
-export const fetchQuestionDetail = async (id: number): Promise<QuestionDetail | null> => {
-  const res = await axios.get<QuestionDetail[]>('http://localhost:3003/contents');
+export const fetchQuestionDetail = async (id: number): Promise<AnswerResponseItem | null> => {
+  const res = await axios.get<AnswerResponseItem[]>('http://localhost:3003/answer');
   return res.data.find((q) => q.questionInstanceId === id) ?? null;
 };
 
