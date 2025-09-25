@@ -11,7 +11,7 @@ export default function LoadingProvider({ children }: { children: React.ReactNod
   useEffect(() => {
     const timer = setTimeout(() => {
       setShow(false);
-    }, 1500);
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
