@@ -79,13 +79,13 @@ class QuestionRatingRepositoryTest {
 
     QuestionRating rating = new QuestionRating();
     rating.setQuestion(questionRef);
-    rating.setLiked(true); // is_like = 1
+    rating.setLike(true); // is_like = 1
 
     QuestionRating saved = repository.saveAndFlush(rating);
 
     assertThat(saved.getId()).isNotNull();
     assertThat(saved.getUserId()).isEqualTo(TEST_USER_ID);
     assertThat(saved.getCreatedAt()).isNotNull();
-    assertThat(saved.isLiked()).isTrue();
+    assertThat(saved.isLike()).isTrue();
   }
 }
