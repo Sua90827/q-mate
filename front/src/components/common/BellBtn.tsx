@@ -2,6 +2,7 @@
 import { Bell } from 'lucide-react';
 import React, { useState } from 'react';
 
+//알림 리스트 추가 필요
 export default function BellBtn() {
   const [active, setActive] = useState(false);
 
