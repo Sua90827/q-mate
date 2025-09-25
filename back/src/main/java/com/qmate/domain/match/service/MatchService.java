@@ -3,16 +3,19 @@ package com.qmate.domain.match.service;
 import com.qmate.common.redis.RedisHelper;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.MatchMember;
+import com.qmate.domain.match.MatchSetting;
 import com.qmate.domain.match.MatchStatus;
 import com.qmate.domain.match.RelationType;
 import com.qmate.domain.match.model.request.MatchCreationRequest;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
+import com.qmate.domain.match.model.request.MatchUpdateRequest;
 import com.qmate.domain.match.model.response.MatchCreationResponse;
 import com.qmate.domain.match.model.response.MatchInfoResponse;
 import com.qmate.domain.match.model.response.MatchJoinResponse;
 import com.qmate.domain.match.model.response.MatchMembersResponse;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
+import com.qmate.domain.match.repository.MatchSettingRepository;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
 import com.qmate.exception.custom.matchinstance.AlreadyInMatchException;
@@ -40,6 +43,7 @@ public class MatchService {
   private final MatchMemberRepository matchMemberRepository;
   private final UserRepository userRepository;
   private final RedisHelper redisHelper;
+  private final MatchSettingRepository matchSettingRepository;
 
   //초대 코드 생성 로직
   @Transactional
@@ -137,6 +141,29 @@ public class MatchService {
     return new MatchMembersResponse(match, userId);
   }
 
+  //매칭 정보를 선택적으로 업데이트합니다.(기념일, 질문시간)
+  @Transactional
+  public void updateMatchInfo(Long matchId, Long userId, MatchUpdateRequest request) {
+    Match match = matchRepository.findWithMembersAndUsersById(matchId)
+        .orElseThrow(MatchNotFoundException::new);
+
+    boolean isMember = match.getMembers().stream()
+        .anyMatch(matchMember -> matchMember.getUser().getId().equals(userId));
+    if (!isMember){
+      throw new MatchForbiddenException();
+    }
+    if (request.getStartDate() != null){
+      match.updateStartDate(request.getStartDate());
+    }
+    if (request.getDailyQuestionHour() != null){
+      MatchSetting matchSetting = matchSettingRepository.findByMatchId(matchId)
+          .orElseGet(() ->{
+            MatchSetting newSetting = new MatchSetting(match);
+            return matchSettingRepository.save(newSetting);
+          });
+      matchSetting.updateDailyQuestionHour(request.getDailyQuestionHour());
+    }
+  }
 
   //가독성을 위한 private 헬퍼 메서드(초대 생성 관련)
   private void validateUserNotInActiveMatch(Long userId) {

@@ -40,4 +40,15 @@ public class MatchSetting {
   @UpdateTimestamp
   @Column(name = "updated_at", nullable = false)
   private LocalDateTime updatedAt;
+
+  // Match와 함께 처음 생성될 때 사용하는 생성자
+  public MatchSetting(Match match) {
+    this.match = match;
+    this.matchId = match.getId();
+  }
+
+  // 질문 시간을 업데이트하는 전용 메서드
+  public void updateDailyQuestionHour(int hour) {
+    this.dailyQuestionHour = hour;
+  }
 }
