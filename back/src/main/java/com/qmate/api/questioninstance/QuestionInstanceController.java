@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -43,15 +44,12 @@ public class QuestionInstanceController {
           단일 질문 인스턴스의 상세 정보를 반환합니다.
           - 권한: 요청자의 currentMatchId와 해당 인스턴스의 matchId가 일치해야 함
           """,
+      security = @SecurityRequirement(name = "bearerAuth"),
       responses = {
-          @ApiResponse(responseCode = "200", description = "성공",
-              content = @Content(schema = @Schema(implementation = QIDetailResponse.class))),
-          @ApiResponse(responseCode = "401", description = "인증 실패",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "403", description = "권한 없음",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "404", description = "리소스 없음",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+          @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QIDetailResponse.class))),
+          @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "404", description = "리소스 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
       },
       parameters = {
           @Parameter(name = "questionInstanceId", description = "질문 인스턴스 ID", required = true)
@@ -77,15 +75,12 @@ public class QuestionInstanceController {
           - 필터: `notified_at IS NOT NULL` 인 레코드만 대상
           - 권한: 요청자의 currentMatchId(또는 소속)가 path의 matchId와 일치해야 함
           """,
+      security = @SecurityRequirement(name = "bearerAuth"),
       responses = {
-          @ApiResponse(responseCode = "200", description = "성공",
-              content = @Content(schema = @Schema(implementation = QIDetailResponse.class))),
-          @ApiResponse(responseCode = "401", description = "인증 실패",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "403", description = "권한 없음",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "404", description = "리소스 없음(발송 이력 없음 등)",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+          @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QIDetailResponse.class))),
+          @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "404", description = "리소스 없음(발송 이력 없음 등)", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
       },
       parameters = {
           @Parameter(name = "matchId", description = "매칭 ID", required = true)
@@ -109,15 +104,12 @@ public class QuestionInstanceController {
           - 정렬: 기본 deliveredAt 내림차순
           - 권한: 요청자의 currentMatchId와 matchId가 일치해야 함
           """,
+      security = @SecurityRequirement(name = "bearerAuth"),
       responses = {
-          @ApiResponse(responseCode = "200", description = "성공",
-              content = @Content(schema = @Schema(implementation = QIListItem.class))),
-          @ApiResponse(responseCode = "400", description = "미지원 sort 키 사용",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "401", description = "인증 실패",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "403", description = "권한 없음",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QIListItem.class))),
+          @ApiResponse(responseCode = "400", description = "미지원 sort 키 사용", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
       },
       parameters = {
           @Parameter(name = "matchId", description = "매치 ID", required = true),
