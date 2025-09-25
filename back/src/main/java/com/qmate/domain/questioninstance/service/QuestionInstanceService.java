@@ -15,6 +15,7 @@ import com.qmate.exception.custom.matchinstance.UserNotFoundException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,13 +25,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class QuestionInstanceService {
 
   private final QuestionInstanceRepository qiRepository;
   private final AnswerRepository answerRepository;
   private final UserRepository userRepository;
 
-  @Transactional(readOnly = true)
+  /**
+   * QI 상세 조회
+   *
+   * @param qiId        질문 인스턴스 ID
+   * @param requesterId 요청자(나) ID
+   * @return QIDetailResponse
+   * @throws QuestionInstanceNotFoundException    QI 없음
+   * @throws UserNotFoundException                요청자 없음
+   * @throws QuestionInstanceForbiddenException   권한 없음 (현재 매치 != QI 매치)
+   */
   public QIDetailResponse getDetail(Long qiId, Long requesterId) {
 
     // 1) QI + (question/custom + category) + match 한 번에 로드
@@ -73,6 +84,35 @@ public class QuestionInstanceService {
     );
   }
 
+  /**
+   * 매치의 최신 알림된 QI 상세 조회
+   *
+   * @param matchId     매치 ID
+   * @param requesterId 요청자(나) ID
+   * @return QIDetailResponse
+   * @throws QuestionInstanceNotFoundException    QI 없음
+   * @throws UserNotFoundException                요청자 없음
+   * @throws QuestionInstanceForbiddenException   권한 없음 (현재 매치 != QI 매치)
+   */
+  public QIDetailResponse getLatestNotified(Long matchId, Long requesterId) {
+    Long qiId = qiRepository.findLatestNotifiedIdByMatch(matchId)
+        .orElseThrow(QuestionInstanceNotFoundException::new);
+    return getDetail(qiId, requesterId);
+  }
+
+  /**
+   * QI 목록 조회
+   *
+   * @param userId    요청자(나) ID
+   * @param matchId   매치 ID (필수)
+   * @param status    질문 인스턴스 상태 (optional)
+   * @param from      deliveredAt 시작 범위 (inclusive, optional)
+   * @param to        deliveredAt 종료 범위 (exclusive, optional)
+   * @param pageable  페이지 정보
+   * @return Page&lt;QIListItem&gt;
+   * @throws UserNotFoundException                요청자 없음
+   * @throws QuestionInstanceForbiddenException   권한 없음 (현재 매치 != 조회 매치)
+   */
   @Transactional(readOnly = true)
   public Page<QIListItem> list(Long userId, Long matchId, InstanceStatus status,
       LocalDateTime from, LocalDateTime to, Pageable pageable) {

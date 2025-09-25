@@ -40,6 +40,29 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
   private final JPAQueryFactory queryFactory;
 
   /**
+   * 매치의 최신 알림된 질문 인스턴스 ID 조회
+   *
+   * @param matchId 매치 ID
+   * @return Optional&lt;Long&gt; (없으면 empty)
+   */
+  @Override
+  public Optional<Long> findLatestNotifiedIdByMatch(Long matchId) {
+    Long qiId = queryFactory
+        .select(questionInstance.id)
+        .from(questionInstance)
+        .where(
+            questionInstance.match.id.eq(matchId),
+            questionInstance.notifiedAt.isNotNull()
+        )
+        .orderBy(
+            questionInstance.notifiedAt.desc(),
+            questionInstance.id.desc()
+        )
+        .fetchFirst();
+    return Optional.ofNullable(qiId);
+  }
+
+  /**
    * 질문 인스턴스 상세 조회 (question, customQuestion, match 조인 페치)
    *
    * @param qiId 질문 인스턴스 ID

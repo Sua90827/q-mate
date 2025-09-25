@@ -10,6 +10,7 @@ import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.model.response.MatchCreationResponse;
 import com.qmate.domain.match.model.response.MatchInfoResponse;
 import com.qmate.domain.match.model.response.MatchJoinResponse;
+import com.qmate.domain.match.model.response.MatchMembersResponse;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.user.User;
@@ -66,12 +67,12 @@ public class MatchService {
   //초대 코드를 사용하여 기존 매칭에 참여 로직.
   @Transactional
   public MatchJoinResponse joinMatch(MatchJoinRequest request, Long joinerId) {
-    if (redisHelper.isLocked(joinerId)){
+    if (redisHelper.isLocked(joinerId)) {
       throw new InviteAttemptLockedException();
     }
 
     User joiner = userRepository.findById(joinerId)
-            .orElseThrow(UserNotFoundException::new);
+        .orElseThrow(UserNotFoundException::new);
     validateUserNotInActiveMatch(joinerId);
 
     String inviteCode = request.getInviteCode();
@@ -81,7 +82,7 @@ public class MatchService {
           .orElseThrow(InviteCodeExpiredException::new);
 
       Match match = matchRepository.findById(matchId)
-              .orElseThrow(MatchNotFoundException::new);
+          .orElseThrow(MatchNotFoundException::new);
 
       validateJoinAttempt(match, joinerId);
 
@@ -92,16 +93,15 @@ public class MatchService {
       MatchMember partner = findPartner(matchId, joinerId);
       redisHelper.deleteInviteCode(inviteCode);
 
-
       return MatchJoinResponse.builder()
           .matchId(matchId)
           .message("매칭에 성공적으로 참여했습니다.")
           .partnerNickname(partner.getUser().getNickname())
           .build();
-    }catch (InviteCodeExpiredException e){
+    } catch (InviteCodeExpiredException e) {
       //초대 코드가 틀렸을 때 실행되는 실패 로직
       long attempCount = redisHelper.incrementAttemptCount(joinerId);
-      if (attempCount >= 5){
+      if (attempCount >= 5) {
         redisHelper.lockUser(joinerId);
         throw new InviteAttemptLockedException();//5번 실패 시 발생
       }
@@ -111,17 +111,30 @@ public class MatchService {
 
   //특정 매칭의 상세 정보를 조회합니다.
   @Transactional(readOnly = true)
-  public MatchInfoResponse getMatchInfo(Long matchId, Long userId){
+  public MatchInfoResponse getMatchInfo(Long matchId, Long userId) {
     Match match = matchRepository.findWithMembersAndUsersById(matchId)
         .orElseThrow(MatchNotFoundException::new);
 
     boolean isMember = match.getMembers().stream()
         .anyMatch(matchMember -> matchMember.getUser().getId().equals(userId));
 
-    if (!isMember){
+    if (!isMember) {
       throw new MatchForbiddenException();
     }
-    return new MatchInfoResponse(match);
+    return new MatchInfoResponse(match, userId);
+  }
+
+  //특정 매칭의 구성원 목록(상세 정보)을 조회합니다.
+  @Transactional(readOnly = true)
+  public MatchMembersResponse getMatchMembers(Long matchId, Long userId) {
+    Match match = matchRepository.findWithMembersAndUsersById(matchId)
+        .orElseThrow(MatchNotFoundException::new);
+    boolean isMember = match.getMembers().stream()
+        .anyMatch(matchMember -> matchMember.getUser().getId().equals(userId));
+    if (!isMember) {
+      throw new MatchForbiddenException();
+    }
+    return new MatchMembersResponse(match, userId);
   }
 
 
@@ -132,6 +145,7 @@ public class MatchService {
           throw new AlreadyInMatchException();
         });
   }
+
   //커플이 아니라면 입력 필요 없어서 = return null
   private LocalDateTime parseStartDate(RelationType relationType, String startDateString) {
     if (relationType != RelationType.COUPLE) {
@@ -157,15 +171,15 @@ public class MatchService {
   }
 
   //가독성을 위한 private 헬퍼 메서드(매칭 조인 관련)
-  private void validateJoinAttempt(Match match, Long joinerId){
-    if (match.getStatus() != MatchStatus.WAITING){
+  private void validateJoinAttempt(Match match, Long joinerId) {
+    if (match.getStatus() != MatchStatus.WAITING) {
       throw new AlreadyInMatchException();
     }
     List<MatchMember> members = matchMemberRepository.findAllByMatch_Id(match.getId());
-    if (members.size() != 1){
+    if (members.size() != 1) {
       throw new AlreadyInMatchException(); // 꽉 찼거나 비정상적인 방
     }
-    if (members.get(0).getUser().getId().equals(joinerId)){
+    if (members.get(0).getUser().getId().equals(joinerId)) {
       throw new SelfMatchNotAllowedException();
     }
   }

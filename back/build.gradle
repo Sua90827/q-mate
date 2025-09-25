@@ -65,5 +65,12 @@ dependencies {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'local' // 기본 제외
+        if (project.hasProperty('includeTags')) {
+            // ./gradlew test -PincludeTags=local
+            // 필요시 위 명령어로 특정 태그 테스트 가능
+            includeTags project.property('includeTags')
+        }
+    }
 }

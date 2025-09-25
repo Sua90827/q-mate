@@ -27,7 +27,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "`user`")
+@Table(name = "`user`") // user가 예약어라 백틱 처리
 public class User {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "user_id", nullable = false)
