@@ -3,6 +3,7 @@ import '../styles/globals.css';
 import Providers from './providers';
 import BodyWrapper from './BodyWrapper';
 import NavGuard from '@/components/common/NavGuard';
+import LoadingProvider from '@/app/LoadingProvider';
 
 export const metadata: Metadata = {
   title: 'Q-mate',
@@ -33,12 +34,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="h-full">
         <BodyWrapper>
-          <Providers>
-            <div className="flex flex-col h-full">
-              <NavGuard />
-              <main className="h-full flex-1 pt-0 sm:pt-[70px] pb-[70px] sm:pb-0">{children}</main>
-            </div>
-          </Providers>
+          <LoadingProvider>
+            <Providers>
+              <div className="flex flex-col h-full">
+                <NavGuard />
+                <main className="h-full flex-1 pt-0 sm:pt-[70px] pb-[70px] sm:pb-0">
+                  {children}
+                </main>
+              </div>
+            </Providers>
+          </LoadingProvider>
         </BodyWrapper>
       </body>
     </html>

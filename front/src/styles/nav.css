@@ -13,7 +13,7 @@ html[data-theme='sunset'] .nav-item-mob.active {
   color: var(--color-sunset-active);
 }
 html[data-theme='night'] .nav-item-mob.active {
-  color: var(--color-night-active);
+  color: var(--color-night-active3);
 }
 
 /* 데스크탑 active 배경 */

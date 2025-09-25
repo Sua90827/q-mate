@@ -1,9 +1,7 @@
 import BellBtn from '@/components/common/BellBtn';
 import ScheduleListWeb from '@/components/schedule/ScheduleListWeb';
 import ScheduleView from '@/components/schedule/ScheduleView';
-import AddBtn from '@/components/schedule/ui/AddBtn';
 import { CalendarDays } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
