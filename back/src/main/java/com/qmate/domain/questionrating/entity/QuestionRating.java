@@ -46,7 +46,7 @@ public class QuestionRating {
   private Long userId;
 
   @Column(name = "is_like", nullable = false)
-  private boolean liked;
+  private boolean isLike;
 
   @CreatedDate
   @Column(name = "created_at", nullable = false, updatable = false)
