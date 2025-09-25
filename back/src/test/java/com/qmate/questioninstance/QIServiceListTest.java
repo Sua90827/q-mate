@@ -12,7 +12,7 @@ import com.qmate.domain.questioninstance.repository.QuestionInstanceQueryReposit
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
 import com.qmate.domain.questioninstance.service.QuestionInstanceService;
 import com.qmate.domain.user.UserRepository;
-import com.qmate.exception.custom.UserNotFoundException;
+import com.qmate.exception.custom.matchinstance.UserNotFoundException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import java.time.LocalDateTime;
 import java.util.Optional;
