@@ -65,9 +65,12 @@ class MatchControllerTest {
   void getMatchMembers_success_200ok() throws Exception {
     // given: 서비스가 정상적으로 MatchMembersResponse DTO를 반환하는 상황
     Long matchId = 1L;
+    Long requesterId = 1L;
+
     // 서비스가 반환할 가짜 응답 DTO를 미리 만들어둠
     var fakeResponse = new MatchMembersResponse(
-        Match.builder().id(matchId).members(List.of()).build()
+        Match.builder().id(matchId).members(List.of()).build(),
+        requesterId
     );
 
     given(matchService.getMatchMembers(anyLong(), anyLong())).willReturn(fakeResponse);
@@ -83,6 +86,8 @@ class MatchControllerTest {
   void getMatchInfo_success_200ok() throws Exception {
     // given: 서비스가 정상적으로 MatchInfoResponse DTO를 반환하는 상황
     Long matchId = 1L;
+    Long requesterId = 3L;
+
     // 서비스가 반환할 가짜 응답 DTO를 미리 만들어둠
     var fakeResponse = new MatchInfoResponse(
         Match.builder()
@@ -90,7 +95,8 @@ class MatchControllerTest {
             .relationType(RelationType.COUPLE)
             .startDate(LocalDateTime.now())
             .members(List.of()) // 테스트에서는 멤버 리스트가 비어있어도 괜찮습니다.
-            .build()
+            .build(),
+        requesterId
     );
 
     // matchService.getMatchInfo가 어떤 ID로든 호출되면, 위에서 만든 가짜 응답을 반환하도록 설정

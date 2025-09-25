@@ -10,10 +10,10 @@ public class MatchMembersResponse {
   private final Long matchId;
   private final List<MatchMemberDetailResponse> members;
 
-  public MatchMembersResponse(Match match){
+  public MatchMembersResponse(Match match, Long requesterId) {
     this.matchId = match.getId();
     this.members = match.getMembers().stream()
-        .map(matchMember -> new MatchMemberDetailResponse(matchMember.getUser()))
+        .map(matchMember -> new MatchMemberDetailResponse(matchMember.getUser(), requesterId))
         .toList();
   }
 

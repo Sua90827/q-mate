@@ -10,11 +10,13 @@ public class MatchMemberDetailResponse {
   private final Long userId;
   private final String nickname;
   private final LocalDate birthDate;
+  private final boolean isMe;
 
-  public MatchMemberDetailResponse(User user) {
+  public MatchMemberDetailResponse(User user, Long requesterId) {
     this.userId = user.getId();
     this.nickname = user.getNickname();
     this.birthDate = user.getBirthDate();
+    this.isMe = user.getId().equals(requesterId);
   }
 
 }
