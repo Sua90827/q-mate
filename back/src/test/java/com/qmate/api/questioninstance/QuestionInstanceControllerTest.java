@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.qmate.AuthTestUtils;
+import com.qmate.SecuritySliceTestConfig;
 import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse.AnswerView;
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,8 +38,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = QuestionInstanceController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
+@Import(SecuritySliceTestConfig.class)
 class QuestionInstanceControllerTest {
+
   @Autowired
   MockMvc mockMvc;
   @MockitoBean
@@ -45,7 +50,8 @@ class QuestionInstanceControllerTest {
   @BeforeEach
   void setUpSecurityContext() {
     UserPrincipal principal = new UserPrincipal(99L, "user@example.com", "USER");
-    var auth = new UsernamePasswordAuthenticationToken(principal, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+    var auth = new UsernamePasswordAuthenticationToken(principal, null,
+        List.of(new SimpleGrantedAuthority("ROLE_USER")));
     SecurityContextHolder.getContext().setAuthentication(auth);
   }
 
@@ -105,7 +111,9 @@ class QuestionInstanceControllerTest {
     when(questionInstanceService.getDetail(qiId, 1L)).thenReturn(dto);
 
     // expect
-    mockMvc.perform(get("/api/question-instances/{id}", qiId))
+    mockMvc.perform(get("/api/question-instances/{id}", qiId)
+            .with(AuthTestUtils.userPrincipal(1L)))
+
         .andExpect(status().isOk())
 
         // top-level
@@ -155,6 +163,7 @@ class QuestionInstanceControllerTest {
     given(questionInstanceService.getLatestNotified(anyLong(), anyLong())).willReturn(stub);
 
     mockMvc.perform(get("/api/matches/{matchId}/questions/today", matchId)
+            .with(AuthTestUtils.userPrincipal(1L))
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.questionInstanceId").value(555))
