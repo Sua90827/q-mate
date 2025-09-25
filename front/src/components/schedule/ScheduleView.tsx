@@ -9,6 +9,27 @@ import AddBtn from './ui/AddBtn';
 
 export default function ScheduleView() {
   const [selected, setSelected] = useState<Date | undefined>(new Date());
+
+  const currentMonth = selected ? selected.getMonth() + 1 : new Date().getMonth() + 1;
+  const currentYear = selected ? selected.getFullYear() : new Date().getFullYear();
+  const { data: monthData } = useEventMonth(currentYear, currentMonth);
+
+  const anniversarySet = useMemo(() => {
+    const s = new Set<string>();
+    monthData?.days.forEach((d) => {
+      if (d.isAnniversary) s.add(d.eventAt);
+    });
+    return s;
+  }, [monthData]);
+
+  const scheduleSet = useMemo(() => {
+    const s = new Set<string>();
+    monthData?.days.forEach((d) => {
+      if (!d.isAnniversary && !anniversarySet.has(d.eventAt)) s.add(d.eventAt);
+    });
+    return s;
+  }, [monthData, anniversarySet]);
+
   const { data, isLoading, isError } = useScheduleList();
 
   const dayItems = useMemo(() => {
@@ -17,9 +38,14 @@ export default function ScheduleView() {
   }, [data, selected]);
 
   return (
-    <div className="w-full h-full flex justify-center">
-      <div className="relative flex flex-col justify-center rounded-t-lg border shadow-sm w-full h-full sm:w-[500px] md:w-[600px] lg:w-[700px]">
-        <MainCalendar selected={selected} onSelect={(date) => date && setSelected(date)} />
+    <div className="w-full h-full flex justify-center rounded-lg">
+      <div className="relative flex flex-col justify-center rounded-lg w-full h-full sm:w-[500px] md:w-[600px] lg:w-[700px]">
+        <MainCalendar
+          selected={selected}
+          onSelect={(date) => date && setSelected(date)}
+          anniversarySet={anniversarySet}
+          scheduleSet={scheduleSet}
+        />
         <EventList
           date={selected ?? new Date()}
           items={dayItems}
