@@ -3,10 +3,12 @@ package com.qmate.api.questioninstance;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
 import com.qmate.domain.questioninstance.model.response.AnswerResponse;
 import com.qmate.domain.questioninstance.service.AnswerService;
+import com.qmate.security.UserPrincipal;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,10 +26,10 @@ public class AnswerController {
   @PostMapping("/question-instances/{questionInstanceId}/answers")
   public ResponseEntity<AnswerResponse> create(
       @PathVariable Long questionInstanceId,
-      // TODO: @AuthenticationPrincipal CustomUserDetails principal
+      @AuthenticationPrincipal UserPrincipal principal,
       @Valid @RequestBody AnswerContentRequest request
   ) {
-    Long userId = 1L; // TODO: principal.getUserId();
+    Long userId = principal.userId();
 
     AnswerResponse response = answerService.create(questionInstanceId, userId, request);
 
@@ -39,10 +41,10 @@ public class AnswerController {
   @PatchMapping("/answers/{answerId}")
   public ResponseEntity<AnswerResponse> update(
       @PathVariable Long answerId,
-      // TODO: @AuthenticationPrincipal CustomUserDetails principal
+      @AuthenticationPrincipal UserPrincipal principal,
       @Valid @RequestBody AnswerContentRequest request
   ) {
-    Long userId = 1L; // TODO: principal.getUserId();
+    Long userId = principal.userId();
 
     AnswerResponse response = answerService.update(answerId, userId, request);
     return ResponseEntity.ok(response);

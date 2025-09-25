@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-// TODO 유저 권한: 일반 사용자 (인증된 사용자)
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -61,10 +60,10 @@ public class QuestionInstanceController {
   @GetMapping("/question-instances/{questionInstanceId}")
   // @GetMapping("/question-instances/{questionInstanceId}")
   public ResponseEntity<QIDetailResponse> getDetail(
-      @PathVariable Long questionInstanceId
-      // TODO: @AuthenticationPrincipal CustomUserDetails principal
+      @PathVariable Long questionInstanceId,
+      @AuthenticationPrincipal UserPrincipal principal
   ) {
-    Long requesterId = 1L; // TODO: principal.getUserId();
+    Long requesterId = principal.userId();
     return ResponseEntity.ok(
         questionInstanceService.getDetail(questionInstanceId, requesterId)
     );
@@ -73,11 +72,11 @@ public class QuestionInstanceController {
   @Operation(
       summary = "오늘 질문 조회(가장 최근 notified 인스턴스)",
       description = """
-        해당 매칭에서 가장 최근에 알림(notified)된 질문 인스턴스를 상세 형태로 반환합니다.
-        - 의미: 엔드포인트 명은 today지만, 날짜 경계와 무관하게 `notified_at`이 가장 최신인 1건을 반환
-        - 필터: `notified_at IS NOT NULL` 인 레코드만 대상
-        - 권한: 요청자의 currentMatchId(또는 소속)가 path의 matchId와 일치해야 함
-        """,
+          해당 매칭에서 가장 최근에 알림(notified)된 질문 인스턴스를 상세 형태로 반환합니다.
+          - 의미: 엔드포인트 명은 today지만, 날짜 경계와 무관하게 `notified_at`이 가장 최신인 1건을 반환
+          - 필터: `notified_at IS NOT NULL` 인 레코드만 대상
+          - 권한: 요청자의 currentMatchId(또는 소속)가 path의 matchId와 일치해야 함
+          """,
       responses = {
           @ApiResponse(responseCode = "200", description = "성공",
               content = @Content(schema = @Schema(implementation = QIDetailResponse.class))),
@@ -131,14 +130,14 @@ public class QuestionInstanceController {
           @Parameter(
               name = "sort",
               description = """
-              정렬 키와 방향(여러 개 지정 가능).
-              - 형식: sort=`key`[,`dir`]  (dir 기본값: asc)
-              - 허용 key: deliveredAt | completedAt | status
-              - 예: sort=deliveredAt,desc&sort=status,asc
-              """,
+                  정렬 키와 방향(여러 개 지정 가능).
+                  - 형식: sort=`key`[,`dir`]  (dir 기본값: asc)
+                  - 허용 key: deliveredAt | completedAt | status
+                  - 예: sort=deliveredAt,desc&sort=status,asc
+                  """,
               array = @ArraySchema(
                   schema = @Schema(implementation = String.class,
-                      allowableValues = {"deliveredAt","completedAt","status"})
+                      allowableValues = {"deliveredAt", "completedAt", "status"})
               ),
               example = "deliveredAt,desc"
           ),
@@ -154,10 +153,10 @@ public class QuestionInstanceController {
       @RequestParam(required = false)
       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
       @PageableDefault(size = 20, sort = "deliveredAt", direction = Sort.Direction.DESC)
-      @ParameterObject Pageable pageable
-      // TODO: @AuthenticationPrincipal CustomUserDetails principal
+      @ParameterObject Pageable pageable,
+      @AuthenticationPrincipal UserPrincipal principal
   ) {
-    Long userId = 1L; // TODO: principal.getUserId();
+    Long userId = principal.userId();
     Page<QIListItem> page = questionInstanceService.list(userId, matchId, status, from, to, pageable);
     return ResponseEntity.ok(page);
   }
