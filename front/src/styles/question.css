@@ -22,7 +22,7 @@ html[data-theme='night'] .bg-theme-list-active {
   background-color: var(--color-night-list);
 }
 
-/* PENDING 상태 텍스트 색상 */
+/* 데스크탑 오늘의 질문 텍스트 색상 */
 html[data-theme='day'] .text-theme-accent {
   color: var(--color-primary);
 }
@@ -30,15 +30,15 @@ html[data-theme='sunset'] .text-theme-accent {
   color: var(--color-sunset-active);
 }
 html[data-theme='night'] .text-theme-accent {
-  color: var(--color-night-active2);
+  color: var(--color-night-active);
 }
 
-/* 포인트 색상 2*/
+/* 모바일 오늘의 질문 텍스트 색상 */
 html[data-theme='day'] .text-theme-accent2 {
   color: var(--color-primary);
 }
 html[data-theme='sunset'] .text-theme-accent2 {
-  color: var(--color-sunset-active);
+  color: var(--color-sunset-active2);
 }
 html[data-theme='night'] .text-theme-accent2 {
   color: var(--color-night-active2);

@@ -18,7 +18,7 @@ export default function ScheduleListWeb() {
   });
 
   return (
-    <div className="w-[370px] h-[550px] bg-secondary py-4 shadow-md ml-7">
+    <div className="hidden md:flex flex-col w-[420px] h-full bg-secondary py-4 shadow-md ml-7 rounded-lg">
       <h2 className="font-bold text-20 p-4">일정 전체 리스트</h2>
       <ul className="w-full border-y divide-y divide-text-gray">
         {nextSchedules.map((list) => (

@@ -1,0 +1,16 @@
+{
+  "year": 2025,
+  "month": 9,
+  "days": [
+    {
+      "eventId": 1,
+      "eventAt": "2025-09-03",
+      "isAnniversary": false
+    },
+    {
+      "eventId": 2,
+      "eventAt": "2025-09-10",
+      "isAnniversary": true
+    }
+  ]
+}
