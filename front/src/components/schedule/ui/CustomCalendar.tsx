@@ -165,13 +165,14 @@ function CalendarDayButton({
         'cursor-pointer',
         'data-[selected-single=true]:bg-primary data-[selected-single=true]:text-white',
 
-        'flex w-8 h-8 p-0 flex-col gap-1 leading-none font-normal text-sm',
+        'flex w-8 h-8 lg:w-12 lg:h-12 p-0 flex-col gap-1 leading-none font-normal text-sm',
         'rounded-full',
         'data-[selected-single=true]:rounded-full',
         '[&>span]:text-xs [&>span]:opacity-70',
         'items-center justify-center mx-auto',
         'focus:outline-none focus-visible:outline-none',
-        modifiers.today && 'bg-gray-200 text-theme-secondary hover:bg-gray-300',
+        modifiers.today &&
+          'bg-gray-200 text-theme-secondary data-[selected-single=true]:!text-white hover:bg-gray-300',
         defaultClassNames.day_button,
         className,
       )}
