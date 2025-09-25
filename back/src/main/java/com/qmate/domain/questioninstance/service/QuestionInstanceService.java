@@ -2,7 +2,7 @@ package com.qmate.domain.questioninstance.service;
 
 import com.qmate.domain.match.Match;
 import com.qmate.domain.questioninstance.entity.Answer;
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.mapper.QIDetailMapper;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse;
@@ -15,7 +15,6 @@ import com.qmate.exception.custom.matchinstance.UserNotFoundException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -74,9 +73,9 @@ public class QuestionInstanceService {
         .orElse(null);
 
     // 5) 가시성 결정 (정책)
-    InstanceStatus status = qi.getStatus();
-    boolean myVisible = status != InstanceStatus.EXPIRED;        // EXPIRED면 내 답변도 비공개/삭제
-    boolean partnerVisible = status == InstanceStatus.COMPLETED; // 완료일 때만 상대 공개
+    QuestionInstanceStatus status = qi.getStatus();
+    boolean myVisible = status != QuestionInstanceStatus.EXPIRED;        // EXPIRED면 내 답변도 비공개/삭제
+    boolean partnerVisible = status == QuestionInstanceStatus.COMPLETED; // 완료일 때만 상대 공개
 
     // 6) DTO 변환 (매퍼는 순수 변환)
     return QIDetailMapper.toResponse(
@@ -114,7 +113,7 @@ public class QuestionInstanceService {
    * @throws QuestionInstanceForbiddenException   권한 없음 (현재 매치 != 조회 매치)
    */
   @Transactional(readOnly = true)
-  public Page<QIListItem> list(Long userId, Long matchId, InstanceStatus status,
+  public Page<QIListItem> list(Long userId, Long matchId, QuestionInstanceStatus status,
       LocalDateTime from, LocalDateTime to, Pageable pageable) {
 
     // 1) 요청자 조회 및 권한 확인: 현재 매치 == 조회 매치

@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.model.response.QIListItem;
 import com.qmate.domain.questioninstance.service.QuestionInstanceService;
 import com.qmate.exception.custom.questioninstance.QIInvalidSortKeyException;
@@ -52,7 +52,7 @@ class QIControllerListTest {
       Long matchId = 10L;
       QIListItem item = new QIListItem(123L,
           LocalDateTime.parse("2025-09-11T12:00:00"),
-          InstanceStatus.COMPLETED,
+          QuestionInstanceStatus.COMPLETED,
           "상대가 가장 좋아하는 음식은?",
           LocalDateTime.parse("2025-09-11T12:45:00"));
 
@@ -84,7 +84,7 @@ class QIControllerListTest {
       Page<QIListItem> empty = Page.empty();
 
       given(questionInstanceService.list(
-          anyLong(), eq(matchId), eq(InstanceStatus.COMPLETED),
+          anyLong(), eq(matchId), eq(QuestionInstanceStatus.COMPLETED),
           any(LocalDateTime.class), any(LocalDateTime.class), any(Pageable.class)))
           .willReturn(empty);
 

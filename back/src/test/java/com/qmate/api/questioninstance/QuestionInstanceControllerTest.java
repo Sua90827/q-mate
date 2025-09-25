@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse.AnswerView;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse.CategoryInfo;
@@ -68,7 +68,7 @@ class QuestionInstanceControllerTest {
         .questionInstanceId(qiId)
         .matchId(matchId)
         .deliveredAt(deliveredAt)
-        .status(InstanceStatus.COMPLETED)
+        .status(QuestionInstanceStatus.COMPLETED)
         .completedAt(completedAt)
         .question(
             QuestionInfo.builder()

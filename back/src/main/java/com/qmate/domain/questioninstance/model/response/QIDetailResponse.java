@@ -1,7 +1,7 @@
 package com.qmate.domain.questioninstance.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ public class QIDetailResponse {
   private Long questionInstanceId;
   private Long matchId;
   private LocalDateTime deliveredAt;
-  private InstanceStatus status;     // PENDING | COMPLETED | EXPIRED
+  private QuestionInstanceStatus status;     // PENDING | COMPLETED | EXPIRED
   private LocalDateTime completedAt; // COMPLETED 시각(없으면 null)
   private QuestionInfo question;         // 질문 본문(ADMIN/CUSTOM)
   private List<AnswerView> answers;  // [내 답변, 상대 답변] 순서 권장

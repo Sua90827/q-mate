@@ -1,6 +1,6 @@
 package com.qmate.api.questioninstance;
 
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse;
 import com.qmate.domain.questioninstance.model.response.QIListItem;
 import com.qmate.domain.questioninstance.service.QuestionInstanceService;
@@ -114,7 +114,7 @@ public class QuestionInstanceController {
       parameters = {
           @Parameter(name = "matchId", description = "매치 ID", required = true),
           @Parameter(name = "status", description = "질문 인스턴스 상태 (optional)",
-              schema = @Schema(implementation = InstanceStatus.class)),
+              schema = @Schema(implementation = QuestionInstanceStatus.class)),
           @Parameter(name = "from", description = "deliveredAt 시작 범위 (inclusive, optional)",
               example = "2025-09-01T00:00:00"),
           @Parameter(name = "to", description = "deliveredAt 종료 범위 (exclusive, optional)",
@@ -139,7 +139,7 @@ public class QuestionInstanceController {
   // @GetMapping("/matches/{matchId}/question-instances")
   public ResponseEntity<Page<QIListItem>> list(
       @PathVariable Long matchId,
-      @RequestParam(required = false) InstanceStatus status,
+      @RequestParam(required = false) QuestionInstanceStatus status,
       @RequestParam(required = false)
       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
       @RequestParam(required = false)
