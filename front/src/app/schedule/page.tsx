@@ -15,16 +15,10 @@ export default function page() {
           <CalendarDays className="text-theme-primary ml-7" />
         </Link>
 
-        <Image
-          src="/images/logo/logo.svg"
-          alt="큐메이트"
-          width={109}
-          height={35}
-          className="site-logo"
-        />
+        <img alt="큐메이트" width={109} height={35} className="site-logo" />
         <BellBtn />
       </div>
-      <div className="w-full h-full flex flex-row gap-30 justify-center">
+      <div className="w-full h-full flex flex-row gap-10 justify-center">
         <ScheduleListWeb />
         <ScheduleView />
       </div>

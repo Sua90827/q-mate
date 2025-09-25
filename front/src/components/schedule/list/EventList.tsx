@@ -26,8 +26,8 @@ function EventList({ date, items, isLoading, isError }: Props) {
   }
 
   return (
-    <div className="flex-1 border-t border-black bg-white rounded-lg shadow-sm h-full px-4 overflow-hidden">
-      <h2 className="font-extrabold text-16">
+    <div className="flex-1 border-t border-text-text-primary bg-secondary shadow-sm h-full px-4 overflow-hidden">
+      <h2 className="font-extrabold text-16 mt-4">
         {date.getDate()}. {date.toLocaleString('ko-kR', { weekday: 'narrow' })}
       </h2>
       {/* 리스트 내부에 스크롤 추가 */}
@@ -35,7 +35,7 @@ function EventList({ date, items, isLoading, isError }: Props) {
         {items.length === 0 && <li>표시할 일정이 없어요.</li>}
 
         {items.map(({ eventId, title, isAnniversary, repeatType }) => (
-          <li key={eventId} className="flex items-center py-2">
+          <li key={eventId} className="flex items-center py-2 border-y">
             <span
               className={`inline-block w-1 h-12 mr-2 ${
                 isAnniversary ? 'bg-yellow-400' : 'bg-primary'

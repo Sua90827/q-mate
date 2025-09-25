@@ -2,16 +2,14 @@
 
 import React from 'react';
 import { Calendar } from '../ui/CustomCalendar';
-import { Schedule } from '@/types/scheduleType';
 
 type Props = {
   selected?: Date;
   onSelect: (date: Date | undefined) => void;
-  getDayEvents: (date: Date) => Schedule[];
 };
-export default function MainCalendar({ selected, onSelect, getDayEvents }: Props) {
+export default function MainCalendar({ selected, onSelect }: Props) {
   return (
-    <div className="flex flex-1.5 justify-center rounded-lg border shadow-sm w-full md:w-[500px]">
+    <div className="flex flex-1.5 justify-center rounded-lg border shadow-sm w-full lg:flex-1">
       <Calendar
         mode="single"
         defaultMonth={selected}
@@ -23,7 +21,7 @@ export default function MainCalendar({ selected, onSelect, getDayEvents }: Props
             const year = calendarMonth.date.getFullYear();
             const month = calendarMonth.date.getMonth() + 1;
             return (
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center mt-2">
                 <span className="text-12 text-muted-foreground">{year}</span>
                 <span className="text-24 font-semibold">{month}</span>
               </div>
