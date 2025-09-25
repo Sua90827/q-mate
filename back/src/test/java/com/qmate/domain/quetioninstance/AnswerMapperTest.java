@@ -1,4 +1,4 @@
-package com.qmate.questioninstance;
+package com.qmate.domain.quetioninstance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
