@@ -18,7 +18,11 @@ export default function MainLoading() {
         />
       </picture>
 
-      <p className="font-Gumi text-24 py-10 text-center">함께 하루를 기록해봐요!</p>
+      <p className="font-Gumi text-24 py-10 text-center">
+        오늘도 함께
+        <br />
+        하루를 기록해봐요!
+      </p>
       <Image
         src="/images/bubbley/bubbley_baby.png"
         alt="버블리 캐릭터"
