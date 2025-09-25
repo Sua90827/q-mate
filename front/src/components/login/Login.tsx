@@ -29,7 +29,7 @@ export default function Login() {
           validate={validatePassword}
           setActive={setPasswordValid}
         />
-        <Button className="w-[295px]" disabled={!isFormValid}>
+        <Button className="w-[295px]" disabled={!isFormValid} variant="primary">
           로그인
         </Button>
       </form>
@@ -40,7 +40,7 @@ export default function Login() {
         <div className="h-px flex-1 bg-dash" />
       </div>
 
-      <Button variant="outline" className="w-[295px]" asChild>
+      <Button variant="primaryOutline" className="w-[295px]" asChild>
         <Link href="/signup">회원가입</Link>
       </Button>
       <GoogleBtn />

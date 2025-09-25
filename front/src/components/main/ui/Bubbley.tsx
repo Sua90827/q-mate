@@ -1,5 +1,6 @@
+'use client';
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 type BubbleyProps = {
   exp: number;
@@ -7,13 +8,30 @@ type BubbleyProps = {
 };
 
 export default function Bubbley({ exp, className }: BubbleyProps) {
+  const [theme, setTheme] = useState<string | null>(null);
+
+  useEffect(() => {
+    const current = document.documentElement.getAttribute('data-theme');
+    setTheme(current);
+  }, []);
+
   let src = '/images/bubbley/bubbley_baby.png';
+
   if (exp < 300) {
-    src = '/images/bubbley/bubbley_baby.png';
+    src =
+      theme === 'night'
+        ? '/images/bubbley/bubbley_baby_night.png'
+        : '/images/bubbley/bubbley_baby.png';
   } else if (exp < 500) {
-    src = '/images/bubbley/bubbley_child.png';
+    src =
+      theme === 'night'
+        ? '/images/bubbley/bubbley_child_night.png'
+        : '/images/bubbley/bubbley_child.png';
   } else {
-    src = '/images/bubbley/bubbley_adult.png';
+    src =
+      theme === 'night'
+        ? '/images/bubbley/bubbley_adult_night.png'
+        : '/images/bubbley/bubbley_adult.png';
   }
   return (
     <div className={className}>

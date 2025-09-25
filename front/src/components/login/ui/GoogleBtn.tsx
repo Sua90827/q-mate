@@ -5,7 +5,11 @@ import Link from 'next/link';
 
 export default function GoogleBtn() {
   return (
-    <Button variant="outline" className="text-text-secondary border border-gray w-[295px]" asChild>
+    <Button
+      variant="icon"
+      className="text-text-secondary bg-secondary border-2 border-gray w-[295px]"
+      asChild
+    >
       <Link href="/signup/onboarding">
         <Image src="/images/social/googleLogo.png" width={20} height={20} alt="구글 로그인" />
         구글 로그인

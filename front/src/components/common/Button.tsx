@@ -12,9 +12,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: 'shadow-xs btn-default',
-        outline: 'border-3 shadow-xs hover:bg-accent btn-outline',
+        outline: 'border-2 shadow-xs hover:bg-accent btn-outline',
         invite: 'bg-secondary text-primary py-4 shadow-md hover:bg-accent btn-invite',
         primary: 'bg-primary text-secondary shadow-xs hover:opacity-80',
+        primaryOutline:
+          'border-2 shadow-xs hover:bg-accent bg-secondary border-primary text-primary',
         icon: 'hover:opacity-80',
       },
       size: {

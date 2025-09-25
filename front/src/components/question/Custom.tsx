@@ -2,8 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '../common/Button';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCreateCustomQuestion, useUpdateCustomQuestion } from '@/hooks/useCustom';
 
 export default function Custom({ value }: { value?: string }) {
