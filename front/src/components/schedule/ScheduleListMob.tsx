@@ -1,7 +1,8 @@
 'use client';
 import { useScheduleList } from '@/hooks/useSchedule';
-import { Trash2, X } from 'lucide-react';
 import React, { useState } from 'react';
+import DeleteBtn from '../common/DeleteBtn';
+import TrashCan from '../common/TrashCan';
 
 export default function ScheduleListMob() {
   const [isDelete, setIsDelete] = useState(false);
@@ -23,10 +24,7 @@ export default function ScheduleListMob() {
     <div className=" w-full h-full ">
       <div className="flex justify-center items-center h-[70px] relative">
         <p className="text-20 font-Gumi select-none">일정</p>
-        <Trash2
-          className="!w-[24px] !h-[24px] absolute right-4"
-          onClick={() => setIsDelete((prev) => !prev)}
-        />
+        <TrashCan onClick={() => setIsDelete((prev) => !prev)} />
       </div>
 
       <div>
@@ -40,7 +38,7 @@ export default function ScheduleListMob() {
                 <span className="font-bold text-16">{list.title}</span>
                 <span className="block text-text-secondary font-normal">{list.eventAt}</span>
               </div>
-              {isDelete && <X className="text-text-secondary !w-4 !h-4 mr-4" />}
+              {isDelete && <DeleteBtn />}
             </li>
           ))}
         </ul>

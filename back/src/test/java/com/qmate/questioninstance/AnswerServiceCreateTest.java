@@ -16,7 +16,7 @@ import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
 import com.qmate.domain.questioninstance.service.AnswerService;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
-import com.qmate.exception.custom.UserNotFoundException;
+import com.qmate.exception.custom.matchinstance.UserNotFoundException;
 import com.qmate.exception.custom.questioninstance.AnswerAlreadyExistsException;
 import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
@@ -47,7 +47,7 @@ class AnswerServiceCreateTest {
     return QuestionInstance.builder()
         .id(qiId)
         .status(status)
-        .match(Match.builder().matchId(matchId).build())
+        .match(Match.builder().id(matchId).build())
         .build();
   }
 

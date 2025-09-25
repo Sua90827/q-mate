@@ -15,7 +15,7 @@ export default function TrashCan({ onClick }: { onClick: ReactEventHandler }) {
         onClick?.(e);
       }}
     >
-      <Trash2 className="!w-[24px] !h-[24px]" />
+      <Trash2 className="!w-6 !h-6" />
     </Button>
   );
 }

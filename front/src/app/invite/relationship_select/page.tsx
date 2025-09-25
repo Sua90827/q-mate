@@ -1,5 +1,6 @@
 import { Button } from '@/components/common/Button';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 export default function page() {
@@ -11,11 +12,11 @@ export default function page() {
       </div>
       <Image src="/images/bubbley/bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
       <div className="mt-10 flex flex-col gap-5">
-        <Button variant="invite" className="w-[300px] z-10">
-          연인
+        <Button variant="invite" className="w-[300px] z-10" asChild>
+          <Link href="/invite/anniversary">연인</Link>
         </Button>
         <Button variant="invite" className="w-[300px] z-10">
-          친구
+          <Link href="/invite/invite">친구</Link>
         </Button>
       </div>
     </>

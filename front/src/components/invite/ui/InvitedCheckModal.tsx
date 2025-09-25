@@ -37,14 +37,14 @@ export default function InvitedCheckModal({ open, setIsOpen }: InvitedCheckModal
 
         <div className="flex justify-center gap-4 py-3">
           <Button
-            variant="outline"
+            variant="primaryOutline"
             className="w-30 h-9.5 hover:opacity-80"
             onClick={() => setIsOpen(false)}
           >
             예
           </Button>
           <Button
-            variant="default"
+            variant="primary"
             className="w-30 h-9.5 hover:opacity-80 "
             onClick={() => setIsOpen(false)}
           >
