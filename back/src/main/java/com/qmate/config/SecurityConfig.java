@@ -64,10 +64,11 @@ public class SecurityConfig {
             })
         )
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/auth/**").permitAll()
-            .requestMatchers(SWAGGER_WHITELIST).permitAll()
-            .requestMatchers("/api/admin/**").hasRole("ADMIN")
-            .anyRequest().authenticated()  // 나머지 모든 요청은 인증 필요
+//            .requestMatchers("/auth/**").permitAll()
+//            .requestMatchers(SWAGGER_WHITELIST).permitAll()
+//            .requestMatchers("/api/admin/**").hasRole("ADMIN")
+//            .anyRequest().authenticated()  // 나머지 모든 요청은 인증 필요
+                .anyRequest().permitAll()
         )
         .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);  // JWT 필터 추가
 

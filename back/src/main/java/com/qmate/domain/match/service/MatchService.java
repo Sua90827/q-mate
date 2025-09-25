@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,19 +150,25 @@ public class MatchService {
 
     boolean isMember = match.getMembers().stream()
         .anyMatch(matchMember -> matchMember.getUser().getId().equals(userId));
-    if (!isMember){
+    if (!isMember) {
       throw new MatchForbiddenException();
     }
-    if (request.getStartDate() != null){
+    if (request.getStartDate() != null) {
       match.updateStartDate(request.getStartDate());
     }
-    if (request.getDailyQuestionHour() != null){
-      MatchSetting matchSetting = matchSettingRepository.findById(matchId)
-          .orElseGet(() ->{
-            MatchSetting newSetting = new MatchSetting(match);
-            return matchSettingRepository.save(newSetting);
-          });
-      matchSetting.updateDailyQuestionHour(request.getDailyQuestionHour());
+    if (request.getDailyQuestionHour() != null) {
+      Optional<MatchSetting> optMatchSetting = matchSettingRepository.findById(matchId);
+
+      if (optMatchSetting.isPresent()) {
+        //  이미 존재한다면, 찾은 객체의 값을 업데이트합니다.
+        MatchSetting matchSetting = optMatchSetting.get();
+        matchSetting.updateDailyQuestionHour(request.getDailyQuestionHour());
+      } else {
+        //  존재하지 않는다면, 새로운 객체를 만들어서 저장합니다.
+        MatchSetting newSetting = new MatchSetting(match);
+        newSetting.updateDailyQuestionHour(request.getDailyQuestionHour());
+        matchSettingRepository.save(newSetting);
+      }
     }
   }
 
