@@ -39,7 +39,7 @@
       "eventId": "127",
       "title": "저녁 약속3",
       "eventAt": "2025-09-27",
-      "repeatType": "none",
+      "repeatType": "monthly",
       "isAnniversary": true
     },
     {
