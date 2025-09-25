@@ -18,7 +18,7 @@ export default function ScheduleView() {
 
   return (
     <div className="w-full h-full flex justify-center">
-      <div className="relative flex flex-col justify-center rounded-lg border shadow-sm w-full sm:w-[500px] h-full">
+      <div className="relative flex flex-col justify-center rounded-t-lg border shadow-sm w-full h-full sm:w-[500px] md:w-[600px] lg:w-[700px]">
         <MainCalendar selected={selected} onSelect={(date) => date && setSelected(date)} />
         <EventList
           date={selected ?? new Date()}
