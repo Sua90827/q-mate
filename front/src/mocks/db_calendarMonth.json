@@ -1,16 +1,28 @@
 {
-  "year": 2025,
-  "month": 9,
-  "days": [
-    {
-      "eventId": 1,
-      "eventAt": "2025-09-03",
-      "isAnniversary": false
-    },
-    {
-      "eventId": 2,
-      "eventAt": "2025-09-10",
-      "isAnniversary": true
-    }
-  ]
+  "calendarMonth": {
+    "year": 2025,
+    "month": 9,
+    "days": [
+      {
+        "eventId": 1,
+        "eventAt": "2025-09-03",
+        "isAnniversary": false
+      },
+      {
+        "eventId": 2,
+        "eventAt": "2025-09-10",
+        "isAnniversary": true
+      },
+      {
+        "eventId": 3,
+        "eventAt": "2025-09-27",
+        "isAnniversary": false
+      },
+      {
+        "eventId": 4,
+        "eventAt": "2025-09-27",
+        "isAnniversary": true
+      }
+    ]
+  }
 }
