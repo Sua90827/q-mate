@@ -1,5 +1,6 @@
 package com.qmate.domain.questionrating.service;
 
+import com.qmate.common.redis.rating.RedisQuestionRatingCounter;
 import com.qmate.domain.question.entity.Question;
 import com.qmate.domain.question.repository.QuestionRepository;
 import com.qmate.domain.questionrating.entity.QuestionRating;
@@ -25,6 +26,7 @@ public class QuestionRatingService {
   private final QuestionRatingRepository questionRatingRepository;
   private final QuestionRepository questionRepository;
   private final AuditorAware<Long> auditorAware;
+  private final RedisQuestionRatingCounter redisQuestionRatingCounter;
 
   public QuestionRatingResponse create(Long questionId, QuestionRatingRequest req) {
     Question q = questionRepository.findById(questionId)
@@ -39,6 +41,7 @@ public class QuestionRatingService {
 
     QuestionRating entity = QuestionRatingMapper.toEntity(req, q);
     QuestionRating saved = questionRatingRepository.save(entity);
+    redisQuestionRatingCounter.addDelta(questionId, req.getIsLike());
     return QuestionRatingMapper.toResponse(saved);
   }
 }
