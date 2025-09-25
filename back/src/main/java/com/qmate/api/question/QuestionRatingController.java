@@ -2,7 +2,9 @@ package com.qmate.api.question;
 
 import com.qmate.domain.questionrating.model.request.QuestionRatingRequest;
 import com.qmate.domain.questionrating.model.response.QuestionRatingResponse;
+import com.qmate.domain.questionrating.service.AdminRatingRebuildService;
 import com.qmate.domain.questionrating.service.QuestionRatingService;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class QuestionRatingController {
 
   private final QuestionRatingService questionRatingService;
+  private final AdminRatingRebuildService questionRatingRebuildService;
 
   @Operation(summary = "질문 평가 생성", description = "특정 질문에 대한 평가를 생성합니다.",
       responses = {
@@ -44,5 +47,19 @@ public class QuestionRatingController {
   ) {
     QuestionRatingResponse res = questionRatingService.create(questionId, request);
     return ResponseEntity.status(HttpStatus.CREATED).body(res);
+  }
+
+  @Operation(summary = "질문 평가 집계 재생성 (관리자 전용)", description = "모든 질문에 대한 평가 집계를 재생성합니다.",
+      responses = {
+          @ApiResponse(responseCode = "204", description = "재생성 성공"),
+          @ApiResponse(responseCode = "401", description = "인증 실패"),
+          @ApiResponse(responseCode = "403", description = "권한 없음"),
+          @ApiResponse(responseCode = "500", description = "재생성 중 오류 발생"),
+      }
+  )
+  @PostMapping("/admin/questions/ratings/rebuild")
+  public ResponseEntity<Void> rebuildAll() {
+    questionRatingRebuildService.rebuildAll();
+    return ResponseEntity.noContent().build();
   }
 }
