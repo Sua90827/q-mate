@@ -13,12 +13,14 @@ import com.qmate.domain.match.MatchStatus;
 import com.qmate.domain.match.RelationType;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.model.response.MatchInfoResponse;
+import com.qmate.domain.match.model.response.MatchMembersResponse;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
 import com.qmate.exception.custom.matchinstance.InviteAttemptLockedException;
 import com.qmate.exception.custom.matchinstance.MatchForbiddenException;
+import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +30,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class MatchServiceJoinTest {
+class MatchServiceTest {
 
   @InjectMocks
   private MatchService sut; // sut: System Under Test (테스트 대상 시스템)
@@ -41,6 +43,51 @@ class MatchServiceJoinTest {
   private UserRepository userRepository;
   @Mock
   private RedisHelper redisHelper;
+
+
+  @Test
+  @DisplayName("매칭 멤버 상세 조회 실패: 멤버가 아닌 사용자의 접근")
+  void getMatchMembers_fail_forbidden() {
+    // given: 3번 매칭에 3번, 4번 유저가 속해있는데, 상관없는 99번 유저가 조회를 요청한 상황
+    Long matchId = 3L;
+    Long outsiderId = 99L; // 외부인 ID
+
+    User user3 = User.builder().id(3L).build();
+    User user4 = User.builder().id(4L).build();
+    Match match = Match.builder().id(matchId).build();
+    match.addMember(MatchMember.create(user3, match));
+    match.addMember(MatchMember.create(user4, match));
+
+    // "matchRepository에서 3번 매칭을 찾아달라고 하면, 이 가짜 match 객체를 돌려줘"
+    given(matchRepository.findWithMembersAndUsersById(matchId)).willReturn(Optional.of(match));
+
+    // expect: getMatchMembers를 호출하면 MatchForbiddenException 예외가 발생해야 함
+    assertThatThrownBy(() -> sut.getMatchMembers(matchId, outsiderId))
+        .isInstanceOf(MatchForbiddenException.class);
+  }
+
+  @Test
+  @DisplayName("매칭 멤버 상세 조회 성공")
+  void getMatchMembers_success() {
+    // given: 1번 매칭에 1번, 2번 유저가 속해있고, 1번 유저가 조회를 요청한 상황
+    Long matchId = 1L;
+    Long requesterId = 1L;
+    User user1 = User.builder().id(1L).nickname("유저1").birthDate(LocalDate.of(2000, 1, 1)).build();
+    User user2 = User.builder().id(2L).nickname("유저2").birthDate(LocalDate.of(2001, 2, 2)).build();
+    Match match = Match.builder().id(matchId).build();
+    match.addMember(MatchMember.create(user1, match));
+    match.addMember(MatchMember.create(user2, match));
+
+    given(matchRepository.findWithMembersAndUsersById(matchId)).willReturn(Optional.of(match));
+
+    // when: 서비스 메서드를 실행하면
+    MatchMembersResponse response = sut.getMatchMembers(matchId, requesterId);
+
+    // then: 반환된 DTO의 내용이 정확한지 검증
+    assertThat(response.getMatchId()).isEqualTo(matchId);
+    assertThat(response.getMembers()).hasSize(2);
+    assertThat(response.getMembers().get(0).getBirthDate()).isEqualTo(LocalDate.of(2000, 1, 1));
+  }
 
 
   @Test
