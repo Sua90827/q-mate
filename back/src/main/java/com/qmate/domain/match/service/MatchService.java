@@ -156,7 +156,7 @@ public class MatchService {
       match.updateStartDate(request.getStartDate());
     }
     if (request.getDailyQuestionHour() != null){
-      MatchSetting matchSetting = matchSettingRepository.findByMatchId(matchId)
+      MatchSetting matchSetting = matchSettingRepository.findById(matchId)
           .orElseGet(() ->{
             MatchSetting newSetting = new MatchSetting(match);
             return matchSettingRepository.save(newSetting);

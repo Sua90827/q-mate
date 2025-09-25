@@ -23,7 +23,7 @@ public class MatchSetting {
 
   @Id
   @Column(name = "match_id")
-  private Long matchId;
+  private Long id;
 
   @OneToOne(fetch = FetchType.LAZY)
   @MapsId
@@ -44,7 +44,7 @@ public class MatchSetting {
   // Match와 함께 처음 생성될 때 사용하는 생성자
   public MatchSetting(Match match) {
     this.match = match;
-    this.matchId = match.getId();
+    this.id = match.getId();
   }
 
   // 질문 시간을 업데이트하는 전용 메서드

@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MatchSettingRepository extends JpaRepository<MatchSetting, Long> {
 
-  Optional<MatchSetting> findByMatchId(Long matchId);
 }
