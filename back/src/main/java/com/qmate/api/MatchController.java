@@ -2,6 +2,7 @@ package com.qmate.api;
 
 import com.qmate.domain.match.model.request.MatchCreationRequest;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
+import com.qmate.domain.match.model.request.MatchUpdateRequest;
 import com.qmate.domain.match.model.response.MatchCreationResponse;
 import com.qmate.domain.match.model.response.MatchInfoResponse;
 import com.qmate.domain.match.model.response.MatchJoinResponse;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,7 +60,6 @@ public class MatchController {
 
 
   }
-
   /**
    * 특정 매칭의 상세 정보를 조회합니다.
    *
@@ -88,4 +89,24 @@ public class MatchController {
     MatchMembersResponse response = matchService.getMatchMembers(matchId, currentUserId);
     return ResponseEntity.ok(response);
   }
+  /**특정 매칭의 정보를 업데이트(기념일, 질문 받는 시간 등)
+   * @param matchId URL 경로에서 받아온 매칭 ID
+   * @param request 업데이트할 정보가 담긴 DTO
+   * @return 200 OK 상태 코드와 함께 성공 메시지를 반환
+   */
+   @PatchMapping("/{matchId}/info")
+  public ResponseEntity<Void> updateMatchInfo(
+      @PathVariable Long matchId,
+       @RequestBody @Valid MatchUpdateRequest request
+       // @AuthenticationPrincipal UserDetailsImpl userDetails
+   ){
+     // 임시로 요청을 보낸 사용자의 ID를 3L로 가정합니다.
+     Long currentUserId = 3L;
+     // Long currentUserId = userDetails.getUser().getId();
+
+     matchService.updateMatchInfo(matchId, currentUserId,request);
+
+     // 성공적으로 처리되었지만, 별도의 응답 본문은 없다는 의미로 204 No Content를 반환
+     return ResponseEntity.noContent().build();
+   }
 }

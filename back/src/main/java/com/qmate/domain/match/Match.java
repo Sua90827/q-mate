@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +70,9 @@ public class Match {
 
   public void setStatus(MatchStatus status) {
     this.status = status;
+  }
+  public void updateStartDate(LocalDate startDate) {
+    this.startDate = startDate.atStartOfDay();
   }
 
   //정적 팩토리 메서드 추가
