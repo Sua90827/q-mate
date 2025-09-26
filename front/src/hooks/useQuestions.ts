@@ -23,11 +23,12 @@ export const useQuestionDetail = (id: number) => {
 };
 
 //오늘의 질문 hook
-export function useTodayQuestion() {
+export function useTodayQuestion(matchId: number) {
   return useQuery({
-    queryKey: ['todayQuestion'],
-    queryFn: fetchTodayQuestion,
+    queryKey: ['todayQuestion', matchId],
+    queryFn: () => fetchTodayQuestion(matchId),
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10,
+    enabled: !!matchId,
   });
 }

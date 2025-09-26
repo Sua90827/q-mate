@@ -4,6 +4,7 @@ import Providers from './providers';
 import BodyWrapper from './BodyWrapper';
 import NavGuard from '@/components/common/NavGuard';
 import LoadingProvider from '@/app/LoadingProvider';
+import Mocker from './Mocker';
 
 export const metadata: Metadata = {
   title: 'Q-mate',
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <BodyWrapper>
           <LoadingProvider>
             <Providers>
+              <Mocker />
               <div className="flex flex-col h-full">
                 <NavGuard />
                 <main className="h-full flex-1 pt-0 sm:pt-[70px] pb-[70px] sm:pb-0">

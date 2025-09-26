@@ -67,7 +67,7 @@ export interface TodayQuestion {
   matchId: number;
   deliveredAt: string;
   status: 'PENDING' | 'COMPLETED' | 'EXPIRED';
+  completedAt: string | null;
   question: Question;
-  myAnswer: string | null;
-  partnerAnswer: string | null;
+  answers: Answer[];
 }
