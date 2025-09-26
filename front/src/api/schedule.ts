@@ -7,8 +7,8 @@ export const fetchScheduleList = async (): Promise<ScheduleResponse> => {
 };
 
 export const fetchEventMonth = async (year: number, month: number): Promise<EventMonthResponse> => {
-  const res = await axios.get<EventMonthResponse>(
-    `http://localhost:3005/schedule/month?year=${year}&month=${month}`,
-  );
+  const res = await axios.get<EventMonthResponse>(`http://localhost:3006/calendarMonth`, {
+    params: { year, month },
+  });
   return res.data;
 };

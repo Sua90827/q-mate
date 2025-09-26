@@ -1,9 +1,8 @@
 import BellBtn from '@/components/common/BellBtn';
 import ScheduleListWeb from '@/components/schedule/ScheduleListWeb';
 import ScheduleView from '@/components/schedule/ScheduleView';
-import AddBtn from '@/components/schedule/ui/AddBtn';
 import { CalendarDays } from 'lucide-react';
-import Image from 'next/image';
+
 import Link from 'next/link';
 import React from 'react';
 
@@ -18,7 +17,7 @@ export default function page() {
         <img alt="큐메이트" width={109} height={35} className="site-logo" />
         <BellBtn />
       </div>
-      <div className="w-full h-full flex flex-row gap-10 justify-center">
+      <div className="w-full h-full flex flex-row gap-10 justify-center sm:pb-[70px]">
         <ScheduleListWeb />
         <ScheduleView />
       </div>

@@ -10,14 +10,14 @@
     {
       "eventId": "123",
       "title": "저녁 약속",
-      "eventAt": "2025-09-27",
+      "eventAt": "2025-09-3",
       "repeatType": "none",
       "isAnniversary": false
     },
     {
       "eventId": "124",
       "title": "저녁 약속",
-      "eventAt": "2025-09-27",
+      "eventAt": "2025-09-10",
       "repeatType": "none",
       "isAnniversary": false
     },
