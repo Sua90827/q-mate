@@ -1,6 +1,8 @@
 'use client';
 import React from 'react';
 import { Schedule } from '@/types/scheduleType';
+import LoadingDots from '@/components/common/LoadingDots';
+import { repeatTypeLabels } from '@/utils/constants/schedule';
 
 type Props = {
   date: Date;
@@ -9,22 +11,7 @@ type Props = {
   isError?: boolean;
 };
 
-const repeatTypeLabels: Record<Schedule['repeatType'], string> = {
-  none: '',
-  weekly: '매주 반복',
-  monthly: '매월 반복',
-  yearly: '매년 반복',
-};
-
 function EventList({ date, items, isLoading, isError }: Props) {
-  // if (isLoading) {
-  //   return <div>일정을 불러오는 중입니다...</div>;
-  // }
-
-  if (isError) {
-    return <div>일정을 불러오는 중 오류가 발생했습니다.</div>;
-  }
-
   return (
     <div className="flex-1 border-t flex flex-col border-text-text-primary rounded-b-lg bg-secondary shadow-sm h-full px-4 overflow-hidden">
       <h2 className="font-extrabold text-16 mt-4">
@@ -32,6 +19,7 @@ function EventList({ date, items, isLoading, isError }: Props) {
       </h2>
       {/* 리스트 내부에 스크롤 추가 */}
       <ul className="max-h- flex-1 min-h-0 overflow-y-auto">
+        {isError && <li>일정을 불러오는 중 오류가 발생했습니다.</li>}
         {isLoading ? (
           <li>일정을 불러오는 중...</li>
         ) : (
