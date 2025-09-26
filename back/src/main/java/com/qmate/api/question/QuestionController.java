@@ -1,23 +1,17 @@
 package com.qmate.api.question;
 
 import com.qmate.domain.question.entity.RelationType;
-import com.qmate.domain.question.model.request.QuestionCategoryCreateRequest;
-import com.qmate.domain.question.model.request.QuestionCategoryUpdateRequest;
 import com.qmate.domain.question.model.request.QuestionCreateRequest;
 import com.qmate.domain.question.model.request.QuestionUpdateRequest;
-import com.qmate.domain.question.model.response.QuestionCategoryResponse;
 import com.qmate.domain.question.model.response.QuestionResponse;
-import com.qmate.domain.question.service.QuestionCategoryService;
 import com.qmate.domain.question.service.QuestionService;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -28,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-// TODO 관리자 권한 설정 -> SecurityConfig에서 /admin/** 경로에 대해 관리자 권한 설정 필요
 @RestController
 @RequestMapping("/api/admin/questions")
 @RequiredArgsConstructor
