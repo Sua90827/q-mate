@@ -3,8 +3,10 @@ package com.qmate.api;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -12,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qmate.domain.match.RelationType;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
+import com.qmate.domain.match.model.request.MatchUpdateRequest;
 import com.qmate.domain.match.model.response.MatchInfoResponse;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.model.response.MatchMembersResponse;
@@ -43,6 +46,38 @@ class MatchControllerTest {
   @MockitoBean // 가짜 MatchService를 Spring에 등록
   private MatchService matchService;
 
+
+  @Test
+  @DisplayName("매칭 정보 업데이트 성공 시 204 No content 응답")
+  void updateMatchInfo_success_204noContent() throws Exception{
+    Long matchId = 3L;
+    var request = new MatchUpdateRequest();
+    request.setDailyQuestionHour(20);
+
+    // matchService.updateMatchInfo가 호출되어도 아무 일도 일어나지 않도록 설정 (void 메서드이므로)
+    willDoNothing().given(matchService).updateMatchInfo(anyLong(), anyLong(), any(MatchUpdateRequest.class));
+
+    // expect: API를 호출하면, 204 No Content 응답이 와야 함
+    mockMvc.perform(patch("/api/matches/{matchId}/info", matchId) // PATCH 요청
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isNoContent()); // 1. HTTP 상태 코드가 204 No Content인지 검증
+
+  }
+  @Test
+  @DisplayName("매칭 정보 업데이트 실패: 유효성 검증 실패 시 400 Bad Request 응답")
+  void updateMatchInfo_fail_400badRequest() throws Exception {
+    // given: @Max(23) 유효성 검증을 위반하는 요청
+    Long matchId = 3L;
+    var badRequest = new MatchUpdateRequest();
+    badRequest.setDailyQuestionHour(25); // 23을 초과하는 값
+
+    // expect: API를 호출하면, 400 Bad Request 응답이 와야 함
+    mockMvc.perform(patch("/api/matches/{matchId}/info", matchId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(badRequest)))
+        .andExpect(status().isBadRequest());
+  }
 
   @Test
   @DisplayName("매칭 멤버 상세 조회 실패: 권한 없는 접근 시 403 Forbidden 응답")

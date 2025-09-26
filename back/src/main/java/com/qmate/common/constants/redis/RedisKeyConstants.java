@@ -1,4 +1,4 @@
-package com.qmate.common.constants;
+package com.qmate.common.constants.redis;
 
 
 public class RedisKeyConstants {
