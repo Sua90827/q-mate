@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.model.response.QIListItem;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
 import com.qmate.domain.questioninstance.service.QuestionInstanceService;
@@ -91,7 +91,7 @@ public class QIServiceListTest {
           .willReturn(Optional.of(999L));
 
       assertThrows(QuestionInstanceForbiddenException.class, () ->
-          service.list(userId, matchId, InstanceStatus.COMPLETED,
+          service.list(userId, matchId, QuestionInstanceStatus.COMPLETED,
               LocalDateTime.parse("2025-09-01T00:00:00"),
               LocalDateTime.parse("2025-09-30T23:59:59"),
               PageRequest.of(0, 20)));

@@ -8,7 +8,7 @@ import com.qmate.domain.question.entity.Question;
 import com.qmate.domain.question.entity.QuestionCategory;
 import com.qmate.domain.question.entity.RelationType;
 import com.qmate.domain.questioninstance.entity.Answer;
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
 import com.qmate.domain.questioninstance.service.AnswerService;
@@ -72,7 +72,7 @@ class AnswerServiceUpdateTimestampTest {
         .match(match)
         .question(q)                 // custom_question은 null 유지 (CHECK 제약 충족)
         .deliveredAt(LocalDateTime.now()) // 필수
-        .status(InstanceStatus.PENDING)   // ‘PENDING|COMPLETED|EXPIRED’ 중 하나
+        .status(QuestionInstanceStatus.PENDING)   // ‘PENDING|COMPLETED|EXPIRED’ 중 하나
         .build();
     em.persist(qi);
 

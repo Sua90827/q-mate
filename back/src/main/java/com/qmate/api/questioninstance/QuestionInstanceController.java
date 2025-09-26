@@ -1,6 +1,6 @@
 package com.qmate.api.questioninstance;
 
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse;
 import com.qmate.domain.questioninstance.model.response.QIListItem;
 import com.qmate.domain.questioninstance.service.QuestionInstanceService;
@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-// TODO 유저 권한: 일반 사용자 (인증된 사용자)
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -44,15 +44,12 @@ public class QuestionInstanceController {
           단일 질문 인스턴스의 상세 정보를 반환합니다.
           - 권한: 요청자의 currentMatchId와 해당 인스턴스의 matchId가 일치해야 함
           """,
+      security = @SecurityRequirement(name = "bearerAuth"),
       responses = {
-          @ApiResponse(responseCode = "200", description = "성공",
-              content = @Content(schema = @Schema(implementation = QIDetailResponse.class))),
-          @ApiResponse(responseCode = "401", description = "인증 실패",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "403", description = "권한 없음",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "404", description = "리소스 없음",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+          @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QIDetailResponse.class))),
+          @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "404", description = "리소스 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
       },
       parameters = {
           @Parameter(name = "questionInstanceId", description = "질문 인스턴스 ID", required = true)
@@ -61,10 +58,10 @@ public class QuestionInstanceController {
   @GetMapping("/question-instances/{questionInstanceId}")
   // @GetMapping("/question-instances/{questionInstanceId}")
   public ResponseEntity<QIDetailResponse> getDetail(
-      @PathVariable Long questionInstanceId
-      // TODO: @AuthenticationPrincipal CustomUserDetails principal
+      @PathVariable Long questionInstanceId,
+      @AuthenticationPrincipal UserPrincipal principal
   ) {
-    Long requesterId = 1L; // TODO: principal.getUserId();
+    Long requesterId = principal.userId();
     return ResponseEntity.ok(
         questionInstanceService.getDetail(questionInstanceId, requesterId)
     );
@@ -73,20 +70,17 @@ public class QuestionInstanceController {
   @Operation(
       summary = "오늘 질문 조회(가장 최근 notified 인스턴스)",
       description = """
-        해당 매칭에서 가장 최근에 알림(notified)된 질문 인스턴스를 상세 형태로 반환합니다.
-        - 의미: 엔드포인트 명은 today지만, 날짜 경계와 무관하게 `notified_at`이 가장 최신인 1건을 반환
-        - 필터: `notified_at IS NOT NULL` 인 레코드만 대상
-        - 권한: 요청자의 currentMatchId(또는 소속)가 path의 matchId와 일치해야 함
-        """,
+          해당 매칭에서 가장 최근에 알림(notified)된 질문 인스턴스를 상세 형태로 반환합니다.
+          - 의미: 엔드포인트 명은 today지만, 날짜 경계와 무관하게 `notified_at`이 가장 최신인 1건을 반환
+          - 필터: `notified_at IS NOT NULL` 인 레코드만 대상
+          - 권한: 요청자의 currentMatchId(또는 소속)가 path의 matchId와 일치해야 함
+          """,
+      security = @SecurityRequirement(name = "bearerAuth"),
       responses = {
-          @ApiResponse(responseCode = "200", description = "성공",
-              content = @Content(schema = @Schema(implementation = QIDetailResponse.class))),
-          @ApiResponse(responseCode = "401", description = "인증 실패",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "403", description = "권한 없음",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "404", description = "리소스 없음(발송 이력 없음 등)",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+          @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QIDetailResponse.class))),
+          @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "404", description = "리소스 없음(발송 이력 없음 등)", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
       },
       parameters = {
           @Parameter(name = "matchId", description = "매칭 ID", required = true)
@@ -110,20 +104,17 @@ public class QuestionInstanceController {
           - 정렬: 기본 deliveredAt 내림차순
           - 권한: 요청자의 currentMatchId와 matchId가 일치해야 함
           """,
+      security = @SecurityRequirement(name = "bearerAuth"),
       responses = {
-          @ApiResponse(responseCode = "200", description = "성공",
-              content = @Content(schema = @Schema(implementation = QIListItem.class))),
-          @ApiResponse(responseCode = "400", description = "미지원 sort 키 사용",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "401", description = "인증 실패",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "403", description = "권한 없음",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QIListItem.class))),
+          @ApiResponse(responseCode = "400", description = "미지원 sort 키 사용", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
       },
       parameters = {
           @Parameter(name = "matchId", description = "매치 ID", required = true),
           @Parameter(name = "status", description = "질문 인스턴스 상태 (optional)",
-              schema = @Schema(implementation = InstanceStatus.class)),
+              schema = @Schema(implementation = QuestionInstanceStatus.class)),
           @Parameter(name = "from", description = "deliveredAt 시작 범위 (inclusive, optional)",
               example = "2025-09-01T00:00:00"),
           @Parameter(name = "to", description = "deliveredAt 종료 범위 (exclusive, optional)",
@@ -131,14 +122,14 @@ public class QuestionInstanceController {
           @Parameter(
               name = "sort",
               description = """
-              정렬 키와 방향(여러 개 지정 가능).
-              - 형식: sort=`key`[,`dir`]  (dir 기본값: asc)
-              - 허용 key: deliveredAt | completedAt | status
-              - 예: sort=deliveredAt,desc&sort=status,asc
-              """,
+                  정렬 키와 방향(여러 개 지정 가능).
+                  - 형식: sort=`key`[,`dir`]  (dir 기본값: asc)
+                  - 허용 key: deliveredAt | completedAt | status
+                  - 예: sort=deliveredAt,desc&sort=status,asc
+                  """,
               array = @ArraySchema(
                   schema = @Schema(implementation = String.class,
-                      allowableValues = {"deliveredAt","completedAt","status"})
+                      allowableValues = {"deliveredAt", "completedAt", "status"})
               ),
               example = "deliveredAt,desc"
           ),
@@ -148,16 +139,16 @@ public class QuestionInstanceController {
   // @GetMapping("/matches/{matchId}/question-instances")
   public ResponseEntity<Page<QIListItem>> list(
       @PathVariable Long matchId,
-      @RequestParam(required = false) InstanceStatus status,
+      @RequestParam(required = false) QuestionInstanceStatus status,
       @RequestParam(required = false)
       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
       @RequestParam(required = false)
       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
       @PageableDefault(size = 20, sort = "deliveredAt", direction = Sort.Direction.DESC)
-      @ParameterObject Pageable pageable
-      // TODO: @AuthenticationPrincipal CustomUserDetails principal
+      @ParameterObject Pageable pageable,
+      @AuthenticationPrincipal UserPrincipal principal
   ) {
-    Long userId = 1L; // TODO: principal.getUserId();
+    Long userId = principal.userId();
     Page<QIListItem> page = questionInstanceService.list(userId, matchId, status, from, to, pageable);
     return ResponseEntity.ok(page);
   }

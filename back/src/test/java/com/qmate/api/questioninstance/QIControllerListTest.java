@@ -10,7 +10,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.AuthTestUtils;
+import com.qmate.SecuritySliceTestConfig;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.model.response.QIListItem;
 import com.qmate.domain.questioninstance.service.QuestionInstanceService;
 import com.qmate.exception.custom.questioninstance.QIInvalidSortKeyException;
@@ -23,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +36,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = QuestionInstanceController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
+@Import(SecuritySliceTestConfig.class)
 class QIControllerListTest {
 
   @Autowired
@@ -52,7 +56,7 @@ class QIControllerListTest {
       Long matchId = 10L;
       QIListItem item = new QIListItem(123L,
           LocalDateTime.parse("2025-09-11T12:00:00"),
-          InstanceStatus.COMPLETED,
+          QuestionInstanceStatus.COMPLETED,
           "상대가 가장 좋아하는 음식은?",
           LocalDateTime.parse("2025-09-11T12:45:00"));
 
@@ -67,6 +71,7 @@ class QIControllerListTest {
 
       // when & then
       mvc.perform(get("/api/matches/{matchId}/question-instances", matchId)
+              .with(AuthTestUtils.userPrincipal(1L))
               .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.content[0].questionInstanceId").value(123))
@@ -84,7 +89,7 @@ class QIControllerListTest {
       Page<QIListItem> empty = Page.empty();
 
       given(questionInstanceService.list(
-          anyLong(), eq(matchId), eq(InstanceStatus.COMPLETED),
+          anyLong(), eq(matchId), eq(QuestionInstanceStatus.COMPLETED),
           any(LocalDateTime.class), any(LocalDateTime.class), any(Pageable.class)))
           .willReturn(empty);
 
@@ -96,6 +101,7 @@ class QIControllerListTest {
               .param("sort", "status,asc")
               .param("page", "0")
               .param("size", "20")
+              .with(AuthTestUtils.userPrincipal(1L))
               .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.content", hasSize(0)));
@@ -115,6 +121,7 @@ class QIControllerListTest {
           .willThrow(new QuestionInstanceForbiddenException());
 
       mvc.perform(get("/api/matches/{matchId}/question-instances", matchId)
+              .with(AuthTestUtils.userPrincipal(1L))
               .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isForbidden());
     }
@@ -130,6 +137,7 @@ class QIControllerListTest {
         .willThrow(new QIInvalidSortKeyException());
 
     mvc.perform(get("/api/matches/{matchId}/question-instances", matchId)
+            .with(AuthTestUtils.userPrincipal(1L))
             .param("sort", "unknownKey,asc")
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());

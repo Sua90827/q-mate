@@ -1,6 +1,6 @@
 package com.qmate.domain.questioninstance.repository;
 
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.model.response.QIListItem;
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ public interface QuestionInstanceQueryRepository {
 
   Page<QIListItem> findList(
       Long matchId,
-      InstanceStatus status,
+      QuestionInstanceStatus status,
       LocalDateTime from,
       LocalDateTime to,
       Pageable pageable

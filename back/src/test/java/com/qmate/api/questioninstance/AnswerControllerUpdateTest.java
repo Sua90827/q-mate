@@ -12,6 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.qmate.AuthTestUtils;
+import com.qmate.SecuritySliceTestConfig;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
 import com.qmate.domain.questioninstance.model.response.AnswerResponse;
 import com.qmate.domain.questioninstance.service.AnswerService;
@@ -25,12 +27,14 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = AnswerController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
+@Import(SecuritySliceTestConfig.class)
 class AnswerControllerUpdateTest {
 
   @Autowired
@@ -56,6 +60,7 @@ class AnswerControllerUpdateTest {
         .willReturn(res);
 
     mockMvc.perform(patch("/api/answers/{answerId}", answerId)
+            .with(AuthTestUtils.userPrincipal(1L))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isOk())
@@ -77,6 +82,7 @@ class AnswerControllerUpdateTest {
 
     mockMvc.perform(
             patch("/api/answers/{answerId}", 1L)
+                .with(AuthTestUtils.userPrincipal(1L))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
         .andExpect(status().isBadRequest());
@@ -95,6 +101,7 @@ class AnswerControllerUpdateTest {
 
     // expect
     mockMvc.perform(patch("/api/answers/{answerId}", answerId)
+            .with(AuthTestUtils.userPrincipal(1L))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isLocked());
@@ -111,6 +118,7 @@ class AnswerControllerUpdateTest {
 
     // expect
     mockMvc.perform(patch("/api/answers/{answerId}", answerId)
+            .with(AuthTestUtils.userPrincipal(1L))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isNotFound());
@@ -127,6 +135,7 @@ class AnswerControllerUpdateTest {
 
     // expect
     mockMvc.perform(patch("/api/answers/{answerId}", answerId)
+            .with(AuthTestUtils.userPrincipal(1L))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isForbidden());
