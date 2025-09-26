@@ -12,7 +12,7 @@ type Props = {
 };
 export default function MainCalendar({ selected, onSelect, anniversarySet, scheduleSet }: Props) {
   return (
-    <div className="flex flex-1 lg:flex-2 justify-center w-full">
+    <div className="flex flex-1 sm:flex-2 justify-center w-full">
       <Calendar
         mode="single"
         defaultMonth={selected}
