@@ -7,7 +7,7 @@ import static com.qmate.domain.question.entity.QQuestionCategory.questionCategor
 import static com.qmate.domain.questioninstance.entity.QQuestionInstance.questionInstance;
 import static com.qmate.domain.match.QMatch.match;
 
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.model.response.QIListItem;
 import com.qmate.domain.questioninstance.model.response.QQIListItem;
@@ -17,7 +17,6 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,6 +37,29 @@ import org.springframework.stereotype.Repository;
 public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQueryRepository {
 
   private final JPAQueryFactory queryFactory;
+
+  /**
+   * 매치의 최신 알림된 질문 인스턴스 ID 조회
+   *
+   * @param matchId 매치 ID
+   * @return Optional&lt;Long&gt; (없으면 empty)
+   */
+  @Override
+  public Optional<Long> findLatestNotifiedIdByMatch(Long matchId) {
+    Long qiId = queryFactory
+        .select(questionInstance.id)
+        .from(questionInstance)
+        .where(
+            questionInstance.match.id.eq(matchId),
+            questionInstance.notifiedAt.isNotNull()
+        )
+        .orderBy(
+            questionInstance.notifiedAt.desc(),
+            questionInstance.id.desc()
+        )
+        .fetchFirst();
+    return Optional.ofNullable(qiId);
+  }
 
   /**
    * 질문 인스턴스 상세 조회 (question, customQuestion, match 조인 페치)
@@ -72,7 +94,7 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
   @Override
   public Page<QIListItem> findList(
       Long matchId,
-      InstanceStatus status,         // optional
+      QuestionInstanceStatus status,         // optional
       LocalDateTime from,            // optional: deliveredAt >= from
       LocalDateTime to,              // optional: deliveredAt <  to
       Pageable pageable
@@ -116,7 +138,7 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
   }
 
   // ---- Predicates (nullable → 무시) ----
-  private BooleanExpression statusEq(InstanceStatus status) {
+  private BooleanExpression statusEq(QuestionInstanceStatus status) {
     return status == null ? null : questionInstance.status.eq(status);
   }
 

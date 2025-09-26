@@ -1,7 +1,7 @@
 package com.qmate.domain.questioninstance.service;
 
 import com.qmate.domain.questioninstance.entity.Answer;
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.mapper.AnswerMapper;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
@@ -49,9 +49,9 @@ public class AnswerService {
     }
 
     // 3) 상태 검증
-    InstanceStatus status = qi.getStatus();
+    QuestionInstanceStatus status = qi.getStatus();
     // PENDING만 통과
-    if (status != InstanceStatus.PENDING) {
+    if (status != QuestionInstanceStatus.PENDING) {
       throw new AnswerCannotModifyException();
     }
 
@@ -90,9 +90,9 @@ public class AnswerService {
     }
 
     // 3) 상태 검증
-    InstanceStatus status = answer.getQuestionInstance().getStatus();
+    QuestionInstanceStatus status = answer.getQuestionInstance().getStatus();
     // PENDING만 통과
-    if (status != InstanceStatus.PENDING) {
+    if (status != QuestionInstanceStatus.PENDING) {
       throw new AnswerCannotModifyException();
     }
 

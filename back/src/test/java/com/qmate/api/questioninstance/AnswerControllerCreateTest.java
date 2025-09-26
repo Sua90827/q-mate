@@ -1,18 +1,18 @@
-package com.qmate.questioninstance;
+package com.qmate.api.questioninstance;
 
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.qmate.api.questioninstance.AnswerController;
+import com.qmate.AuthTestUtils;
+import com.qmate.SecuritySliceTestConfig;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
 import com.qmate.domain.questioninstance.model.response.AnswerResponse;
 import com.qmate.domain.questioninstance.service.AnswerService;
@@ -21,17 +21,26 @@ import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @WebMvcTest(controllers = AnswerController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
+@Import(SecuritySliceTestConfig.class)
 class AnswerControllerCreateTest {
 
   @Autowired
@@ -60,6 +69,7 @@ class AnswerControllerCreateTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
+            .with(AuthTestUtils.userPrincipal(1L))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isCreated())
@@ -78,6 +88,7 @@ class AnswerControllerCreateTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", 1L)
+            .with(AuthTestUtils.userPrincipal(1L))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(bad)))
         .andExpect(status().isBadRequest());
@@ -94,6 +105,7 @@ class AnswerControllerCreateTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
+            .with(AuthTestUtils.userPrincipal(1L))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isForbidden());
@@ -110,6 +122,7 @@ class AnswerControllerCreateTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
+            .with(AuthTestUtils.userPrincipal(1L))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isLocked());
@@ -126,6 +139,7 @@ class AnswerControllerCreateTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
+            .with(AuthTestUtils.userPrincipal(1L))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isConflict());
@@ -142,6 +156,7 @@ class AnswerControllerCreateTest {
 
     // expect
     mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
+            .with(AuthTestUtils.userPrincipal(1L))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isNotFound());

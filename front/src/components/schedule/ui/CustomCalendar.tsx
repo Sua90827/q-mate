@@ -36,11 +36,12 @@ function Calendar({
         ...formatters,
       }}
       classNames={{
+        month_grid: cn('h-full', defaultClassNames.month_grid),
         root: cn('w-fit', defaultClassNames.root),
         months: cn('flex gap-4 flex-col md:flex-row relative', defaultClassNames.months),
         month: cn('flex flex-col w-full gap-4', defaultClassNames.month),
         nav: cn(
-          'flex items-center gap-1 w-full absolute top-0 inset-x-0 justify-between',
+          'flex items-center gap-1 w-full absolute top-4 inset-x-0 justify-between',
           defaultClassNames.nav,
         ),
         button_previous: cn(
@@ -79,14 +80,17 @@ function Calendar({
           'text-muted-foreground font-normal text-[0.8rem] select-none h-9 grid place-items-center',
           defaultClassNames.weekday,
         ),
-        week: cn('grid grid-cols-7 w-full gap-1', defaultClassNames.week),
+        week: cn(
+          'grid grid-cols-7 w-full place-items-center justify-center',
+          defaultClassNames.week,
+        ),
         week_number_header: cn('select-none w-(--cell-size)', defaultClassNames.week_number_header),
         week_number: cn(
           'text-[0.8rem] select-none text-muted-foreground',
           defaultClassNames.week_number,
         ),
         day: cn(
-          'relative p-0 text-center group/day select-none grid place-items-center aspect-square',
+          'relative p-0 text-center group/day select-none grid place-items-center w-full aspect-square',
           defaultClassNames.day,
         ),
         range_start: cn('bg-accent', defaultClassNames.range_start),
@@ -163,7 +167,7 @@ function CalendarDayButton({
       data-range-middle={modifiers.range_middle}
       className={cn(
         'cursor-pointer',
-        'data-[selected-single=true]:bg-primary data-[selected-single=true]:text-white',
+        'data-[selected-single=true]:bg-calendar data-[selected-single=true]:text-theme-primary',
 
         'flex w-8 h-8 lg:w-12 lg:h-12 p-0 flex-col gap-1 leading-none font-normal text-sm',
         'rounded-full',

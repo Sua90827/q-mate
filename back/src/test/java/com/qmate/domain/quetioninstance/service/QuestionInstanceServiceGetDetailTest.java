@@ -1,4 +1,4 @@
-package com.qmate.questioninstance;
+package com.qmate.domain.quetioninstance.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import com.qmate.domain.match.Match;
 import com.qmate.domain.questioninstance.entity.Answer;
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.mapper.QIDetailMapper;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse;
@@ -60,7 +60,7 @@ class QuestionInstanceServiceGetDetailTest {
       QuestionInstance qi = QuestionInstance.builder()
           .id(qiId)
           .match(match)
-          .status(InstanceStatus.PENDING)
+          .status(QuestionInstanceStatus.PENDING)
           .build();
       User me = User.builder().id(meId).currentMatchId(matchId).build();
       User partner = User.builder().id(partnerId).currentMatchId(matchId).build();
@@ -78,7 +78,7 @@ class QuestionInstanceServiceGetDetailTest {
       QIDetailResponse expected = QIDetailResponse.builder()
           .questionInstanceId(qiId)
           .matchId(matchId)
-          .status(InstanceStatus.PENDING)
+          .status(QuestionInstanceStatus.PENDING)
           .build();
 
       try (MockedStatic<QIDetailMapper> mocked = mockStatic(QIDetailMapper.class)) {
@@ -104,7 +104,7 @@ class QuestionInstanceServiceGetDetailTest {
       QuestionInstance qi = QuestionInstance.builder()
           .id(qiId)
           .match(match)
-          .status(InstanceStatus.COMPLETED)
+          .status(QuestionInstanceStatus.COMPLETED)
           .build();
       User me = User.builder().id(meId).currentMatchId(matchId).build();
       User partner = User.builder().id(partnerId).currentMatchId(matchId).build();
@@ -123,7 +123,7 @@ class QuestionInstanceServiceGetDetailTest {
       QIDetailResponse expected = QIDetailResponse.builder()
           .questionInstanceId(qiId)
           .matchId(matchId)
-          .status(InstanceStatus.COMPLETED)
+          .status(QuestionInstanceStatus.COMPLETED)
           .build();
 
       try (MockedStatic<QIDetailMapper> mocked = mockStatic(QIDetailMapper.class)) {
@@ -149,7 +149,7 @@ class QuestionInstanceServiceGetDetailTest {
       QuestionInstance qi = QuestionInstance.builder()
           .id(qiId)
           .match(match)
-          .status(InstanceStatus.EXPIRED)
+          .status(QuestionInstanceStatus.EXPIRED)
           .build();
       User me = User.builder().id(meId).currentMatchId(matchId).build();
       User partner = User.builder().id(partnerId).currentMatchId(matchId).build();
@@ -166,7 +166,7 @@ class QuestionInstanceServiceGetDetailTest {
       QIDetailResponse expected = QIDetailResponse.builder()
           .questionInstanceId(qiId)
           .matchId(matchId)
-          .status(InstanceStatus.EXPIRED)
+          .status(QuestionInstanceStatus.EXPIRED)
           .build();
 
       try (MockedStatic<QIDetailMapper> mocked = mockStatic(QIDetailMapper.class)) {
@@ -205,7 +205,7 @@ class QuestionInstanceServiceGetDetailTest {
       QuestionInstance qi = QuestionInstance.builder()
           .id(qiId)
           .match(match)
-          .status(InstanceStatus.PENDING)
+          .status(QuestionInstanceStatus.PENDING)
           .build();
 
       when(qiRepository.findDetailWithQuestionAndMatch(qiId)).thenReturn(Optional.of(qi));
@@ -227,7 +227,7 @@ class QuestionInstanceServiceGetDetailTest {
       QuestionInstance qi = QuestionInstance.builder()
           .id(qiId)
           .match(match)
-          .status(InstanceStatus.PENDING)
+          .status(QuestionInstanceStatus.PENDING)
           .build();
 
       User me = User.builder().id(7L).currentMatchId(21L).build(); // mismatch

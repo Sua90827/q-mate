@@ -1,34 +1,64 @@
-package com.qmate.questioninstance;
+package com.qmate.api.questioninstance;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.qmate.api.questioninstance.QuestionInstanceController;
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.AuthTestUtils;
+import com.qmate.SecuritySliceTestConfig;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse.AnswerView;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse.CategoryInfo;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse.QuestionInfo;
 import com.qmate.domain.questioninstance.service.QuestionInstanceService;
+import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
+import com.qmate.security.UserPrincipal;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = QuestionInstanceController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
+@Import(SecuritySliceTestConfig.class)
 class QuestionInstanceControllerTest {
+
   @Autowired
   MockMvc mockMvc;
   @MockitoBean
   QuestionInstanceService questionInstanceService;
+
+  @BeforeEach
+  void setUpSecurityContext() {
+    UserPrincipal principal = new UserPrincipal(99L, "user@example.com", "USER");
+    var auth = new UsernamePasswordAuthenticationToken(principal, null,
+        List.of(new SimpleGrantedAuthority("ROLE_USER")));
+    SecurityContextHolder.getContext().setAuthentication(auth);
+  }
+
+  @AfterEach
+  void clearSecurityContext() {
+    SecurityContextHolder.clearContext();
+  }
 
   @Test
   @DisplayName("GET /api/question-instances/{id} — 모든 필드가 채워진 응답 반환")
@@ -44,7 +74,7 @@ class QuestionInstanceControllerTest {
         .questionInstanceId(qiId)
         .matchId(matchId)
         .deliveredAt(deliveredAt)
-        .status(InstanceStatus.COMPLETED)
+        .status(QuestionInstanceStatus.COMPLETED)
         .completedAt(completedAt)
         .question(
             QuestionInfo.builder()
@@ -81,7 +111,9 @@ class QuestionInstanceControllerTest {
     when(questionInstanceService.getDetail(qiId, 1L)).thenReturn(dto);
 
     // expect
-    mockMvc.perform(get("/api/question-instances/{id}", qiId))
+    mockMvc.perform(get("/api/question-instances/{id}", qiId)
+            .with(AuthTestUtils.userPrincipal(1L)))
+
         .andExpect(status().isOk())
 
         // top-level
@@ -119,5 +151,36 @@ class QuestionInstanceControllerTest {
         .andExpect(jsonPath("$.answers[1].visible").value(true))
         .andExpect(jsonPath("$.answers[1].content").value("파스타!"))
         .andExpect(jsonPath("$.answers[1].submittedAt").value("2025-09-11T12:40:00"));
+  }
+
+  @Test
+  @DisplayName("GET /api/matches/{matchId}/questions/today -> 200 OK")
+  void ok() throws Exception {
+    Long matchId = 1L;
+    QIDetailResponse stub = QIDetailResponse.builder()
+        .questionInstanceId(555L).matchId(matchId).build();
+
+    given(questionInstanceService.getLatestNotified(anyLong(), anyLong())).willReturn(stub);
+
+    mockMvc.perform(get("/api/matches/{matchId}/questions/today", matchId)
+            .with(AuthTestUtils.userPrincipal(1L))
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.questionInstanceId").value(555))
+        .andExpect(jsonPath("$.matchId").value(1));
+
+    then(questionInstanceService).should(times(1)).getLatestNotified(anyLong(), anyLong());
+  }
+
+  @Test
+  @DisplayName("GET /api/matches/{matchId}/questions/today -> 404 Not Found")
+  void notFound() throws Exception {
+    willThrow(new QuestionInstanceNotFoundException())
+        .given(questionInstanceService).getLatestNotified(anyLong(), anyLong());
+
+    mockMvc.perform(get("/api/matches/{matchId}/questions/today", 2L)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.message").exists());
   }
 }

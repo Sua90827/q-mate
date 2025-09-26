@@ -1,6 +1,6 @@
 package com.qmate.common.redis;
 
-import com.qmate.common.constants.RedisKeyConstants;
+import com.qmate.common.constants.redis.RedisKeyConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;

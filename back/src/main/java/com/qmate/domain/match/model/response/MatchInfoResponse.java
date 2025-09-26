@@ -15,13 +15,13 @@ public class MatchInfoResponse {
   private final List<MemberInfoResponse> users;
 
   // Match 엔티티를 통째로 받아서 이 DTO를 완성하는 생성자
-  public MatchInfoResponse(Match match) {
+  public MatchInfoResponse(Match match, Long requesterId) {
     this.matchId = match.getId();
     this.relationType = match.getRelationType();
     this.startDate = match.getStartDate();
     // Match 엔티티가 가진 MatchMember 리스트를 순회하며 MemberInfo DTO 리스트로 변환
     this.users = match.getMembers().stream()
-        .map(matchMember -> new MemberInfoResponse(matchMember.getUser()))
+        .map(matchMember -> new MemberInfoResponse(matchMember.getUser(), requesterId))
         .toList();
   }
 }

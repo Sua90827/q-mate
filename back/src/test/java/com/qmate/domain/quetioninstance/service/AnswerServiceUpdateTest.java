@@ -1,11 +1,11 @@
-package com.qmate.questioninstance;
+package com.qmate.domain.quetioninstance.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.*;
 
 import com.qmate.domain.questioninstance.entity.Answer;
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
 import com.qmate.domain.questioninstance.model.response.AnswerResponse;
@@ -15,7 +15,6 @@ import com.qmate.domain.user.User;
 import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
 import com.qmate.exception.custom.questioninstance.AnswerForbiddenException;
 import com.qmate.exception.custom.questioninstance.AnswerNotFoundException;
-import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -56,7 +55,7 @@ class AnswerServiceUpdateTest {
 
       QuestionInstance qi = QuestionInstance.builder()
           .id(10L)
-          .status(InstanceStatus.PENDING)
+          .status(QuestionInstanceStatus.PENDING)
           .build();
 
       Answer answer = Answer.builder()
@@ -124,7 +123,7 @@ class AnswerServiceUpdateTest {
           .build();
 
       QuestionInstance qi = QuestionInstance.builder()
-          .id(10L).status(InstanceStatus.PENDING).build();
+          .id(10L).status(QuestionInstanceStatus.PENDING).build();
 
       Answer answer = Answer.builder()
           .id(answerId).user(owner).questionInstance(qi).content("초기").build();
@@ -152,7 +151,7 @@ class AnswerServiceUpdateTest {
           .build();
 
       QuestionInstance qi = QuestionInstance.builder()
-          .id(10L).status(InstanceStatus.COMPLETED) // 수정 불가 상태
+          .id(10L).status(QuestionInstanceStatus.COMPLETED) // 수정 불가 상태
           .build();
 
       Answer answer = Answer.builder()

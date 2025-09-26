@@ -1,4 +1,4 @@
-package com.qmate.questioninstance;
+package com.qmate.domain.quetioninstance.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -6,13 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 
-import com.qmate.domain.questioninstance.entity.InstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.model.response.QIListItem;
-import com.qmate.domain.questioninstance.repository.QuestionInstanceQueryRepository;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
 import com.qmate.domain.questioninstance.service.QuestionInstanceService;
 import com.qmate.domain.user.UserRepository;
-import com.qmate.exception.custom.UserNotFoundException;
+import com.qmate.exception.custom.matchinstance.UserNotFoundException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -20,7 +19,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -93,7 +91,7 @@ public class QIServiceListTest {
           .willReturn(Optional.of(999L));
 
       assertThrows(QuestionInstanceForbiddenException.class, () ->
-          service.list(userId, matchId, InstanceStatus.COMPLETED,
+          service.list(userId, matchId, QuestionInstanceStatus.COMPLETED,
               LocalDateTime.parse("2025-09-01T00:00:00"),
               LocalDateTime.parse("2025-09-30T23:59:59"),
               PageRequest.of(0, 20)));

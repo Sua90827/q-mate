@@ -45,6 +45,10 @@
   --color-night-active2: #8f93cf;
   --color-night-active3: #424e97;
   --color-night-list: #d3d5ff;
+  --color-day-calendar: #68c5f3;
+  --color-sunset-calendar: #f3a968;
+  --color-night-calendar: #424e97;
+  --color-anniversary: #fddd69;
 
   /* shadcn 토큰 */
   --color-sidebar-ring: var(--sidebar-ring);
