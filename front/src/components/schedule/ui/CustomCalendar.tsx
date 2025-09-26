@@ -90,7 +90,7 @@ function Calendar({
           defaultClassNames.week_number,
         ),
         day: cn(
-          'relative p-0 text-center group/day select-none grid place-items-center w-full aspect-square',
+          'relative p-0 text-center group/day select-none grid place-items-center w-full aspect-square lg:aspect-auto lg:h-[70px]',
           defaultClassNames.day,
         ),
         range_start: cn('bg-accent', defaultClassNames.range_start),
