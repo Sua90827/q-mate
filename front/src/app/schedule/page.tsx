@@ -16,7 +16,7 @@ export default function page() {
         <img alt="큐메이트" width={109} height={35} className="site-logo" />
         <BellBtn />
       </div>
-      <div className="w-full h-full flex flex-row gap-10 justify-center sm:pb-[70px]">
+      <div className="w-full h-full flex flex-row gap-10 justify-center md:justify-between sm:pb-[70px] md:px-[40px] xl:px-[120px]">
         <ScheduleListWeb />
         <ScheduleView />
       </div>
