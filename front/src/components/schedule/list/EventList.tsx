@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import { Schedule } from '@/types/scheduleType';
-import LoadingDots from '@/components/common/LoadingDots';
 import { repeatTypeLabels } from '@/utils/constants/schedule';
 
 type Props = {
