@@ -19,7 +19,6 @@ public class QuestionCategoryService {
 
   private final QuestionCategoryRepository categoryRepository;
 
-  @Transactional
   public QuestionCategoryResponse createCategory(QuestionCategoryCreateRequest request) {
     if (categoryRepository.existsByName(request.getName())) {
       throw new QuestionCategoryAlreadyExistException();

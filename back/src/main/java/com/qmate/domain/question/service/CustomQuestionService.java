@@ -28,7 +28,6 @@ public class CustomQuestionService {
    * @param request 질문 생성 요청
    * @return 생성된 커스텀 질문 정보
    */
-  @Transactional
   public CustomQuestionResponse create(Long userId, Long matchId, CustomQuestionTextRequest request) {
 
     // Match 존재 여부 확인 및 로드
