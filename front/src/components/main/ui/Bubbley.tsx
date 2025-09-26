@@ -1,4 +1,5 @@
 'use client';
+import { motion, transform } from 'motion/react';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
@@ -9,6 +10,7 @@ type BubbleyProps = {
 
 export default function Bubbley({ exp, className }: BubbleyProps) {
   const [theme, setTheme] = useState<string | null>(null);
+  const [isJumping, setIsJumping] = useState(false);
 
   useEffect(() => {
     const current = document.documentElement.getAttribute('data-theme');
@@ -35,7 +37,25 @@ export default function Bubbley({ exp, className }: BubbleyProps) {
   }
   return (
     <div className={className}>
-      <Image src={src} alt="버블리 캐릭터" width={120} height={167} className="opacity-90" />
+      <motion.div
+        animate={isJumping ? { y: [0, -20, 0, -10, 0] } : { y: 0 }}
+        transition={{
+          type: 'tween',
+          ease: 'easeInOut',
+          duration: 0.7,
+          times: [0, 0.3, 0.6, 0.8, 1],
+        }}
+        onAnimationComplete={() => setIsJumping(false)}
+      >
+        <Image
+          src={src}
+          alt="버블리 캐릭터"
+          width={120}
+          height={167}
+          className="opacity-90"
+          onClick={() => setIsJumping(true)}
+        />
+      </motion.div>
     </div>
   );
 }
