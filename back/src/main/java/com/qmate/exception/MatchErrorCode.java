@@ -15,6 +15,8 @@ public class MatchErrorCode extends ErrorCode {
   private static final String INVITE_ATTEMPT_LOCKED_MESSAGE = "초대 코드 입력 5회 실패하여 24시간 동안 시도할 수 없습니다.";
   private static final String CANNOT_MATCH_WITH_SELF_MESSAGE = "자기 자신과 매칭할 수 없습니다.";
   private static final String MATCH_FORBIDDEN_MESSAGE = "해당 매칭에 대한 접근 권한이 없습니다.";
+  private static final String MATCH_STATE_CONFLICT_MESSAGE = "요청을 처리할 수 없는 매칭 상태입니다.";
+
   // 에러 코드 객체 반환 메서드
   public static ErrorCode alreadyInMatch() {
     return new MatchErrorCode(HttpStatus.CONFLICT, "MATCH_001", ALREADY_IN_MATCH_MESSAGE);
@@ -46,6 +48,10 @@ public class MatchErrorCode extends ErrorCode {
 
   public static ErrorCode matchForbidden(){
     return new MatchErrorCode(HttpStatus.FORBIDDEN, "MATCH_008", MATCH_FORBIDDEN_MESSAGE);
+  }
+
+  public static ErrorCode matchStateConflict(){
+    return new MatchErrorCode(HttpStatus.CONFLICT, "MATCH_009",MATCH_STATE_CONFLICT_MESSAGE);
   }
 
   private MatchErrorCode(HttpStatus httpStatus, String code, String message) {

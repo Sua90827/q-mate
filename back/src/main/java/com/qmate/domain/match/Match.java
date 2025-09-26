@@ -1,5 +1,6 @@
 package com.qmate.domain.match;
 
+import com.qmate.exception.custom.matchinstance.MatchStateConflictException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -73,6 +74,15 @@ public class Match {
   }
   public void updateStartDate(LocalDate startDate) {
     this.startDate = startDate.atStartOfDay();
+  }
+
+  public void disconnect(){
+    //이미 끊어진 관계를 또 끊으려고 하는 것 방지
+    if (this.status != MatchStatus.ACTIVE){
+      throw new MatchStateConflictException();
+    }
+    this.status = MatchStatus.DETACHED_PENDING_DELETE;
+    this.detachedAt = LocalDateTime.now();
   }
 
   //정적 팩토리 메서드 추가
