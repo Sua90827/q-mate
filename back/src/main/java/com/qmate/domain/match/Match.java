@@ -1,5 +1,6 @@
 package com.qmate.domain.match;
 
+import com.qmate.exception.custom.matchinstance.MatchRecoveryExpiredException;
 import com.qmate.exception.custom.matchinstance.MatchStateConflictException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -83,6 +84,18 @@ public class Match {
     }
     this.status = MatchStatus.DETACHED_PENDING_DELETE;
     this.detachedAt = LocalDateTime.now();
+  }
+  //끊어진 매칭 연결을 복구합니다.
+  public void restore(){
+    //복구할 수 있는 상태인지 확인
+    if (this.status != MatchStatus.DETACHED_PENDING_DELETE){
+      throw new MatchStateConflictException();
+    }
+    if (this.detachedAt != null && this.detachedAt.plusWeeks(2).isBefore(LocalDateTime.now())){
+      throw new MatchRecoveryExpiredException();
+    }
+    this.status = MatchStatus.ACTIVE;
+    this.detachedAt = null;
   }
 
   //정적 팩토리 메서드 추가

@@ -1,8 +1,10 @@
 package com.qmate.api;
 
+import com.qmate.common.constants.match.MatchConstants;
 import com.qmate.domain.match.model.request.MatchCreationRequest;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.model.request.MatchUpdateRequest;
+import com.qmate.domain.match.model.response.MatchActionResponse;
 import com.qmate.domain.match.model.response.MatchCreationResponse;
 import com.qmate.domain.match.model.response.MatchInfoResponse;
 import com.qmate.domain.match.model.response.MatchJoinResponse;
@@ -100,5 +102,16 @@ public class MatchController {
     matchService.updateMatchInfo(matchId, currentUserId, request);
     // 성공적으로 처리되었지만, 별도의 응답 본문은 없다는 의미로 204 No Content를 반환
     return ResponseEntity.noContent().build();
+  }
+  //매칭 연결을 끊습니다.(2주간의 복구 유예 기간 시작)
+  @PostMapping("/{matchId}/disconnect")
+  public ResponseEntity<MatchActionResponse> disconnectMatch(
+      @PathVariable Long matchId,
+      @AuthenticationPrincipal UserPrincipal principal
+  ){
+    Long currentUserId = principal.userId();
+    matchService.disconnectMatch(matchId, currentUserId);
+
+    return ResponseEntity.ok(new MatchActionResponse(MatchConstants.DISCONNECT_SUCCESS_MESSAGE));
   }
 }
