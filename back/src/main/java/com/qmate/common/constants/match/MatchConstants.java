@@ -16,5 +16,5 @@ public class MatchConstants {
 
   // MatchController
   public static final String DISCONNECT_SUCCESS_MESSAGE = "매칭 연결 끊기 요청이 처리되었습니다. 2주 후에 데이터가 삭제됩니다.";
-
+  public static final String RESTORE_SUCCESS_MESSAGE = "매칭이 성공적으로 복구되었습니다.";
 }

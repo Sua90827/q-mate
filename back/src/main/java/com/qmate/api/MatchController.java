@@ -114,4 +114,15 @@ public class MatchController {
 
     return ResponseEntity.ok(new MatchActionResponse(MatchConstants.DISCONNECT_SUCCESS_MESSAGE));
   }
+  //매칭 연결 복구
+  @PostMapping("/{matchId}/restore")
+  public ResponseEntity<MatchActionResponse> restoreMatch(
+      @PathVariable Long matchId,
+      @AuthenticationPrincipal UserPrincipal principal
+  ){
+    Long currentUserId = principal.userId();
+    matchService.restoreMatch(matchId, currentUserId);
+
+    return ResponseEntity.ok(new MatchActionResponse(MatchConstants.RESTORE_SUCCESS_MESSAGE));
+  }
 }
