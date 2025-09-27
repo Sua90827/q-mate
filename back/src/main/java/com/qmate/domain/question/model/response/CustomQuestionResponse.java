@@ -1,6 +1,7 @@
 package com.qmate.domain.question.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.qmate.domain.match.RelationType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +14,8 @@ import lombok.Setter;
 public class CustomQuestionResponse {
 
   private Long customQuestionId;
-  private String sourceType;     // "ADMIN" | "CUSTOM"
-  private String relationType;   // "COUPLE" | "FRIEND" | "BOTH"
+  private SourceType sourceType;     // "ADMIN" | "CUSTOM"
+  private RelationType relationType;   // "COUPLE" | "FRIEND"
   private Long matchId;
 
   private String text;

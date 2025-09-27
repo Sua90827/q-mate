@@ -24,7 +24,7 @@ public class QuestionCategoryMapper {
     return new QuestionCategoryResponse(
         category.getId(),
         category.getName(),
-        category.getRelationType().name(),
+        category.getRelationType(),
         category.isActive()
     );
   }

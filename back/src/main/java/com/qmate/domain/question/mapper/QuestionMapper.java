@@ -10,6 +10,7 @@ import com.qmate.domain.question.model.request.QuestionUpdateRequest;
 import com.qmate.domain.question.model.response.CategoryInfo;
 import com.qmate.domain.question.model.response.CustomQuestionResponse;
 import com.qmate.domain.question.model.response.QuestionResponse;
+import com.qmate.domain.question.model.response.SourceType;
 import java.time.format.DateTimeFormatter;
 import lombok.NoArgsConstructor;
 
@@ -54,8 +55,8 @@ public class QuestionMapper {
 
     return new QuestionResponse(
         q.getId(),
-        "ADMIN",
-        q.getRelationType().name(),
+        SourceType.ADMIN,
+        q.getRelationType(),
         categoryInfo,
         q.getText(),
         q.isActive(),
@@ -79,8 +80,8 @@ public class QuestionMapper {
     Match match = preloadedMatch != null ? preloadedMatch : cq.getMatch();
     return new CustomQuestionResponse(
         cq.getId(),
-        "CUSTOM",
-        match.getRelationType().name(),
+        SourceType.CUSTOM,
+        match.getRelationType(),
         match.getId(),
         cq.getText(),
         isEditable,
