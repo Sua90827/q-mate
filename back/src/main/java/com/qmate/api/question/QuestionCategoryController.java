@@ -33,6 +33,9 @@ public class QuestionCategoryController {
 
   private final QuestionCategoryService questionCategoryService;
 
+  /**
+   * 카테고리 생성
+   */
   @PostMapping
   @Operation(
       summary = "카테고리 생성",
@@ -44,10 +47,7 @@ public class QuestionCategoryController {
       responses = {
           @ApiResponse(responseCode = "201", description = "생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionCategoryResponse.class))),
           @ApiResponse(responseCode = "400", description = "유효하지 않은 요청 값", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
           @ApiResponse(responseCode = "409", description = "이미 존재하는 카테고리명", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "500", description = "서버 오류", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
       }
   )
   // @PostMapping
@@ -71,11 +71,8 @@ public class QuestionCategoryController {
       responses = {
           @ApiResponse(responseCode = "200", description = "수정 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionCategoryResponse.class))),
           @ApiResponse(responseCode = "400", description = "유효하지 않은 요청 값", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
           @ApiResponse(responseCode = "404", description = "대상 카테고리 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
           @ApiResponse(responseCode = "409", description = "이미 존재하는 카테고리명", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "500", description = "서버 오류", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
       }
   )
   // @PatchMapping("/{id}")
@@ -95,9 +92,6 @@ public class QuestionCategoryController {
       description = "모든 질문 카테고리를 조회합니다.",
       responses = {
           @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionCategoryResponse.class))),
-          @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "500", description = "서버 오류", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
       }
   )
   //@GetMapping

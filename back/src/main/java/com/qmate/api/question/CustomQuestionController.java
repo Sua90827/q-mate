@@ -45,10 +45,7 @@ public class CustomQuestionController {
       responses = {
           @ApiResponse(responseCode = "201", description = "생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomQuestionResponse.class))),
           @ApiResponse(responseCode = "400", description = "유효하지 않은 요청 값", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
           @ApiResponse(responseCode = "404", description = "매치를 찾을 수 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "500", description = "서버 오류", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
       },
       requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
           required = true,
@@ -77,11 +74,8 @@ public class CustomQuestionController {
       responses = {
           @ApiResponse(responseCode = "200", description = "수정 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomQuestionResponse.class))),
           @ApiResponse(responseCode = "400", description = "유효하지 않은 요청 값", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
           @ApiResponse(responseCode = "404", description = "커스텀 질문을 찾을 수 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
           @ApiResponse(responseCode = "423", description = "수정 불가", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "500", description = "서버 오류", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
       },
       requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
           required = true,
@@ -109,11 +103,8 @@ public class CustomQuestionController {
       description = "특정 커스텀 질문을 삭제합니다.",
       responses = {
           @ApiResponse(responseCode = "204", description = "삭제 성공"),
-          @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
           @ApiResponse(responseCode = "404", description = "커스텀 질문을 찾을 수 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
           @ApiResponse(responseCode = "423", description = "삭제 불가", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "500", description = "서버 오류", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
       },
       parameters = {
           @Parameter(name = "id", description = "삭제할 커스텀 질문 ID", required = true)
@@ -137,10 +128,8 @@ public class CustomQuestionController {
       description = "특정 커스텀 질문을 조회합니다.",
       responses = {
           @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomQuestionResponse.class))),
-          @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
           @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
           @ApiResponse(responseCode = "404", description = "커스텀 질문을 찾을 수 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "500", description = "서버 오류", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
       },
       parameters = {
           @Parameter(name = "id", description = "조회할 커스텀 질문 ID", required = true)
