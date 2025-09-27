@@ -1,4 +1,3 @@
-// hooks/useLocalTimeTheme.ts
 'use client';
 
 import { useEffect } from 'react';
