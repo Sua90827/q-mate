@@ -14,7 +14,7 @@ export const fetchQuestionDetail = async (id: number): Promise<AnswerResponseIte
 };
 
 // 오늘의 질문 가져오기
-export const fetchTodayQuestion = async (): Promise<TodayQuestion> => {
-  const res = await axios.get('http://localhost:4000/todayQuestion');
+export const fetchTodayQuestion = async (matchId: number): Promise<TodayQuestion> => {
+  const res = await axios.get(`/api/matches/${matchId}/questions/today`);
   return res.data;
 };

@@ -38,8 +38,8 @@ export default function ScheduleView() {
   }, [data, selected]);
 
   return (
-    <div className="w-full h-full flex justify-center rounded-lg">
-      <div className="relative flex flex-col justify-center rounded-lg w-full h-full sm:w-[500px] md:w-[600px] lg:w-[700px]">
+    <div className="w-full h-full flex justify-center rounded-lg sm:w-[500px] md:w-[600px] lg:w-[700px]">
+      <div className="relative flex flex-col justify-center rounded-lg w-full h-full">
         <MainCalendar
           selected={selected}
           onSelect={(date) => date && setSelected(date)}

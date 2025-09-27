@@ -12,13 +12,13 @@ type Props = {
 };
 export default function MainCalendar({ selected, onSelect, anniversarySet, scheduleSet }: Props) {
   return (
-    <div className="flex flex-1 justify-center w-full lg:flex-1">
+    <div className="flex flex-1 sm:flex-2 justify-center w-full">
       <Calendar
         mode="single"
         defaultMonth={selected}
         selected={selected}
         onSelect={onSelect}
-        className="w-full rounded-lg"
+        className="w-full rounded-t-lg"
         components={{
           MonthCaption: ({ calendarMonth }) => {
             const year = calendarMonth.date.getFullYear();
