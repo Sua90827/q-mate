@@ -1,10 +1,12 @@
 package com.qmate.api.question;
 
+import com.qmate.common.constants.CommonConstants;
+import com.qmate.common.constants.HttpStatusCode;
+import com.qmate.common.constants.question.QuestionCategoryConstants;
 import com.qmate.domain.question.model.request.QuestionCategoryCreateRequest;
 import com.qmate.domain.question.model.request.QuestionCategoryUpdateRequest;
 import com.qmate.domain.question.model.response.QuestionCategoryResponse;
 import com.qmate.domain.question.service.QuestionCategoryService;
-import com.qmate.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -39,15 +41,13 @@ public class QuestionCategoryController {
   @PostMapping
   @Operation(
       summary = "카테고리 생성",
-      description = "새로운 질문 카테고리를 생성합니다.",
+      description = QuestionCategoryConstants.CREATE_MD,
       requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
           required = true,
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionCategoryCreateRequest.class))
+          content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionCategoryCreateRequest.class))
       ),
       responses = {
-          @ApiResponse(responseCode = "201", description = "생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionCategoryResponse.class))),
-          @ApiResponse(responseCode = "400", description = "유효하지 않은 요청 값", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "409", description = "이미 존재하는 카테고리명", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = HttpStatusCode.CREATED, description = "생성 성공", content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionCategoryResponse.class))),
       }
   )
   // @PostMapping
@@ -63,16 +63,13 @@ public class QuestionCategoryController {
   @PatchMapping("/{id}")
   @Operation(
       summary = "카테고리 수정",
-      description = "기존 질문 카테고리를 부분 수정합니다.",
+      description = QuestionCategoryConstants.UPDATE_MD,
       requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
           required = true,
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionCategoryUpdateRequest.class))
+          content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionCategoryUpdateRequest.class))
       ),
       responses = {
-          @ApiResponse(responseCode = "200", description = "수정 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionCategoryResponse.class))),
-          @ApiResponse(responseCode = "400", description = "유효하지 않은 요청 값", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "404", description = "대상 카테고리 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "409", description = "이미 존재하는 카테고리명", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+          @ApiResponse(responseCode = HttpStatusCode.OK, description = "수정 성공", content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionCategoryResponse.class))),
       }
   )
   // @PatchMapping("/{id}")
@@ -91,7 +88,7 @@ public class QuestionCategoryController {
       summary = "카테고리 전체 조회",
       description = "모든 질문 카테고리를 조회합니다.",
       responses = {
-          @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionCategoryResponse.class))),
+          @ApiResponse(responseCode = HttpStatusCode.OK, description = "조회 성공", content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionCategoryResponse.class))),
       }
   )
   //@GetMapping
