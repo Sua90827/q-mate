@@ -189,6 +189,23 @@ public class MatchService {
     match.disconnect();
   }
 
+  /**
+   * 끊어진 매칭 연결을 복구합나다.
+   * @param matchId 복구할 매칭의 ID
+   * @param userId 요청을 보낸 사용자의 ID (권한 검증용)
+   */
+  @Transactional
+  public void restoreMatch(Long matchId, Long userId){
+    Match match = matchRepository.findWithMembersAndUsersById(matchId)
+        .orElseThrow(MatchNotFoundException::new);
+    boolean isMember = match.getMembers().stream()
+        .anyMatch(matchMember -> matchMember.getUser().getId().equals(userId));
+    if (!isMember){
+      throw new MatchForbiddenException();
+    }
+    match.restore();
+  }
+
 
   //가독성을 위한 private 헬퍼 메서드(초대 생성 관련)
   private void validateUserNotInActiveMatch(Long userId) {
