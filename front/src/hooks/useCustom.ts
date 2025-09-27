@@ -7,10 +7,10 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 //조회
-export const useFetchCustomQuestions = () => {
+export const useFetchCustomQuestions = (matchId: number) => {
   return useQuery({
     queryKey: ['customQuestions'],
-    queryFn: fetchCustomQuestions,
+    queryFn: () => fetchCustomQuestions(matchId),
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10,
   });

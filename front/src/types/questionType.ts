@@ -51,6 +51,7 @@ export interface AnswerResponseItem {
   answers: Answer[];
 }
 
+//커스텀 질문 조회 컨텐츠
 export interface CustomQuestion {
   customQuestionId: number;
   sourceType: 'CUSTOM';
@@ -60,6 +61,13 @@ export interface CustomQuestion {
   createdAt: string;
   updatedAt: string;
   isEditable: boolean;
+}
+//커스텀 질문 조회 전체 배열
+export interface CustomQuestionPage {
+  content: CustomQuestion[];
+  last: boolean;
+  number: number; // 현재 페이지
+  size: number; // 페이지 크기
 }
 
 export interface TodayQuestion {

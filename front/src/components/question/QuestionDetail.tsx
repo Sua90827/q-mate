@@ -18,7 +18,8 @@ export default function QuestionDetail() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { data: customQuestions = [] } = useFetchCustomQuestions();
+  const { data } = useFetchCustomQuestions(1);
+  const customQuestions = data?.content ?? [];
 
   const customQuestionId =
     questionInstanceId !== null && questionInstanceId < 0 ? Math.abs(questionInstanceId) : null;

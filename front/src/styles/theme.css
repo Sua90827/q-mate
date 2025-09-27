@@ -42,8 +42,7 @@
   --color-night-top: #171940;
   --color-night-bottom: #2d3367;
   --color-night-active: #020433;
-  --color-night-active2: #8f93cf;
-  --color-night-active3: #424e97;
+  --color-night-active2: #424e97;
   --color-night-list: #d3d5ff;
   --color-day-calendar: #68c5f3;
   --color-sunset-calendar: #f3a968;
@@ -130,25 +129,24 @@ html[data-theme='night'] .text-theme-primary {
   color: var(--color-text-secondary);
 }
 
-/* night 테마에서 흰색으로 변경 */
+/* night 테마에서 회색으로 변경 */
 html[data-theme='night'] .text-theme-secondary {
   color: var(--color-dash);
 }
 
 /* 테마별 스위치 활성 배경 */
-@layer utilities {
-  /* 기본 (day) */
-  .bg-theme-primary[data-state='checked'] {
-    background-color: var(--color-primary) !important;
-  }
 
-  /* sunset 테마 */
-  html[data-theme='sunset'] .bg-theme-primary[data-state='checked'] {
-    background-color: var(--color-sunset-active) !important;
-  }
+/* 기본 (day) */
+html[data-theme='day'] .bg-theme-primary[data-state='checked'] {
+  background-color: var(--color-primary) !important;
+}
 
-  /* night 테마 */
-  html[data-theme='night'] .bg-theme-primary[data-state='checked'] {
-    background-color: var(--color-night-active) !important;
-  }
+/* sunset 테마 */
+html[data-theme='sunset'] .bg-theme-primary[data-state='checked'] {
+  background-color: var(--color-sunset-active) !important;
+}
+
+/* night 테마 */
+html[data-theme='night'] .bg-theme-primary[data-state='checked'] {
+  background-color: var(--color-night-active) !important;
 }
