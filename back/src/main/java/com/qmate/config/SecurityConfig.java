@@ -1,6 +1,9 @@
 package com.qmate.config;
 
 import com.qmate.domain.auth.JwtService;
+import com.qmate.security.oauth.CustomOAuth2UserService;
+import com.qmate.security.oauth.OAuth2FailureHandler;
+import com.qmate.security.oauth.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +23,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   private final JwtService jwtService;
+  private final CustomOAuth2UserService customOAuth2UserService;
+  private final OAuth2SuccessHandler oAuth2SuccessHandler;
+  private final OAuth2FailureHandler oAuth2FailureHandler;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -39,9 +45,15 @@ public class SecurityConfig {
         .formLogin(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authz -> authz
-            .requestMatchers("/auth/register", "/auth/login", "/auth/logout").permitAll()
+            .requestMatchers("/auth/register", "/auth/login", "/auth/logout",
+                "/oauth2/**", "/login/oauth2/**", "/oauth2/authorization/**").permitAll()
             .requestMatchers(SWAGGER_WHITELIST).permitAll()
             .anyRequest().authenticated()  // 나머지 모든 요청은 인증 필요
+        )
+        .oauth2Login(oauth -> oauth
+            .userInfoEndpoint(u -> u.userService(customOAuth2UserService))
+            .successHandler(oAuth2SuccessHandler)
+            .failureHandler(oAuth2FailureHandler)
         )
         .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);  // JWT 필터 추가
 
