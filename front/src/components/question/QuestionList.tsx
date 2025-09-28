@@ -16,13 +16,15 @@ export default function QuestionList() {
   const [isDeleteMode, setIsDeleteMode] = useState<boolean>(false);
 
   // API 호출
-  const { data: questionResponse } = useQuestions();
-  const { data: customQuestions = [] } = useFetchCustomQuestions();
+  const { data: questionResponse } = useQuestions(); //전체 질문 조회
+  const { data } = useFetchCustomQuestions(1); //커스텀 질문
 
   const questionInstances: QuestionList[] = useMemo(
     () => questionResponse?.[0]?.content ?? [],
     [questionResponse],
   );
+
+  const customQuestions = data?.content ?? [];
 
   // 커스텀 질문을 QuestionList 포맷으로 변환
   const normalizedCustomInstances: QuestionList[] = customQuestions.map((custom) => ({

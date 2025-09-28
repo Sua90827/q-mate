@@ -1,8 +1,29 @@
 import Image from 'next/image';
-import React from 'react';
-import { DatePicker } from '../common/DatePicker';
+import React, { useEffect, useState } from 'react';
+import { useCreateInviteCode } from '@/hooks/useInvite';
+import { AnniversaryPicker } from './ui/AnniversaryPicker';
 
 export default function Anniversary() {
+  const [date, setDate] = useState<string | undefined>(undefined);
+  const {
+    mutate: createCodeMutate,
+    isPending: isCreating,
+    isError: isCreateError,
+  } = useCreateInviteCode();
+
+  useEffect(() => {
+    if (date) {
+      createCodeMutate(
+        { relationType: 'COUPLE', startDate: date },
+        {
+          onSuccess: (data) => {
+            localStorage.setItem('code', data.inviteCode);
+          },
+        },
+      );
+    }
+  }, [date, createCodeMutate]);
+
   return (
     <>
       <div className="mb-10 text-center">
@@ -13,7 +34,7 @@ export default function Anniversary() {
       <Image src="/images/bubbley/bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
 
       <div className="w-[300px]  mt-10">
-        <DatePicker label="날짜 선택" anniversary />
+        <AnniversaryPicker label="날짜 선택" onSelect={(d) => setDate(d)} />
       </div>
     </>
   );

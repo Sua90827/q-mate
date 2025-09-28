@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import BellBtn from '../common/BellBtn';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, UserRoundPen } from 'lucide-react';
 import { Switch } from '../ui/switch';
 import { Button } from '../common/Button';
 import NicknameModal from './ui/NicknameModal';
@@ -57,11 +57,16 @@ export default function Settings() {
           {settings.map((item) => (
             <li
               key={item.id}
-              className="flex justify-between items-center px-4 py-5 cursor-pointer"
+              className={`flex justify-between items-center px-4 py-5 cursor-pointer ${
+                item.id === 'profile' ? 'text-theme-accent2 font-extrabold' : ''
+              }`}
               onClick={item.type === 'modal' ? item.onClick : undefined}
             >
               <div>
-                <span className="block text-16 ">{item.label}</span>
+                <div className="flex gap-2">
+                  {item.id === 'profile' ? <UserRoundPen className="w-5" /> : ''}
+                  <span className="block text-16">{item.label}</span>
+                </div>
                 {'subLabel' in item && item.subLabel && (
                   <span className="text-theme-secondary font-normal text-12">{item.subLabel}</span>
                 )}

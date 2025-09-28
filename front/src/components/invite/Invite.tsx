@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button } from '../common/Button';
 import { Copy } from 'lucide-react';
@@ -7,9 +7,16 @@ import InviteCopyErrorModal from './ui/InviteCopyerrorModal';
 import InviteWaitingModal from './ui/InviteWaitingModal';
 
 export default function Invite() {
-  const [code, setCode] = useState();
+  const [code, setCode] = useState<string>();
+
   const [open, setOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
+
+  useEffect(() => {
+    const inviteCode = localStorage.getItem('code');
+    if (inviteCode === null) return;
+    setCode(inviteCode);
+  }, []);
 
   // Clipboard API를 이용한 복사
   const handleCopyClipBoard = async (text: string) => {
