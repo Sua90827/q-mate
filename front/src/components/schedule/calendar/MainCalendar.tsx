@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Calendar } from '../ui/CustomCalendar';
+import { Calendar, CalendarDayButton } from '../ui/CustomCalendar';
 import { toKey } from '@/utils/date';
+import { cn } from '@/lib/utils';
 
 type Props = {
   selected?: Date;
@@ -18,7 +19,7 @@ export default function MainCalendar({ selected, onSelect, anniversarySet, sched
         defaultMonth={selected}
         selected={selected}
         onSelect={onSelect}
-        className="w-full rounded-t-lg"
+        className="w-full rounded-t-lg theme-night:bg-black"
         components={{
           MonthCaption: ({ calendarMonth }) => {
             const year = calendarMonth.date.getFullYear();
@@ -30,6 +31,22 @@ export default function MainCalendar({ selected, onSelect, anniversarySet, sched
               </div>
             );
           },
+          DayButton: (props) => {
+            const isSingleSelected = props.modifiers?.selected;
+            const isToday = props.modifiers?.today;
+            return (
+              <CalendarDayButton
+                {...props}
+                className={cn(
+                  props.className,
+                  isSingleSelected
+                    ? 'bg-calendar text-primary-foreground'
+                    : isToday && 'bg-gray-200 hover:bg-gray-200 text-theme-secondary',
+                )}
+              />
+            );
+          },
+
           Day: ({ className, children, day, ...props }) => {
             const key = toKey(day.date);
             const dot = anniversarySet.has(key)
@@ -37,10 +54,10 @@ export default function MainCalendar({ selected, onSelect, anniversarySet, sched
               : scheduleSet.has(key)
               ? 'bg-calendar'
               : '';
-
             return (
               <td {...props} className={`relative p-0 ${className ?? ''}`}>
                 {children}
+
                 {dot && (
                   <span
                     aria-hidden

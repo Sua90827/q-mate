@@ -9,28 +9,10 @@
   }
   html[data-theme='sunset'] .bg-calendar {
     background-color: var(--color-sunset-calendar) !important;
+    color: var(--color-secondary);
   }
   html[data-theme='night'] .bg-calendar {
     background-color: var(--color-night-calendar) !important;
-  }
-
-  button[data-selected-single='true'],
-  button[data-selected-single='true']:hover {
-    background-color: var(--color-day-calendar) !important;
-    color: var(--color-secondary) !important;
-  }
-
-  /* sunset 테마 */
-  html[data-theme='sunset'] button[data-selected-single='true'],
-  html[data-theme='sunset'] button[data-selected-single='true']:hover {
-    background-color: var(--color-sunset-calendar) !important;
-    color: var(--color-secondary) !important;
-  }
-
-  /* night 테마 */
-  html[data-theme='night'] button[data-selected-single='true'],
-  html[data-theme='night'] button[data-selected-single='true']:hover {
-    background-color: var(--color-night-calendar) !important;
-    color: var(--color-secondary) !important;
+    color: var(--color-secondary);
   }
 }
