@@ -3,8 +3,7 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import Calendar from '@/components/schedule/CalendarCustom';
-import { useRouter } from 'next/navigation';
+import CalendarCustom from '@/components/schedule/ui/CalendarCustom';
 
 export function AnniversaryPicker({
   label,
@@ -15,10 +14,6 @@ export function AnniversaryPicker({
 }) {
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(undefined);
-  const router = useRouter();
-  if (onSelect !== undefined) {
-    router.push('invite/invite');
-  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -36,7 +31,7 @@ export function AnniversaryPicker({
           align="start"
           style={{ width: 'var(--radix-popover-trigger-width)' }}
         >
-          <Calendar
+          <CalendarCustom
             value={date}
             onChange={(d) => {
               setDate(d);

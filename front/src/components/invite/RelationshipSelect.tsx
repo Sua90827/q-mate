@@ -18,7 +18,7 @@ export default function RelationshipSelect() {
         </Button>
 
         <Button variant="invite" className="w-[300px] z-10">
-          <Link href="/invite/invite">친구</Link>
+          <Link href="/invite/invite/FRIEND">친구</Link>
         </Button>
       </div>
     </>

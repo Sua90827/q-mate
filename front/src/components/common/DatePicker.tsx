@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import Calendar from '../schedule/CalendarCustom';
+import CalendarCustom from '../schedule/ui/CalendarCustom';
 
 export function DatePicker({
   label,
@@ -35,9 +35,9 @@ export function DatePicker({
           align="start"
           style={{ width: 'var(--radix-popover-trigger-width)' }}
         >
-          <Calendar
+          <CalendarCustom
             value={date}
-            onChange={(d) => {
+            onChange={(d: Date | undefined) => {
               setDate(d);
               onSelect?.(d ? d.toISOString() : undefined);
               setOpen(false);

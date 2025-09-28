@@ -48,6 +48,7 @@
   --color-sunset-calendar: #f3a968;
   --color-night-calendar: #424e97;
   --color-anniversary: #fddd69;
+  --color-error: #da7173;
 
   /* shadcn 토큰 */
   --color-sidebar-ring: var(--sidebar-ring);

@@ -2,10 +2,35 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '../common/Button';
-import InvitedCheckModal from './ui/InvitedCheckModal';
+import axios from 'axios';
+import { useMatchIdStore } from '@/store/useMatchIdStore';
+import ConfirmModal from '../common/ConfirmModal';
+import { useRouter } from 'next/navigation';
 
 export default function Invited() {
   const [isOpen, setIsOpen] = useState(false);
+  const [code, setCode] = useState('');
+  const [name, setName] = useState('');
+  const setMatchId = useMatchIdStore((state) => state.setMatchId);
+  const router = useRouter();
+
+  const handleJoin = async () => {
+    try {
+      const res = await axios.post('/api/matches/join', { inviteCode: code });
+      setName(res.data.partnerNickname);
+      setMatchId(res.data.matchId);
+      setIsOpen(true);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 400) {
+          //만료된 코드, 잘못된 코드 나눌 방법 생각하기
+        } else if (error.response?.status === 401) {
+        }
+      } else {
+        console.error('Unexpected error', error);
+      }
+    }
+  };
 
   return (
     <>
@@ -16,14 +41,27 @@ export default function Invited() {
           type="text"
           placeholder="초대 코드 입력"
           className="rounded-md pl-4 bg-secondary font-Pre text-14 py-4 mt-7 w-[250px]"
+          onChange={(e) => setCode(e.target.value)}
         />
       </div>
 
       <Image src="/images/bubbley/bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
-      <Button variant="invite" className="w-[300px] mt-10 z-10" onClick={() => setIsOpen(true)}>
+      <Button variant="invite" className="w-[300px] mt-10 z-10" onClick={handleJoin}>
         등록하기
       </Button>
-      <InvitedCheckModal open={isOpen} setIsOpen={setIsOpen} />
+      <ConfirmModal
+        open={isOpen}
+        setOpen={setIsOpen}
+        title={
+          <>
+            {name}님과 함께 <br />
+            이야기를 기록하시겠습니까?
+          </>
+        }
+        onConfirm={() => {
+          router.push('/main');
+        }}
+      />
     </>
   );
 }
