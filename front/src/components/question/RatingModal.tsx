@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader } from '../ui/di
 import { Button } from '../common/Button';
 import { ThumbsDownIcon, ThumbsUpIcon } from 'lucide-react';
 import { DialogTitle } from '@radix-ui/react-dialog';
-import { useThemeStore } from '@/store/useThemeStore';
 
 type Props = {
   open: boolean;
@@ -14,8 +13,6 @@ type Props = {
 };
 
 export default function RatingModal({ open, onLike, onDislike }: Props) {
-  const theme = useThemeStore((state) => state.theme);
-
   return (
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent
@@ -33,20 +30,10 @@ export default function RatingModal({ open, onLike, onDislike }: Props) {
         </DialogHeader>
 
         <div className="flex justify-center gap-4 py-4">
-          <Button
-            variant="outline"
-            className="w-30 h-9.5 hover:opacity-80"
-            onClick={onDislike}
-            theme={theme}
-          >
+          <Button variant="outline" className="w-30 h-9.5 hover:opacity-80" onClick={onDislike}>
             <ThumbsDownIcon className="w-6 h-6" />
           </Button>
-          <Button
-            variant="default"
-            className="w-30 h-9.5 hover:opacity-80 "
-            onClick={onLike}
-            theme={theme}
-          >
+          <Button variant="default" className="w-30 h-9.5 hover:opacity-80 " onClick={onLike}>
             <ThumbsUpIcon className="w-6 h-6" />
           </Button>
         </div>

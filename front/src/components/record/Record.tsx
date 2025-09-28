@@ -3,20 +3,17 @@ import React from 'react';
 import { Button } from '../common/Button';
 import Link from 'next/link';
 
-import { useThemeStore } from '@/store/useThemeStore';
 import BellBtn from '../common/BellBtn';
 import QuestionCard from '../question/ui/QuestionCard';
 
 export default function Record() {
-  const theme = useThemeStore((state) => state.theme);
-  let whiteClass = '';
-  if (theme === 'night') whiteClass = 'text-secondary';
-
   return (
     <>
       <div className="fixed top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden ">
         <div className="w-6" />
-        <span className={`absolute left-1/2 -translate-x-1/2 font-Gumi text-20  ${whiteClass}`}>
+        <span
+          className={`absolute left-1/2 -translate-x-1/2 font-Gumi text-20  text-theme-primary `}
+        >
           우리의 기록
         </span>
 
@@ -30,7 +27,7 @@ export default function Record() {
               <Link href="/question/list">질문 리스트 보기</Link>
             </Button>
             <Button size="lg" className="!w-[150px]">
-              <Link href="/question/custom ">질문 작성하기</Link>
+              <Link href="/question/custom">질문 작성하기</Link>
             </Button>
           </div>
         </div>

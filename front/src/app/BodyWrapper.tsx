@@ -13,7 +13,7 @@ export default function BodyWrapper({ children }: { children: React.ReactNode })
     bgClass = 'bg-bg-auth';
   }
   // 초대 페이지는 무조건 day 테마 배경
-  else if (pathname.startsWith('/invite')) {
+  else if (pathname.startsWith('/invite') || pathname === '/') {
     bgClass = 'bg-gradient-main';
   }
 

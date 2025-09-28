@@ -65,7 +65,7 @@ public class QuestionInstance {
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false, length = 20)
   @Builder.Default
-  private InstanceStatus status = InstanceStatus.PENDING;
+  private QuestionInstanceStatus status = QuestionInstanceStatus.PENDING;
 
   @Column(name = "completed_at")
   private LocalDateTime completedAt;
@@ -106,7 +106,7 @@ public class QuestionInstance {
   }
 
   public void markCompleted(LocalDateTime now) {
-    this.status = InstanceStatus.COMPLETED;
+    this.status = QuestionInstanceStatus.COMPLETED;
     this.completedAt = now;
   }
 }

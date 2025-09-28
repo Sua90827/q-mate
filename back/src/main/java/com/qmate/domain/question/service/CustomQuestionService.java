@@ -1,14 +1,13 @@
 package com.qmate.domain.question.service;
 
-import com.qmate.common.constants.question.QuestionConstants;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.question.entity.CustomQuestion;
-import com.qmate.domain.question.entity.RelationType;
 import com.qmate.domain.question.mapper.QuestionMapper;
 import com.qmate.domain.question.model.request.CustomQuestionTextRequest;
 import com.qmate.domain.question.model.response.CustomQuestionResponse;
 import com.qmate.domain.question.repository.CustomQuestionRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.qmate.exception.custom.question.CustomQuestionForbiddenException;
+import com.qmate.exception.custom.question.CustomQuestionNotFoundException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,6 @@ public class CustomQuestionService {
    * @param request 질문 생성 요청
    * @return 생성된 커스텀 질문 정보
    */
-  @Transactional
   public CustomQuestionResponse create(Long userId, Long matchId, CustomQuestionTextRequest request) {
 
     // Match 존재 여부 확인 및 로드
@@ -59,12 +57,10 @@ public class CustomQuestionService {
 
     // 본인 질문인지 확인
     if (!Objects.equals(entity.getCreatedBy().getId(), userId)) {
-      // TODO 커스텀 예외 처리
-      throw new RuntimeException(QuestionConstants.CUSTOM_QUESTION_FORBIDDEN_MESSAGE);
+      throw new CustomQuestionForbiddenException();
     }
 
     // TODO 수정 가능한 상태인지 확인 : QuestionInstance 존재 여부로 판단
-
 
     entity.setText(request.getText().trim());
 
@@ -83,8 +79,7 @@ public class CustomQuestionService {
     CustomQuestion entity = loadOrThrow(id);
     // 본인 질문인지 확인
     if (!Objects.equals(entity.getCreatedBy().getId(), userId)) {
-      // TODO 커스텀 예외 처리
-      throw new RuntimeException(QuestionConstants.CUSTOM_QUESTION_FORBIDDEN_MESSAGE);
+      throw new CustomQuestionForbiddenException();
     }
     // TODO 삭제 가능한 상태인지 확인 : QuestionInstance 존재 여부로 판단
     customQuestionRepository.delete(entity);
@@ -100,8 +95,7 @@ public class CustomQuestionService {
     CustomQuestion entity = loadWithMatchOrThrow(id);
     // 본인 질문인지 확인
     if (!Objects.equals(entity.getCreatedBy().getId(), userId)) {
-      // TODO 커스텀 예외 처리
-      throw new RuntimeException(QuestionConstants.CUSTOM_QUESTION_FORBIDDEN_MESSAGE);
+      throw new CustomQuestionForbiddenException();
     }
     boolean editable = true; // TODO QuestionInstance 존재 여부로 판단
     return QuestionMapper.toResponse(entity, editable, entity.getMatch());
@@ -114,13 +108,11 @@ public class CustomQuestionService {
 
   private CustomQuestion loadOrThrow(Long id) {
     return customQuestionRepository.findById(id)
-        // TODO 커스텀 예외 처리
-        .orElseThrow(() -> new EntityNotFoundException(QuestionConstants.CUSTOM_QUESTION_NOT_FOUND_MESSAGE));
+        .orElseThrow(CustomQuestionNotFoundException::new);
   }
 
   private CustomQuestion loadWithMatchOrThrow(Long id) {
     return customQuestionRepository.findWithMatchById(id)
-        // TODO 커스텀 예외 처리
-        .orElseThrow(() -> new EntityNotFoundException(QuestionConstants.CUSTOM_QUESTION_NOT_FOUND_MESSAGE));
+        .orElseThrow(CustomQuestionNotFoundException::new);
   }
 }

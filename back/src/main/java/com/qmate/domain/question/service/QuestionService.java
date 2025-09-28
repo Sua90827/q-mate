@@ -1,7 +1,5 @@
 package com.qmate.domain.question.service;
 
-import com.qmate.common.constants.question.QuestionCategoryConstants;
-import com.qmate.common.constants.question.QuestionConstants;
 import com.qmate.domain.question.entity.Question;
 import com.qmate.domain.question.entity.QuestionCategory;
 import com.qmate.domain.question.entity.RelationType;
@@ -12,7 +10,8 @@ import com.qmate.domain.question.model.response.QuestionResponse;
 import com.qmate.domain.question.repository.QuestionCategoryRepository;
 import com.qmate.domain.question.repository.QuestionRepository;
 import com.qmate.domain.question.repository.QuestionSpecs;
-import jakarta.persistence.EntityNotFoundException;
+import com.qmate.exception.custom.question.QuestionNotFoundException;
+import com.qmate.exception.custom.question.QuestionCategoryNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +32,6 @@ public class QuestionService {
    * @param request 질문 생성 요청
    * @return 생성된 질문 정보
    */
-  @Transactional
   public QuestionResponse createQuestion(QuestionCreateRequest request) {
     // 카테고리 존재 여부 확인
     QuestionCategory category = loadCategoryOrThrow(request.getCategoryId());
@@ -93,15 +91,13 @@ public class QuestionService {
   // 존재하지 않는 질문 조회 시 예외 발생
   private Question loadQuestionOrThrow(Long id) {
     return questionRepository.findById(id)
-        // TODO 커스텀 예외로 변경
-        .orElseThrow(() -> new EntityNotFoundException(QuestionConstants.QUESTION_NOT_FOUND_MESSAGE));
+        .orElseThrow(QuestionNotFoundException::new);
   }
 
   // 존재하지 않는 카테고리 조회 시 예외 발생
   private QuestionCategory loadCategoryOrThrow(Long categoryId) {
     return categoryRepository.findById(categoryId)
-        // TODO 커스텀 예외로 변경
-        .orElseThrow(() -> new EntityNotFoundException(QuestionCategoryConstants.CATEGORY_NOT_FOUND_MESSAGE));
+        .orElseThrow(QuestionCategoryNotFoundException::new);
   }
 
 }

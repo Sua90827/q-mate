@@ -14,6 +14,7 @@ public class MatchErrorCode extends ErrorCode {
   private static final String INVALID_START_DATE_FOR_COUPLE_MESSAGE = "연인 관계는 기념일(YYYY-MM-DD)을 필수로 입력해야 합니다.";
   private static final String INVITE_ATTEMPT_LOCKED_MESSAGE = "초대 코드 입력 5회 실패하여 24시간 동안 시도할 수 없습니다.";
   private static final String CANNOT_MATCH_WITH_SELF_MESSAGE = "자기 자신과 매칭할 수 없습니다.";
+  private static final String MATCH_FORBIDDEN_MESSAGE = "해당 매칭에 대한 접근 권한이 없습니다.";
   // 에러 코드 객체 반환 메서드
   public static ErrorCode alreadyInMatch() {
     return new MatchErrorCode(HttpStatus.CONFLICT, "MATCH_001", ALREADY_IN_MATCH_MESSAGE);
@@ -41,6 +42,10 @@ public class MatchErrorCode extends ErrorCode {
 
   public static ErrorCode cannotMatchWithSelf() {
     return new MatchErrorCode(HttpStatus.BAD_REQUEST, "MATCH_006", CANNOT_MATCH_WITH_SELF_MESSAGE);
+  }
+
+  public static ErrorCode matchForbidden(){
+    return new MatchErrorCode(HttpStatus.FORBIDDEN, "MATCH_008", MATCH_FORBIDDEN_MESSAGE);
   }
 
   private MatchErrorCode(HttpStatus httpStatus, String code, String message) {

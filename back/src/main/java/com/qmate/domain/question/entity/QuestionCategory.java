@@ -33,9 +33,11 @@ public class QuestionCategory {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 10)
+  @Builder.Default
   private RelationType relationType = RelationType.BOTH;
 
   @Column(nullable = false)
+  @Builder.Default
   private boolean isActive = true;
 
 }

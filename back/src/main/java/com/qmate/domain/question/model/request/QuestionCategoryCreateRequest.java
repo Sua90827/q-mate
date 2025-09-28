@@ -2,7 +2,7 @@ package com.qmate.domain.question.model.request;
 
 import com.qmate.common.constants.question.QuestionCategoryConstants;
 import com.qmate.domain.question.entity.RelationType;
-import jakarta.validation.constraints.NotBlank;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -21,5 +21,6 @@ public class QuestionCategoryCreateRequest {
   private String name;
 
   @NotNull(message = QuestionCategoryConstants.RELATION_TYPE_NOT_BLANK_MESSAGE)
+  // @Schema(description = "카테고리의 관계 유형", implementation = RelationType.class)
   private RelationType relationType;
 }

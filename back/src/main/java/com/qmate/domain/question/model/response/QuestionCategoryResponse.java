@@ -1,5 +1,6 @@
 package com.qmate.domain.question.model.response;
 
+import com.qmate.domain.question.entity.RelationType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,6 @@ public class QuestionCategoryResponse {
 
   private Long id;
   private String name;
-  private String relationType;
+  private RelationType relationType;
   private boolean isActive;
 }

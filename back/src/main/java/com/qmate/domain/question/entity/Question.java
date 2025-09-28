@@ -43,6 +43,7 @@ public class Question {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "relation_type", nullable = false, length = 10)
+  @Builder.Default
   private RelationType relationType = RelationType.BOTH;
 
   @Column(nullable = false, length = 500)
@@ -67,5 +68,10 @@ public class Question {
   @LastModifiedDate
   @Column(name = "updated_at", nullable = false)
   private LocalDateTime updatedAt;
+
+  public void applyRatingDelta(long likeDelta, long dislikeDelta) {
+    this.likeCount += likeDelta;
+    this.dislikeCount += dislikeDelta;
+  }
 
 }

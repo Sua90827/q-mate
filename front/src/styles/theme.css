@@ -36,13 +36,19 @@
   --color-sunset-top: #ff9263;
   --color-sunset-bottom: #fadb5e;
   --color-sunset-active: #ff8736;
+  --color-sunset-active2: #ea4f0c;
   --color-sunset-text: #717886;
   --color-sunset-list: #fef4e6;
   --color-night-top: #171940;
   --color-night-bottom: #2d3367;
   --color-night-active: #020433;
   --color-night-active2: #8f93cf;
+  --color-night-active3: #424e97;
   --color-night-list: #d3d5ff;
+  --color-day-calendar: #68c5f3;
+  --color-sunset-calendar: #f3a968;
+  --color-night-calendar: #424e97;
+  --color-anniversary: #fddd69;
 
   /* shadcn 토큰 */
   --color-sidebar-ring: var(--sidebar-ring);
