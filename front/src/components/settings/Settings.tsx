@@ -5,6 +5,7 @@ import { ChevronRight, UserRoundPen } from 'lucide-react';
 import { Switch } from '../ui/switch';
 import { Button } from '../common/Button';
 import NicknameModal from './ui/NicknameModal';
+import { cn } from '@/lib/utils';
 
 type SettingItem =
   | { id: string; label: string; subLabel?: string; type: 'modal'; onClick: () => void }
@@ -12,7 +13,7 @@ type SettingItem =
 
 export default function Settings() {
   const [modal, setModal] = useState<string | null>(null);
-
+  const [isChecked, setIsChecked] = useState(false);
   const settings: SettingItem[] = [
     {
       id: 'profile',
@@ -72,7 +73,11 @@ export default function Settings() {
                 )}
               </div>
               {item.type === 'switch' ? (
-                <Switch />
+                <Switch
+                  checked={isChecked}
+                  onCheckedChange={setIsChecked}
+                  className={cn(isChecked && 'bg-theme-primary')}
+                />
               ) : (
                 <ChevronRight className="text-theme-secondary !w-4 !h-4" />
               )}

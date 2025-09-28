@@ -16,7 +16,7 @@ export function Switch({ className, ...props }: SwitchProps) {
          focus-visible:border-ring focus-visible:ring-ring/50 
          disabled:cursor-not-allowed disabled:opacity-50
          data-[state=unchecked]:bg-input
-         data-[state=checked]: bg-theme-primary`,
+         data-[state=checked]: bg-primary`,
         className,
       )}
       {...props}
