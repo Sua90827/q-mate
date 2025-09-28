@@ -2,6 +2,9 @@ package com.qmate.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qmate.domain.auth.JwtService;
+import com.qmate.security.oauth.CustomOAuth2UserService;
+import com.qmate.security.oauth.OAuth2FailureHandler;
+import com.qmate.security.oauth.OAuth2SuccessHandler;
 import com.qmate.exception.CommonErrorCode;
 import com.qmate.exception.ErrorCode;
 import com.qmate.exception.ErrorResponse;
@@ -27,6 +30,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   private final JwtService jwtService;
+  private final CustomOAuth2UserService customOAuth2UserService;
+  private final OAuth2SuccessHandler oAuth2SuccessHandler;
+  private final OAuth2FailureHandler oAuth2FailureHandler;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -45,6 +51,7 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
+
         // 세션 기반 인증 사용 안함
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .exceptionHandling(e -> e
@@ -63,11 +70,18 @@ public class SecurityConfig {
               res.getWriter().write(om.writeValueAsString(body));
             })
         )
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/auth/**").permitAll()
+        .authorizeHttpRequests(authz -> authz
+            .requestMatchers("/auth/**",
+                "/oauth2/**", "/login/oauth2/**", "/oauth2/authorization/**").permitAll()
+
             .requestMatchers(SWAGGER_WHITELIST).permitAll()
             .requestMatchers("/api/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated()  // 나머지 모든 요청은 인증 필요
+        )
+        .oauth2Login(oauth -> oauth
+            .userInfoEndpoint(u -> u.userService(customOAuth2UserService))
+            .successHandler(oAuth2SuccessHandler)
+            .failureHandler(oAuth2FailureHandler)
         )
         .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);  // JWT 필터 추가
 
