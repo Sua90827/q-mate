@@ -5,7 +5,6 @@ import static com.qmate.config.OpenApiConfig.COMMON_ERRORS_MD;
 import com.qmate.exception.CommonErrorCode;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
-import org.springframework.http.HttpStatus;
 
 @OpenAPIDefinition(
     info = @Info(
@@ -16,7 +15,8 @@ import org.springframework.http.HttpStatus;
 public class OpenApiConfig {
 
   public static final String COMMON_ERRORS_MD =
-      "## 공통 오류 규약\n"
+      "API 문서 https://qmate.notion.site/API-26cc12a8ec408024a84de4639eaf3eed\n\n"
+          + "## 공통 오류 규약\n"
           + "### 오류 바디: ErrorResponse\n"
           + "```\n"
           + "{\n"

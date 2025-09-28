@@ -1,19 +1,14 @@
 package com.qmate.api.question;
 
-import com.qmate.common.constants.CommonConstants;
-import com.qmate.common.constants.HttpStatusCode;
 import com.qmate.common.constants.question.QuestionConstants;
 import com.qmate.domain.question.entity.RelationType;
 import com.qmate.domain.question.model.request.QuestionCreateRequest;
 import com.qmate.domain.question.model.request.QuestionUpdateRequest;
 import com.qmate.domain.question.model.response.QuestionResponse;
 import com.qmate.domain.question.service.QuestionService;
-import com.qmate.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -49,14 +44,7 @@ public class QuestionController {
   @PostMapping
   @Operation(
       summary = "질문 생성",
-      description = "새로운 질문을 생성합니다.",
-      responses = {
-          @ApiResponse(responseCode = HttpStatusCode.CREATED, description = "생성 성공", content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionResponse.class))),
-      },
-      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-          required = true,
-          content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionCreateRequest.class))
-      )
+      description = "새로운 질문을 생성합니다."
   )
   // @PostMapping
   public ResponseEntity<QuestionResponse> createQuestion(
@@ -71,13 +59,6 @@ public class QuestionController {
   @Operation(
       summary = "질문 수정",
       description = QuestionConstants.UPDATE_MD,
-      responses = {
-          @ApiResponse(responseCode = HttpStatusCode.OK, description = "수정 성공", content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionResponse.class))),
-      },
-      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-          required = true,
-          content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionUpdateRequest.class))
-      ),
       parameters = {
           @Parameter(name = "id", description = "수정할 질문 ID", required = true)
       }
@@ -96,9 +77,6 @@ public class QuestionController {
   @Operation(
       summary = "질문 전체 조회 (필터링 및 페이징)",
       description = "질문을 필터링 조건에 따라 페이징하여 조회합니다.",
-      responses = {
-          @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionResponse.class))),
-      },
       parameters = {
           @Parameter(name = "relationType", description = "질문의 관계 타입", required = false, schema = @Schema(implementation = RelationType.class)),
           @Parameter(name = "categoryId", description = "질문의 카테고리 ID", required = false),

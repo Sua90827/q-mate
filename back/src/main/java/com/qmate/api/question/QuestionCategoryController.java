@@ -1,16 +1,11 @@
 package com.qmate.api.question;
 
-import com.qmate.common.constants.CommonConstants;
-import com.qmate.common.constants.HttpStatusCode;
 import com.qmate.common.constants.question.QuestionCategoryConstants;
 import com.qmate.domain.question.model.request.QuestionCategoryCreateRequest;
 import com.qmate.domain.question.model.request.QuestionCategoryUpdateRequest;
 import com.qmate.domain.question.model.response.QuestionCategoryResponse;
 import com.qmate.domain.question.service.QuestionCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -41,14 +36,7 @@ public class QuestionCategoryController {
   @PostMapping
   @Operation(
       summary = "카테고리 생성",
-      description = QuestionCategoryConstants.CREATE_MD,
-      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-          required = true,
-          content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionCategoryCreateRequest.class))
-      ),
-      responses = {
-          @ApiResponse(responseCode = HttpStatusCode.CREATED, description = "생성 성공", content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionCategoryResponse.class))),
-      }
+      description = QuestionCategoryConstants.CREATE_MD
   )
   // @PostMapping
   public ResponseEntity<QuestionCategoryResponse> createCategory(
@@ -63,14 +51,7 @@ public class QuestionCategoryController {
   @PatchMapping("/{id}")
   @Operation(
       summary = "카테고리 수정",
-      description = QuestionCategoryConstants.UPDATE_MD,
-      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-          required = true,
-          content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionCategoryUpdateRequest.class))
-      ),
-      responses = {
-          @ApiResponse(responseCode = HttpStatusCode.OK, description = "수정 성공", content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionCategoryResponse.class))),
-      }
+      description = QuestionCategoryConstants.UPDATE_MD
   )
   // @PatchMapping("/{id}")
   public ResponseEntity<QuestionCategoryResponse> updateCategory(
@@ -86,10 +67,7 @@ public class QuestionCategoryController {
   @GetMapping
   @Operation(
       summary = "카테고리 전체 조회",
-      description = "모든 질문 카테고리를 조회합니다.",
-      responses = {
-          @ApiResponse(responseCode = HttpStatusCode.OK, description = "조회 성공", content = @Content(mediaType = CommonConstants.MEDIA_TYPE_JSON, schema = @Schema(implementation = QuestionCategoryResponse.class))),
-      }
+      description = "모든 질문 카테고리를 조회합니다."
   )
   //@GetMapping
   public ResponseEntity<List<QuestionCategoryResponse>> getAllCategories() {
