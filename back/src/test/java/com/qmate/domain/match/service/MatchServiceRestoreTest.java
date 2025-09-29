@@ -52,19 +52,49 @@ class MatchServiceRestoreTest {
   }
 
   @Test
-  @DisplayName("연결 복구 성공: 상태가 ACTIVE로 변경되고 detachedAt은 null이 된다")
-  void restoreMatch_success() {
-    // given: 1번 유저가 자신의 DETACHED 상태인 매칭에 대해 복구를 요청
+  @DisplayName("연결 복구 성공: 내가 첫 번째로 동의한 경우, false를 반환하고 상태는 유지된다")
+  void restoreMatch_success_firstAgreement() {
+    // given: 1번 유저(나)와 2번 유저(상대)가 매칭된 상황. 상대는 아직 동의 안 함(isAgreed=false)
     Long matchId = 100L;
     Long requesterId = 1L;
-    given(matchRepository.findWithMembersAndUsersById(matchId)).willReturn(Optional.of(detachedMatch));
+    User user1 = User.builder().id(1L).build();
+    User user2 = User.builder().id(2L).build();
+    Match match = Match.builder().id(matchId).status(MatchStatus.DETACHED_PENDING_DELETE).detachedAt(LocalDateTime.now()).build();
+    match.addMember(MatchMember.builder().user(user1).isAgreed(false).build()); // 내 동의 상태: false
+    match.addMember(MatchMember.builder().user(user2).isAgreed(false).build()); // 상대 동의 상태: false
 
-    // when: 서비스 메서드를 실행
-    sut.restoreMatch(matchId, requesterId);
+    given(matchRepository.findWithMembersAndUsersById(matchId)).willReturn(Optional.of(match));
 
-    // then: Match 엔티티의 상태가 올바르게 변경되었는지 검증
-    assertThat(detachedMatch.getStatus()).isEqualTo(MatchStatus.ACTIVE);
-    assertThat(detachedMatch.getDetachedAt()).isNull();
+    // when: 내가 복구를 요청하면
+    boolean isFullyRestored = sut.restoreMatch(matchId, requesterId);
+
+    // then:
+    assertThat(isFullyRestored).isFalse(); // 최종 복구는 아니므로 false 반환
+    assertThat(match.getMembers().get(0).isAgreed()).isTrue(); // 내 동의 상태는 true로 변경
+    assertThat(match.getStatus()).isEqualTo(MatchStatus.DETACHED_PENDING_DELETE); // 매칭 상태는 그대로 유지
+  }
+
+  @Test
+  @DisplayName("연결 복구 성공: 내가 마지막으로 동의하여 최종 복구되는 경우, true를 반환하고 상태가 변경된다")
+  void restoreMatch_success_finalAgreement() {
+    // given: 상대방은 이미 동의한 상황 (isAgreed=true)
+    Long matchId = 100L;
+    Long requesterId = 1L;
+    User user1 = User.builder().id(1L).build();
+    User user2 = User.builder().id(2L).build();
+    Match match = Match.builder().id(matchId).status(MatchStatus.DETACHED_PENDING_DELETE).detachedAt(LocalDateTime.now()).build();
+    match.addMember(MatchMember.builder().user(user1).isAgreed(false).build()); // 내 동의 상태: false
+    match.addMember(MatchMember.builder().user(user2).isAgreed(true).build());  // 상대 동의 상태: true
+
+    given(matchRepository.findWithMembersAndUsersById(matchId)).willReturn(Optional.of(match));
+
+    // when: 내가 복구를 요청하면
+    boolean isFullyRestored = sut.restoreMatch(matchId, requesterId);
+
+    // then:
+    assertThat(isFullyRestored).isTrue(); // 최종 복구되었으므로 true 반환
+    assertThat(match.getStatus()).isEqualTo(MatchStatus.ACTIVE); // 매칭 상태가 ACTIVE로 변경
+    assertThat(match.getDetachedAt()).isNull(); // 끊어진 시각은 null로 초기화
   }
 
   @Test

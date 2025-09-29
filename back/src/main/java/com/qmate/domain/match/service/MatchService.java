@@ -190,12 +190,11 @@ public class MatchService {
   }
 
   /**
-   * 끊어진 매칭 연결을 복구합나다.
-   * @param matchId 복구할 매칭의 ID
-   * @param userId 요청을 보낸 사용자의 ID (권한 검증용)
+   * 끊어진 매칭 연결 복구를 시도합니다.
+   * @return 최종 복구 여부 (true: 완전 복구, false: 내 동의만 완료)
    */
   @Transactional
-  public void restoreMatch(Long matchId, Long userId){
+  public boolean restoreMatch(Long matchId, Long userId){
     Match match = matchRepository.findWithMembersAndUsersById(matchId)
         .orElseThrow(MatchNotFoundException::new);
     boolean isMember = match.getMembers().stream()
@@ -203,7 +202,14 @@ public class MatchService {
     if (!isMember){
       throw new MatchForbiddenException();
     }
-    match.restore();
+    //요청자의 MatchMember를 찾습니다.
+    MatchMember requester = match.getMembers().stream()
+            .filter(matchMember -> matchMember.getUser().getId().equals(userId))
+                .findFirst()
+                    .orElseThrow();
+    requester.agreeToRestore();
+
+    return match.attemptToRestore();
   }
 
 

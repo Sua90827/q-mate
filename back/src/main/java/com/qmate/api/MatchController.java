@@ -121,8 +121,13 @@ public class MatchController {
       @AuthenticationPrincipal UserPrincipal principal
   ){
     Long currentUserId = principal.userId();
-    matchService.restoreMatch(matchId, currentUserId);
+    boolean isFullyRestored = matchService.restoreMatch(matchId, currentUserId);
 
-    return ResponseEntity.ok(new MatchActionResponse(MatchConstants.RESTORE_SUCCESS_MESSAGE));
+    //서비스의 결과에 따른 메세지를 선태
+    String message = isFullyRestored
+        ? MatchConstants.RESTORE_SUCCESS_MESSAGE
+        : MatchConstants.RESTORE_AGREED_AWAITING_PARTNER_MESSAGE;
+
+    return ResponseEntity.ok(new MatchActionResponse(message));
   }
 }

@@ -21,7 +21,7 @@ public class MatchInfoResponse {
     this.startDate = match.getStartDate();
     // Match 엔티티가 가진 MatchMember 리스트를 순회하며 MemberInfo DTO 리스트로 변환
     this.users = match.getMembers().stream()
-        .map(matchMember -> new MemberInfoResponse(matchMember.getUser(), requesterId))
+        .map(matchMember -> new MemberInfoResponse(matchMember, requesterId))
         .toList();
   }
 }

@@ -1,6 +1,7 @@
 package com.qmate.api;
 
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -9,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.qmate.AuthTestUtils;
 import com.qmate.SecuritySliceTestConfig;
+import com.qmate.common.constants.match.MatchConstants;
 import com.qmate.domain.match.service.MatchService;
 import com.qmate.exception.custom.matchinstance.MatchForbiddenException;
 import com.qmate.exception.custom.matchinstance.MatchNotFoundException;
@@ -35,17 +37,31 @@ class MatchControllerRestoreTest {
   private MatchService matchService;
 
   @Test
-  @DisplayName("연결 복구 성공 시 200 OK와 성공 메시지를 응답한다")
-  void restoreMatch_success_200ok() throws Exception {
-    // given
+  @DisplayName("연결 복구 성공: 상대 동의를 기다려야 할 때, '대기' 메시지를 응답한다")
+  void restoreMatch_success_awaitingPartner() throws Exception {
+    // given: 서비스가 '최종 복구 아님'을 의미하는 false를 반환하는 상황
     Long matchId = 100L;
-    willDoNothing().given(matchService).restoreMatch(anyLong(), anyLong());
+    given(matchService.restoreMatch(anyLong(), anyLong())).willReturn(false);
 
-    // expect
+    // expect: 200 OK 응답과 함께 '상대방 동의 대기' 메시지가 와야 함
     mockMvc.perform(post("/api/matches/{matchId}/restore", matchId)
             .with(AuthTestUtils.userPrincipal(1L)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.message").value("매칭이 성공적으로 복구되었습니다."));
+        .andExpect(jsonPath("$.message").value(MatchConstants.RESTORE_AGREED_AWAITING_PARTNER_MESSAGE));
+  }
+
+  @Test
+  @DisplayName("연결 복구 성공: 최종 복구 완료 시, '성공' 메시지를 응답한다")
+  void restoreMatch_success_fullyRestored() throws Exception {
+    // given: 서비스가 '최종 복구 성공'을 의미하는 true를 반환하는 상황
+    Long matchId = 100L;
+    given(matchService.restoreMatch(anyLong(), anyLong())).willReturn(true);
+
+    // expect: 200 OK 응답과 함께 '성공' 메시지가 와야 함
+    mockMvc.perform(post("/api/matches/{matchId}/restore", matchId)
+            .with(AuthTestUtils.userPrincipal(1L)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.message").value(MatchConstants.RESTORE_SUCCESS_MESSAGE));
   }
 
   @Test
