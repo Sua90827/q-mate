@@ -1,5 +1,7 @@
 package com.qmate.domain.match;
 
+import com.qmate.exception.custom.matchinstance.MatchRecoveryExpiredException;
+import com.qmate.exception.custom.matchinstance.MatchStateConflictException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -74,6 +76,36 @@ public class Match {
   public void updateStartDate(LocalDate startDate) {
     this.startDate = startDate.atStartOfDay();
   }
+
+  public void disconnect(){
+    //이미 끊어진 관계를 또 끊으려고 하는 것 방지
+    if (this.status != MatchStatus.ACTIVE){
+      throw new MatchStateConflictException();
+    }
+    this.status = MatchStatus.DETACHED_PENDING_DELETE;
+    this.detachedAt = LocalDateTime.now();
+    this.members.forEach(MatchMember::resetAgreement);
+  }
+  //끊어진 매칭 연결을 복구합니다.
+  public boolean attemptToRestore() {
+    //복구할 수 있는 상태인지 확인
+    if (this.status != MatchStatus.DETACHED_PENDING_DELETE) {
+      throw new MatchStateConflictException();
+    }
+    if (this.detachedAt != null && this.detachedAt.plusWeeks(2).isBefore(LocalDateTime.now())) {
+      throw new MatchRecoveryExpiredException();
+    }
+    boolean allAgreed = this.members.stream().allMatch(MatchMember::isAgreed);
+
+    if (allAgreed) {
+      this.status = MatchStatus.ACTIVE;
+      this.detachedAt = null;
+      return true;
+    }
+//아직 상대방이 동의하지 않았다면, 상태를 변경하지 않고 '아직 대기 중'임을 알림
+    return false;
+  }
+
 
   //정적 팩토리 메서드 추가
   public static Match create(RelationType relationType, LocalDateTime startDate) {

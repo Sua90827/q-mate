@@ -172,6 +172,47 @@ public class MatchService {
     }
   }
 
+  /**
+   * 특정 매칭의 연결을 끊습니다.
+   * @param matchId 연결을 끊을 매칭의 ID
+   * @param userId 요청을 보낸 사용자의 ID(권한 검증용)
+   */
+  @Transactional
+  public void disconnectMatch(Long matchId, Long userId){
+    Match match = matchRepository.findWithMembersAndUsersById(matchId)
+        .orElseThrow(MatchNotFoundException::new);
+    boolean isMember = match.getMembers().stream()
+        .anyMatch(matchMember -> matchMember.getUser().getId().equals(userId));
+    if (!isMember){
+      throw new MatchForbiddenException();
+    }
+    match.disconnect();
+  }
+
+  /**
+   * 끊어진 매칭 연결 복구를 시도합니다.
+   * @return 최종 복구 여부 (true: 완전 복구, false: 내 동의만 완료)
+   */
+  @Transactional
+  public boolean restoreMatch(Long matchId, Long userId){
+    Match match = matchRepository.findWithMembersAndUsersById(matchId)
+        .orElseThrow(MatchNotFoundException::new);
+    boolean isMember = match.getMembers().stream()
+        .anyMatch(matchMember -> matchMember.getUser().getId().equals(userId));
+    if (!isMember){
+      throw new MatchForbiddenException();
+    }
+    //요청자의 MatchMember를 찾습니다.
+    MatchMember requester = match.getMembers().stream()
+            .filter(matchMember -> matchMember.getUser().getId().equals(userId))
+                .findFirst()
+                    .orElseThrow();
+    requester.agreeToRestore();
+
+    return match.attemptToRestore();
+  }
+
+
   //가독성을 위한 private 헬퍼 메서드(초대 생성 관련)
   private void validateUserNotInActiveMatch(Long userId) {
     matchMemberRepository.findByUser_IdAndMatch_Status(userId, MatchStatus.ACTIVE)
