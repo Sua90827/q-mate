@@ -85,8 +85,8 @@ public class QuestionMapper {
         match.getId(),
         cq.getText(),
         isEditable,
-        cq.getCreatedAt().format(ISO),
-        cq.getUpdatedAt().format(ISO)
+        cq.getCreatedAt(),
+        cq.getUpdatedAt()
     );
   }
 
