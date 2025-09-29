@@ -95,13 +95,17 @@ public class MatchService {
       matchMemberRepository.save(joinerMember);
       match.setStatus(MatchStatus.ACTIVE);
 
-      MatchMember partner = findPartner(matchId, joinerId);
+      MatchMember partnerMember = findPartner(matchId, joinerId);
+      User partner = partnerMember.getUser();
+
+      joiner.joinMatch(match);
+      partner.joinMatch(match);
       redisHelper.deleteInviteCode(inviteCode);
 
       return MatchJoinResponse.builder()
           .matchId(matchId)
           .message("매칭에 성공적으로 참여했습니다.")
-          .partnerNickname(partner.getUser().getNickname())
+          .partnerNickname(partner.getNickname())
           .build();
     } catch (InviteCodeExpiredException e) {
       //초대 코드가 틀렸을 때 실행되는 실패 로직
