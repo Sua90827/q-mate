@@ -1,6 +1,7 @@
 package com.qmate.domain.questioninstance.service;
 
 import com.qmate.domain.match.Match;
+import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.questioninstance.entity.Answer;
 import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
@@ -15,6 +16,7 @@ import com.qmate.exception.custom.matchinstance.UserNotFoundException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,30 +40,23 @@ public class QuestionInstanceService {
    * @param requesterId 요청자(나) ID
    * @return QIDetailResponse
    * @throws QuestionInstanceNotFoundException    QI 없음
-   * @throws UserNotFoundException                요청자 없음
-   * @throws QuestionInstanceForbiddenException   권한 없음 (현재 매치 != QI 매치)
    */
   public QIDetailResponse getDetail(Long qiId, Long requesterId) {
 
-    // 1) QI + (question/custom + category) + match 한 번에 로드
-    QuestionInstance qi = qiRepository.findDetailWithQuestionAndMatch(qiId)
+    // QI + (question/custom + category) + match + user 한 번에 로드
+    // 요청자의 qi 권한 여부도 동시 체크
+    QuestionInstance qi = qiRepository.findDetailWithMatchMembersAndQuestionByIdIfRequesterInMatch(qiId, requesterId)
         .orElseThrow(QuestionInstanceNotFoundException::new);
 
     Match match = qi.getMatch();
-    Long matchId = match.getId();
 
-    // 2) 요청자 조회 및 권한 확인: 현재 매치 == QI 매치
-    User me = userRepository.findById(requesterId)
-        .orElseThrow(UserNotFoundException::new);
+    // match에서 나와 파트너를 추출
+    Iterator<MatchMember> it = match.getMembers().iterator();
+    MatchMember a = it.next();
+    MatchMember b = it.next();
 
-    Long myCurrentMatchId = me.getCurrentMatchId();
-    if (!matchId.equals(myCurrentMatchId)) {
-      throw new QuestionInstanceForbiddenException();
-    }
-
-    // 3) 파트너 조회: 같은 매치의 '나 제외' 사용자
-    User partner = userRepository.findByCurrentMatchIdAndIdNot(matchId, requesterId)
-        .orElseThrow(UserNotFoundException::new);
+    User me = Objects.equals(a.getUser().getId(), requesterId) ? a.getUser() : b.getUser();
+    User partner = Objects.equals(a.getUser().getId(), requesterId) ? b.getUser() : a.getUser();
 
     // 4) 답변 조회: (qiId, userId) 각각 단건
     Answer myAnswer = answerRepository
@@ -90,8 +85,6 @@ public class QuestionInstanceService {
    * @param requesterId 요청자(나) ID
    * @return QIDetailResponse
    * @throws QuestionInstanceNotFoundException    QI 없음
-   * @throws UserNotFoundException                요청자 없음
-   * @throws QuestionInstanceForbiddenException   권한 없음 (현재 매치 != QI 매치)
    */
   public QIDetailResponse getLatestNotified(Long matchId, Long requesterId) {
     Long qiId = qiRepository.findLatestNotifiedIdByMatch(matchId)

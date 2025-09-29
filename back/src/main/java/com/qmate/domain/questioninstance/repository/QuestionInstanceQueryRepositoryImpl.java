@@ -62,26 +62,6 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
   }
 
   /**
-   * 질문 인스턴스 상세 조회 (question, customQuestion, match 조인 페치)
-   *
-   * @param qiId 질문 인스턴스 ID
-   * @return Optional<QuestionInstance>
-   */
-  @Override
-  public Optional<QuestionInstance> findDetailWithQuestionAndMatch(Long qiId) {
-    return Optional.ofNullable(
-        queryFactory
-            .selectFrom(questionInstance)
-            .leftJoin(questionInstance.question, question).fetchJoin()
-            .leftJoin(question.category, questionCategory).fetchJoin()
-            .leftJoin(questionInstance.customQuestion, customQuestion).fetchJoin()
-            .join(questionInstance.match, match).fetchJoin()
-            .where(questionInstance.id.eq(qiId))
-            .fetchOne()
-    );
-  }
-
-  /**
    * 질문 인스턴스 목록 조회 (question, customQuestion 조인)
    *
    * @param matchId 매치 ID (필수)

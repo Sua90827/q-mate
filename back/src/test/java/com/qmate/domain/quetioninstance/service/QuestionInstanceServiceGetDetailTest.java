@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import com.qmate.domain.match.Match;
+import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.questioninstance.entity.Answer;
 import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
@@ -36,9 +37,12 @@ class QuestionInstanceServiceGetDetailTest {
 
   private QuestionInstanceService service;
 
-  @Mock QuestionInstanceRepository qiRepository;
-  @Mock AnswerRepository answerRepository;
-  @Mock UserRepository userRepository;
+  @Mock
+  QuestionInstanceRepository qiRepository;
+  @Mock
+  AnswerRepository answerRepository;
+  @Mock
+  UserRepository userRepository;
 
   @BeforeEach
   void setUp() {
@@ -64,10 +68,12 @@ class QuestionInstanceServiceGetDetailTest {
           .build();
       User me = User.builder().id(meId).currentMatchId(matchId).build();
       User partner = User.builder().id(partnerId).currentMatchId(matchId).build();
+      MatchMember mmMe = MatchMember.builder().match(match).user(me).build();
+      MatchMember mmPartner = MatchMember.builder().match(match).user(partner).build();
+      match.getMembers().add(mmMe);
+      match.getMembers().add(mmPartner);
 
-      when(qiRepository.findDetailWithQuestionAndMatch(qiId)).thenReturn(Optional.of(qi));
-      when(userRepository.findById(meId)).thenReturn(Optional.of(me));
-      when(userRepository.findByCurrentMatchIdAndIdNot(matchId, meId)).thenReturn(Optional.of(partner));
+      when(qiRepository.findDetailWithMatchMembersAndQuestionByIdIfRequesterInMatch(qiId, meId)).thenReturn(Optional.of(qi));
 
       Answer myAnswer = Answer.builder().id(1L).user(me).questionInstance(qi).build();
       when(answerRepository.findByQuestionInstance_IdAndUser_Id(qiId, meId))
@@ -108,10 +114,12 @@ class QuestionInstanceServiceGetDetailTest {
           .build();
       User me = User.builder().id(meId).currentMatchId(matchId).build();
       User partner = User.builder().id(partnerId).currentMatchId(matchId).build();
+      MatchMember mmMe = MatchMember.builder().match(match).user(me).build();
+      MatchMember mmPartner = MatchMember.builder().match(match).user(partner).build();
+      match.getMembers().add(mmMe);
+      match.getMembers().add(mmPartner);
 
-      when(qiRepository.findDetailWithQuestionAndMatch(qiId)).thenReturn(Optional.of(qi));
-      when(userRepository.findById(meId)).thenReturn(Optional.of(me));
-      when(userRepository.findByCurrentMatchIdAndIdNot(matchId, meId)).thenReturn(Optional.of(partner));
+      when(qiRepository.findDetailWithMatchMembersAndQuestionByIdIfRequesterInMatch(qiId, meId)).thenReturn(Optional.of(qi));
 
       Answer myAnswer = Answer.builder().id(1L).user(me).questionInstance(qi).build();
       Answer partnerAnswer = Answer.builder().id(2L).user(partner).questionInstance(qi).build();
@@ -153,10 +161,12 @@ class QuestionInstanceServiceGetDetailTest {
           .build();
       User me = User.builder().id(meId).currentMatchId(matchId).build();
       User partner = User.builder().id(partnerId).currentMatchId(matchId).build();
+      MatchMember mmMe = MatchMember.builder().match(match).user(me).build();
+      MatchMember mmPartner = MatchMember.builder().match(match).user(partner).build();
+      match.getMembers().add(mmMe);
+      match.getMembers().add(mmPartner);
 
-      when(qiRepository.findDetailWithQuestionAndMatch(qiId)).thenReturn(Optional.of(qi));
-      when(userRepository.findById(meId)).thenReturn(Optional.of(me));
-      when(userRepository.findByCurrentMatchIdAndIdNot(matchId, meId)).thenReturn(Optional.of(partner));
+      when(qiRepository.findDetailWithMatchMembersAndQuestionByIdIfRequesterInMatch(qiId, meId)).thenReturn(Optional.of(qi));
 
       when(answerRepository.findByQuestionInstance_IdAndUser_Id(qiId, meId))
           .thenReturn(Optional.empty());
@@ -187,7 +197,7 @@ class QuestionInstanceServiceGetDetailTest {
     @Test
     @DisplayName("QI가 없으면 404")
     void qiNotFound() {
-      when(qiRepository.findDetailWithQuestionAndMatch(999L)).thenReturn(Optional.empty());
+      when(qiRepository.findDetailWithMatchMembersAndQuestionByIdIfRequesterInMatch(999L, 1L)).thenReturn(Optional.empty());
 
       try {
         service.getDetail(999L, 1L);
@@ -196,50 +206,5 @@ class QuestionInstanceServiceGetDetailTest {
       }
     }
 
-    @Test
-    @DisplayName("요청자(User) 없으면 404")
-    void userNotFound() {
-      Long qiId = 1L, matchId = 10L;
-
-      Match match = Match.builder().id(matchId).build();
-      QuestionInstance qi = QuestionInstance.builder()
-          .id(qiId)
-          .match(match)
-          .status(QuestionInstanceStatus.PENDING)
-          .build();
-
-      when(qiRepository.findDetailWithQuestionAndMatch(qiId)).thenReturn(Optional.of(qi));
-      when(userRepository.findById(123L)).thenReturn(Optional.empty());
-
-      try {
-        service.getDetail(qiId, 123L);
-      } catch (Exception e) {
-        assertThat(e).isInstanceOf(UserNotFoundException.class);
-      }
-    }
-
-    @Test
-    @DisplayName("권한 불일치면 403")
-    void forbidden_hiddenAsNotFound() {
-      Long qiId = 2L, matchId = 20L;
-
-      Match match = Match.builder().id(matchId).build();
-      QuestionInstance qi = QuestionInstance.builder()
-          .id(qiId)
-          .match(match)
-          .status(QuestionInstanceStatus.PENDING)
-          .build();
-
-      User me = User.builder().id(7L).currentMatchId(21L).build(); // mismatch
-
-      when(qiRepository.findDetailWithQuestionAndMatch(qiId)).thenReturn(Optional.of(qi));
-      when(userRepository.findById(7L)).thenReturn(Optional.of(me));
-
-      try {
-        service.getDetail(qiId, 7L);
-      } catch (Exception e) {
-        assertThat(e).isInstanceOf(QuestionInstanceForbiddenException.class);
-      }
-    }
   }
 }
