@@ -1,5 +1,7 @@
 package com.qmate.api.question;
 
+import com.qmate.common.constants.question.CustomQuestionConstants;
+import com.qmate.domain.question.model.request.CustomQuestionStatusFilter;
 import com.qmate.domain.question.model.request.CustomQuestionTextRequest;
 import com.qmate.domain.question.model.response.CustomQuestionResponse;
 import com.qmate.domain.question.service.CustomQuestionService;
@@ -7,6 +9,7 @@ import com.qmate.exception.ErrorResponse;
 import com.qmate.security.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +17,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -117,5 +126,26 @@ public class CustomQuestionController {
       @PathVariable Long id) {
     Long userId = principal.userId();
     return ResponseEntity.ok(customQuestionService.getOne(userId, id));
+  }
+
+  @GetMapping("/matches/{matchId}/custom-questions")
+  @Operation(
+      summary = "내 커스텀 질문 리스트 조회",
+      description = CustomQuestionConstants.LIST_MD,
+      parameters = {
+          @Parameter(name = "matchId", in = ParameterIn.PATH, description = "매치 id"),
+          @Parameter(name = "status", description = "상태 필터", schema = @Schema(implementation = CustomQuestionStatusFilter.class)),
+          @Parameter(name = "sort", description = CustomQuestionConstants.SORT_DESCRIPTION)
+      }
+  )
+  //@GetMapping("/matches/{matchId}/custom-questions")
+  public Page<CustomQuestionResponse> list(
+      @AuthenticationPrincipal UserPrincipal principal,
+      @PathVariable Long matchId,
+      @RequestParam(required = false) CustomQuestionStatusFilter status,
+      @PageableDefault(page = 0, size = 20, sort = CustomQuestionConstants.SORT_KEY_CREATED_AT, direction = Sort.Direction.DESC)
+      @ParameterObject Pageable pageable
+  ) {
+    return customQuestionService.findPageByOwnerAndStatusFilter(principal.userId(), matchId, status, pageable);
   }
 }

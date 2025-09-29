@@ -1,7 +1,9 @@
 package com.qmate.exception;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @Slf4j
 @RestControllerAdvice
@@ -48,6 +51,38 @@ public class GlobalExceptionHandler {
 
     );
 
+  }
+
+  // 컨트롤러에서 타입 미스매치 예외를 처리하는 핸들러
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+    log.warn("파라미터 타입 불일치: {}", ex.getMessage());
+
+    ErrorCode errorCode = CommonErrorCode.invalidInput();
+    String field = ex.getName();
+    Object rejected = ex.getValue();
+    String detailMsg = "잘못된 파라미터 값입니다.";
+
+    // Enum인 경우 허용 가능한 값 힌트 제공
+    Class<?> required = ex.getRequiredType();
+    if (required != null && required.isEnum()) {
+      String allowed = Arrays.stream(required.getEnumConstants())
+          .map(Object::toString)
+          .collect(Collectors.joining(", "));
+      detailMsg = "허용 가능한 값: " + allowed;
+    }
+
+    List<ErrorResponse.FieldErrorDetail> errors = List.of(
+        new ErrorResponse.FieldErrorDetail(
+            field,
+            String.format("입력값 '%s'은(는) 유효하지 않습니다. %s", rejected, detailMsg)
+        )
+    );
+
+    return new ResponseEntity<>(
+        new ErrorResponse(errorCode.getCode(), errorCode.getMessage(), errors),
+        errorCode.getHttpStatus()
+    );
   }
 
   //인증 실패 예외를 처리하는 핸들러(401)
