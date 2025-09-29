@@ -4,36 +4,135 @@ import Image from 'next/image';
 import { Button } from '../common/Button';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import ConfirmModal from '../common/ConfirmModal';
+import NoticeModal from '../common/NoticeModal';
 import { useRouter } from 'next/navigation';
 import { useCreateMatchId } from '@/hooks/useInvite';
 import axios from 'axios';
 
+type ModalType = 'success' | 'errorConfirm' | 'errorNotice' | null;
+
+interface ModalConfig {
+  open: boolean;
+  type: ModalType;
+  title: React.ReactNode;
+  sub?: string;
+  isDanger?: boolean;
+  onConfirm?: () => void;
+}
+
 export default function Invited() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [code, setCode] = useState('');
-  const [name, setName] = useState('');
-  const setMatchId = useMatchIdStore((state) => state.setMatchId);
   const router = useRouter();
+  const setMatchId = useMatchIdStore((state) => state.setMatchId);
+
+  const [modal, setModal] = useState<ModalConfig>({
+    open: false,
+    type: null,
+    title: '',
+  });
+  const [code, setCode] = useState('');
 
   const { mutate: joinMatch, isPending: isJoining } = useCreateMatchId();
+
+  // 페이지 전용 에러 모달 설정
+  const errorConfig: Record<number, ModalConfig> = {
+    400: {
+      open: true,
+      type: 'errorNotice',
+      title: (
+        <>
+          ⚠️ <br /> 유효하지 않은 코드입니다.
+        </>
+      ),
+      sub: '초대 코드를 다시 확인해 주세요.',
+    },
+    401: {
+      open: true,
+      type: 'errorNotice',
+      title: (
+        <>
+          ⚠️ <br /> 로그인 정보가 유효하지 않습니다.
+          <br /> 다시 로그인해주세요.
+        </>
+      ),
+    },
+    403: {
+      open: true,
+      type: 'errorConfirm',
+      title: (
+        <>
+          ⚠️ <br /> 초대 코드를 5회 이상 잘못 입력하여,
+          <br /> 24시간 동안 입력과 생성이 제한됩니다.
+        </>
+      ),
+      sub: '예를 누르면 로그인 화면으로 이동됩니다.',
+      isDanger: true,
+      onConfirm: () => router.push('/login'),
+    },
+    404: {
+      open: true,
+      type: 'errorNotice',
+      title: (
+        <>
+          ⚠️ <br /> 유효하지 않은 초대입니다.
+          <br /> 새로운 초대를 받아 다시 시도해 주세요.
+        </>
+      ),
+    },
+    409: {
+      open: true,
+      type: 'errorNotice',
+      title: (
+        <>
+          ⚠️ <br /> 매칭 중 문제가 발생했습니다.
+        </>
+      ),
+      sub: '이미 매칭에 속해 있거나 참여 중 오류가 발생했습니다.',
+    },
+  };
 
   const handleJoin = () => {
     joinMatch(
       { inviteCode: code },
       {
         onSuccess: (data) => {
-          setName(data.partnerNickname);
           setMatchId(data.matchId);
-          setIsOpen(true);
+          setModal({
+            open: true,
+            type: 'success',
+            title: (
+              <>
+                {data.partnerNickname}님과 함께 <br /> 이야기를 기록하시겠습니까?
+              </>
+            ),
+            onConfirm: () => router.push('/main'),
+          });
         },
         onError: (error) => {
           if (axios.isAxiosError(error)) {
-            if (error.response?.status === 400) {
-              // 만료된 코드, 잘못된 코드 구분 필요
-            } else if (error.response?.status === 401) {
-              // 인증 에러 처리
-            }
+            const status = error.response?.status ?? 0;
+            setModal(
+              errorConfig[status] ?? {
+                open: true,
+                type: 'errorNotice',
+                title: (
+                  <>
+                    ⚠️ <br /> 예상치 못한 오류가 발생했습니다.
+                  </>
+                ),
+                sub: '잠시 후 다시 시도해 주세요.',
+              },
+            );
           } else {
+            setModal({
+              open: true,
+              type: 'errorNotice',
+              title: (
+                <>
+                  ⚠️ <br /> 예상치 못한 오류가 발생했습니다.
+                </>
+              ),
+              sub: '잠시 후 다시 시도해 주세요.',
+            });
           }
         },
       },
@@ -52,7 +151,6 @@ export default function Invited() {
           onChange={(e) => setCode(e.target.value)}
         />
       </div>
-
       <Image src="/images/bubbley/bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
       <Button
         variant="invite"
@@ -62,19 +160,28 @@ export default function Invited() {
       >
         {isJoining ? '등록 중...' : '등록하기'}
       </Button>
-      <ConfirmModal
-        open={isOpen}
-        setOpen={setIsOpen}
-        title={
-          <>
-            {name}님과 함께 <br />
-            이야기를 기록하시겠습니까?
-          </>
-        }
-        onConfirm={() => {
-          router.push('/main');
-        }}
-      />
+
+      {/* 성공 / Confirm Error */}
+      {(modal.type === 'success' || modal.type === 'errorConfirm') && (
+        <ConfirmModal
+          open={modal.open}
+          setOpen={(open) => setModal((prev) => ({ ...prev, open }))}
+          title={modal.title}
+          sub={modal.sub}
+          isDanger={modal.isDanger}
+          onConfirm={modal.onConfirm ?? (() => {})}
+        />
+      )}
+
+      {/* Notice Error */}
+      {modal.type === 'errorNotice' && (
+        <NoticeModal
+          open={modal.open}
+          setOpen={(open) => setModal((prev) => ({ ...prev, open }))}
+          title={modal.title}
+          sub={modal.sub}
+        />
+      )}
     </>
   );
 }

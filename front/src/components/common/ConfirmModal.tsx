@@ -1,10 +1,9 @@
 import { Button } from '@/components/common/Button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import React, { Dispatch, SetStateAction } from 'react';
 
 interface ConfirmModalProps {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (open: boolean) => void;
   title: React.ReactNode;
   sub?: string;
   confirmText?: string; // 기본값 "예"

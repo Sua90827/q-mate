@@ -27,12 +27,21 @@ public class AuthService {
 
     JwtService.TokenPair pair = jwtService.issue(user.getId(), user.getRole().name(), user.getEmail());
 
+    LoginResponse.UserSummary summary = LoginResponse.UserSummary.builder()
+        .userId(user.getId())
+        .email(user.getEmail())
+        .nickname(user.getNickname())
+        .role(user.getRole().name())
+        .currentMatchId(user.getCurrentMatchId())
+        .build();
+
     return LoginResponse.builder()
         .accessToken(pair.getAccessToken())
         .refreshToken(pair.getRefreshToken())
         .tokenType("Bearer")
         .accessTokenExpiresIn(pair.getAccessTokenTtlSeconds())
         .refreshTokenExpiresIn(pair.getRefreshTokenTtlSeconds())
+        .user(summary)
         .build();
   }
 }

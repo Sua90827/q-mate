@@ -19,9 +19,20 @@ spring:
     port: 587
     test-connection: false
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: dummy
+            client-secret: dummy
+            scope: openid, email, profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
 security:
   jwt:
     secret: dummy-doc-secret-32bytes-minimum-xxxxxxxxxxxxxxxx
+
 
 # 필요 시 springdoc 커스터마이즈(옵션)
 # springdoc:
