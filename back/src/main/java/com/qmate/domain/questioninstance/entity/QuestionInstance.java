@@ -3,7 +3,6 @@ package com.qmate.domain.questioninstance.entity;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.question.entity.CustomQuestion;
 import com.qmate.domain.question.entity.Question;
-import com.qmate.exception.custom.questioninstance.QuestionInstanceDeliveredAtRequiredException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceInvalidXorException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -82,9 +81,6 @@ public class QuestionInstance {
     boolean hasCQ = this.customQuestion != null;
     if (hasQ == hasCQ) {
       throw new QuestionInstanceInvalidXorException();
-    }
-    if (this.deliveredAt == null) {
-      throw new QuestionInstanceDeliveredAtRequiredException();
     }
   }
 
