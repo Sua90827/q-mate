@@ -190,6 +190,7 @@ public class MatchService {
     if (!isMember){
       throw new MatchForbiddenException();
     }
+    match.getMembers().forEach(matchMember -> matchMember.getUser().leaveMatch());
     match.disconnect();
   }
 
@@ -213,7 +214,12 @@ public class MatchService {
                     .orElseThrow();
     requester.agreeToRestore();
 
-    return match.attemptToRestore();
+    boolean isFullyRestored = match.attemptToRestore();
+    if (isFullyRestored){
+      match.getMembers().forEach(matchMember -> matchMember.getUser().joinMatch(match));
+    }
+
+    return isFullyRestored;
   }
 
 

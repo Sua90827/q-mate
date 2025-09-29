@@ -14,8 +14,9 @@ public class MatchInfoResponse {
   private final Long matchId;
   private final RelationType relationType;
   private final LocalDateTime startDate;
-  private final List<MemberInfoResponse> users;
   private final int dailyQuestionHour;
+  private final List<MemberInfoResponse> users;
+
 
   // Match 엔티티를 통째로 받아서 이 DTO를 완성하는 생성자
   public MatchInfoResponse(Match match, Long requesterId) {
