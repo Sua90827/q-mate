@@ -1,5 +1,3 @@
-// utils/date.ts
-
 import { Schedule } from '@/types/scheduleType';
 
 // Date YYYY.MM.DD -> YYYY-MM-DD형태의 문자열로 변환
