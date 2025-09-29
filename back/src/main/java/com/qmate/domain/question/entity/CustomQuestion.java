@@ -30,9 +30,9 @@ public class CustomQuestion {
   private Match match;
 
   @CreatedBy
-  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(nullable = false)
-  private User createdBy;
+  private Long createdBy;
+
 
   @Column(nullable = false, length = 500)
   private String text;

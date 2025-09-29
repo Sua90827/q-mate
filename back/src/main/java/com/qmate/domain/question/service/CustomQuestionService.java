@@ -56,7 +56,7 @@ public class CustomQuestionService {
     CustomQuestion entity = loadWithMatchOrThrow(id);
 
     // 본인 질문인지 확인
-    if (!Objects.equals(entity.getCreatedBy().getId(), userId)) {
+    if (!Objects.equals(entity.getCreatedBy(), userId)) {
       throw new CustomQuestionForbiddenException();
     }
 
@@ -78,7 +78,7 @@ public class CustomQuestionService {
   public void delete(Long userId, Long id) {
     CustomQuestion entity = loadOrThrow(id);
     // 본인 질문인지 확인
-    if (!Objects.equals(entity.getCreatedBy().getId(), userId)) {
+    if (!Objects.equals(entity.getCreatedBy(), userId)) {
       throw new CustomQuestionForbiddenException();
     }
     // TODO 삭제 가능한 상태인지 확인 : QuestionInstance 존재 여부로 판단
@@ -94,7 +94,7 @@ public class CustomQuestionService {
   public CustomQuestionResponse getOne(Long userId, Long id) {
     CustomQuestion entity = loadWithMatchOrThrow(id);
     // 본인 질문인지 확인
-    if (!Objects.equals(entity.getCreatedBy().getId(), userId)) {
+    if (!Objects.equals(entity.getCreatedBy(), userId)) {
       throw new CustomQuestionForbiddenException();
     }
     boolean editable = true; // TODO QuestionInstance 존재 여부로 판단
