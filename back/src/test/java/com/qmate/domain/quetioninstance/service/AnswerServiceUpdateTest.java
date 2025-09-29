@@ -2,22 +2,23 @@ package com.qmate.domain.quetioninstance.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.times;
 
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.match.RelationType;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.questioninstance.entity.Answer;
-import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
 import com.qmate.domain.questioninstance.model.response.AnswerResponse;
 import com.qmate.domain.questioninstance.repository.AnswerRepository;
 import com.qmate.domain.questioninstance.service.AnswerService;
 import com.qmate.domain.user.User;
 import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
-import com.qmate.exception.custom.questioninstance.AnswerForbiddenException;
 import com.qmate.exception.custom.questioninstance.AnswerNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

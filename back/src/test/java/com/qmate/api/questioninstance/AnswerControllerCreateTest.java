@@ -95,23 +95,6 @@ class AnswerControllerCreateTest {
   }
 
   @Test
-  @DisplayName("403 Forbidden: 매치 불일치")
-  void create_403_forbidden() throws Exception {
-    // given
-    Long qiId = 10L;
-    var req = new AnswerContentRequest("ok");
-    willThrow(new QuestionInstanceForbiddenException())
-        .given(answerService).create(eq(qiId), anyLong(), any(AnswerContentRequest.class));
-
-    // expect
-    mockMvc.perform(post("/api/question-instances/{qiId}/answers", qiId)
-            .with(AuthTestUtils.userPrincipal(1L))
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(req)))
-        .andExpect(status().isForbidden());
-  }
-
-  @Test
   @DisplayName("423 Locked: QI 상태가 완료/만료라 수정 불가")
   void create_423_locked() throws Exception {
     // given

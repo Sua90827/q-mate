@@ -12,7 +12,6 @@ import com.qmate.domain.questioninstance.repository.AnswerRepository;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
 import com.qmate.exception.custom.questioninstance.AnswerAlreadyExistsException;
 import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
-import com.qmate.exception.custom.questioninstance.AnswerForbiddenException;
 import com.qmate.exception.custom.questioninstance.AnswerNotFoundException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
 import java.time.LocalDateTime;

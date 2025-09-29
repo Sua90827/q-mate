@@ -48,7 +48,6 @@ public class QuestionInstanceController {
       }
   )
   @GetMapping("/question-instances/{questionInstanceId}")
-  // @GetMapping("/question-instances/{questionInstanceId}")
   public ResponseEntity<QIDetailResponse> getDetail(
       @PathVariable Long questionInstanceId,
       @AuthenticationPrincipal UserPrincipal principal
@@ -94,7 +93,6 @@ public class QuestionInstanceController {
       }
   )
   @GetMapping("/matches/{matchId}/question-instances")
-  // @GetMapping("/matches/{matchId}/question-instances")
   public ResponseEntity<Page<QIListItem>> list(
       @PathVariable Long matchId,
       @RequestParam(required = false) QuestionInstanceStatus status,
