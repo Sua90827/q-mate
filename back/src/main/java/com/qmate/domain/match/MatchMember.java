@@ -71,4 +71,9 @@ public class MatchMember {
         .lastAnsweredAt(LocalDateTime.now())
         .build();
   }
+
+  // lastAnsweredAt 최신화 메서드
+  public void updateLastAnsweredAt() {
+    lastAnsweredAt = LocalDateTime.now();
+  }
 }

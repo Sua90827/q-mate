@@ -4,6 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.*;
 
+import com.qmate.domain.match.Match;
+import com.qmate.domain.match.MatchMember;
+import com.qmate.domain.match.RelationType;
+import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.questioninstance.entity.Answer;
 import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
@@ -31,6 +35,10 @@ class AnswerServiceUpdateTest {
 
   @Mock
   AnswerRepository answerRepository;
+
+  @Mock
+  MatchMemberRepository matchMemberRepository;
+
   @InjectMocks
   AnswerService answerService;
 
@@ -53,8 +61,14 @@ class AnswerServiceUpdateTest {
           .birthDate(LocalDate.now())
           .build();
 
+      Match match = Match.builder()
+          .id(11L)
+          .relationType(RelationType.COUPLE)
+          .build();
+
       QuestionInstance qi = QuestionInstance.builder()
           .id(10L)
+          .match(match)
           .status(QuestionInstanceStatus.PENDING)
           .build();
 
@@ -67,7 +81,14 @@ class AnswerServiceUpdateTest {
           .updatedAt(LocalDateTime.parse("2025-09-11T12:30:00"))
           .build();
 
-      given(answerRepository.findById(answerId)).willReturn(Optional.of(answer));
+      MatchMember matchMember = MatchMember.builder()
+          .id(100L)
+          .match(match)
+          .user(owner)
+          .build();
+
+      given(answerRepository.findByIdAndUserId(answerId, userId)).willReturn(Optional.of(answer));
+      given(matchMemberRepository.findByMatch_IdAndUser_Id(qi.getMatch().getId(), userId)).willReturn(Optional.of(matchMember));
 
       String raw = "  수정된 내용\r\n두줄  ";
       String normalized = "수정된 내용\n두줄";
@@ -76,7 +97,7 @@ class AnswerServiceUpdateTest {
       AnswerResponse res = answerService.update(answerId, userId, new AnswerContentRequest(raw));
 
       // then: 리포지토리 호출 검증
-      then(answerRepository).should(times(1)).findById(answerId);
+      then(answerRepository).should(times(1)).findByIdAndUserId(answerId, userId);
       then(answerRepository).should(times(1)).saveAndFlush(answer);
       then(answerRepository).shouldHaveNoMoreInteractions();
 
@@ -99,42 +120,13 @@ class AnswerServiceUpdateTest {
     void update_notFound_404() {
       // given
       Long notExist = 999L;
-      given(answerRepository.findById(notExist)).willReturn(Optional.empty());
+      given(answerRepository.findByIdAndUserId(notExist, 1L)).willReturn(Optional.empty());
 
       // when / then
       assertThrows(AnswerNotFoundException.class,
           () -> answerService.update(notExist, 1L, new AnswerContentRequest("x")));
 
-      then(answerRepository).should(times(1)).findById(notExist);
-      then(answerRepository).shouldHaveNoMoreInteractions();
-    }
-
-    @Test
-    @DisplayName("403 Forbidden: 작성자 아님")
-    void update_forbidden_403() {
-      // given
-      Long answerId = 100L;
-      Long ownerId = 1L;
-      Long otherId = 2L;
-
-      User owner = User.builder()
-          .id(ownerId).email("o@o").nickname("o")
-          .passwordHash("x").birthDate(LocalDate.now())
-          .build();
-
-      QuestionInstance qi = QuestionInstance.builder()
-          .id(10L).status(QuestionInstanceStatus.PENDING).build();
-
-      Answer answer = Answer.builder()
-          .id(answerId).userId(owner.getId()).questionInstance(qi).content("초기").build();
-
-      given(answerRepository.findById(answerId)).willReturn(Optional.of(answer));
-
-      // when / then
-      assertThrows(AnswerForbiddenException.class,
-          () -> answerService.update(answerId, otherId, new AnswerContentRequest("x")));
-
-      then(answerRepository).should(times(1)).findById(answerId);
+      then(answerRepository).should(times(1)).findByIdAndUserId(notExist, 1L);
       then(answerRepository).shouldHaveNoMoreInteractions();
     }
 
@@ -157,13 +149,13 @@ class AnswerServiceUpdateTest {
       Answer answer = Answer.builder()
           .id(answerId).userId(owner.getId()).questionInstance(qi).content("초기").build();
 
-      given(answerRepository.findById(answerId)).willReturn(Optional.of(answer));
+      given(answerRepository.findByIdAndUserId(answerId, userId)).willReturn(Optional.of(answer));
 
       // when / then
       assertThrows(AnswerCannotModifyException.class,
           () -> answerService.update(answerId, userId, new AnswerContentRequest("x")));
 
-      then(answerRepository).should(times(1)).findById(answerId);
+      then(answerRepository).should(times(1)).findByIdAndUserId(answerId, userId);
       then(answerRepository).shouldHaveNoMoreInteractions();
     }
 

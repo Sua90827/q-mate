@@ -56,11 +56,11 @@ public class QuestionInstanceService {
 
     // 4) 답변 조회: (qiId, userId) 각각 단건
     Answer myAnswer = answerRepository
-        .findByQuestionInstance_IdAndUser_Id(qiId, requesterId)
+        .findByQuestionInstance_IdAndUserId(qiId, requesterId)
         .orElse(null);
 
     Answer partnerAnswer = answerRepository
-        .findByQuestionInstance_IdAndUser_Id(qiId, partner.getId())
+        .findByQuestionInstance_IdAndUserId(qiId, partner.getId())
         .orElse(null);
 
     // 5) 가시성 결정 (정책)

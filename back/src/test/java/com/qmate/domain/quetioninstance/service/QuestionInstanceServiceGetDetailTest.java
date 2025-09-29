@@ -71,9 +71,9 @@ class QuestionInstanceServiceGetDetailTest {
       when(qiRepository.findDetailWithMatchMembersAndQuestionByIdIfRequesterInMatch(qiId, meId)).thenReturn(Optional.of(qi));
 
       Answer myAnswer = Answer.builder().id(1L).userId(me.getId()).questionInstance(qi).build();
-      when(answerRepository.findByQuestionInstance_IdAndUser_Id(qiId, meId))
+      when(answerRepository.findByQuestionInstance_IdAndUserId(qiId, meId))
           .thenReturn(Optional.of(myAnswer));
-      when(answerRepository.findByQuestionInstance_IdAndUser_Id(qiId, partnerId))
+      when(answerRepository.findByQuestionInstance_IdAndUserId(qiId, partnerId))
           .thenReturn(Optional.empty());
 
       QIDetailResponse expected = QIDetailResponse.builder()
@@ -118,9 +118,9 @@ class QuestionInstanceServiceGetDetailTest {
 
       Answer myAnswer = Answer.builder().id(1L).userId(me.getId()).questionInstance(qi).build();
       Answer partnerAnswer = Answer.builder().id(2L).userId(partner.getId()).questionInstance(qi).build();
-      when(answerRepository.findByQuestionInstance_IdAndUser_Id(qiId, meId))
+      when(answerRepository.findByQuestionInstance_IdAndUserId(qiId, meId))
           .thenReturn(Optional.of(myAnswer));
-      when(answerRepository.findByQuestionInstance_IdAndUser_Id(qiId, partnerId))
+      when(answerRepository.findByQuestionInstance_IdAndUserId(qiId, partnerId))
           .thenReturn(Optional.of(partnerAnswer));
 
       QIDetailResponse expected = QIDetailResponse.builder()
@@ -163,9 +163,9 @@ class QuestionInstanceServiceGetDetailTest {
 
       when(qiRepository.findDetailWithMatchMembersAndQuestionByIdIfRequesterInMatch(qiId, meId)).thenReturn(Optional.of(qi));
 
-      when(answerRepository.findByQuestionInstance_IdAndUser_Id(qiId, meId))
+      when(answerRepository.findByQuestionInstance_IdAndUserId(qiId, meId))
           .thenReturn(Optional.empty());
-      when(answerRepository.findByQuestionInstance_IdAndUser_Id(qiId, partnerId))
+      when(answerRepository.findByQuestionInstance_IdAndUserId(qiId, partnerId))
           .thenReturn(Optional.empty());
 
       QIDetailResponse expected = QIDetailResponse.builder()
