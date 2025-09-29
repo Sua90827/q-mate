@@ -108,6 +108,17 @@ html[data-theme='night'] .trash-btn.active {
     color: var(--color-text-secondary) !important;
   }
 
+  /* 보더 색상 (테마별) */
+  .border-theme-primary {
+    border-color: var(--color-primary) !important;
+  }
+  html[data-theme='sunset'] .border-theme-primary {
+    border-color: var(--color-sunset-active) !important;
+  }
+  html[data-theme='night'] .border-theme-primary {
+    border-color: var(--color-night-active) !important;
+  }
+
   /* 활성 배경 (공통 클래스) */
   .bg-theme-primary {
     background-color: var(--color-primary) !important;
