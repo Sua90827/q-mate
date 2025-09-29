@@ -19,10 +19,10 @@ class AnswerMapperTest {
     User user = User.builder().id(99L).build();
 
     AnswerContentRequest req = new AnswerContentRequest("  안녕\r\n하세요  ");
-    Answer a = AnswerMapper.toEntity(qi, user, req);
+    Answer a = AnswerMapper.toEntity(qi, req);
 
     assertThat(a.getQuestionInstance()).isSameAs(qi);
-    assertThat(a.getUser()).isSameAs(user);
+    assertThat(a.getUserId()).isSameAs(user.getId());
     assertThat(a.getContent()).isEqualTo("안녕\n하세요");
   }
 
@@ -33,7 +33,7 @@ class AnswerMapperTest {
     Answer a = Answer.builder()
         .id(456L)
         .questionInstance(qi)
-        .user(user)
+        .userId(user.getId())
         .content("hello")
         .submittedAt(LocalDateTime.parse("2025-09-11T12:20:00"))
         .build();

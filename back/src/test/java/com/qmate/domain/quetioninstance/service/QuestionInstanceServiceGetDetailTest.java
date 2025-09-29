@@ -70,7 +70,7 @@ class QuestionInstanceServiceGetDetailTest {
 
       when(qiRepository.findDetailWithMatchMembersAndQuestionByIdIfRequesterInMatch(qiId, meId)).thenReturn(Optional.of(qi));
 
-      Answer myAnswer = Answer.builder().id(1L).user(me).questionInstance(qi).build();
+      Answer myAnswer = Answer.builder().id(1L).userId(me.getId()).questionInstance(qi).build();
       when(answerRepository.findByQuestionInstance_IdAndUser_Id(qiId, meId))
           .thenReturn(Optional.of(myAnswer));
       when(answerRepository.findByQuestionInstance_IdAndUser_Id(qiId, partnerId))
@@ -116,8 +116,8 @@ class QuestionInstanceServiceGetDetailTest {
 
       when(qiRepository.findDetailWithMatchMembersAndQuestionByIdIfRequesterInMatch(qiId, meId)).thenReturn(Optional.of(qi));
 
-      Answer myAnswer = Answer.builder().id(1L).user(me).questionInstance(qi).build();
-      Answer partnerAnswer = Answer.builder().id(2L).user(partner).questionInstance(qi).build();
+      Answer myAnswer = Answer.builder().id(1L).userId(me.getId()).questionInstance(qi).build();
+      Answer partnerAnswer = Answer.builder().id(2L).userId(partner.getId()).questionInstance(qi).build();
       when(answerRepository.findByQuestionInstance_IdAndUser_Id(qiId, meId))
           .thenReturn(Optional.of(myAnswer));
       when(answerRepository.findByQuestionInstance_IdAndUser_Id(qiId, partnerId))

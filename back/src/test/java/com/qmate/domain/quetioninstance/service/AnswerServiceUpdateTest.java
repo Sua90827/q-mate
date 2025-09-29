@@ -60,7 +60,7 @@ class AnswerServiceUpdateTest {
 
       Answer answer = Answer.builder()
           .id(answerId)
-          .user(owner)
+          .userId(owner.getId())
           .questionInstance(qi)
           .content("초기 내용")
           .submittedAt(LocalDateTime.parse("2025-09-11T12:00:00"))
@@ -126,7 +126,7 @@ class AnswerServiceUpdateTest {
           .id(10L).status(QuestionInstanceStatus.PENDING).build();
 
       Answer answer = Answer.builder()
-          .id(answerId).user(owner).questionInstance(qi).content("초기").build();
+          .id(answerId).userId(owner.getId()).questionInstance(qi).content("초기").build();
 
       given(answerRepository.findById(answerId)).willReturn(Optional.of(answer));
 
@@ -155,7 +155,7 @@ class AnswerServiceUpdateTest {
           .build();
 
       Answer answer = Answer.builder()
-          .id(answerId).user(owner).questionInstance(qi).content("초기").build();
+          .id(answerId).userId(owner.getId()).questionInstance(qi).content("초기").build();
 
       given(answerRepository.findById(answerId)).willReturn(Optional.of(answer));
 

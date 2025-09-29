@@ -65,7 +65,7 @@ class AnswerServiceCreateTest {
 
     // 저장 시 id/시간 세팅된 엔티티 리턴
     var saved = Answer.builder()
-        .id(456L).questionInstance(qi).user(user)
+        .id(456L).questionInstance(qi).userId(user.getId())
         .content("안녕\n하세요").submittedAt(LocalDateTime.parse("2025-09-11T12:20:00")).build();
     given(answerRepo.save(any(Answer.class))).willReturn(saved);
     given(answerRepo.countByQuestionInstance_Id(qiId)).willReturn(2L);

@@ -58,7 +58,7 @@ public class AnswerService {
     // 4) 저장 (+ 유니크 충돌을 409로 매핑)
     Answer saved;
     try {
-      Answer entity = AnswerMapper.toEntity(qi, user, req);
+      Answer entity = AnswerMapper.toEntity(qi, req);
       saved = answerRepository.save(entity);
     } catch (DataIntegrityViolationException e) {
       // (question_instance_id, user_id) 유니크 인덱스 충돌
@@ -85,7 +85,7 @@ public class AnswerService {
         .orElseThrow(AnswerNotFoundException::new);
 
     // 2) 권한 검증: 작성자만 가능
-    if (!answer.getUser().getId().equals(userId)) {
+    if (!answer.getId().equals(userId)) {
       throw new AnswerForbiddenException();
     }
 
