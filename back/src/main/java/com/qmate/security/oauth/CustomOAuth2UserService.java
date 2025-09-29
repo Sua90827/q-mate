@@ -1,15 +1,20 @@
 package com.qmate.security.oauth;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qmate.domain.auth.SocialAccountService;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserSocialAccount.SocialProvider;
+import java.time.LocalDate;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -21,20 +26,44 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     OAuth2User oAuth2User = super.loadUser(userRequest);
     Map<String, Object> attr = oAuth2User.getAttributes();
 
-    String registrationId = userRequest.getClientRegistration().getRegistrationId(); // "google"
-    if (!"google".equalsIgnoreCase(registrationId)) {
-      throw new IllegalArgumentException("Unsupported provider: " + registrationId);
+    String registrationId = userRequest.getClientRegistration().getRegistrationId(); // "naver", "google"
+
+    if ("naver".equalsIgnoreCase(registrationId)) {
+      Map<String, Object> resp = (Map<String, Object>) attr.getOrDefault("response", attr);
+
+      try {
+        log.debug("NAVER attrs = {}", new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(resp));
+      } catch (JsonProcessingException e) {
+        throw new RuntimeException(e);
+      }
+
+      String providerUserId = String.valueOf(resp.get("id"));
+      String email = (String) resp.get("email");
+      String name  = (String) resp.getOrDefault("name", email);
+      LocalDate birthDate = parseNaverBirth(resp);
+
+      if (providerUserId == null) {
+        throw new IllegalStateException("Naver response missing 'id'");
+      }
+
+      User user = socialAccountService.upsertSocialUser(
+          SocialProvider.NAVER, providerUserId, email, name, birthDate
+      );
+
+      // 우리가 쓰는 Principal 형태로 리턴 → 성공 핸들러는 그대로 동작
+      return new CustomOAuth2User(user.getId(), user.getEmail(), user.getRole().name(), resp);
     }
 
-    String sub   = (String) attr.get("sub");   // provider user id
-    String email = (String) attr.get("email");
-    String name  = (String) attr.get("name");
+    // 구글(oidc)은 여기 안 타고 기본 OIDC 경로로 가서 SuccessHandler에서 처리됨
+    return oAuth2User;
+  }
 
-    if (sub == null) throw new IllegalStateException("Google response missing 'sub'");
-
-    User user = socialAccountService.upsertSocialUser(SocialProvider.GOOGLE, sub, email, name);
-
-    // 성공 핸들러에서 UserPrincipal로 통일할 것이므로, 여기서는 “임시” 사용자 정보 객체 리턴
-    return new CustomOAuth2User(user.getId(), user.getEmail(), user.getRole().name(), attr);
+  private LocalDate parseNaverBirth(Map<String, Object> resp) {
+    String yyyy = (String) resp.get("birthyear");
+    String mmdd = (String) resp.get("birthday");
+    if (yyyy != null && mmdd != null && mmdd.matches("\\d{2}-\\d{2}")) {
+      return LocalDate.parse(yyyy + "-" + mmdd);
+    }
+    return null;//하나라도 없으면
   }
 }

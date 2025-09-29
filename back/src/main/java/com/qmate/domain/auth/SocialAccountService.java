@@ -25,7 +25,7 @@ public class SocialAccountService {
    */
   @Transactional
   public User upsertSocialUser(SocialProvider provider, String providerUserId,
-      String email, String nickname) {
+      String email, String nickname, LocalDate birthDate) {
     // 1) 소셜 계정으로 바로 매칭
     Optional<UserSocialAccount> linked = socialRepository.findByProviderAndProviderUserId(provider, providerUserId);
     if (linked.isPresent()) {
@@ -40,7 +40,7 @@ public class SocialAccountService {
           .email(email)
           .passwordHash(null)
           .nickname(nickname != null && !nickname.isBlank() ? nickname : email)
-          .birthDate(LocalDate.now()) // 필수 not null이라 임시값; 실제론 프론트에서 추가정보 받는 플로우 권장
+          .birthDate(birthDate)
           .build();
     });
 

@@ -4,12 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qmate.domain.auth.JwtService;
 import com.qmate.domain.auth.SocialAccountService;
 import com.qmate.domain.auth.model.response.LoginResponse;
+import com.qmate.domain.user.User;
+import com.qmate.domain.user.UserRepository;
 import com.qmate.domain.user.UserSocialAccount.SocialProvider;
 import com.qmate.security.UserPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +23,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -26,60 +31,56 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
   private final JwtService jwtService;
   private final SocialAccountService socialAccountService;
   private final ObjectMapper om = new ObjectMapper();
+  private final UserRepository userRepository;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) throws IOException {
 
-    Long userId;
-    String email;
-    String role;
-
     Object p = authentication.getPrincipal();
+    User user;
 
-    if (p instanceof CustomOAuth2User ou) {
-      // 네이버 등 OAuth2 (기존 플로우)
-      userId = ou.getUserId();
-      email  = ou.getEmail();
-      role   = ou.getRole();
-
-    } else if (p instanceof OidcUser oidc) {
-      // 구글 OIDC (openid 스코프)
+    if (p instanceof CustomOAuth2User ou) {//네이버
+      user = userRepository.findById(ou.getUserId()).orElseThrow();
+    } else if (p instanceof OidcUser oidc) {//구글
       String sub  = oidc.getSubject();
-      String mail = oidc.getEmail(); // scope에 email 포함되어 있으면 옴
+      String mail = oidc.getEmail();
       String name = (String) oidc.getClaims().getOrDefault("name", mail);
-
-      var user = socialAccountService.upsertSocialUser(
-          SocialProvider.GOOGLE, sub, mail, name
-      );
-
-      userId = user.getId();
-      email  = user.getEmail();
-      role   = user.getRole().name();
-
+      user = socialAccountService.upsertSocialUser(SocialProvider.GOOGLE, sub, mail, name,
+          LocalDate.parse("2025-01-01"));
+      String birthdate = (String) oidc.getClaims().get("birthdate");
+      log.debug("GOOGLE birthdate claim = {}", birthdate);
     } else {
       throw new IllegalStateException("Unsupported principal type: " + p.getClass());
     }
-    // 1) 소셜도 UserPrincipal로 통일
-    var principal = new UserPrincipal(userId, email, role);
+
+    var principal = new UserPrincipal(user.getId(), user.getEmail(), user.getRole().name());
+
     var auth = new UsernamePasswordAuthenticationToken(
         principal, null,
-        java.util.List.of(new SimpleGrantedAuthority("ROLE_" + role))
+        java.util.List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
     );
     SecurityContextHolder.getContext().setAuthentication(auth);
 
-    // 2) JWT 발급 (자체 로그인과 동일)
-    var pair = jwtService.issue(principal.userId(), principal.role(), principal.email());
+    var pair = jwtService.issue(user.getId(), user.getRole().name(), user.getEmail());
 
-    var body = LoginResponse.builder()
+    LoginResponse.UserSummary summary = LoginResponse.UserSummary.builder()
+        .userId(user.getId())
+        .email(user.getEmail())
+        .nickname(user.getNickname())
+        .role(user.getRole().name())
+        .currentMatchId(user.getCurrentMatchId())
+        .build();
+
+    LoginResponse body = LoginResponse.builder()
         .accessToken(pair.getAccessToken())
         .refreshToken(pair.getRefreshToken())
         .tokenType("Bearer")
         .accessTokenExpiresIn(pair.getAccessTokenTtlSeconds())
         .refreshTokenExpiresIn(pair.getRefreshTokenTtlSeconds())
+        .user(summary)
         .build();
 
-    // 3) JSON 응답 (원하면 여기서 sendRedirect(...) 방식으로 교체 가능)
     response.setStatus(HttpServletResponse.SC_OK);
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     om.writeValue(response.getOutputStream(), body);
