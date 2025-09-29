@@ -9,6 +9,7 @@ import com.qmate.domain.match.RelationType;
 import com.qmate.domain.match.model.request.MatchCreationRequest;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.model.request.MatchUpdateRequest;
+import com.qmate.domain.match.model.response.InviteCodeValidationResponse;
 import com.qmate.domain.match.model.response.MatchCreationResponse;
 import com.qmate.domain.match.model.response.MatchInfoResponse;
 import com.qmate.domain.match.model.response.MatchJoinResponse;
@@ -18,6 +19,8 @@ import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.match.repository.MatchSettingRepository;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
+import com.qmate.exception.BusinessGlobalException;
+import com.qmate.exception.CommonErrorCode;
 import com.qmate.exception.custom.matchinstance.AlreadyInMatchException;
 import com.qmate.exception.custom.matchinstance.InvalidStartDateForCoupleException;
 import com.qmate.exception.custom.matchinstance.InviteAttemptLockedException;
@@ -220,6 +223,22 @@ public class MatchService {
     }
 
     return isFullyRestored;
+  }
+
+  //초대 코드의 유효성 검증하고, 코드를 생성한 파트너의 닉네임을 반환합니다.
+  @Transactional(readOnly = true)
+  public InviteCodeValidationResponse validateInviteCode(String inviteCode){
+    Long matchId = redisHelper.getMatchIdByInviteCode(inviteCode)
+        .orElseThrow(InviteCodeExpiredException::new);//코드가 없거나 만료됨
+
+    Match match = matchRepository.findWithMembersAndUsersById(matchId)
+        .orElseThrow(MatchNotFoundException::new);
+    if (match.getMembers().isEmpty()){
+      throw new BusinessGlobalException(CommonErrorCode.internalServerError());
+      //500번 처리 이유: 사용자가 무언가를 잘못했다(4xx)"가 아닌, 우리가 코드를 잘못 짜서 시스템이 고장 났다(500)"는 것을 의미
+    }
+    String partnerNickname = match.getMembers().get(0).getUser().getNickname();
+    return new InviteCodeValidationResponse(true, partnerNickname);
   }
 
 
