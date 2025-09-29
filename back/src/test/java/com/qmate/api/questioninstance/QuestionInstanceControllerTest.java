@@ -160,7 +160,7 @@ class QuestionInstanceControllerTest {
     QIDetailResponse stub = QIDetailResponse.builder()
         .questionInstanceId(555L).matchId(matchId).build();
 
-    given(questionInstanceService.getLatestNotified(anyLong(), anyLong())).willReturn(stub);
+    given(questionInstanceService.getLatestDelivered(anyLong(), anyLong())).willReturn(stub);
 
     mockMvc.perform(get("/api/matches/{matchId}/questions/today", matchId)
             .with(AuthTestUtils.userPrincipal(1L))
@@ -169,14 +169,14 @@ class QuestionInstanceControllerTest {
         .andExpect(jsonPath("$.questionInstanceId").value(555))
         .andExpect(jsonPath("$.matchId").value(1));
 
-    then(questionInstanceService).should(times(1)).getLatestNotified(anyLong(), anyLong());
+    then(questionInstanceService).should(times(1)).getLatestDelivered(anyLong(), anyLong());
   }
 
   @Test
   @DisplayName("GET /api/matches/{matchId}/questions/today -> 404 Not Found")
   void notFound() throws Exception {
     willThrow(new QuestionInstanceNotFoundException())
-        .given(questionInstanceService).getLatestNotified(anyLong(), anyLong());
+        .given(questionInstanceService).getLatestDelivered(anyLong(), anyLong());
 
     mockMvc.perform(get("/api/matches/{matchId}/questions/today", 2L)
             .accept(MediaType.APPLICATION_JSON))

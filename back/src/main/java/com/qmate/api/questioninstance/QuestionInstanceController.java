@@ -87,12 +87,12 @@ public class QuestionInstanceController {
       }
   )
   @GetMapping("/matches/{matchId}/questions/today")
-  public ResponseEntity<QIDetailResponse> getLatestNotifiedForMatch(
+  public ResponseEntity<QIDetailResponse> getLatestDeliveredForMatch(
       @PathVariable Long matchId,
       @AuthenticationPrincipal UserPrincipal principal
   ) {
     Long requesterId = principal.userId();
-    QIDetailResponse body = questionInstanceService.getLatestNotified(matchId, requesterId);
+    QIDetailResponse body = questionInstanceService.getLatestDelivered(matchId, requesterId);
     return ResponseEntity.ok(body);
   }
 

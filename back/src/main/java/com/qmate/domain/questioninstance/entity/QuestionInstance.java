@@ -59,9 +59,6 @@ public class QuestionInstance {
   @Column(name = "delivered_at", nullable = false)
   private LocalDateTime deliveredAt;     // 스케줄 목표
 
-  @Column(name = "notified_at")
-  private LocalDateTime notifiedAt;      // 실제 최초 노출 시각
-
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false, length = 20)
   @Builder.Default
@@ -97,12 +94,6 @@ public class QuestionInstance {
 
   public boolean isCustom() {
     return this.customQuestion != null;
-  }
-
-  public void markNotified(LocalDateTime now) {
-    if (this.notifiedAt == null) {
-      this.notifiedAt = now;
-    }
   }
 
   public void markCompleted(LocalDateTime now) {

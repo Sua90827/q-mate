@@ -3,15 +3,14 @@ package com.qmate.domain.questioninstance.service;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.questioninstance.entity.Answer;
-import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.mapper.QIDetailMapper;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse;
 import com.qmate.domain.questioninstance.model.response.QIListItem;
 import com.qmate.domain.questioninstance.repository.AnswerRepository;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
 import com.qmate.domain.user.User;
-import com.qmate.domain.user.UserRepository;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Iterator;
@@ -29,7 +28,6 @@ public class QuestionInstanceService {
 
   private final QuestionInstanceRepository qiRepository;
   private final AnswerRepository answerRepository;
-  private final UserRepository userRepository;
 
   /**
    * QI 상세 조회
@@ -37,7 +35,7 @@ public class QuestionInstanceService {
    * @param qiId        질문 인스턴스 ID
    * @param requesterId 요청자(나) ID
    * @return QIDetailResponse
-   * @throws QuestionInstanceNotFoundException    QI 없음
+   * @throws QuestionInstanceNotFoundException QI 없음
    */
   public QIDetailResponse getDetail(Long qiId, Long requesterId) {
 
@@ -82,10 +80,10 @@ public class QuestionInstanceService {
    * @param matchId     매치 ID
    * @param requesterId 요청자(나) ID
    * @return QIDetailResponse
-   * @throws QuestionInstanceNotFoundException    QI 없음
+   * @throws QuestionInstanceNotFoundException QI 없음
    */
-  public QIDetailResponse getLatestNotified(Long matchId, Long requesterId) {
-    Long qiId = qiRepository.findLatestNotifiedIdByMatch(matchId)
+  public QIDetailResponse getLatestDelivered(Long matchId, Long requesterId) {
+    Long qiId = qiRepository.findLatestDeliveredIdByMatch(matchId)
         .orElseThrow(QuestionInstanceNotFoundException::new);
     return getDetail(qiId, requesterId);
   }
@@ -93,12 +91,12 @@ public class QuestionInstanceService {
   /**
    * QI 목록 조회
    *
-   * @param userId    요청자(나) ID
-   * @param matchId   매치 ID (필수)
-   * @param status    질문 인스턴스 상태 (optional)
-   * @param from      deliveredAt 시작 범위 (inclusive, optional)
-   * @param to        deliveredAt 종료 범위 (exclusive, optional)
-   * @param pageable  페이지 정보
+   * @param userId   요청자(나) ID
+   * @param matchId  매치 ID (필수)
+   * @param status   질문 인스턴스 상태 (optional)
+   * @param from     deliveredAt 시작 범위 (inclusive, optional)
+   * @param to       deliveredAt 종료 범위 (exclusive, optional)
+   * @param pageable 페이지 정보
    * @return Page&lt;QIListItem&gt;
    */
   @Transactional(readOnly = true)

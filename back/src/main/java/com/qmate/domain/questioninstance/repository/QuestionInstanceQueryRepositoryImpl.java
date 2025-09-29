@@ -48,16 +48,16 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
    * @return Optional&lt;Long&gt; (없으면 empty)
    */
   @Override
-  public Optional<Long> findLatestNotifiedIdByMatch(Long matchId) {
+  public Optional<Long> findLatestDeliveredIdByMatch(Long matchId) {
     Long qiId = queryFactory
         .select(questionInstance.id)
         .from(questionInstance)
         .where(
             questionInstance.match.id.eq(matchId),
-            questionInstance.notifiedAt.isNotNull()
+            questionInstance.deliveredAt.isNotNull()
         )
         .orderBy(
-            questionInstance.notifiedAt.desc(),
+            questionInstance.deliveredAt.desc(),
             questionInstance.id.desc()
         )
         .fetchFirst();

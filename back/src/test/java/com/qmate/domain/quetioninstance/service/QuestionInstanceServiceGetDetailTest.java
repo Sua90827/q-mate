@@ -10,17 +10,14 @@ import static org.mockito.Mockito.when;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.questioninstance.entity.Answer;
-import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.mapper.QIDetailMapper;
 import com.qmate.domain.questioninstance.model.response.QIDetailResponse;
 import com.qmate.domain.questioninstance.repository.AnswerRepository;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
 import com.qmate.domain.questioninstance.service.QuestionInstanceService;
 import com.qmate.domain.user.User;
-import com.qmate.domain.user.UserRepository;
-import com.qmate.exception.custom.matchinstance.UserNotFoundException;
-import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,12 +38,10 @@ class QuestionInstanceServiceGetDetailTest {
   QuestionInstanceRepository qiRepository;
   @Mock
   AnswerRepository answerRepository;
-  @Mock
-  UserRepository userRepository;
 
   @BeforeEach
   void setUp() {
-    service = new QuestionInstanceService(qiRepository, answerRepository, userRepository);
+    service = new QuestionInstanceService(qiRepository, answerRepository);
   }
 
   @Nested
