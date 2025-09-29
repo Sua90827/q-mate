@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -63,6 +64,9 @@ public class Match {
   @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<MatchMember> members = new ArrayList<>();
+
+  @OneToOne(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
+  private MatchSetting matchSetting;
 
   //연관관계 평의 메서드
   public void addMember(MatchMember member) {
