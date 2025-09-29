@@ -2,30 +2,37 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Copy } from 'lucide-react';
-import axios from 'axios';
 import { useParams } from 'next/navigation';
 import NoticeModal from '../common/NoticeModal';
+import { useCreateInviteCode } from '@/hooks/useInvite';
 
 export default function Invite() {
   const [code, setCode] = useState<string>('');
-
   const [open, setOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
   const params = useParams();
+  const { mutate: createCode } = useCreateInviteCode();
 
-  //초대코드 가져오기
+  // 초대코드 가져오기
   useEffect(() => {
-    const date = params.date;
-    const createInviteCode = async () => {
-      const res = await axios.post('/api/matches', {
+    const date = params.date as string | null;
+
+    createCode(
+      {
         relationType: date === 'FRIEND' ? 'FRIEND' : 'COUPLE',
         startDate: date,
-      });
-      setCode(res.data.inviteCode);
-    };
-    createInviteCode();
-  }, [params.date]);
+      },
+      {
+        onSuccess: (data) => {
+          setCode(data.inviteCode);
+        },
+        onError: () => {
+          setErrorOpen(true);
+        },
+      },
+    );
+  }, [params.date, createCode]);
 
   // Clipboard API를 이용한 복사
   const handleCopyClipBoard = async (text: string) => {
@@ -33,7 +40,6 @@ export default function Invite() {
       await navigator.clipboard.writeText(text);
       setOpen(true);
     } catch (e) {
-      // 실패 시 모달 오픈
       setErrorOpen(true);
     }
   };
@@ -84,7 +90,7 @@ export default function Invite() {
         danger
         title={
           <>
-            복사에 실패했어요. <br />
+            복사 또는 코드 생성에 실패했어요. <br />
             다시 시도해 주세요!
           </>
         }

@@ -1,12 +1,9 @@
 //질문리스트
 export interface QuestionList {
-  questionInstanceId: number;
+  questionInstanceId: number | string;
   deliveredAt: string;
-  status: 'COMPLETED' | 'PENDING' | 'EXPIRED' | 'EDITABLE';
-  question: {
-    questionId: number;
-    text: string;
-  };
+  status: 'COMPLETED' | 'PENDING' | 'EXPIRED' | true | false;
+  text: string;
   completedAt: string;
 }
 
@@ -62,7 +59,7 @@ export interface CustomQuestion {
   updatedAt: string;
   isEditable: boolean;
 }
-//커스텀 질문 조회 전체 배열
+//커스텀 질문 조회
 export interface CustomQuestionPage {
   content: CustomQuestion[];
   last: boolean;
