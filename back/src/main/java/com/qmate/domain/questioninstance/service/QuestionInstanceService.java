@@ -12,8 +12,6 @@ import com.qmate.domain.questioninstance.repository.AnswerRepository;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
-import com.qmate.exception.custom.matchinstance.UserNotFoundException;
-import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Iterator;
@@ -102,19 +100,11 @@ public class QuestionInstanceService {
    * @param to        deliveredAt 종료 범위 (exclusive, optional)
    * @param pageable  페이지 정보
    * @return Page&lt;QIListItem&gt;
-   * @throws UserNotFoundException                요청자 없음
-   * @throws QuestionInstanceForbiddenException   권한 없음 (현재 매치 != 조회 매치)
    */
   @Transactional(readOnly = true)
   public Page<QIListItem> list(Long userId, Long matchId, QuestionInstanceStatus status,
       LocalDateTime from, LocalDateTime to, Pageable pageable) {
 
-    // 1) 요청자 조회 및 권한 확인: 현재 매치 == 조회 매치
-    Long myCurrentMatchId = userRepository.findCurrentMatchIdById(userId).orElseThrow(UserNotFoundException::new);
-    if (!Objects.equals(myCurrentMatchId, matchId)) {
-      throw new QuestionInstanceForbiddenException();
-    }
-
-    return qiRepository.findList(matchId, status, from, to, pageable);
+    return qiRepository.findPageByMatchIdForRequesterWithQuestion(matchId, userId, status, from, to, pageable);
   }
 }

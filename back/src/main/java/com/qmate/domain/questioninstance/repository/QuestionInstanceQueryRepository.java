@@ -11,8 +11,9 @@ public interface QuestionInstanceQueryRepository {
 
   Optional<Long> findLatestNotifiedIdByMatch(Long matchId);
 
-  Page<QIListItem> findList(
+  Page<QIListItem> findPageByMatchIdForRequesterWithQuestion(
       Long matchId,
+      Long requesterId,
       QuestionInstanceStatus status,
       LocalDateTime from,
       LocalDateTime to,
