@@ -1,7 +1,7 @@
 import { connectWithInviteCode, createInviteCode } from '@/api/invite';
 import { useMutation } from '@tanstack/react-query';
 
-//초대 코드 반환 API
+//초대 코드 발급
 export const useCreateInviteCode = () => {
   return useMutation({
     mutationFn: ({
@@ -14,7 +14,7 @@ export const useCreateInviteCode = () => {
   });
 };
 
-//매칭 연결 모달에 사용
+//초대 코드 연결
 export const useCreateMatchId = () => {
   return useMutation({
     mutationFn: ({ inviteCode }: { inviteCode: string }) => connectWithInviteCode({ inviteCode }),

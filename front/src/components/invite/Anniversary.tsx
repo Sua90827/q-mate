@@ -1,18 +1,12 @@
 'use client';
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
-import { useCreateInviteCode } from '@/hooks/useInvite';
 import { AnniversaryPicker } from './ui/AnniversaryPicker';
 import { useRouter } from 'next/navigation';
 
 export default function Anniversary() {
   const [date, setDate] = useState<string | undefined>(undefined);
   const router = useRouter();
-  const {
-    mutate: createCodeMutate,
-    isPending: isCreating,
-    isError: isCreateError,
-  } = useCreateInviteCode();
 
   useEffect(() => {
     if (date) {

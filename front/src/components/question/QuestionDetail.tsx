@@ -13,39 +13,46 @@ import { useFetchCustomQuestions } from '@/hooks/useCustom';
 export default function QuestionDetail() {
   const searchParams = useSearchParams();
   const idParam = searchParams.get('id');
-  const questionInstanceId = idParam ? Number(idParam) : null;
+  const questionInstanceId = idParam ? Number(idParam.replace('custom-', '')) : null;
 
   const router = useRouter();
   const pathname = usePathname();
 
+  // 커스텀 질문 불러오기
   const { data } = useFetchCustomQuestions(1);
   const customQuestions = data?.content ?? [];
 
-  const customQuestionId =
-    questionInstanceId !== null && questionInstanceId < 0 ? Math.abs(questionInstanceId) : null;
+  // 수정 가능한 커스텀 질문 찾기
+  const customItem = customQuestions.find(
+    (q) => q.customQuestionId === questionInstanceId && q.isEditable === true,
+  );
 
-  const customItem = customQuestionId
-    ? customQuestions.find((q) => q.customQuestionId === customQuestionId)
-    : null;
+  //커스텀일때 API 호출막기
+  const shouldFetch = questionInstanceId !== null && !customItem;
+  const {
+    data: detail,
+    isLoading,
+    isError,
+  } = useQuestionDetail(shouldFetch ? questionInstanceId! : -1);
 
-  const isCustom = Boolean(customItem);
-
-  const numericIdForHook =
-    questionInstanceId === null || isCustom ? -1 : (questionInstanceId as number);
-
-  const { data: detail, isLoading, isError } = useQuestionDetail(numericIdForHook);
-
+  // 질문 id 없음
   if (questionInstanceId === null) {
-    return <div className="p-6">선택된 질문이 없습니다.</div>;
+    return (
+      <div className="w-full h-full flex justify-center  items-center">
+        <div className="flex items-center justify-center  w-full sm:w-[400px] h-[550px] bg-secondary/80 rounded-md shadow-md">
+          <p className="text-24 opacity-80">선택된 질문이 없습니다.</p>
+        </div>
+      </div>
+    );
   }
 
-  if (isCustom && customItem) {
+  // 커스텀 질문 처리
+  if (customItem) {
     return (
       <div className="w-full h-full relative p-6 flex flex-col items-center">
         <div className="absolute top-0 right-5 sm:hidden">
           <CloseButton onClick={() => router.push(pathname)} />
         </div>
-
         <Custom value={customItem.text} />
       </div>
     );
@@ -64,7 +71,6 @@ export default function QuestionDetail() {
 
   return (
     <div className="w-full h-[550px] justify-center flex flex-col items-center">
-      {/* <CloseButton onClick={() => router.push(pathname)} /> */}
       <div className="h-[550px]">
         {detail.status === 'PENDING' && hasMy ? (
           <AnswerForm mode="edit" questionText={detail.question.text} />
@@ -76,6 +82,8 @@ export default function QuestionDetail() {
 
         {detail.status === 'COMPLETED' || (hasMy && hasPartner) ? (
           <AnswerView
+            nickname={my?.nickname ?? ''}
+            partnerNickname={partner?.nickname ?? ''}
             questionText={detail.question.text}
             myContent={my?.content ?? ''}
             partnerContent={partner?.content ?? ''}

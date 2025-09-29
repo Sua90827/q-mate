@@ -1,6 +1,82 @@
 import { http, HttpResponse, delay } from 'msw';
 
 export const questionHandlers = [
+  //전체 질문 리스트 조회
+  http.get('/api/matches/:matchId/question-instances', async ({ params }) => {
+    const { matchId } = params;
+    await delay(200);
+
+    return HttpResponse.json({
+      content: [
+        {
+          questionInstanceId: 10,
+          deliveredAt: new Date().toISOString(),
+          status: 'COMPLETED',
+          text: '주말에 같이 하고 싶은 일은?',
+          completedAt: new Date().toISOString(),
+        },
+      ],
+      pageable: {
+        sort: { empty: true, sorted: false, unsorted: true },
+        offset: 0,
+        pageNumber: 0,
+        pageSize: 20,
+        paged: true,
+        unpaged: false,
+      },
+      totalPages: 1,
+      totalElements: 1,
+      last: true,
+      size: 20,
+      number: 0,
+      sort: { empty: true, sorted: false, unsorted: true },
+      numberOfElements: 1,
+      first: true,
+      empty: false,
+    });
+  }),
+
+  // 질문 인스턴스 상세 조회 (단일 질문)
+  http.get('/api/question-instances/:questionInstanceId', async ({ params }) => {
+    const { questionInstanceId } = params;
+    await delay(200);
+
+    return HttpResponse.json({
+      questionInstanceId: Number(questionInstanceId),
+      matchId: 1,
+      deliveredAt: new Date(Date.now() - 60 * 60 * 1000).toDateString,
+      status: 'COMPLETED',
+      completedAt: null,
+      question: {
+        questionId: 778,
+        sourceType: 'ADMIN',
+        relationType: 'COUPLE',
+        category: { id: 5, name: '일상' },
+        text: '주말에 같이 하고 싶은 일은?',
+      },
+      answers: [
+        {
+          answerId: 461,
+          userId: 99,
+          nickname: '조용한 유령',
+          isMine: true,
+          visible: true,
+          content: '영화 보기',
+          submittedAt: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
+        },
+        {
+          answerId: null,
+          userId: 100,
+          nickname: '활기찬 고래',
+          isMine: false,
+          visible: false,
+          content: '스포츠 보기',
+          submittedAt: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
+        },
+      ],
+    });
+  }),
+
   // 매칭별 오늘의 질문 조회 (스펙 일치: answers 배열 포함)
   http.get('/api/matches/:matchId/questions/today', async ({ params }) => {
     const { matchId } = params;
@@ -40,47 +116,6 @@ export const questionHandlers = [
           submittedAt: null,
           mine: false,
           isMine: false,
-        },
-      ],
-    });
-  }),
-
-  // 질문 인스턴스 상세 조회
-  http.get('/api/question-instances/:questionInstanceId', async ({ params }) => {
-    const { questionInstanceId } = params;
-    await delay(200);
-
-    return HttpResponse.json({
-      questionInstanceId: Number(questionInstanceId),
-      matchId: 10,
-      deliveredAt: new Date(Date.now() - 60 * 60 * 1000).toDateString,
-      status: 'PENDING',
-      completedAt: null,
-      question: {
-        questionId: 778,
-        sourceType: 'ADMIN',
-        relationType: 'COUPLE',
-        category: { id: 5, name: '일상' },
-        text: '주말에 같이 하고 싶은 일은?',
-      },
-      answers: [
-        {
-          answerId: 461,
-          userId: 99,
-          nickname: '내 닉네임',
-          isMine: true,
-          visible: true,
-          content: '영화 보기',
-          submittedAt: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
-        },
-        {
-          answerId: null,
-          userId: 100,
-          nickname: '상대 닉네임',
-          isMine: false,
-          visible: false,
-          content: null,
-          submittedAt: null,
         },
       ],
     });

@@ -2,10 +2,11 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '../common/Button';
-import axios from 'axios';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import ConfirmModal from '../common/ConfirmModal';
 import { useRouter } from 'next/navigation';
+import { useCreateMatchId } from '@/hooks/useInvite';
+import axios from 'axios';
 
 export default function Invited() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,22 +15,29 @@ export default function Invited() {
   const setMatchId = useMatchIdStore((state) => state.setMatchId);
   const router = useRouter();
 
-  const handleJoin = async () => {
-    try {
-      const res = await axios.post('/api/matches/join', { inviteCode: code });
-      setName(res.data.partnerNickname);
-      setMatchId(res.data.matchId);
-      setIsOpen(true);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 400) {
-          //만료된 코드, 잘못된 코드 나눌 방법 생각하기
-        } else if (error.response?.status === 401) {
-        }
-      } else {
-        console.error('Unexpected error', error);
-      }
-    }
+  const { mutate: joinMatch, isPending: isJoining } = useCreateMatchId();
+
+  const handleJoin = () => {
+    joinMatch(
+      { inviteCode: code },
+      {
+        onSuccess: (data) => {
+          setName(data.partnerNickname);
+          setMatchId(data.matchId);
+          setIsOpen(true);
+        },
+        onError: (error) => {
+          if (axios.isAxiosError(error)) {
+            if (error.response?.status === 400) {
+              // 만료된 코드, 잘못된 코드 구분 필요
+            } else if (error.response?.status === 401) {
+              // 인증 에러 처리
+            }
+          } else {
+          }
+        },
+      },
+    );
   };
 
   return (
@@ -46,8 +54,13 @@ export default function Invited() {
       </div>
 
       <Image src="/images/bubbley/bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
-      <Button variant="invite" className="w-[300px] mt-10 z-10" onClick={handleJoin}>
-        등록하기
+      <Button
+        variant="invite"
+        className="w-[300px] mt-10 z-10"
+        onClick={handleJoin}
+        disabled={isJoining}
+      >
+        {isJoining ? '등록 중...' : '등록하기'}
       </Button>
       <ConfirmModal
         open={isOpen}
