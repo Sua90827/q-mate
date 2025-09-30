@@ -18,7 +18,6 @@ import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
 import com.qmate.domain.questioninstance.model.response.AnswerResponse;
 import com.qmate.domain.questioninstance.service.AnswerService;
 import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
-import com.qmate.exception.custom.questioninstance.AnswerForbiddenException;
 import com.qmate.exception.custom.questioninstance.AnswerNotFoundException;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
@@ -124,20 +123,4 @@ class AnswerControllerUpdateTest {
         .andExpect(status().isNotFound());
   }
 
-  @Test
-  @DisplayName("403 forbidden: 작성자가 아님")
-  void update_403_forbidden() throws Exception {
-    // given
-    Long answerId = 13L;
-    var req = new AnswerContentRequest("ok");
-    willThrow(new AnswerForbiddenException())
-        .given(answerService).update(eq(answerId), anyLong(), any(AnswerContentRequest.class));
-
-    // expect
-    mockMvc.perform(patch("/api/answers/{answerId}", answerId)
-            .with(AuthTestUtils.userPrincipal(1L))
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(req)))
-        .andExpect(status().isForbidden());
-  }
 }

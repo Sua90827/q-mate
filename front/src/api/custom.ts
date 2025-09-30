@@ -1,9 +1,9 @@
-import { CustomQuestion } from '@/types/questionType';
+import { CustomQuestionPage } from '@/types/questionType';
 import axios from 'axios';
 
 // 커스텀 질문 조회
-export const fetchCustomQuestions = async (): Promise<CustomQuestion[]> => {
-  const res = await axios.get('http://localhost:3003/customs');
+export const fetchCustomQuestions = async (matchId: number): Promise<CustomQuestionPage> => {
+  const res = await axios.get(`/api/matches/${matchId}/custom-questions`);
   return res.data;
 };
 

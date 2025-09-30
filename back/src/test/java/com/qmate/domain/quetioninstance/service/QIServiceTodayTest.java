@@ -31,11 +31,11 @@ class QIServiceTodayTest {
   QuestionInstanceService questionInstanceService;
 
   @Test
-  @DisplayName("getLatestNotified: 최신 notified 인스턴스를 상세로 반환(BDD+Spy)")
+  @DisplayName("getLatestDelivered: 최신 Delivered 인스턴스를 상세로 반환(BDD+Spy)")
   void getLatestNotified_ok() {
     // given
     Long matchId = 1L, requesterId = 99L, qiId = 123L;
-    given(questionInstanceRepository.findLatestNotifiedIdByMatch(matchId))
+    given(questionInstanceRepository.findLatestDeliveredIdByMatch(matchId))
         .willReturn(Optional.of(qiId));
 
     QIDetailResponse expected = QIDetailResponse.builder()
@@ -47,28 +47,28 @@ class QIServiceTodayTest {
     willReturn(expected).given(questionInstanceService).getDetail(qiId, requesterId);
 
     // when
-    QIDetailResponse result = questionInstanceService.getLatestNotified(matchId, requesterId);
+    QIDetailResponse result = questionInstanceService.getLatestDelivered(matchId, requesterId);
 
     // then
     assertThat(result.getQuestionInstanceId()).isEqualTo(qiId);
     assertThat(result.getMatchId()).isEqualTo(matchId);
-    then(questionInstanceRepository).should(times(1)).findLatestNotifiedIdByMatch(matchId);
+    then(questionInstanceRepository).should(times(1)).findLatestDeliveredIdByMatch(matchId);
     then(questionInstanceService).should(times(1)).getDetail(qiId, requesterId);
   }
 
   @Test
-  @DisplayName("getLatestNotified: 발송 이력 없음 → QuestionInstanceNotFoundException")
+  @DisplayName("getLatestDelivered: 발송 이력 없음 → QuestionInstanceNotFoundException")
   void getLatestNotified_notFound() {
     // given
     Long matchId = 1L, requesterId = 99L;
-    given(questionInstanceRepository.findLatestNotifiedIdByMatch(matchId))
+    given(questionInstanceRepository.findLatestDeliveredIdByMatch(matchId))
         .willReturn(Optional.empty());
 
     // expect
     assertThatThrownBy(() ->
-        questionInstanceService.getLatestNotified(matchId, requesterId)
+        questionInstanceService.getLatestDelivered(matchId, requesterId)
     ).isInstanceOf(QuestionInstanceNotFoundException.class);
 
-    then(questionInstanceRepository).should(times(1)).findLatestNotifiedIdByMatch(matchId);
+    then(questionInstanceRepository).should(times(1)).findLatestDeliveredIdByMatch(matchId);
   }
 }

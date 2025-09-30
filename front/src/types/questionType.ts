@@ -1,12 +1,9 @@
 //질문리스트
 export interface QuestionList {
-  questionInstanceId: number;
+  questionInstanceId: number | string;
   deliveredAt: string;
-  status: 'COMPLETED' | 'PENDING' | 'EXPIRED' | 'EDITABLE';
-  question: {
-    questionId: number;
-    text: string;
-  };
+  status: 'COMPLETED' | 'PENDING' | 'EXPIRED' | true | false;
+  text: string;
   completedAt: string;
 }
 
@@ -51,6 +48,7 @@ export interface AnswerResponseItem {
   answers: Answer[];
 }
 
+//커스텀 질문 조회 컨텐츠
 export interface CustomQuestion {
   customQuestionId: number;
   sourceType: 'CUSTOM';
@@ -60,6 +58,13 @@ export interface CustomQuestion {
   createdAt: string;
   updatedAt: string;
   isEditable: boolean;
+}
+//커스텀 질문 조회
+export interface CustomQuestionPage {
+  content: CustomQuestion[];
+  last: boolean;
+  number: number; // 현재 페이지
+  size: number; // 페이지 크기
 }
 
 export interface TodayQuestion {

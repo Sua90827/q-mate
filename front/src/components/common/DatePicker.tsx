@@ -3,16 +3,16 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import Calendar from '../schedule/CalendarCustom';
+import CalendarCustom from '../schedule/ui/CalendarCustom';
 
 export function DatePicker({
   label,
   schedule,
-  anniversary,
+  onSelect,
 }: {
   label: string;
   schedule?: boolean;
-  anniversary?: boolean;
+  onSelect?: (date: string | undefined) => void;
 }) {
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(undefined);
@@ -25,11 +25,7 @@ export function DatePicker({
             id="date"
             className={`w-full border-gray h-[37px] font-semibold bg-secondary justify-between  text-14 hover:bg-secondary ${
               schedule ? 'shadow-box  ' : '!text-text-secondary/60'
-            } ${
-              anniversary
-                ? 'h-[45px] w-[300px] !text-primary font-bold flex justify-center text-16'
-                : ''
-            }`}
+            } `}
           >
             {date ? date.toLocaleDateString() : label}
           </Button>
@@ -39,10 +35,11 @@ export function DatePicker({
           align="start"
           style={{ width: 'var(--radix-popover-trigger-width)' }}
         >
-          <Calendar
+          <CalendarCustom
             value={date}
-            onChange={(d) => {
+            onChange={(d: Date | undefined) => {
               setDate(d);
+              onSelect?.(d ? d.toISOString() : undefined);
               setOpen(false);
             }}
           />

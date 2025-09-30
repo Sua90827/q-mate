@@ -54,6 +54,14 @@ public class MatchMember {
   public void setMatch(Match match) {
     this.match = match;
   }
+  //복구에 동의하는 메서드
+  public void agreeToRestore(){
+    this.isAgreed = true;
+  }
+  //동의 상태를 초기화하는 메서드
+  public void resetAgreement(){
+    this.isAgreed = false;
+  }
 
   //정적 팩토리 메서드 추가
   public static MatchMember create(User user, Match match) {
@@ -62,5 +70,10 @@ public class MatchMember {
         .match(match)
         .lastAnsweredAt(LocalDateTime.now())
         .build();
+  }
+
+  // lastAnsweredAt 최신화 메서드
+  public void updateLastAnsweredAt() {
+    lastAnsweredAt = LocalDateTime.now();
   }
 }

@@ -1,15 +1,38 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Button } from '../common/Button';
 import { Copy } from 'lucide-react';
-import InviteCopyErrorModal from './ui/InviteCopyerrorModal';
-import InviteWaitingModal from './ui/InviteWaitingModal';
+import { useParams } from 'next/navigation';
+import NoticeModal from '../common/NoticeModal';
+import { useCreateInviteCode } from '@/hooks/useInvite';
 
 export default function Invite() {
-  const [code, setCode] = useState();
+  const [code, setCode] = useState<string>('');
   const [open, setOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
+
+  const params = useParams();
+  const { mutate: createCode } = useCreateInviteCode();
+
+  // 초대코드 가져오기
+  useEffect(() => {
+    const date = params.date as string | null;
+
+    createCode(
+      {
+        relationType: date === 'FRIEND' ? 'FRIEND' : 'COUPLE',
+        startDate: date,
+      },
+      {
+        onSuccess: (data) => {
+          setCode(data.inviteCode);
+        },
+        onError: () => {
+          setErrorOpen(true);
+        },
+      },
+    );
+  }, [params.date, createCode]);
 
   // Clipboard API를 이용한 복사
   const handleCopyClipBoard = async (text: string) => {
@@ -17,7 +40,6 @@ export default function Invite() {
       await navigator.clipboard.writeText(text);
       setOpen(true);
     } catch (e) {
-      // 실패 시 모달 오픈
       setErrorOpen(true);
     }
   };
@@ -50,11 +72,29 @@ export default function Invite() {
         height={167}
         className="select-none"
       />
-      <Button variant="invite" className="w-[300px] mt-10 z-10">
-        등록하기
-      </Button>
-      <InviteWaitingModal open={open} setOpen={setOpen} />
-      <InviteCopyErrorModal open={errorOpen} setOpen={setErrorOpen} />
+
+      <NoticeModal
+        open={open}
+        setOpen={setOpen}
+        title="상대방을 기다리는 중이에요 🐢"
+        description={
+          <>
+            상대방이 초대 코드를 입력하면 <br />
+            자동으로 연결돼요
+          </>
+        }
+      />
+      <NoticeModal
+        open={errorOpen}
+        setOpen={setErrorOpen}
+        danger
+        title={
+          <>
+            복사 또는 코드 생성에 실패했어요. <br />
+            다시 시도해 주세요!
+          </>
+        }
+      />
     </>
   );
 }

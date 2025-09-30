@@ -79,7 +79,7 @@ class AnswerServiceUpdateTimestampTest {
     // 5) answer ((qi,user) 유니크), content <= 100
     Answer answer = Answer.builder()
         .questionInstance(qi)
-        .user(owner)
+        .userId(owner.getId())
         .content("초기") // VARCHAR(100)
         .build();
     em.persist(answer);

@@ -2,6 +2,7 @@ package com.qmate.domain.question.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.qmate.domain.match.RelationType;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,6 @@ public class CustomQuestionResponse {
   @JsonProperty("isEditable") // api 명세 맞춤
   private boolean editable;
 
-  private String createdAt;
-  private String updatedAt;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 }

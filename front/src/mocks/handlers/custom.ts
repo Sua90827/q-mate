@@ -1,0 +1,117 @@
+import { http, HttpResponse } from 'msw';
+
+// 전역 배열 (조회/등록/수정/삭제 시 공유)
+let customQuestions: {
+  customQuestionId: number;
+  sourceType: 'CUSTOM';
+  relationType: 'COUPLE';
+  matchId: number;
+  text: string;
+  isEditable: boolean;
+  createdAt: string;
+  updatedAt: string;
+}[] = [
+  {
+    customQuestionId: 901,
+    sourceType: 'CUSTOM',
+    relationType: 'COUPLE',
+    matchId: 1,
+    text: '상대방의 첫 인상은 어땠나요?',
+    isEditable: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
+
+export const customHandlers = [
+  // 조회
+  http.get('/api/matches/:matchId/custom-questions', ({ params }) => {
+    const { matchId } = params;
+
+    const filtered = customQuestions.filter((q) => q.matchId === Number(matchId));
+
+    return HttpResponse.json({
+      content: filtered,
+      pageable: { pageNumber: 0, pageSize: 20 },
+      totalElements: filtered.length,
+      totalPages: 1,
+      empty: filtered.length === 0,
+    });
+  }),
+
+  // 등록
+  http.post('/api/matches/:matchId/custom-questions', async ({ params, request }) => {
+    const { matchId } = params;
+    const body = ((await request.json()) ?? {}) as { text?: string };
+
+    const text = typeof body.text === 'string' ? body.text.trim() : '';
+    if (!text || text.length > 100) {
+      return HttpResponse.json(
+        { error: 'FIELD_VALIDATION_FAILED', message: 'text(1~100자)이 필요합니다.' },
+        { status: 400 },
+      );
+    }
+
+    const newItem = {
+      customQuestionId: Math.floor(Math.random() * 10000),
+      sourceType: 'CUSTOM' as const,
+      relationType: 'COUPLE' as const,
+      matchId: Number(matchId),
+      text,
+      isEditable: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    customQuestions.push(newItem);
+
+    return HttpResponse.json(newItem, { status: 201 });
+  }),
+
+  // 수정
+  http.patch('/api/custom-questions/:id', async ({ params, request }) => {
+    const { id } = params;
+    const body = ((await request.json()) ?? {}) as { text?: string };
+
+    const text = typeof body.text === 'string' ? body.text.trim() : '';
+    if (!text || text.length > 100) {
+      return HttpResponse.json(
+        { error: 'FIELD_VALIDATION_FAILED', message: 'text(1~100자)이 필요합니다.' },
+        { status: 400 },
+      );
+    }
+
+    const idx = customQuestions.findIndex((q) => q.customQuestionId === Number(id));
+    if (idx === -1) {
+      return HttpResponse.json(
+        { error: 'NOT_FOUND', message: '해당 질문을 찾을 수 없습니다.' },
+        { status: 404 },
+      );
+    }
+
+    customQuestions[idx] = {
+      ...customQuestions[idx],
+      text,
+      updatedAt: new Date().toISOString(),
+    };
+
+    return HttpResponse.json(customQuestions[idx], { status: 200 });
+  }),
+
+  // 삭제
+  http.delete('/api/custom-questions/:id', ({ params }) => {
+    const { id } = params;
+    const before = customQuestions.length;
+
+    customQuestions = customQuestions.filter((q) => q.customQuestionId !== Number(id));
+
+    if (customQuestions.length === before) {
+      return HttpResponse.json(
+        { error: 'NOT_FOUND', message: '삭제할 질문이 없습니다.' },
+        { status: 404 },
+      );
+    }
+
+    return new HttpResponse(null, { status: 204 });
+  }),
+];

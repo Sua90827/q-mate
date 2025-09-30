@@ -1,5 +1,7 @@
 package com.qmate.api.question;
 
+import com.qmate.common.constants.question.CustomQuestionConstants;
+import com.qmate.domain.question.model.request.CustomQuestionStatusFilter;
 import com.qmate.domain.question.model.request.CustomQuestionTextRequest;
 import com.qmate.domain.question.model.response.CustomQuestionResponse;
 import com.qmate.domain.question.service.CustomQuestionService;
@@ -7,6 +9,7 @@ import com.qmate.exception.ErrorResponse;
 import com.qmate.security.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +17,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -42,15 +51,6 @@ public class CustomQuestionController {
   @Operation(
       summary = "커스텀 질문 생성",
       description = "특정 매치에 대한 커스텀 질문을 생성합니다.",
-      responses = {
-          @ApiResponse(responseCode = "201", description = "생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomQuestionResponse.class))),
-          @ApiResponse(responseCode = "400", description = "유효하지 않은 요청 값", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "404", description = "매치를 찾을 수 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-      },
-      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-          required = true,
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomQuestionTextRequest.class))
-      ),
       parameters = {
           @Parameter(name = "matchId", description = "커스텀 질문을 추가할 매치 ID", required = true)
       }
@@ -71,16 +71,6 @@ public class CustomQuestionController {
   @Operation(
       summary = "커스텀 질문 수정",
       description = "특정 커스텀 질문을 수정합니다.",
-      responses = {
-          @ApiResponse(responseCode = "200", description = "수정 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomQuestionResponse.class))),
-          @ApiResponse(responseCode = "400", description = "유효하지 않은 요청 값", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "404", description = "커스텀 질문을 찾을 수 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "423", description = "수정 불가", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-      },
-      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-          required = true,
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomQuestionTextRequest.class))
-      ),
       parameters = {
           @Parameter(name = "id", description = "수정할 커스텀 질문 ID", required = true)
       }
@@ -101,11 +91,6 @@ public class CustomQuestionController {
   @Operation(
       summary = "커스텀 질문 삭제",
       description = "특정 커스텀 질문을 삭제합니다.",
-      responses = {
-          @ApiResponse(responseCode = "204", description = "삭제 성공"),
-          @ApiResponse(responseCode = "404", description = "커스텀 질문을 찾을 수 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "423", description = "삭제 불가", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-      },
       parameters = {
           @Parameter(name = "id", description = "삭제할 커스텀 질문 ID", required = true)
       }
@@ -141,5 +126,26 @@ public class CustomQuestionController {
       @PathVariable Long id) {
     Long userId = principal.userId();
     return ResponseEntity.ok(customQuestionService.getOne(userId, id));
+  }
+
+  @GetMapping("/matches/{matchId}/custom-questions")
+  @Operation(
+      summary = "내 커스텀 질문 리스트 조회",
+      description = CustomQuestionConstants.LIST_MD,
+      parameters = {
+          @Parameter(name = "matchId", in = ParameterIn.PATH, description = "매치 id"),
+          @Parameter(name = "status", description = "상태 필터", schema = @Schema(implementation = CustomQuestionStatusFilter.class)),
+          @Parameter(name = "sort", description = CustomQuestionConstants.SORT_DESCRIPTION)
+      }
+  )
+  //@GetMapping("/matches/{matchId}/custom-questions")
+  public Page<CustomQuestionResponse> list(
+      @AuthenticationPrincipal UserPrincipal principal,
+      @PathVariable Long matchId,
+      @RequestParam(required = false) CustomQuestionStatusFilter status,
+      @PageableDefault(page = 0, size = 20, sort = CustomQuestionConstants.SORT_KEY_CREATED_AT, direction = Sort.Direction.DESC)
+      @ParameterObject Pageable pageable
+  ) {
+    return customQuestionService.findPageByOwnerAndStatusFilter(principal.userId(), matchId, status, pageable);
   }
 }

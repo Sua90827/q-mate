@@ -6,6 +6,7 @@ import static com.qmate.domain.question.entity.QCustomQuestion.customQuestion;
 import static com.qmate.domain.question.entity.QQuestionCategory.questionCategory;
 import static com.qmate.domain.questioninstance.entity.QQuestionInstance.questionInstance;
 import static com.qmate.domain.match.QMatch.match;
+import static com.qmate.domain.user.QUser.user;
 
 import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
@@ -17,6 +18,8 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -45,16 +48,16 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
    * @return Optional&lt;Long&gt; (없으면 empty)
    */
   @Override
-  public Optional<Long> findLatestNotifiedIdByMatch(Long matchId) {
+  public Optional<Long> findLatestDeliveredIdByMatch(Long matchId) {
     Long qiId = queryFactory
         .select(questionInstance.id)
         .from(questionInstance)
         .where(
             questionInstance.match.id.eq(matchId),
-            questionInstance.notifiedAt.isNotNull()
+            questionInstance.deliveredAt.isNotNull()
         )
         .orderBy(
-            questionInstance.notifiedAt.desc(),
+            questionInstance.deliveredAt.desc(),
             questionInstance.id.desc()
         )
         .fetchFirst();
@@ -62,41 +65,23 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
   }
 
   /**
-   * 질문 인스턴스 상세 조회 (question, customQuestion, match 조인 페치)
-   *
-   * @param qiId 질문 인스턴스 ID
-   * @return Optional<QuestionInstance>
-   */
-  @Override
-  public Optional<QuestionInstance> findDetailWithQuestionAndMatch(Long qiId) {
-    return Optional.ofNullable(
-        queryFactory
-            .selectFrom(questionInstance)
-            .leftJoin(questionInstance.question, question).fetchJoin()
-            .leftJoin(question.category, questionCategory).fetchJoin()
-            .leftJoin(questionInstance.customQuestion, customQuestion).fetchJoin()
-            .join(questionInstance.match, match).fetchJoin()
-            .where(questionInstance.id.eq(qiId))
-            .fetchOne()
-    );
-  }
-
-  /**
    * 질문 인스턴스 목록 조회 (question, customQuestion 조인)
    *
-   * @param matchId 매치 ID (필수)
-   * @param status 질문 인스턴스 상태 (optional)
-   * @param from deliveredAt 시작 범위 (inclusive, optional)
-   * @param to deliveredAt 종료 범위 (exclusive, optional)
-   * @param pageable 페이지 정보
+   * @param matchId     매치 ID (필수)
+   * @param requesterId 요청자 ID (필수) - 요청자의 currentMatchId가 matchId와 동일해야 결과 반환
+   * @param status      질문 인스턴스 상태 (optional)
+   * @param from        deliveredAt 시작 범위 (inclusive, optional)
+   * @param to          deliveredAt 종료 범위 (exclusive, optional)
+   * @param pageable    페이지 정보
    * @return Page&lt;QIListItem&gt;
    */
   @Override
-  public Page<QIListItem> findList(
+  public Page<QIListItem> findPageByMatchIdForRequesterWithQuestion(
       Long matchId,
-      QuestionInstanceStatus status,         // optional
-      LocalDateTime from,            // optional: deliveredAt >= from
-      LocalDateTime to,              // optional: deliveredAt <  to
+      Long requesterId,
+      QuestionInstanceStatus status,    // optional
+      LocalDateTime from,               // optional: deliveredAt >= from
+      LocalDateTime to,                 // optional: deliveredAt <  to
       Pageable pageable
   ) {
     // 1) content
@@ -113,6 +98,7 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
         .leftJoin(questionInstance.customQuestion, customQuestion)
         .where(
             questionInstance.match.id.eq(matchId),
+            requesterInMatch(requesterId),          // ← 추가: 권한 검증(현재 매치 일치)
             statusEq(status),
             deliveredFrom(from),
             deliveredTo(to)
@@ -128,6 +114,7 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
         .from(questionInstance)
         .where(
             questionInstance.match.id.eq(matchId),
+            requesterInMatch(requesterId),          // ← 추가: content와 동일 조건
             statusEq(status),
             deliveredFrom(from),
             deliveredTo(to)
@@ -148,6 +135,17 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
 
   private BooleanExpression deliveredTo(LocalDateTime to) {
     return to == null ? null : questionInstance.deliveredAt.lt(to);
+  }
+
+  /** 요청자의 currentMatchId가 대상 QI의 match.id와 같은지 검증 */
+  private BooleanExpression requesterInMatch(Long requesterId) {
+    if (requesterId == null) return Expressions.FALSE.isTrue(); // 항상 false
+    return questionInstance.match.id.eq(
+        JPAExpressions
+            .select(user.currentMatchId)
+            .from(user)
+            .where(user.id.eq(requesterId))
+    );
   }
 
   /**

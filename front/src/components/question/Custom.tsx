@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '../common/Button';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCreateCustomQuestion, useUpdateCustomQuestion } from '@/hooks/useCustom';
 
 export default function Custom({ value }: { value?: string }) {
@@ -10,6 +10,8 @@ export default function Custom({ value }: { value?: string }) {
   const pathName = usePathname();
   const hideLogo = pathName.startsWith('/question/list');
   const router = useRouter();
+  const params = useSearchParams();
+  const id = Number(params.get('id')?.replace('custom-', ''));
 
   const {
     mutate: createCustomMutate,
@@ -32,7 +34,7 @@ export default function Custom({ value }: { value?: string }) {
   };
 
   const handleUpdate = () => {
-    updateCustomMutate({ text: text, id: 1 });
+    updateCustomMutate({ text: text, id: id });
     if (isUpdateError) {
     } else {
       router.push('/question/list');

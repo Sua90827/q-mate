@@ -1,25 +1,21 @@
 package com.qmate.domain.questioninstance.service;
 
+import com.qmate.domain.match.MatchMember;
+import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.questioninstance.entity.Answer;
-import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.mapper.AnswerMapper;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
 import com.qmate.domain.questioninstance.model.response.AnswerResponse;
 import com.qmate.domain.questioninstance.repository.AnswerRepository;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
-import com.qmate.domain.user.User;
-import com.qmate.domain.user.UserRepository;
-import com.qmate.exception.custom.matchinstance.UserNotFoundException;
 import com.qmate.exception.custom.questioninstance.AnswerAlreadyExistsException;
 import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
-import com.qmate.exception.custom.questioninstance.AnswerForbiddenException;
 import com.qmate.exception.custom.questioninstance.AnswerNotFoundException;
-import com.qmate.exception.custom.questioninstance.QuestionInstanceForbiddenException;
 import com.qmate.exception.custom.questioninstance.QuestionInstanceNotFoundException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,68 +24,54 @@ import org.springframework.transaction.annotation.Transactional;
 public class AnswerService {
 
   private final QuestionInstanceRepository questionInstanceRepository;
-  private final UserRepository userRepository;
   private final AnswerRepository answerRepository;
+  private final MatchMemberRepository matchMemberRepository;
 
   @Transactional
   public AnswerResponse create(Long questionInstanceId, Long userId, AnswerContentRequest req) {
 
-    // 1) 로드
-    QuestionInstance qi = questionInstanceRepository.findById(questionInstanceId)
+    // qi 와 user의 matchId를 기준으로 조건을 걸어서 만족한 qi 로드
+    QuestionInstance qi = questionInstanceRepository.findAuthorizedByIdForUser(questionInstanceId, userId)
         .orElseThrow(QuestionInstanceNotFoundException::new);
 
-    User user = userRepository.findById(userId)
-        .orElseThrow(UserNotFoundException::new);
-
-    // 2) 권한 검증: 같은 매치인지 확인
-    Long qiMatchId = qi.getMatch().getId();
-    Long userCurrentMatchId = user.getCurrentMatchId();
-    if (qiMatchId == null || !qiMatchId.equals(userCurrentMatchId)) {
-      throw new QuestionInstanceForbiddenException();
+    if (answerRepository.existsByQuestionInstance_IdAndUserId(questionInstanceId, userId)) {
+      throw new AnswerAlreadyExistsException();
     }
 
-    // 3) 상태 검증
+    // 상태 검증
     QuestionInstanceStatus status = qi.getStatus();
     // PENDING만 통과
     if (status != QuestionInstanceStatus.PENDING) {
       throw new AnswerCannotModifyException();
     }
 
-    // 4) 저장 (+ 유니크 충돌을 409로 매핑)
-    Answer saved;
-    try {
-      Answer entity = AnswerMapper.toEntity(qi, user, req);
-      saved = answerRepository.save(entity);
-    } catch (DataIntegrityViolationException e) {
-      // (question_instance_id, user_id) 유니크 인덱스 충돌
-      throw new AnswerAlreadyExistsException();
+    // 저장
+    Answer entity = AnswerMapper.toEntity(qi, req);
+    Answer saved = answerRepository.save(entity);
+
+    // matchMember의 lastAnsweredAt 갱신
+    MatchMember matchMember = matchMemberRepository.findByMatch_IdAndUser_Id(qi.getMatch().getId(), userId).orElseThrow();
+    matchMember.updateLastAnsweredAt();
+
+    // 완료 전이 (QI 행 잠금)
+    QuestionInstance locked = questionInstanceRepository.findByIdForUpdate(questionInstanceId).orElseThrow();
+    if (locked.getStatus() == QuestionInstanceStatus.PENDING &&
+        answerRepository.countDistinctUserIdByQuestionInstance_Id(questionInstanceId) >= 2L) {
+      locked.markCompleted(LocalDateTime.now());
     }
 
-    // TODO matchMember의 lastAnsweredAt 갱신
-
-    // 5) 두 사람 모두 답하면 QI 완료 전이
-    if (answerRepository.countByQuestionInstance_Id(questionInstanceId) >= 2L) {
-      qi.markCompleted(LocalDateTime.now());
-      // TODO 알림 발송
-    }
-
-    // 6) 응답 매핑
+    // 응답 매핑
     return AnswerMapper.toResponse(saved);
   }
 
   @Transactional
   public AnswerResponse update(Long answerId, Long userId, AnswerContentRequest req) {
 
-    // 1) 로드
-    Answer answer = answerRepository.findById(answerId)
+    // 권한 확인과 동시에 조회
+    Answer answer = answerRepository.findByIdAndUserId(answerId, userId)
         .orElseThrow(AnswerNotFoundException::new);
 
-    // 2) 권한 검증: 작성자만 가능
-    if (!answer.getUser().getId().equals(userId)) {
-      throw new AnswerForbiddenException();
-    }
-
-    // 3) 상태 검증
+    // 상태 검증
     QuestionInstanceStatus status = answer.getQuestionInstance().getStatus();
     // PENDING만 통과
     if (status != QuestionInstanceStatus.PENDING) {
@@ -100,7 +82,9 @@ public class AnswerService {
     String normalized = AnswerMapper.normalize(req.getContent());
     answer.setContent(normalized);
 
-    // TODO matchMember의 lastAnsweredAt 갱신
+    // matchMember의 lastAnsweredAt 갱신
+    MatchMember matchMember = matchMemberRepository.findByMatch_IdAndUser_Id(answer.getQuestionInstance().getMatch().getId(), userId).orElseThrow();
+    matchMember.updateLastAnsweredAt();
 
     // 5) updatedAt(@LastModifiedDate) 보장
     answerRepository.saveAndFlush(answer);

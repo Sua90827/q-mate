@@ -11,11 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class AnswerMapper {
 
-  public static Answer toEntity(QuestionInstance qi, User user, AnswerContentRequest req) {
+  public static Answer toEntity(QuestionInstance qi, AnswerContentRequest req) {
     String normalized = normalize(req.getContent());
     return Answer.builder()
         .questionInstance(qi)
-        .user(user)
         .content(normalized)
         .build();
   }

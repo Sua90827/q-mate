@@ -14,4 +14,8 @@ public class MatchConstants {
   public static final String RELATION_TYPE_NOT_NULL = "관계 유형을 선택해주세요.";
   public static final String VALID_START_DATE_DEFAULT = "연인(COUPLE) 관계는 기념일(startDate)을 필수로 입력해야 합니다.";
 
+  // MatchController
+  public static final String DISCONNECT_SUCCESS_MESSAGE = "매칭 연결 끊기 요청이 처리되었습니다. 2주 후에 데이터가 삭제됩니다.";
+  public static final String RESTORE_SUCCESS_MESSAGE = "매칭이 성공적으로 복구되었습니다.";
+  public static final String RESTORE_AGREED_AWAITING_PARTNER_MESSAGE = "복구에 동의했습니다. 상대방의 동의를 기다려주세요.";
 }

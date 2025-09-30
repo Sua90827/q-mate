@@ -3,6 +3,7 @@ package com.qmate.domain.question.service;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.question.entity.CustomQuestion;
 import com.qmate.domain.question.mapper.QuestionMapper;
+import com.qmate.domain.question.model.request.CustomQuestionStatusFilter;
 import com.qmate.domain.question.model.request.CustomQuestionTextRequest;
 import com.qmate.domain.question.model.response.CustomQuestionResponse;
 import com.qmate.domain.question.repository.CustomQuestionRepository;
@@ -10,6 +11,8 @@ import com.qmate.exception.custom.question.CustomQuestionForbiddenException;
 import com.qmate.exception.custom.question.CustomQuestionNotFoundException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +59,7 @@ public class CustomQuestionService {
     CustomQuestion entity = loadWithMatchOrThrow(id);
 
     // 본인 질문인지 확인
-    if (!Objects.equals(entity.getCreatedBy().getId(), userId)) {
+    if (!Objects.equals(entity.getCreatedBy(), userId)) {
       throw new CustomQuestionForbiddenException();
     }
 
@@ -78,7 +81,7 @@ public class CustomQuestionService {
   public void delete(Long userId, Long id) {
     CustomQuestion entity = loadOrThrow(id);
     // 본인 질문인지 확인
-    if (!Objects.equals(entity.getCreatedBy().getId(), userId)) {
+    if (!Objects.equals(entity.getCreatedBy(), userId)) {
       throw new CustomQuestionForbiddenException();
     }
     // TODO 삭제 가능한 상태인지 확인 : QuestionInstance 존재 여부로 판단
@@ -94,11 +97,16 @@ public class CustomQuestionService {
   public CustomQuestionResponse getOne(Long userId, Long id) {
     CustomQuestion entity = loadWithMatchOrThrow(id);
     // 본인 질문인지 확인
-    if (!Objects.equals(entity.getCreatedBy().getId(), userId)) {
+    if (!Objects.equals(entity.getCreatedBy(), userId)) {
       throw new CustomQuestionForbiddenException();
     }
     boolean editable = true; // TODO QuestionInstance 존재 여부로 판단
     return QuestionMapper.toResponse(entity, editable, entity.getMatch());
+  }
+
+  public Page<CustomQuestionResponse> findPageByOwnerAndStatusFilter(Long ownerUserId, Long matchId, CustomQuestionStatusFilter status,
+      Pageable pageable) {
+    return customQuestionRepository.findPageByOwnerAndStatusFilter(ownerUserId, matchId, status, pageable);
   }
 
   private Match loadMatchOrThrow(Long matchId) {

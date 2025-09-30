@@ -1,6 +1,82 @@
 import { http, HttpResponse, delay } from 'msw';
 
 export const questionHandlers = [
+  //전체 질문 리스트 조회
+  http.get('/api/matches/:matchId/question-instances', async ({ params }) => {
+    const { matchId } = params;
+    await delay(200);
+
+    return HttpResponse.json({
+      content: [
+        {
+          questionInstanceId: 10,
+          deliveredAt: new Date().toISOString(),
+          status: 'COMPLETED',
+          text: '주말에 같이 하고 싶은 일은?',
+          completedAt: new Date().toISOString(),
+        },
+      ],
+      pageable: {
+        sort: { empty: true, sorted: false, unsorted: true },
+        offset: 0,
+        pageNumber: 0,
+        pageSize: 20,
+        paged: true,
+        unpaged: false,
+      },
+      totalPages: 1,
+      totalElements: 1,
+      last: true,
+      size: 20,
+      number: 0,
+      sort: { empty: true, sorted: false, unsorted: true },
+      numberOfElements: 1,
+      first: true,
+      empty: false,
+    });
+  }),
+
+  // 질문 인스턴스 상세 조회 (단일 질문)
+  http.get('/api/question-instances/:questionInstanceId', async ({ params }) => {
+    const { questionInstanceId } = params;
+    await delay(200);
+
+    return HttpResponse.json({
+      questionInstanceId: Number(questionInstanceId),
+      matchId: 1,
+      deliveredAt: new Date(Date.now() - 60 * 60 * 1000).toDateString,
+      status: 'COMPLETED',
+      completedAt: null,
+      question: {
+        questionId: 778,
+        sourceType: 'ADMIN',
+        relationType: 'COUPLE',
+        category: { id: 5, name: '일상' },
+        text: '주말에 같이 하고 싶은 일은?',
+      },
+      answers: [
+        {
+          answerId: 461,
+          userId: 99,
+          nickname: '조용한 유령',
+          isMine: true,
+          visible: true,
+          content: '영화 보기',
+          submittedAt: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
+        },
+        {
+          answerId: null,
+          userId: 100,
+          nickname: '활기찬 고래',
+          isMine: false,
+          visible: false,
+          content: '스포츠 보기',
+          submittedAt: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
+        },
+      ],
+    });
+  }),
+
   // 매칭별 오늘의 질문 조회 (스펙 일치: answers 배열 포함)
   http.get('/api/matches/:matchId/questions/today', async ({ params }) => {
     const { matchId } = params;
@@ -28,49 +104,6 @@ export const questionHandlers = [
           visible: true,
           content: '초밥',
           submittedAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
-          mine: true,
-          isMine: true,
-        },
-        {
-          answerId: null,
-          userId: 100,
-          nickname: '상대 닉네임',
-          visible: false,
-          content: null,
-          submittedAt: null,
-          mine: false,
-          isMine: false,
-        },
-      ],
-    });
-  }),
-
-  // 질문 인스턴스 상세 조회
-  http.get('/api/question-instances/:questionInstanceId', async ({ params }) => {
-    const { questionInstanceId } = params;
-    await delay(200);
-
-    return HttpResponse.json({
-      questionInstanceId: Number(questionInstanceId),
-      matchId: 10,
-      deliveredAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-      status: 'PENDING',
-      completedAt: null,
-      question: {
-        questionId: 778,
-        sourceType: 'CUSTOM',
-        relationType: 'COUPLE',
-        category: { id: 5, name: '일상' },
-        text: '주말에 같이 하고 싶은 일은?',
-      },
-      answers: [
-        {
-          answerId: 461,
-          userId: 99,
-          nickname: '내 닉네임',
-          visible: true,
-          content: '영화 보기',
-          submittedAt: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
           mine: true,
           isMine: true,
         },
@@ -171,124 +204,5 @@ export const questionHandlers = [
       },
       { status: 201 },
     );
-  }),
-
-  // 커스텀 질문 등록 (유효성: 문자열, 1~100자)
-  http.post('/api/matches/:matchId/custom-questions', async ({ params, request }) => {
-    const { matchId } = params;
-    const body = (await request.json()) as { text?: string };
-
-    const text = typeof body?.text === 'string' ? body.text.trim() : '';
-    if (!text || text.length > 100) {
-      return HttpResponse.json(
-        { error: 'FIELD_VALIDATION_FAILED', message: 'text(1~100자)이 필요합니다.' },
-        { status: 400 },
-      );
-    }
-
-    await delay(200);
-    const id = Math.floor(Math.random() * 10000);
-    const now = new Date().toISOString();
-    return HttpResponse.json(
-      {
-        customQuestionId: id,
-        sourceType: 'CUSTOM',
-        relationType: 'COUPLE',
-        matchId: Number(matchId),
-        text,
-        isEditable: true,
-        createdAt: now,
-        updatedAt: now,
-      },
-      { status: 201 },
-    );
-  }),
-
-  // 커스텀 질문 목록 조회
-  http.get('/api/matches/:matchId/custom-questions', async ({ params }) => {
-    const { matchId } = params;
-    await delay(200);
-
-    const content = [
-      {
-        customQuestionId: 901,
-        sourceType: 'CUSTOM',
-        relationType: 'COUPLE',
-        matchId: Number(matchId),
-        text: '연인이 가장 좋아하는 음식은?',
-        isEditable: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ];
-
-    return HttpResponse.json({
-      content,
-      pageable: {
-        sort: { empty: true, sorted: false, unsorted: true },
-        offset: 0,
-        pageNumber: 0,
-        pageSize: 20,
-        paged: true,
-        unpaged: false,
-      },
-      totalPages: 1,
-      totalElements: content.length,
-      last: true,
-      size: 20,
-      number: 0,
-      sort: { empty: true, sorted: false, unsorted: true },
-      numberOfElements: content.length,
-      first: true,
-      empty: content.length === 0,
-    });
-  }),
-
-  // 커스텀 질문 수정 (유효성: 문자열, 1~100자)
-  http.patch('/api/custom-questions/:id', async ({ params, request }) => {
-    const { id } = params;
-    const body = (await request.json()) as { text?: string };
-
-    const text = typeof body?.text === 'string' ? body.text.trim() : '';
-    if (!text || text.length > 100) {
-      return HttpResponse.json(
-        { error: 'FIELD_VALIDATION_FAILED', message: 'text(1~100자)이 필요합니다.' },
-        { status: 400 },
-      );
-    }
-
-    await delay(200);
-    return HttpResponse.json({
-      customQuestionId: Number(id),
-      sourceType: 'CUSTOM',
-      relationType: 'COUPLE',
-      matchId: 10,
-      text,
-      isEditable: true,
-      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-      updatedAt: new Date().toISOString(),
-    });
-  }),
-
-  // 커스텀 질문 삭제
-  http.delete('/api/custom-questions/:id', async () => {
-    await delay(150);
-    return new HttpResponse(null, { status: 204 });
-  }),
-
-  // 커스텀 질문 단건 조회 (키: customQuestionId 로 정규화)
-  http.get('/api/custom-questions/:id', async ({ params }) => {
-    const { id } = params;
-    await delay(150);
-
-    return HttpResponse.json({
-      customQuestionId: Number(id),
-      sourceType: 'CUSTOM',
-      relationType: 'COUPLE',
-      category: { id: 5, name: '일상' },
-      text: '커스텀 질문',
-      isEditable: true,
-      updatedAt: new Date().toISOString(),
-    });
   }),
 ];

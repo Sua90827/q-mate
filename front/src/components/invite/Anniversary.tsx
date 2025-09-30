@@ -1,8 +1,19 @@
+'use client';
 import Image from 'next/image';
-import React from 'react';
-import { DatePicker } from '../common/DatePicker';
+import React, { useState, useEffect } from 'react';
+import { AnniversaryPicker } from './ui/AnniversaryPicker';
+import { useRouter } from 'next/navigation';
 
 export default function Anniversary() {
+  const [date, setDate] = useState<string | undefined>(undefined);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (date) {
+      router.push(`/invite/invite/${date}`);
+    }
+  }, [date, router]);
+
   return (
     <>
       <div className="mb-10 text-center">
@@ -13,7 +24,12 @@ export default function Anniversary() {
       <Image src="/images/bubbley/bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
 
       <div className="w-[300px]  mt-10">
-        <DatePicker label="날짜 선택" anniversary />
+        <AnniversaryPicker
+          label="날짜 선택"
+          onSelect={(d) => {
+            setDate(d ? d.split('T')[0] : undefined);
+          }}
+        />
       </div>
     </>
   );

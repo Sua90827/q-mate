@@ -167,7 +167,7 @@ function CalendarDayButton({
       data-range-middle={modifiers.range_middle}
       className={cn(
         'cursor-pointer',
-        'data-[selected-single=true]:bg-calendar data-[selected-single=true]:text-theme-primary',
+        'data-[selected-single=true]:bg-primary data-[selected-single=true]:text-theme-primary',
 
         'flex w-8 h-8 lg:w-12 lg:h-12 p-0 flex-col gap-1 leading-none font-normal text-sm',
         'rounded-full',
@@ -175,8 +175,7 @@ function CalendarDayButton({
         '[&>span]:text-xs [&>span]:opacity-70',
         'items-center justify-center mx-auto',
         'focus:outline-none focus-visible:outline-none',
-        modifiers.today &&
-          'bg-gray-200 text-theme-secondary data-[selected-single=true]:!text-white hover:bg-gray-300',
+
         defaultClassNames.day_button,
         className,
       )}

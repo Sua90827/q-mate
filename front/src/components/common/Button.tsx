@@ -17,6 +17,8 @@ const buttonVariants = cva(
         primary: 'bg-primary text-secondary shadow-xs hover:opacity-80',
         primaryOutline:
           'border-2 shadow-xs hover:bg-accent bg-secondary border-primary text-primary',
+        dangerPrimary: 'bg-error text-secondary shadow-xs hover:opacity-80',
+        dangerOutline: 'bg-secondary text-error border-2 border-error shadow-xs hover:bg-accent',
         icon: 'hover:opacity-80',
       },
       size: {

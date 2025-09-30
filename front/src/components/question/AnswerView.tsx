@@ -5,9 +5,11 @@ type Props = {
   questionText: string;
   myContent: string;
   partnerContent: string;
+  nickname: string;
+  partnerNickname: string;
 };
 
-function AnswerView({ questionText, myContent, partnerContent }: Props) {
+function AnswerView({ questionText, myContent, partnerContent, nickname, partnerNickname }: Props) {
   const captureID = 'answerView';
   return (
     <div className="pt-[70px] relative flex flex-col items-center w-full sm:w-[400px] h-[550px] bg-secondary rounded-md shadow-md">
@@ -16,12 +18,12 @@ function AnswerView({ questionText, myContent, partnerContent }: Props) {
         <h2 className="text-24 font-bold">{questionText}</h2>
         <div className="mt-16">
           <div className="pb-6">
-            <p className="text-18">조용한 유령</p>
+            <p className="text-18">{nickname}</p>
             <p className="text-gray-500 text-16">{myContent}</p>
           </div>
 
           <div>
-            <p className="text-18">활기찬 고래</p>
+            <p className="text-18">{partnerNickname}</p>
             <p className="text-gray-500 text-16">{partnerContent}</p>
           </div>
         </div>
@@ -29,7 +31,7 @@ function AnswerView({ questionText, myContent, partnerContent }: Props) {
         <ShareBtn
           targetId={captureID}
           title={`${questionText} 답변`}
-          text={`닉네임1답변: ${myContent}\n닉네임2답변: ${partnerContent}`}
+          text={`${nickname}: ${myContent}\n${partnerNickname}: ${partnerContent}`}
         />
       </div>
     </div>

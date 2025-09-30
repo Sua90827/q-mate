@@ -1,17 +1,24 @@
 'use client';
 import React, { useState } from 'react';
 import BellBtn from '../common/BellBtn';
-import { ChevronRight } from 'lucide-react';
+import { CheckCircle, ChevronRight, UserRoundPen, XCircle } from 'lucide-react';
 import { Switch } from '../ui/switch';
 import { Button } from '../common/Button';
 import NicknameModal from './ui/NicknameModal';
-
+import { cn } from '@/lib/utils';
+import QuestionTimeModal from './ui/QuestionTimeModal';
+import { useMatchInfo, useUpdateMatchInfo } from '@/hooks/useMatches';
+import { toast } from 'sonner';
 type SettingItem =
   | { id: string; label: string; subLabel?: string; type: 'modal'; onClick: () => void }
   | { id: string; label: string; type: 'switch' };
 
 export default function Settings() {
   const [modal, setModal] = useState<string | null>(null);
+  const [isChecked, setIsChecked] = useState(false);
+  //match id추가 필요
+  const { data: matchInfo } = useMatchInfo(333);
+  const { mutateAsync: updateMatchInfo } = useUpdateMatchInfo(333);
 
   const settings: SettingItem[] = [
     {
@@ -40,6 +47,28 @@ export default function Settings() {
     },
   ];
 
+  const handleSaveTime = async (hour24: number) => {
+    try {
+      const res = await updateMatchInfo({ dailyQuestionHour: hour24 });
+
+      toast.custom(() => (
+        <div className="flex items-center gap-2 rounded-lg border border-theme-primary bg-theme-primary/10 px-4 py-3 text-theme-primary shadow-lg">
+          <CheckCircle className="h-5 w-5 text-theme-primary" />
+          <span className="font-medium">{res.message}</span>
+        </div>
+      ));
+
+      setModal(null);
+    } catch (error) {
+      toast.custom(() => (
+        <div className="flex items-center gap-2 rounded-lg border border-red-500 bg-red-500/10 px-4 py-3 text-red-600 shadow-lg">
+          <XCircle className="h-5 w-5 text-red-600" />
+          <span className="font-medium">저장에 실패했습니다</span>
+        </div>
+      ));
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col justify-center items-center sm:pt-0 pt-[70px]">
       {/* 모바일 상단바 */}
@@ -57,17 +86,27 @@ export default function Settings() {
           {settings.map((item) => (
             <li
               key={item.id}
-              className="flex justify-between items-center px-4 py-5 cursor-pointer"
+              className={`flex justify-between items-center px-4 py-5 cursor-pointer ${
+                item.id === 'profile' ? 'text-theme-accent2 font-extrabold' : ''
+              }`}
               onClick={item.type === 'modal' ? item.onClick : undefined}
             >
               <div>
-                <span className="block text-16 ">{item.label}</span>
+                <div className="flex gap-2">
+                  {item.id === 'profile' ? <UserRoundPen className="w-5" /> : ''}
+                  <span className="block text-16">{item.label}</span>
+                </div>
                 {'subLabel' in item && item.subLabel && (
                   <span className="text-theme-secondary font-normal text-12">{item.subLabel}</span>
                 )}
               </div>
               {item.type === 'switch' ? (
-                <Switch />
+                //현재는 useState로 색상변경되는지 확인했지만 유저 정보에서 알림을 받는지 끄는지 확인필요할듯
+                <Switch
+                  checked={isChecked}
+                  onCheckedChange={setIsChecked}
+                  className={cn(isChecked && 'bg-theme-primary')}
+                />
               ) : (
                 <ChevronRight className="text-theme-secondary !w-4 !h-4" />
               )}
@@ -79,6 +118,13 @@ export default function Settings() {
       <Button className="w-[295px] mt-10">로그아웃</Button>
 
       {modal === 'profile' && <NicknameModal open={modal} setIsOpen={setModal} />}
+      <QuestionTimeModal
+        open={modal === 'time'}
+        setIsOpen={(open) => setModal(open ? 'time' : null)}
+        initialHour={matchInfo?.dailyQuestionHour}
+        onSave={handleSaveTime}
+      />
+      {modal === 'disconnect' && <div>time</div>}
     </div>
   );
 }

@@ -7,9 +7,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.qmate.domain.match.Match;
+import com.qmate.domain.match.MatchMember;
+import com.qmate.domain.match.RelationType;
+import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.questioninstance.entity.Answer;
-import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
 import com.qmate.domain.questioninstance.repository.AnswerRepository;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
@@ -33,12 +36,15 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 @ExtendWith(MockitoExtension.class)
 class AnswerServiceCreateTest {
+
   @Mock
   QuestionInstanceRepository qiRepo;
   @Mock
   UserRepository userRepo;
   @Mock
   AnswerRepository answerRepo;
+  @Mock
+  MatchMemberRepository matchMemberRepository;
 
   @InjectMocks
   AnswerService sut;
@@ -55,20 +61,35 @@ class AnswerServiceCreateTest {
   @DisplayName("정상: 저장 후 두 사람 답변이면 QI 완료 전이")
   void create_정상_201() {
     // given
-    Long qiId = 123L; Long userId = 99L; Long matchId = 7L;
+    Long qiId = 123L;
+    Long userId = 99L;
+    Long matchId = 7L;
     var req = new AnswerContentRequest("  안녕\r\n하세요  ");
     var user = User.builder().id(userId).currentMatchId(matchId).build();
     var qi = qi(qiId, matchId, QuestionInstanceStatus.PENDING);
+    Match match = Match.builder()
+        .id(matchId)
+        .relationType(RelationType.COUPLE)
+        .build();
 
-    given(qiRepo.findById(qiId)).willReturn(Optional.of(qi));
-    given(userRepo.findById(userId)).willReturn(Optional.of(user));
+    MatchMember matchMember = MatchMember.builder()
+        .id(100L)
+        .match(match)
+        .user(user)
+        .build();
+
+    qi.setMatch(match);
+
+    given(qiRepo.findAuthorizedByIdForUser(qiId, userId)).willReturn(Optional.of(qi));
+    given(matchMemberRepository.findByMatch_IdAndUser_Id(matchId, userId)).willReturn(Optional.of(matchMember));
 
     // 저장 시 id/시간 세팅된 엔티티 리턴
     var saved = Answer.builder()
-        .id(456L).questionInstance(qi).user(user)
+        .id(456L).questionInstance(qi).userId(user.getId())
         .content("안녕\n하세요").submittedAt(LocalDateTime.parse("2025-09-11T12:20:00")).build();
     given(answerRepo.save(any(Answer.class))).willReturn(saved);
-    given(answerRepo.countByQuestionInstance_Id(qiId)).willReturn(2L);
+    given(answerRepo.countDistinctUserIdByQuestionInstance_Id(qiId)).willReturn(2L);
+    given(qiRepo.findByIdForUpdate(qiId)).willReturn(Optional.of(qi));
 
     // when
     var res = sut.create(qiId, userId, req);
@@ -84,29 +105,16 @@ class AnswerServiceCreateTest {
   }
 
   @Test
-  void create_권한불일치_403() {
-    Long qiId = 1L; Long userId = 2L;
-    var req = new AnswerContentRequest("a");
-    var qi = qi(qiId, 100L, QuestionInstanceStatus.PENDING);
-    var user = User.builder().id(userId).currentMatchId(200L).build();
-
-    given(qiRepo.findById(qiId)).willReturn(Optional.of(qi));
-    given(userRepo.findById(userId)).willReturn(Optional.of(user));
-
-    assertThatThrownBy(() -> sut.create(qiId, userId, req))
-        .isInstanceOf(QuestionInstanceForbiddenException.class);
-  }
-
-  @Test
   @DisplayName("만료(EXPIRED): 423 Locked")
   void create_expired_423() {
-    Long qiId = 1L; Long userId = 2L; Long matchId = 7L;
+    Long qiId = 1L;
+    Long userId = 2L;
+    Long matchId = 7L;
     var req = new AnswerContentRequest("a");
     var qi = qi(qiId, matchId, QuestionInstanceStatus.EXPIRED);
     var user = User.builder().id(userId).currentMatchId(matchId).build();
 
-    given(qiRepo.findById(qiId)).willReturn(Optional.of(qi));
-    given(userRepo.findById(userId)).willReturn(Optional.of(user));
+    given(qiRepo.findAuthorizedByIdForUser(qiId, userId)).willReturn(Optional.of(qi));
 
     assertThatThrownBy(() -> sut.create(qiId, userId, req))
         .isInstanceOf(AnswerCannotModifyException.class);
@@ -119,10 +127,8 @@ class AnswerServiceCreateTest {
     Long qiId = 1L, userId = 2L, matchId = 7L;
     var req = new AnswerContentRequest("a");
     var qi = qi(qiId, matchId, QuestionInstanceStatus.COMPLETED);
-    var user = User.builder().id(userId).currentMatchId(matchId).build();
 
-    given(qiRepo.findById(qiId)).willReturn(Optional.of(qi));
-    given(userRepo.findById(userId)).willReturn(Optional.of(user));
+    given(qiRepo.findAuthorizedByIdForUser(qiId, userId)).willReturn(Optional.of(qi));
 
     // expect
     thenThrownBy(() -> sut.create(qiId, userId, req))
@@ -131,15 +137,16 @@ class AnswerServiceCreateTest {
 
   @Test
   void create_중복답변_409() {
-    Long qiId = 1L; Long userId = 2L; Long matchId = 7L;
+    Long qiId = 1L;
+    Long userId = 2L;
+    Long matchId = 7L;
     var req = new AnswerContentRequest("a");
     var qi = qi(qiId, matchId, QuestionInstanceStatus.PENDING);
     var user = User.builder().id(userId).currentMatchId(matchId).build();
 
-    given(qiRepo.findById(qiId)).willReturn(Optional.of(qi));
-    given(userRepo.findById(userId)).willReturn(Optional.of(user));
-    given(answerRepo.save(any(Answer.class)))
-        .willThrow(new DataIntegrityViolationException("dup"));
+    given(qiRepo.findAuthorizedByIdForUser(qiId, userId)).willReturn(Optional.of(qi));
+    given(answerRepo.existsByQuestionInstance_IdAndUserId(qiId, userId))
+        .willReturn(true);
 
     assertThatThrownBy(() -> sut.create(qiId, userId, req))
         .isInstanceOf(AnswerAlreadyExistsException.class);
@@ -147,14 +154,10 @@ class AnswerServiceCreateTest {
 
   @Test
   void create_QI없음_404_USER없음_404() {
-    Long qiId = 1L; Long userId = 2L;
-    given(qiRepo.findById(qiId)).willReturn(Optional.empty());
+    Long qiId = 1L;
+    Long userId = 2L;
+    given(qiRepo.findAuthorizedByIdForUser(qiId, userId)).willReturn(Optional.empty());
     assertThatThrownBy(() -> sut.create(qiId, userId, new AnswerContentRequest("a")))
         .isInstanceOf(QuestionInstanceNotFoundException.class);
-
-    given(qiRepo.findById(qiId)).willReturn(Optional.of(qi(qiId, 7L, QuestionInstanceStatus.PENDING)));
-    given(userRepo.findById(userId)).willReturn(Optional.empty());
-    assertThatThrownBy(() -> sut.create(qiId, userId, new AnswerContentRequest("a")))
-        .isInstanceOf(UserNotFoundException.class);
   }
 }

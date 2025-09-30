@@ -16,47 +16,69 @@ export default function QuestionList() {
   const [isDeleteMode, setIsDeleteMode] = useState<boolean>(false);
 
   // API 호출
-  const { data: questionResponse } = useQuestions();
-  const { data: customQuestions = [] } = useFetchCustomQuestions();
+  const { data: questionResponse } = useQuestions(1); //전체 질문 조회 (수정 가능한 커스텀 질문 제외)
+  const { data } = useFetchCustomQuestions(1); //커스텀 질문 (이미 답변한 커스텀 질문, 수정가능한 커스텀 질문)
 
   const questionInstances: QuestionList[] = useMemo(
-    () => questionResponse?.[0]?.content ?? [],
+    () => questionResponse?.content ?? [],
     [questionResponse],
   );
 
+  const customQuestions = data?.content ?? [];
+
   // 커스텀 질문을 QuestionList 포맷으로 변환
   const normalizedCustomInstances: QuestionList[] = customQuestions.map((custom) => ({
-    questionInstanceId: -custom.customQuestionId, // id 충돌 방지
+    questionInstanceId: `custom-${custom.customQuestionId}`, // id 충돌 방지
     deliveredAt: custom.createdAt,
-    status: 'EDITABLE',
-    question: { questionId: custom.customQuestionId, text: custom.text },
+    status: custom.isEditable,
+    text: custom.text,
     completedAt: custom.updatedAt,
   }));
 
+  //수정 가능한 질문만 빼기
+  const editableCustom = normalizedCustomInstances.filter((instance) => instance.status === true);
+
   // 질문 전체 합치기
   const totalInstances: QuestionList[] = useMemo(
-    () => [...questionInstances, ...normalizedCustomInstances],
-    [questionInstances, normalizedCustomInstances],
+    () => [...questionInstances, ...editableCustom],
+    [questionInstances, editableCustom],
   );
 
-  // 필터링
-  const filteredInstances: QuestionList[] = totalInstances
-    .filter((instance) => instance.question.text.toLowerCase().includes(queryText.toLowerCase()))
-    .filter((instance) => (showCustomOnly ? instance.status === 'EDITABLE' : true));
+  let filteredInstances = totalInstances;
 
-  // 쿼리 파라미터 기반 선택 상태
+  // 검색
+  if (queryText) {
+    filteredInstances = totalInstances.filter((instance) =>
+      instance.text.toLowerCase().includes(queryText.toLowerCase()),
+    );
+  }
+
+  //커스텀 질문 중 수정 가능한 것만 필터링
+  if (showCustomOnly) {
+    filteredInstances = editableCustom;
+  }
+
+  // 라우터 관련 훅
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  // 현재 URL 쿼리 파라미터에서 'id'를 꺼냄
   const selectedQuestionInstanceIdParam = searchParams.get('id');
+
+  // URL에서 현재 선택된 id 읽어오기
   const selectedQuestionInstanceId =
     selectedQuestionInstanceIdParam !== null ? Number(selectedQuestionInstanceIdParam) : null;
 
-  const openDetailByQuery = (targetQuestionInstanceId: number) => {
-    const params = new URLSearchParams(searchParams as unknown as URLSearchParams);
+  // 특정 질문 클릭했을 때 URL에 id 파라미터를 세팅하는 함수
+  const openDetailByQuery = (targetQuestionInstanceId: number | string) => {
+    const params = new URLSearchParams(searchParams);
     params.set('id', String(targetQuestionInstanceId));
     router.push(`${pathname}?${params.toString()}`);
   };
+
+  const paramsDel = useSearchParams();
+  const deleteId = Number(paramsDel.get('id')?.replace('custom-', ''));
 
   const {
     mutate: deleteCustomMutate,
@@ -65,8 +87,7 @@ export default function QuestionList() {
   } = useDeleteCustomQuestion();
 
   const handleDelete = async () => {
-    const id = 153;
-    deleteCustomMutate(id);
+    deleteCustomMutate(deleteId);
     if (isDeleting) {
       // 로딩 처리 가능
     } else if (isDeleteError) {
@@ -95,7 +116,7 @@ export default function QuestionList() {
               if (isSelected) {
                 itemClassName += ' font-bold bg-theme-list-active';
               }
-              if (instance.status === 'EDITABLE') {
+              if (instance.status === true) {
                 itemClassName += ' text-text-secondary bg-gray font-bold';
               }
               if (instance.status === 'PENDING') {
@@ -110,9 +131,9 @@ export default function QuestionList() {
                 >
                   <div className="flex justify-between">
                     <p>
-                      {instance.question.text.length > 17
-                        ? `${instance.question.text.slice(0, 16)}...`
-                        : instance.question.text}
+                      {instance.text.length > 17
+                        ? `${instance.text.slice(0, 16)}...`
+                        : instance.text}
                     </p>
                     {isDeleteMode && <DeleteBtn onClick={handleDelete} />}
                   </div>
@@ -143,8 +164,8 @@ export default function QuestionList() {
             if (instance.status === 'PENDING') {
               itemClassName += ' text-theme-accent2';
             }
-            if (instance.status === 'EDITABLE') {
-              itemClassName += ' !text-text-secondary bg-list-custom';
+            if (instance.status === true) {
+              itemClassName += ' text-text-secondary bg-list-custom';
             }
 
             return (
@@ -154,10 +175,8 @@ export default function QuestionList() {
                 onClick={() => openDetailByQuery(instance.questionInstanceId)}
               >
                 <div className="flex justify-between">
-                  {instance.question.text.length > 17
-                    ? `${instance.question.text.slice(0, 16)}...`
-                    : instance.question.text}
-                  {instance.status === 'EDITABLE' && <DeleteBtn onClick={handleDelete} />}
+                  {instance.text.length > 17 ? `${instance.text.slice(0, 16)}...` : instance.text}
+                  {instance.status === true && <DeleteBtn onClick={handleDelete} />}
                 </div>
               </li>
             );

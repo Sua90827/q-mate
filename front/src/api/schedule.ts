@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { EventMonthResponse, ScheduleResponse } from '@/types/scheduleType';
 
+//일정리스트 조회
 export const fetchScheduleList = async (): Promise<ScheduleResponse> => {
   const res = await axios.get<ScheduleResponse>('http://localhost:3005/schedule');
   return res.data;

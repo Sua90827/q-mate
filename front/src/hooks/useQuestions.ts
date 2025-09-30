@@ -2,23 +2,23 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchQuestions, fetchQuestionDetail, fetchTodayQuestion } from '../api/questions';
 
 //전체 질문 조회
-export const useQuestions = () => {
+export const useQuestions = (matchId: number) => {
   return useQuery({
     queryKey: ['questions'],
-    queryFn: fetchQuestions,
+    queryFn: () => fetchQuestions(matchId),
     staleTime: 1000 * 60 * 60 * 24,
     gcTime: 1000 * 60 * 60 * 24,
   });
 };
 
 //질문 상세 조회
-export const useQuestionDetail = (id: number) => {
+export const useQuestionDetail = (questionInstanceId: number) => {
   return useQuery({
-    queryKey: ['questionDetail', id],
-    queryFn: () => fetchQuestionDetail(id),
+    queryKey: ['questionDetail', questionInstanceId],
+    queryFn: () => fetchQuestionDetail(questionInstanceId),
     staleTime: 1000 * 30,
     gcTime: 1000 * 60 * 5,
-    enabled: !!id,
+    enabled: !!questionInstanceId,
   });
 };
 

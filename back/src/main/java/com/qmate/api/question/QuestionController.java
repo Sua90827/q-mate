@@ -1,16 +1,14 @@
 package com.qmate.api.question;
 
+import com.qmate.common.constants.question.QuestionConstants;
 import com.qmate.domain.question.entity.RelationType;
 import com.qmate.domain.question.model.request.QuestionCreateRequest;
 import com.qmate.domain.question.model.request.QuestionUpdateRequest;
 import com.qmate.domain.question.model.response.QuestionResponse;
 import com.qmate.domain.question.service.QuestionService;
-import com.qmate.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -43,20 +42,12 @@ public class QuestionController {
   /**
    * 질문 생성
    */
+  @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   @Operation(
       summary = "질문 생성",
-      description = "새로운 질문을 생성합니다.",
-      responses = {
-          @ApiResponse(responseCode = "201", description = "생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionResponse.class))),
-          @ApiResponse(responseCode = "400", description = "유효하지 않은 요청 값", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-      },
-      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-          required = true,
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionCreateRequest.class))
-      )
+      description = "새로운 질문을 생성합니다."
   )
-  // @PostMapping
   public ResponseEntity<QuestionResponse> createQuestion(
       @RequestBody @Valid QuestionCreateRequest request) {
     return ResponseEntity.status(HttpStatus.CREATED).body(questionService.createQuestion(request));
@@ -68,21 +59,11 @@ public class QuestionController {
   @PatchMapping("/{id}")
   @Operation(
       summary = "질문 수정",
-      description = "기존 질문을 부분 수정합니다.",
-      responses = {
-          @ApiResponse(responseCode = "200", description = "수정 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionResponse.class))),
-          @ApiResponse(responseCode = "400", description = "유효하지 않은 요청 값", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "404", description = "해당 질문 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-      },
-      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-          required = true,
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionUpdateRequest.class))
-      ),
+      description = QuestionConstants.UPDATE_MD,
       parameters = {
           @Parameter(name = "id", description = "수정할 질문 ID", required = true)
       }
   )
-  //@PatchMapping("/{id}")
   public ResponseEntity<QuestionResponse> updateQuestion(
       @PathVariable Long id,
       @RequestBody @Valid QuestionUpdateRequest request) {
@@ -96,10 +77,6 @@ public class QuestionController {
   @Operation(
       summary = "질문 전체 조회 (필터링 및 페이징)",
       description = "질문을 필터링 조건에 따라 페이징하여 조회합니다.",
-      responses = {
-          @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionResponse.class))),
-          @ApiResponse(responseCode = "400", description = "유효하지 않은 요청 값", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-      },
       parameters = {
           @Parameter(name = "relationType", description = "질문의 관계 타입", required = false, schema = @Schema(implementation = RelationType.class)),
           @Parameter(name = "categoryId", description = "질문의 카테고리 ID", required = false),
