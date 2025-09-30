@@ -1,20 +1,23 @@
-// src/app/Mocker.tsx
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function Mocker() {
+export default function Mocker({ children }: { children: React.ReactNode }) {
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       import('../mocks/browser').then(({ worker }) => {
-        worker.start({
-          // 선택: 콘솔 경고 줄이고 싶으면
-          onUnhandledRequest: 'bypass',
+        worker.start({ onUnhandledRequest: 'bypass' }).then(() => {
+          console.info('[MSW] Mocking enabled.');
+          setReady(true);
         });
-        console.info('[MSW] Mocking enabled.');
       });
+    } else {
+      setReady(true);
     }
   }, []);
 
-  return null;
+  if (!ready) return null;
+  return <>{children}</>;
 }

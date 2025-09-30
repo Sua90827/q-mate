@@ -26,11 +26,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <BodyWrapper>
           <LoadingProvider>
             <Providers>
-              <Mocker />
               <div className="flex flex-col h-full">
                 <NavGuard />
                 <main className="h-full flex-1 pt-0 sm:pt-[70px] pb-[70px] sm:pb-0">
-                  {children}
+                  <Mocker>{children}</Mocker>
                 </main>
                 <Toaster position="top-center" offset={100} />
               </div>
