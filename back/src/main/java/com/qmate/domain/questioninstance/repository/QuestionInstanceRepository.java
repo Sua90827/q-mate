@@ -52,4 +52,6 @@ public interface QuestionInstanceRepository extends JpaRepository<QuestionInstan
   @Query("select qi from QuestionInstance qi where qi.id = :qiId")
   @QueryHints(@QueryHint(name = "jakarta.persistence.lock.timeout", value = "3000")) // ms
   Optional<QuestionInstance> findByIdForUpdate(Long qiId);
+
+  boolean existsByCustomQuestion_Id(Long customQuestionId);
 }
