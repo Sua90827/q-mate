@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -33,12 +34,12 @@ public class QuestionCategoryController {
   /**
    * 카테고리 생성
    */
+  @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   @Operation(
       summary = "카테고리 생성",
       description = QuestionCategoryConstants.CREATE_MD
   )
-  // @PostMapping
   public ResponseEntity<QuestionCategoryResponse> createCategory(
       @RequestBody @Valid QuestionCategoryCreateRequest request) {
     QuestionCategoryResponse response = questionCategoryService.createCategory(request);
@@ -53,7 +54,6 @@ public class QuestionCategoryController {
       summary = "카테고리 수정",
       description = QuestionCategoryConstants.UPDATE_MD
   )
-  // @PatchMapping("/{id}")
   public ResponseEntity<QuestionCategoryResponse> updateCategory(
       @PathVariable Long id,
       @RequestBody @Valid QuestionCategoryUpdateRequest request) {
@@ -69,7 +69,6 @@ public class QuestionCategoryController {
       summary = "카테고리 전체 조회",
       description = "모든 질문 카테고리를 조회합니다."
   )
-  //@GetMapping
   public ResponseEntity<List<QuestionCategoryResponse>> getAllCategories() {
     List<QuestionCategoryResponse> response = questionCategoryService.getAllCategories();
     return ResponseEntity.ok(response);

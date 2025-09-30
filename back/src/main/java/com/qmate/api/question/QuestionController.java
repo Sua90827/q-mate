@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -41,12 +42,12 @@ public class QuestionController {
   /**
    * 질문 생성
    */
+  @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   @Operation(
       summary = "질문 생성",
       description = "새로운 질문을 생성합니다."
   )
-  // @PostMapping
   public ResponseEntity<QuestionResponse> createQuestion(
       @RequestBody @Valid QuestionCreateRequest request) {
     return ResponseEntity.status(HttpStatus.CREATED).body(questionService.createQuestion(request));
@@ -63,7 +64,6 @@ public class QuestionController {
           @Parameter(name = "id", description = "수정할 질문 ID", required = true)
       }
   )
-  //@PatchMapping("/{id}")
   public ResponseEntity<QuestionResponse> updateQuestion(
       @PathVariable Long id,
       @RequestBody @Valid QuestionUpdateRequest request) {

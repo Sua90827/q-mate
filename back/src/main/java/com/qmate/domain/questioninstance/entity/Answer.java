@@ -17,6 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -40,9 +41,9 @@ public class Answer {
   @JoinColumn(name = "question_instance_id", nullable = false)
   private QuestionInstance questionInstance;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+  @CreatedBy
+  @Column(name = "user_id")
+  private Long userId;
 
   @Column(name = "content", nullable = false, length = 100)
   private String content;

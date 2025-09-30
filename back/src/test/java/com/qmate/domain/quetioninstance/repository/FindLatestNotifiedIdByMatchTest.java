@@ -65,7 +65,7 @@ class FindLatestNotifiedIdByMatchTest {
     em.flush();
     em.clear();
 
-    Optional<Long> found = questionInstanceRepository.findLatestNotifiedIdByMatch(matchId);
+    Optional<Long> found = questionInstanceRepository.findLatestDeliveredIdByMatch(matchId);
 
     assertThat(found).isPresent();
     assertThat(found.get()).isEqualTo(lastId);
@@ -82,7 +82,7 @@ class FindLatestNotifiedIdByMatchTest {
     em.flush();
     em.clear();
 
-    Optional<Long> found = questionInstanceRepository.findLatestNotifiedIdByMatch(matchId);
+    Optional<Long> found = questionInstanceRepository.findLatestDeliveredIdByMatch(matchId);
 
     assertThat(found).isEmpty();
   }
