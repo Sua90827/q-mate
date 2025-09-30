@@ -5,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { TriangleAlert } from 'lucide-react';
 import React from 'react';
 
 interface NoticeModalProps {
@@ -33,7 +34,12 @@ export default function NoticeModal({
         className="w-[285px] min-h-[153px] z-50"
       >
         <DialogHeader className="flex justify-center">
-          {danger && <span className="block text-red-600">⚠️</span>}
+          {danger && (
+            <div className="flex justify-center">
+              <TriangleAlert className=" text-red-600" />
+            </div>
+          )}
+
           <DialogTitle className="text-center leading-relaxed text-16">{title}</DialogTitle>
           {sub && (
             <DialogDescription className="text-14 font-semibold text-center text-text-secondary">
