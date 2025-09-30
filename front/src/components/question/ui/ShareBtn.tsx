@@ -1,7 +1,6 @@
 'use client';
-import { Button } from '@/components/common/Button';
-import { useThemeStore } from '@/store/useThemeStore';
 
+import { Button } from '@/components/common/Button';
 import { Share2 } from 'lucide-react';
 import React, { useState, useRef } from 'react';
 import {
@@ -23,7 +22,6 @@ type Props = {
 export default function ShareBtn({ targetId, title, text, className }: Props) {
   const [open, setOpen] = useState(false);
   const blobRef = useRef<Blob | null>(null);
-  const { theme } = useThemeStore();
 
   const handleShare = async () => {
     const el = document.getElementById(targetId);
