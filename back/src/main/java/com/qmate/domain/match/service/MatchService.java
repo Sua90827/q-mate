@@ -10,6 +10,7 @@ import com.qmate.domain.match.model.request.MatchCreationRequest;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.model.request.MatchUpdateRequest;
 import com.qmate.domain.match.model.response.InviteCodeValidationResponse;
+import com.qmate.domain.match.model.response.LockStatusResponse;
 import com.qmate.domain.match.model.response.MatchCreationResponse;
 import com.qmate.domain.match.model.response.MatchInfoResponse;
 import com.qmate.domain.match.model.response.MatchJoinResponse;
@@ -239,6 +240,14 @@ public class MatchService {
     }
     String partnerNickname = match.getMembers().get(0).getUser().getNickname();
     return new InviteCodeValidationResponse(true, partnerNickname);
+  }
+
+  //사용자의 초대 코드 입력 잠금 상태와 남은 시간을 조회합니다.
+  public LockStatusResponse getLockStatus(Long userId){
+    // RedisHelper를 통해 사용자의 잠금 남은 시간을 가져옴.
+    return redisHelper.getLockTimeRemaining(userId)
+        .map(remainingSeconds -> new LockStatusResponse(true, remainingSeconds)) // 잠겨있다면 (시간이 남아있다면)
+        .orElse(new LockStatusResponse(false, 0L)); // 잠겨있지 않다면
   }
 
 

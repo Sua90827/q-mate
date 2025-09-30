@@ -1,4 +1,4 @@
-package com.qmate.domain.auth.model.response;
+package com.qmate.domain.match.model.response;
 
 import lombok.Getter;
 

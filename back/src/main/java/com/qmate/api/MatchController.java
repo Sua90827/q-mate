@@ -4,6 +4,7 @@ import com.qmate.common.constants.match.MatchConstants;
 import com.qmate.domain.match.model.request.MatchCreationRequest;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.model.request.MatchUpdateRequest;
+import com.qmate.domain.match.model.response.LockStatusResponse;
 import com.qmate.domain.match.model.response.MatchActionResponse;
 import com.qmate.domain.match.model.response.MatchCreationResponse;
 import com.qmate.domain.match.model.response.MatchInfoResponse;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -32,6 +34,7 @@ public class MatchController {
   private final MatchService matchService;
 
   //매칭 생성(초대 코드 발급)
+  @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   public ResponseEntity<MatchCreationResponse> createMatch(
       @RequestBody @Valid MatchCreationRequest request,
@@ -129,5 +132,13 @@ public class MatchController {
         : MatchConstants.RESTORE_AGREED_AWAITING_PARTNER_MESSAGE;
 
     return ResponseEntity.ok(new MatchActionResponse(message));
+  }
+  //현재 로그인한 사용자의 초대 코드 입력 잠금 상태를 조회
+  @GetMapping("/lock-status")
+  public ResponseEntity<LockStatusResponse> getLockStatus(
+      @AuthenticationPrincipal UserPrincipal principal
+  ){
+    LockStatusResponse response = matchService.getLockStatus(principal.userId());
+    return ResponseEntity.ok(response);
   }
 }
