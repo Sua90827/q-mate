@@ -64,7 +64,7 @@ export default function Custom({ value }: { value?: string }) {
           />
           <div className="pt-5 flex gap-7 justify-end ">
             <Button variant="outline" size="lg" asChild className="w-[140px]">
-              <Link href="/record">취소하기</Link>
+              <Link href="/question/list">취소하기</Link>
             </Button>
             {value ? (
               <Button size="lg" className="w-[140px]" onClick={handleUpdate}>

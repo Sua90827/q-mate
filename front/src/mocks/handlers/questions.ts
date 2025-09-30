@@ -1,38 +1,214 @@
 import { http, HttpResponse, delay } from 'msw';
 
+type Answer = {
+  answerId: number | null;
+  userId: number;
+  nickname: string;
+  isMine: boolean;
+  visible: boolean;
+  content: string | null;
+  submittedAt: string | null;
+};
+
+type Question = {
+  questionId: number;
+  sourceType: 'ADMIN' | 'CUSTOM';
+  relationType: 'COUPLE';
+  category: { id: number; name: string };
+  text: string;
+};
+
+type QuestionDetail = {
+  questionInstanceId: number;
+  matchId: number;
+  deliveredAt: string;
+  status: 'PENDING' | 'COMPLETED';
+  completedAt: string | null;
+  question: Question;
+  answers: Answer[];
+};
+
 export const questionHandlers = [
   //전체 질문 리스트 조회
-  http.get('/api/matches/:matchId/question-instances', async ({ params }) => {
+  http.get('/api/matches/:matchId/question-instances', async ({ params, request }) => {
     const { matchId } = params;
     await delay(200);
 
+    const url = new URL(request.url);
+    const page = Number(url.searchParams.get('page') ?? 0);
+    const size = Number(url.searchParams.get('size') ?? 20);
+
+    const allInstances = [
+      {
+        questionInstanceId: 10,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '주말에 같이 하고 싶은 일은?',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 11,
+        deliveredAt: new Date().toISOString(),
+        status: 'PENDING',
+        text: '가장 기억에 남는 여행은?',
+        completedAt: null,
+      },
+      {
+        questionInstanceId: 12,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '처음 만난 날 기분은 어땠나요?',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 13,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '4',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 14,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '5',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 15,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '6',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 16,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '7?',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 17,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '8?',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 18,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '9?',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 19,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '10',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 20,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '11?',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 21,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '12?',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 22,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '13?',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 23,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '14?',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 24,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '15?',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 25,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '16',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 26,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '17',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 27,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '18',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 28,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '19',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 29,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '20',
+        completedAt: new Date().toISOString(),
+      },
+      {
+        questionInstanceId: 30,
+        deliveredAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        text: '21',
+        completedAt: new Date().toISOString(),
+      },
+    ];
+
+    const start = page * size;
+    const end = start + size;
+    const paged = allInstances.slice(start, end);
+
     return HttpResponse.json({
-      content: [
-        {
-          questionInstanceId: 10,
-          deliveredAt: new Date().toISOString(),
-          status: 'COMPLETED',
-          text: '주말에 같이 하고 싶은 일은?',
-          completedAt: new Date().toISOString(),
-        },
-      ],
+      content: paged,
       pageable: {
-        sort: { empty: true, sorted: false, unsorted: true },
-        offset: 0,
-        pageNumber: 0,
-        pageSize: 20,
+        pageNumber: page,
+        pageSize: size,
+        offset: start,
         paged: true,
         unpaged: false,
       },
-      totalPages: 1,
-      totalElements: 1,
-      last: true,
-      size: 20,
-      number: 0,
-      sort: { empty: true, sorted: false, unsorted: true },
-      numberOfElements: 1,
-      first: true,
-      empty: false,
+      totalPages: Math.ceil(allInstances.length / size),
+      totalElements: allInstances.length,
+      last: page + 1 >= Math.ceil(allInstances.length / size),
+      size,
+      number: page,
+      numberOfElements: paged.length,
+      first: page === 0,
+      empty: paged.length === 0,
     });
   }),
 
@@ -41,40 +217,67 @@ export const questionHandlers = [
     const { questionInstanceId } = params;
     await delay(200);
 
-    return HttpResponse.json({
-      questionInstanceId: Number(questionInstanceId),
-      matchId: 1,
-      deliveredAt: new Date(Date.now() - 60 * 60 * 1000).toDateString,
-      status: 'COMPLETED',
-      completedAt: null,
-      question: {
-        questionId: 778,
-        sourceType: 'ADMIN',
-        relationType: 'COUPLE',
-        category: { id: 5, name: '일상' },
-        text: '주말에 같이 하고 싶은 일은?',
+    const id = Number(questionInstanceId);
+
+    // id별 mock 데이터
+    const mockDetails: Record<number, QuestionDetail> = {
+      10: {
+        questionInstanceId: 10,
+        matchId: 1,
+        deliveredAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+        status: 'COMPLETED',
+        completedAt: new Date().toISOString(),
+        question: {
+          questionId: 778,
+          sourceType: 'ADMIN',
+          relationType: 'COUPLE',
+          category: { id: 5, name: '일상' },
+          text: '주말에 같이 하고 싶은 일은?',
+        },
+        answers: [
+          {
+            answerId: 461,
+            userId: 99,
+            nickname: '조용한 유령',
+            isMine: true,
+            visible: true,
+            content: '영화 보기',
+            submittedAt: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
+          },
+          {
+            answerId: null,
+            userId: 100,
+            nickname: '활기찬 고래',
+            isMine: false,
+            visible: false,
+            content: '스포츠 보기',
+            submittedAt: null,
+          },
+        ],
       },
-      answers: [
-        {
-          answerId: 461,
-          userId: 99,
-          nickname: '조용한 유령',
-          isMine: true,
-          visible: true,
-          content: '영화 보기',
-          submittedAt: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
+      11: {
+        questionInstanceId: 11,
+        matchId: 1,
+        deliveredAt: new Date().toISOString(),
+        status: 'PENDING',
+        completedAt: null,
+        question: {
+          questionId: 779,
+          sourceType: 'ADMIN',
+          relationType: 'COUPLE',
+          category: { id: 6, name: '여행' },
+          text: '가장 기억에 남는 여행은?',
         },
-        {
-          answerId: null,
-          userId: 100,
-          nickname: '활기찬 고래',
-          isMine: false,
-          visible: false,
-          content: '스포츠 보기',
-          submittedAt: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
-        },
-      ],
-    });
+        answers: [], // 아직 답변 없음
+      },
+    };
+
+    // id에 해당하는 데이터가 없으면 null 반환
+    if (!mockDetails[id]) {
+      return HttpResponse.json(null, { status: 200 });
+    }
+
+    return HttpResponse.json(mockDetails[id]);
   }),
 
   // 매칭별 오늘의 질문 조회 (스펙 일치: answers 배열 포함)

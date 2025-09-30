@@ -25,17 +25,25 @@ let customQuestions: {
 
 export const customHandlers = [
   // 조회
-  http.get('/api/matches/:matchId/custom-questions', ({ params }) => {
+  http.get('/api/matches/:matchId/custom-questions', ({ params, request }) => {
     const { matchId } = params;
+
+    const url = new URL(request.url);
+    const page = Number(url.searchParams.get('page') ?? 0);
+    const size = Number(url.searchParams.get('size') ?? 20);
 
     const filtered = customQuestions.filter((q) => q.matchId === Number(matchId));
 
+    const start = page * size;
+    const end = start + size;
+    const paged = filtered.slice(start, end);
+
     return HttpResponse.json({
-      content: filtered,
-      pageable: { pageNumber: 0, pageSize: 20 },
+      content: paged,
+      pageable: { pageNumber: page, pageSize: size },
       totalElements: filtered.length,
-      totalPages: 1,
-      empty: filtered.length === 0,
+      totalPages: Math.ceil(filtered.length / size),
+      empty: paged.length === 0,
     });
   }),
 

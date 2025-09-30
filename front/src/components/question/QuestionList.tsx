@@ -9,83 +9,83 @@ import type { QuestionList } from '@/types/questionType';
 import DeleteBtn from '../common/DeleteBtn';
 import { useDeleteCustomQuestion, useFetchCustomQuestions } from '@/hooks/useCustom';
 import FilterBtn from '../common/FilterBtn';
+import PrevBtn from '../common/PrevBtn';
+import NextBtn from '../common/NextBtn';
 
 export default function QuestionList() {
   const [queryText, setQueryText] = useState<string>('');
   const [showCustomOnly, setShowCustomOnly] = useState<boolean>(false);
   const [isDeleteMode, setIsDeleteMode] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const pageSize = 20;
 
   // API 호출
   const { data: questionResponse } = useQuestions(1);
-  const { data } = useFetchCustomQuestions(1);
+  const { data: customResponse } = useFetchCustomQuestions(1);
 
   const questionInstances: QuestionList[] = useMemo(
     () => questionResponse?.content ?? [],
     [questionResponse],
   );
+  const customQuestions = customResponse?.content ?? [];
 
-  const customQuestions = data?.content ?? [];
-
-  // 커스텀 질문을 QuestionList 포맷으로 변환
+  // 커스텀 질문 포맷팅
   const normalizedCustomInstances: QuestionList[] = customQuestions.map((custom) => ({
     questionInstanceId: `custom-${custom.customQuestionId}`,
     deliveredAt: custom.createdAt,
-    status: custom.isEditable,
+    status: custom.isEditable ? 'EDITABLE' : 'LOCKED',
     text: custom.text,
     completedAt: custom.updatedAt,
   }));
 
-  // 수정 가능한 질문만 빼기
-  const editableCustom = normalizedCustomInstances.filter((instance) => instance.status === true);
+  const editableCustom = normalizedCustomInstances.filter(
+    (instance) => instance.status === 'EDITABLE',
+  );
 
-  // 질문 전체 합치기
-  const totalInstances: QuestionList[] = useMemo(
-    () => [...questionInstances, ...editableCustom],
+  // 질문 합치기
+  const mergedInstances: QuestionList[] = useMemo(
+    () => [...editableCustom, ...questionInstances],
     [questionInstances, editableCustom],
   );
 
-  let filteredInstances = totalInstances;
+  let filteredInstances = mergedInstances;
 
   // 검색
   if (queryText) {
-    filteredInstances = totalInstances.filter((instance) =>
+    filteredInstances = mergedInstances.filter((instance) =>
       instance.text.toLowerCase().includes(queryText.toLowerCase()),
     );
   }
 
-  // 커스텀 질문만 보기
+  // 커스텀 수정 가능 필터
   if (showCustomOnly) {
     filteredInstances = editableCustom;
   }
 
-  // 라우터 관련 훅
+  // 페이지네이션 처리
+  const pagedInstances: QuestionList[] = useMemo(
+    () => filteredInstances.slice(page * pageSize, (page + 1) * pageSize),
+    [filteredInstances, page],
+  );
+
+  // 총 페이지 수
+  const totalPages = Math.ceil(filteredInstances.length / pageSize);
+
+  // 라우터
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  // 현재 URL 쿼리 파라미터에서 'id' 꺼내기
   const selectedQuestionInstanceIdParam = searchParams.get('id');
   const selectedQuestionInstanceId =
     selectedQuestionInstanceIdParam !== null ? String(selectedQuestionInstanceIdParam) : null;
 
-  const {
-    mutate: deleteCustomMutate,
-    isPending: isDeleting,
-    isError: isDeleteError,
-  } = useDeleteCustomQuestion();
+  const { mutate: deleteCustomMutate } = useDeleteCustomQuestion();
 
-  // 삭제 함수 (id 직접 받기)
   const handleDelete = (id: number | string) => {
     const targetId = String(id).replace('custom-', '');
     deleteCustomMutate(Number(targetId));
-    if (isDeleting) {
-      // 로딩 처리
-    } else if (isDeleteError) {
-      // 에러 처리
-    }
   };
 
-  // 특정 질문 클릭 시 URL에 id 쿼리 세팅
   const openDetailByQuery = (targetQuestionInstanceId: number | string) => {
     const params = new URLSearchParams(searchParams);
     params.set('id', String(targetQuestionInstanceId));
@@ -94,31 +94,27 @@ export default function QuestionList() {
 
   return (
     <div className="w-full h-full">
-      {/* 모바일 레이아웃 */}
-      <div className="sm:hidden w-full h-[calc(100vh-70px)]">
+      {/* 모바일 */}
+      <div className="sm:hidden w-full h-[calc(100vh-70px)] flex flex-col">
         <div className="flex justify-between items-center h-[70px] px-4">
           <FilterBtn setShowCustomOnly={setShowCustomOnly} className="text-theme-primary" />
           <p className="text-20 font-Gumi text-theme-primary">질문 리스트</p>
           <TrashCan onClick={() => setIsDeleteMode((prev) => !prev)} />
         </div>
-        <div className="py-10">
+        <div className="py-4 px-4 mb-[20px]">
           <SearchInput query={queryText} setQuery={setQueryText} />
         </div>
-        <div className="bg-secondary h-[calc(100vh-177px)]">
-          <ul className="flex flex-col divide-y divide-text-secondary border-y border-text-secondary">
-            {filteredInstances.map((instance) => {
+        <div className="bg-secondary flex flex-col flex-1">
+          <ul className="flex-1 overflow-y-auto flex flex-col divide-y divide-dash border-t border-gray pb-[70px]">
+            {pagedInstances.map((instance) => {
               const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
 
-              let itemClassName = 'text-16 py-7 cursor-pointer';
-              if (isSelected) {
-                itemClassName += ' font-bold bg-theme-list-active';
-              }
-              if (instance.status === true) {
+              let itemClassName =
+                'text-16 py-7 cursor-pointer last:border-b last:border-dash last:border-gray';
+              if (isSelected) itemClassName += ' font-bold bg-theme-list-active';
+              if (instance.status === 'EDITABLE')
                 itemClassName += ' text-text-secondary bg-gray font-bold';
-              }
-              if (instance.status === 'PENDING') {
-                itemClassName += ' text-theme-accent2';
-              }
+              if (instance.status === 'PENDING') itemClassName += ' text-theme-accent2';
 
               return (
                 <li
@@ -132,10 +128,10 @@ export default function QuestionList() {
                         ? `${instance.text.slice(0, 16)}...`
                         : instance.text}
                     </p>
-                    {isDeleteMode && instance.status === true && (
+                    {isDeleteMode && instance.status === 'EDITABLE' && (
                       <DeleteBtn
                         onClick={(e) => {
-                          e.stopPropagation(); //부모 이벤트 전파 막기
+                          e.stopPropagation();
                           handleDelete(instance.questionInstanceId);
                         }}
                       />
@@ -145,10 +141,18 @@ export default function QuestionList() {
               );
             })}
           </ul>
+          {/* 페이지네이션 */}
+          <div className="sticky bottom-[70px] flex justify-between items-center py-3 px-4 border-t border-gray bg-secondary">
+            <PrevBtn page={page} setPage={setPage} />
+            <div className="bg-calendar w-8 h-8 rounded-full flex justify-center items-center">
+              <span>{page + 1}</span>
+            </div>
+            <NextBtn page={page} setPage={setPage} totalPages={totalPages} />
+          </div>
         </div>
       </div>
 
-      {/* 데스크탑 레이아웃 */}
+      {/* 데스크탑 */}
       <div className="hidden sm:flex bg-secondary rounded-md shadow-md w-[320px] h-[550px] flex-col">
         <div className="mt-6 px-4">
           <SearchInput query={queryText} setQuery={setQueryText} />
@@ -157,20 +161,16 @@ export default function QuestionList() {
           <span className="inline-block text-20 font-bold py-4 cursor-default">질문 리스트</span>
           <FilterBtn setShowCustomOnly={setShowCustomOnly} />
         </div>
-        <ul className="flex flex-col divide-y divide-gray flex-1 overflow-y-auto border-y border-gray">
-          {filteredInstances.map((instance) => {
+        <ul className="flex-1 overflow-y-auto flex flex-col divide-y divide-gray border-t border-gray">
+          {pagedInstances.map((instance) => {
             const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
 
-            let itemClassName = 'py-5 cursor-pointer';
-            if (isSelected) {
-              itemClassName += ' bg-theme-list-active';
-            }
-            if (instance.status === 'PENDING') {
-              itemClassName += ' text-theme-accent2';
-            }
-            if (instance.status === true) {
+            let itemClassName =
+              'py-5 cursor-pointer last:border-b last:border-gray last:border-solid';
+            if (isSelected) itemClassName += ' bg-theme-list-active';
+            if (instance.status === 'PENDING') itemClassName += ' text-theme-accent2';
+            if (instance.status === 'EDITABLE')
               itemClassName += ' text-text-secondary bg-list-custom';
-            }
 
             return (
               <li
@@ -180,10 +180,10 @@ export default function QuestionList() {
               >
                 <div className="flex justify-between">
                   {instance.text.length > 17 ? `${instance.text.slice(0, 16)}...` : instance.text}
-                  {instance.status === true && (
+                  {instance.status === 'EDITABLE' && (
                     <DeleteBtn
                       onClick={(e) => {
-                        e.stopPropagation(); //부모 이벤트 전파 막기
+                        e.stopPropagation();
                         handleDelete(instance.questionInstanceId);
                       }}
                     />
@@ -193,6 +193,14 @@ export default function QuestionList() {
             );
           })}
         </ul>
+        {/* 페이지네이션 */}
+        <div className="sticky bottom-0 flex justify-between items-center py-3 px-4 border-t border-gray bg-secondary">
+          <PrevBtn page={page} setPage={setPage} />
+          <div className="bg-calendar w-8 h-8 rounded-full flex justify-center items-center">
+            <span>{page + 1}</span>
+          </div>
+          <NextBtn page={page} setPage={setPage} totalPages={totalPages} />
+        </div>
       </div>
     </div>
   );

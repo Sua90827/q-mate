@@ -2,15 +2,21 @@
 export interface QuestionList {
   questionInstanceId: number | string;
   deliveredAt: string;
-  status: 'COMPLETED' | 'PENDING' | 'EXPIRED' | true | false;
+  status: 'COMPLETED' | 'PENDING' | 'EXPIRED' | 'EDITABLE' | 'LOCKED';
   text: string;
   completedAt: string;
 }
 
 //질문리스트 전체 배열
 export interface QuestionResponse {
-  size: number; // 페이지당 요소 수
   content: QuestionList[];
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
 }
 
 // 답변 하나의 구조
