@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CustomQuestionRepository extends JpaRepository<CustomQuestion, Long>, CustomQuestionQueryRepository {
 
   @EntityGraph(attributePaths = "match")
-  Optional<CustomQuestion> findWithMatchById(Long id);
+  Optional<CustomQuestion> findByIdAndCreatedBy(Long id, Long userId);
 }

@@ -1,15 +1,17 @@
 package com.qmate.domain.question.service;
 
 import com.qmate.domain.match.Match;
+import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.question.entity.CustomQuestion;
 import com.qmate.domain.question.mapper.QuestionMapper;
 import com.qmate.domain.question.model.request.CustomQuestionStatusFilter;
 import com.qmate.domain.question.model.request.CustomQuestionTextRequest;
 import com.qmate.domain.question.model.response.CustomQuestionResponse;
 import com.qmate.domain.question.repository.CustomQuestionRepository;
-import com.qmate.exception.custom.question.CustomQuestionForbiddenException;
+import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
+import com.qmate.exception.custom.matchinstance.MatchNotFoundException;
+import com.qmate.exception.custom.question.CustomQuestionLockedException;
 import com.qmate.exception.custom.question.CustomQuestionNotFoundException;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomQuestionService {
 
   private final CustomQuestionRepository customQuestionRepository;
+  private final MatchRepository matchRepository;
+  private final QuestionInstanceRepository questionInstanceRepository;
 
   /**
    * 커스텀 질문 생성
@@ -33,10 +37,9 @@ public class CustomQuestionService {
    */
   public CustomQuestionResponse create(Long userId, Long matchId, CustomQuestionTextRequest request) {
 
-    // Match 존재 여부 확인 및 로드
-    Match match = loadMatchOrThrow(matchId);
-
-    // TODO User-Match 권한 확인
+    // Match 와 User 권한 확인 후 Match 엔티티 로드
+    Match match = matchRepository.findAuthorizedById(matchId, userId)
+        .orElseThrow(MatchNotFoundException::new);
 
     CustomQuestion saved = customQuestionRepository.save(
         QuestionMapper.toEntity(match, request)
@@ -56,14 +59,13 @@ public class CustomQuestionService {
    */
   @Transactional
   public CustomQuestionResponse update(Long userId, Long id, CustomQuestionTextRequest request) {
-    CustomQuestion entity = loadWithMatchOrThrow(id);
+    CustomQuestion entity = customQuestionRepository.findByIdAndCreatedBy(id, userId)
+        .orElseThrow(CustomQuestionNotFoundException::new);
 
-    // 본인 질문인지 확인
-    if (!Objects.equals(entity.getCreatedBy(), userId)) {
-      throw new CustomQuestionForbiddenException();
+    // 수정 가능한 상태인지 확인 : QuestionInstance 존재 여부로 판단
+    if (questionInstanceRepository.existsByCustomQuestion_Id(entity.getId())) {
+      throw new CustomQuestionLockedException();
     }
-
-    // TODO 수정 가능한 상태인지 확인 : QuestionInstance 존재 여부로 판단
 
     entity.setText(request.getText().trim());
 
@@ -77,14 +79,13 @@ public class CustomQuestionService {
    * @param userId 요청 사용자 ID
    * @param id     삭제할 커스텀 질문 ID
    */
-  @Transactional
   public void delete(Long userId, Long id) {
-    CustomQuestion entity = loadOrThrow(id);
-    // 본인 질문인지 확인
-    if (!Objects.equals(entity.getCreatedBy(), userId)) {
-      throw new CustomQuestionForbiddenException();
+    CustomQuestion entity = customQuestionRepository.findByIdAndCreatedBy(id, userId)
+        .orElseThrow(CustomQuestionNotFoundException::new);
+    // 삭제 가능한 상태인지 확인 : QuestionInstance 존재 여부로 판단
+    if (questionInstanceRepository.existsByCustomQuestion_Id(entity.getId())) {
+      throw new CustomQuestionLockedException();
     }
-    // TODO 삭제 가능한 상태인지 확인 : QuestionInstance 존재 여부로 판단
     customQuestionRepository.delete(entity);
   }
 
@@ -95,32 +96,26 @@ public class CustomQuestionService {
    * @return 커스텀 질문 정보
    */
   public CustomQuestionResponse getOne(Long userId, Long id) {
-    CustomQuestion entity = loadWithMatchOrThrow(id);
-    // 본인 질문인지 확인
-    if (!Objects.equals(entity.getCreatedBy(), userId)) {
-      throw new CustomQuestionForbiddenException();
-    }
-    boolean editable = true; // TODO QuestionInstance 존재 여부로 판단
+    CustomQuestion entity = customQuestionRepository.findByIdAndCreatedBy(id, userId)
+        .orElseThrow(CustomQuestionNotFoundException::new);
+
+    // QuestionInstance 존재 여부로 판단 (존재시 수정 불가)
+    boolean editable = !questionInstanceRepository.existsByCustomQuestion_Id(entity.getId());
     return QuestionMapper.toResponse(entity, editable, entity.getMatch());
   }
 
+  /**
+   * 커스텀 질문 목록 조회 (페이징)
+   *
+   * @param ownerUserId 질문 소유자(생성자) ID
+   * @param matchId     매치 ID
+   * @param status      질문 상태 필터 (null 가능)
+   * @param pageable    페이징 정보
+   * @return 필터링된 커스텀 질문 목록 (페이징)
+   */
   public Page<CustomQuestionResponse> findPageByOwnerAndStatusFilter(Long ownerUserId, Long matchId, CustomQuestionStatusFilter status,
       Pageable pageable) {
     return customQuestionRepository.findPageByOwnerAndStatusFilter(ownerUserId, matchId, status, pageable);
   }
 
-  private Match loadMatchOrThrow(Long matchId) {
-    // TODO MatchRepository 연동
-    return null; // 임시 반환
-  }
-
-  private CustomQuestion loadOrThrow(Long id) {
-    return customQuestionRepository.findById(id)
-        .orElseThrow(CustomQuestionNotFoundException::new);
-  }
-
-  private CustomQuestion loadWithMatchOrThrow(Long id) {
-    return customQuestionRepository.findWithMatchById(id)
-        .orElseThrow(CustomQuestionNotFoundException::new);
-  }
 }
