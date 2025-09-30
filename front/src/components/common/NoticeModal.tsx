@@ -12,7 +12,7 @@ interface NoticeModalProps {
   setOpen: (open: boolean) => void;
   danger?: boolean;
   title: React.ReactNode; // 메인 문구
-  description?: React.ReactNode; // 서브 문구
+  sub?: React.ReactNode; // 서브 문구
   showCloseButton?: boolean; // 닫기 버튼 표시 여부 (기본값 true)
 }
 
@@ -21,7 +21,7 @@ export default function NoticeModal({
   setOpen,
   danger,
   title,
-  description,
+  sub,
   showCloseButton = true,
 }: NoticeModalProps) {
   return (
@@ -35,9 +35,9 @@ export default function NoticeModal({
         <DialogHeader className="flex justify-center">
           {danger && <span className="block text-red-600">⚠️</span>}
           <DialogTitle className="text-center leading-relaxed text-16">{title}</DialogTitle>
-          {description && (
+          {sub && (
             <DialogDescription className="text-14 font-semibold text-center text-text-secondary">
-              {description}
+              {sub}
             </DialogDescription>
           )}
         </DialogHeader>

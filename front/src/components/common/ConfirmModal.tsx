@@ -4,7 +4,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 
 interface ConfirmModalProps {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (open: boolean) => void;
   title: React.ReactNode;
   sub?: string;
   confirmText?: string; // 기본값 "예"
