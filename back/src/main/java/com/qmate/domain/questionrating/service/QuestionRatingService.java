@@ -13,11 +13,8 @@ import com.qmate.exception.CommonErrorCode;
 import com.qmate.exception.custom.question.DuplicateQuestionRatingException;
 import com.qmate.exception.custom.question.QuestionNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
