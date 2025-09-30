@@ -18,7 +18,7 @@ const mockUsers: MockUser[] = [
     nickname: '테스트유저',
     birthDate: '1998-05-10',
     role: 'USER',
-    currentMatchId: 101,
+    currentMatchId: 1,
   },
 ];
 

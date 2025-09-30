@@ -11,6 +11,7 @@ import { useDeleteCustomQuestion, useFetchCustomQuestions } from '@/hooks/useCus
 import FilterBtn from '../common/FilterBtn';
 import PrevBtn from '../common/PrevBtn';
 import NextBtn from '../common/NextBtn';
+import { useMatchIdStore } from '@/store/useMatchIdStore';
 
 export default function QuestionList() {
   const [queryText, setQueryText] = useState<string>('');
@@ -18,10 +19,11 @@ export default function QuestionList() {
   const [isDeleteMode, setIsDeleteMode] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const pageSize = 20;
+  const matchId = useMatchIdStore((state) => state.matchId);
 
   // API 호출
-  const { data: questionResponse } = useQuestions(1);
-  const { data: customResponse } = useFetchCustomQuestions(1);
+  const { data: questionResponse } = useQuestions(Number(matchId));
+  const { data: customResponse } = useFetchCustomQuestions(Number(matchId));
 
   const questionInstances: QuestionList[] = useMemo(
     () => questionResponse?.content ?? [],

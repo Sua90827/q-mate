@@ -2,15 +2,17 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface SelectedState {
-  matchId: string;
-  setMatchId: (code: string) => void;
+  matchId: number | null;
+  setMatchId: (code: number) => void;
+  resetMatchId: () => void;
 }
 
 export const useMatchIdStore = create<SelectedState>()(
   persist(
     (set) => ({
-      matchId: '',
-      setMatchId: (code: string) => set({ matchId: code }),
+      matchId: null,
+      setMatchId: (code: number) => set({ matchId: code }),
+      resetMatchId: () => set({ matchId: null }),
     }),
     {
       name: 'matchCode',

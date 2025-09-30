@@ -8,9 +8,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useLoginUser } from '@/hooks/useLogin';
 import { useRouter } from 'next/navigation';
-import ConfirmModal from '../common/ConfirmModal';
 import NoticeModal from '../common/NoticeModal';
 import LoadingCircleSpinner from '../common/LoadingCircleSpinner';
+import { useMatchIdStore } from '@/store/useMatchIdStore';
 
 /* .test() -> true/false 반환 */
 const validateEmail = (v: string) => /\S+@\S+\.\S+/.test(v);
@@ -25,6 +25,8 @@ export default function Login() {
   const [open, setOpen] = useState(false);
   const isFormValid = isEmailValid && isPasswordValid;
   const router = useRouter();
+  const setMatchId = useMatchIdStore((state) => state.setMatchId);
+
   const { mutate: loginUserMutate, isPending: isLoginLoading } = useLoginUser();
 
   const HandleLogin = () => {
@@ -33,6 +35,7 @@ export default function Login() {
       {
         onSuccess: (data) => {
           if (data.user.currentMatchId !== null) {
+            setMatchId(data.user.currentMatchId);
             router.push('/main');
           } else {
             router.push('/invite');
