@@ -2,6 +2,7 @@ package com.qmate.domain.match.model.response;
 
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.MatchSetting;
+import com.qmate.domain.match.MatchStatus;
 import com.qmate.domain.match.RelationType;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +16,7 @@ public class MatchInfoResponse {
   private final RelationType relationType;
   private final LocalDateTime startDate;
   private final int dailyQuestionHour;
+  private final MatchStatus status;
   private final List<MemberInfoResponse> users;
 
 
@@ -27,6 +29,7 @@ public class MatchInfoResponse {
     this.dailyQuestionHour = Optional.ofNullable(match.getMatchSetting())
         .map(MatchSetting::getDailyQuestionHour)
         .orElse(12);
+    this.status = match.getStatus();
 
     // Match 엔티티가 가진 MatchMember 리스트를 순회하며 MemberInfo DTO 리스트로 변환
     this.users = match.getMembers().stream()
