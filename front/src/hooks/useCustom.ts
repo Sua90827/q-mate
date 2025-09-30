@@ -4,13 +4,14 @@ import {
   fetchCustomQuestions,
   updateCustomQuestion,
 } from '@/api/custom';
+import { CustomQuestionPage } from '@/types/questionType';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 //조회
-export const useFetchCustomQuestions = (matchId: number) => {
-  return useQuery({
-    queryKey: ['customQuestions'],
-    queryFn: () => fetchCustomQuestions(matchId),
+export const useFetchCustomQuestions = (matchId: number, page: number = 0, size: number = 20) => {
+  return useQuery<CustomQuestionPage>({
+    queryKey: ['customQuestions', matchId, page, size], // 캐시 키에 page, size 포함
+    queryFn: () => fetchCustomQuestions(matchId, page, size),
     staleTime: 0,
     gcTime: 1000 * 60 * 10,
   });

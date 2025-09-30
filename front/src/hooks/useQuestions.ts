@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchQuestions, fetchQuestionDetail, fetchTodayQuestion } from '../api/questions';
+import { QuestionResponse } from '@/types/questionType';
 
 //전체 질문 조회
-export const useQuestions = (matchId: number) => {
-  return useQuery({
-    queryKey: ['questions'],
-    queryFn: () => fetchQuestions(matchId),
+
+export const useQuestions = (matchId: number, page: number = 0, size: number = 20) => {
+  return useQuery<QuestionResponse>({
+    queryKey: ['questions', matchId, page, size], // 의존성에 page, size 포함
+    queryFn: () => fetchQuestions(matchId, page, size),
     staleTime: 1000 * 60 * 60 * 24,
     gcTime: 1000 * 60 * 60 * 24,
   });

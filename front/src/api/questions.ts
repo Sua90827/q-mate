@@ -2,8 +2,17 @@ import { AnswerResponseItem, QuestionResponse, TodayQuestion } from '@/types/que
 import axios from 'axios';
 
 // 전체 질문 리스트 가져오기
-export const fetchQuestions = async (matchId: number): Promise<QuestionResponse> => {
-  const res = await axios.get(`/api/matches/${matchId}/question-instances`);
+export const fetchQuestions = async (
+  matchId: number,
+  page: number = 0,
+  size: number = 20,
+): Promise<QuestionResponse> => {
+  const res = await axios.get(`/api/matches/${matchId}/question-instances`, {
+    params: {
+      page,
+      size,
+    },
+  });
   return res.data;
 };
 
