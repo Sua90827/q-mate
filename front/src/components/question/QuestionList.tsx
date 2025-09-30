@@ -16,8 +16,8 @@ export default function QuestionList() {
   const [isDeleteMode, setIsDeleteMode] = useState<boolean>(false);
 
   // API 호출
-  const { data: questionResponse } = useQuestions(1); //전체 질문 조회 (수정 가능한 커스텀 질문 제외)
-  const { data } = useFetchCustomQuestions(1); //커스텀 질문 (이미 답변한 커스텀 질문, 수정가능한 커스텀 질문)
+  const { data: questionResponse } = useQuestions(1);
+  const { data } = useFetchCustomQuestions(1);
 
   const questionInstances: QuestionList[] = useMemo(
     () => questionResponse?.content ?? [],
@@ -28,14 +28,14 @@ export default function QuestionList() {
 
   // 커스텀 질문을 QuestionList 포맷으로 변환
   const normalizedCustomInstances: QuestionList[] = customQuestions.map((custom) => ({
-    questionInstanceId: `custom-${custom.customQuestionId}`, // id 충돌 방지
+    questionInstanceId: `custom-${custom.customQuestionId}`,
     deliveredAt: custom.createdAt,
     status: custom.isEditable,
     text: custom.text,
     completedAt: custom.updatedAt,
   }));
 
-  //수정 가능한 질문만 빼기
+  // 수정 가능한 질문만 빼기
   const editableCustom = normalizedCustomInstances.filter((instance) => instance.status === true);
 
   // 질문 전체 합치기
@@ -53,7 +53,7 @@ export default function QuestionList() {
     );
   }
 
-  //커스텀 질문 중 수정 가능한 것만 필터링
+  // 커스텀 질문만 보기
   if (showCustomOnly) {
     filteredInstances = editableCustom;
   }
@@ -63,22 +63,10 @@ export default function QuestionList() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // 현재 URL 쿼리 파라미터에서 'id'를 꺼냄
+  // 현재 URL 쿼리 파라미터에서 'id' 꺼내기
   const selectedQuestionInstanceIdParam = searchParams.get('id');
-
-  // URL에서 현재 선택된 id 읽어오기
   const selectedQuestionInstanceId =
-    selectedQuestionInstanceIdParam !== null ? Number(selectedQuestionInstanceIdParam) : null;
-
-  // 특정 질문 클릭했을 때 URL에 id 파라미터를 세팅하는 함수
-  const openDetailByQuery = (targetQuestionInstanceId: number | string) => {
-    const params = new URLSearchParams(searchParams);
-    params.set('id', String(targetQuestionInstanceId));
-    router.push(`${pathname}?${params.toString()}`);
-  };
-
-  const paramsDel = useSearchParams();
-  const deleteId = Number(paramsDel.get('id')?.replace('custom-', ''));
+    selectedQuestionInstanceIdParam !== null ? String(selectedQuestionInstanceIdParam) : null;
 
   const {
     mutate: deleteCustomMutate,
@@ -86,13 +74,22 @@ export default function QuestionList() {
     isError: isDeleteError,
   } = useDeleteCustomQuestion();
 
-  const handleDelete = async () => {
-    deleteCustomMutate(deleteId);
+  // 삭제 함수 (id 직접 받기)
+  const handleDelete = (id: number | string) => {
+    const targetId = String(id).replace('custom-', '');
+    deleteCustomMutate(Number(targetId));
     if (isDeleting) {
-      // 로딩 처리 가능
+      // 로딩 처리
     } else if (isDeleteError) {
-      // 에러 모달 예정
+      // 에러 처리
     }
+  };
+
+  // 특정 질문 클릭 시 URL에 id 쿼리 세팅
+  const openDetailByQuery = (targetQuestionInstanceId: number | string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('id', String(targetQuestionInstanceId));
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   return (
@@ -135,7 +132,14 @@ export default function QuestionList() {
                         ? `${instance.text.slice(0, 16)}...`
                         : instance.text}
                     </p>
-                    {isDeleteMode && <DeleteBtn onClick={handleDelete} />}
+                    {isDeleteMode && instance.status === true && (
+                      <DeleteBtn
+                        onClick={(e) => {
+                          e.stopPropagation(); //부모 이벤트 전파 막기
+                          handleDelete(instance.questionInstanceId);
+                        }}
+                      />
+                    )}
                   </div>
                 </li>
               );
@@ -176,7 +180,14 @@ export default function QuestionList() {
               >
                 <div className="flex justify-between">
                   {instance.text.length > 17 ? `${instance.text.slice(0, 16)}...` : instance.text}
-                  {instance.status === true && <DeleteBtn onClick={handleDelete} />}
+                  {instance.status === true && (
+                    <DeleteBtn
+                      onClick={(e) => {
+                        e.stopPropagation(); //부모 이벤트 전파 막기
+                        handleDelete(instance.questionInstanceId);
+                      }}
+                    />
+                  )}
                 </div>
               </li>
             );
