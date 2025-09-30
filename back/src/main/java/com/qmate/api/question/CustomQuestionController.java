@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -47,15 +48,15 @@ public class CustomQuestionController {
   /**
    * 커스텀 질문 생성
    */
+  @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(path = "/matches/{matchId}/custom-questions")
   @Operation(
       summary = "커스텀 질문 생성",
-      description = "특정 매치에 대한 커스텀 질문을 생성합니다.",
+      description = CustomQuestionConstants.CREATE_MD,
       parameters = {
           @Parameter(name = "matchId", description = "커스텀 질문을 추가할 매치 ID", required = true)
       }
   )
-  //@PostMapping(path = "/matches/{matchId}/custom-questions")
   public ResponseEntity<CustomQuestionResponse> create(
       @AuthenticationPrincipal UserPrincipal principal,
       @PathVariable Long matchId,
@@ -70,12 +71,11 @@ public class CustomQuestionController {
   @PatchMapping(path = "/custom-questions/{id}")
   @Operation(
       summary = "커스텀 질문 수정",
-      description = "특정 커스텀 질문을 수정합니다.",
+      description = CustomQuestionConstants.UPDATE_MD,
       parameters = {
           @Parameter(name = "id", description = "수정할 커스텀 질문 ID", required = true)
       }
   )
-  //@PatchMapping(path = "/custom-questions/{id}")
   public ResponseEntity<CustomQuestionResponse> update(
       @AuthenticationPrincipal UserPrincipal principal,
       @PathVariable Long id,
@@ -87,15 +87,15 @@ public class CustomQuestionController {
   /**
    * 커스텀 질문 삭제
    */
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping(path = "/custom-questions/{id}")
   @Operation(
       summary = "커스텀 질문 삭제",
-      description = "특정 커스텀 질문을 삭제합니다.",
+      description = CustomQuestionConstants.DELETE_MD,
       parameters = {
           @Parameter(name = "id", description = "삭제할 커스텀 질문 ID", required = true)
       }
   )
-  //@DeleteMapping(path = "/custom-questions/{id}")
   public ResponseEntity<Void> delete(
       @AuthenticationPrincipal UserPrincipal principal,
       @PathVariable Long id) {
@@ -110,17 +110,11 @@ public class CustomQuestionController {
   @GetMapping(path = "/custom-questions/{id}")
   @Operation(
       summary = "커스텀 질문 단일 조회",
-      description = "특정 커스텀 질문을 조회합니다.",
-      responses = {
-          @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomQuestionResponse.class))),
-          @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "404", description = "커스텀 질문을 찾을 수 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-      },
+      description = CustomQuestionConstants.GET_ONE_MD,
       parameters = {
           @Parameter(name = "id", description = "조회할 커스텀 질문 ID", required = true)
       }
   )
-  //@GetMapping(path = "/custom-questions/{id}")
   public ResponseEntity<CustomQuestionResponse> getOne(
       @AuthenticationPrincipal UserPrincipal principal,
       @PathVariable Long id) {
@@ -138,7 +132,6 @@ public class CustomQuestionController {
           @Parameter(name = "sort", description = CustomQuestionConstants.SORT_DESCRIPTION)
       }
   )
-  //@GetMapping("/matches/{matchId}/custom-questions")
   public Page<CustomQuestionResponse> list(
       @AuthenticationPrincipal UserPrincipal principal,
       @PathVariable Long matchId,
