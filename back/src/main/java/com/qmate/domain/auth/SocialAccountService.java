@@ -26,16 +26,16 @@ public class SocialAccountService {
   @Transactional
   public User upsertSocialUser(SocialProvider provider, String providerUserId,
       String email, String nickname, LocalDate birthDate) {
-    // 1) 소셜 계정으로 바로 매칭
+    //소셜 계정으로 바로 매칭
     Optional<UserSocialAccount> linked = socialRepository.findByProviderAndProviderUserId(provider, providerUserId);
     if (linked.isPresent()) {
       Long uid = linked.get().getUser().getId();
       return userRepository.findById(uid).orElseThrow();
     }
 
-    // 2) 이메일로 기존 사용자 찾기 (로컬/다른 소셜일 수 있음)
+    //이메일로 기존 사용자 찾기
     User user = userRepository.findByEmail(email).orElseGet(() -> {
-      // 새 유저 생성 (passwordHash=null)
+      //새 유저 생성
       return User.builder()
           .email(email)
           .passwordHash(null)
@@ -44,10 +44,10 @@ public class SocialAccountService {
           .build();
     });
 
-    // 새 유저면 저장
+    //새 유저면 저장
     if (user.getId() == null) user = userRepository.save(user);
 
-    // 3) 소셜 계정 연결 정보 저장
+    //소셜 계정 연결 정보 저장
     UserSocialAccount acc = UserSocialAccount.builder()
         .user(user)
         .provider(provider)

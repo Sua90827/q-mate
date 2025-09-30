@@ -48,7 +48,7 @@ public class AuthController {
     return ResponseEntity.ok(tokens);
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  //@PreAuthorize("hasRole('ADMIN')")
   @GetMapping("/session")
   public Map<String, Object> session(@AuthenticationPrincipal UserPrincipal me){
     var map = new java.util.LinkedHashMap<String, Object>();

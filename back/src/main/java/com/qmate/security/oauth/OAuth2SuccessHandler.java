@@ -30,7 +30,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
   private final JwtService jwtService;
   private final SocialAccountService socialAccountService;
-  private final ObjectMapper om = new ObjectMapper();
+  private final ObjectMapper om;
   private final UserRepository userRepository;
 
   @Override
@@ -46,8 +46,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
       String sub  = oidc.getSubject();
       String mail = oidc.getEmail();
       String name = (String) oidc.getClaims().getOrDefault("name", mail);
-      user = socialAccountService.upsertSocialUser(SocialProvider.GOOGLE, sub, mail, name,
-          LocalDate.parse("2025-01-01"));
+      user = socialAccountService.upsertSocialUser(SocialProvider.GOOGLE, sub, mail, name, null);
+
       String birthdate = (String) oidc.getClaims().get("birthdate");
       log.debug("GOOGLE birthdate claim = {}", birthdate);
     } else {
@@ -68,6 +68,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         .userId(user.getId())
         .email(user.getEmail())
         .nickname(user.getNickname())
+        .birthDate(user.getBirthDate())
         .role(user.getRole().name())
         .currentMatchId(user.getCurrentMatchId())
         .build();
@@ -83,6 +84,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     response.setStatus(HttpServletResponse.SC_OK);
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-    om.writeValue(response.getOutputStream(), body);
+    response.getWriter().write(om.writeValueAsString(body));
+    response.getWriter().flush();
   }
 }

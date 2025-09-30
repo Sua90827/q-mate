@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+  //네이버만 거침
+  //구글(oidc)은 여기 안 타고 기본 OIDC 경로로 가서 SuccessHandler에서 처리됨
 
   private final SocialAccountService socialAccountService;
 
@@ -50,11 +52,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
           SocialProvider.NAVER, providerUserId, email, name, birthDate
       );
 
-      // 우리가 쓰는 Principal 형태로 리턴 → 성공 핸들러는 그대로 동작
+      //Principal 형태로 리턴 → 성공 핸들러는 그대로 동작
       return new CustomOAuth2User(user.getId(), user.getEmail(), user.getRole().name(), resp);
     }
 
-    // 구글(oidc)은 여기 안 타고 기본 OIDC 경로로 가서 SuccessHandler에서 처리됨
     return oAuth2User;
   }
 

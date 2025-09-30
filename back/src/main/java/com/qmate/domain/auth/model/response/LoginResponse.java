@@ -1,5 +1,6 @@
 package com.qmate.domain.auth.model.response;
 
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class LoginResponse {
     private final Long userId;
     private final String email;
     private final String nickname;
+    private final LocalDate birthDate;
     private final String role;//"USER", "ADMIN"
     private final Long currentMatchId; //null 가능
   }
