@@ -17,5 +17,6 @@ public class OAuth2FailureHandler implements AuthenticationFailureHandler {
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.getWriter().write("{\"error\":\"oauth2_login_failed\",\"message\":\"" +
         exception.getMessage().replace("\"","'") + "\"}");
+    response.getWriter().flush();
   }
 }
