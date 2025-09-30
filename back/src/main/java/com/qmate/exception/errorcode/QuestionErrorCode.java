@@ -11,12 +11,13 @@ public class QuestionErrorCode extends ErrorCode {
 
   // error code
   public static final String QUESTION_NOT_FOUND_ERROR_CODE = "QUESTION_001";
+  public static final String DUPLICATE_QUESTION_RATING_ERROR_CODE = "QUESTION_002";
 
   public static ErrorCode questionNotFound() {
     return new QuestionErrorCode(HttpStatus.NOT_FOUND, QUESTION_NOT_FOUND_ERROR_CODE, QUESTION_NOT_FOUND_MESSAGE);
   }
   public static ErrorCode duplicateQuestionRating() {
-    return new QuestionErrorCode(HttpStatus.CONFLICT, "Q_002", DUPLICATE_QUESTION_RATING_MESSAGE);
+    return new QuestionErrorCode(HttpStatus.CONFLICT, DUPLICATE_QUESTION_RATING_ERROR_CODE, DUPLICATE_QUESTION_RATING_MESSAGE);
   }
 
   private QuestionErrorCode(HttpStatus httpStatus, String code, String message) {
