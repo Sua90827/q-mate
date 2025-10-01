@@ -1,5 +1,5 @@
 'use client';
-import { getMatchInfo, updateMatchInfo } from '@/api/matches';
+import { disconnectMatch, getMatchInfo, restoreMatch, updateMatchInfo } from '@/api/matches';
 import { MatchInfo } from '@/types/matchType';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -28,5 +28,17 @@ export function useUpdateMatchInfo(matchId: number) {
           : old,
       );
     },
+  });
+}
+//매칭 연결 끊기
+export function useDisconnectMatch(matchId: number) {
+  return useMutation({
+    mutationFn: () => disconnectMatch(matchId),
+  });
+}
+//매칭 연결 복구
+export function useRestoreMatch(matchId: number) {
+  return useMutation({
+    mutationFn: () => restoreMatch(matchId),
   });
 }

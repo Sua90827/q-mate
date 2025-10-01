@@ -21,3 +21,14 @@ export const updateMatchInfo = async (
   const response = await axios.patch(`/api/matches/${matchId}/info`, body);
   return response.data as { message: string };
 };
+
+//매칭 연결 끊기
+export const disconnectMatch = async (matchId: number) => {
+  const res = await axios.post(`/api/matches/${matchId}/disconnect`);
+  return res.data as { message: string };
+};
+//매칭 연결 복구
+export const restoreMatch = async (matchId: number) => {
+  const res = await axios.post(`/api/matches/${matchId}/restore`);
+  return res.data as { message: string };
+};

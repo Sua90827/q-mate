@@ -1,14 +1,16 @@
 'use client';
 import React, { useState } from 'react';
 import BellBtn from '../common/BellBtn';
-import { CheckCircle, ChevronRight, UserRoundPen, XCircle } from 'lucide-react';
+import { ChevronRight, UserRoundPen } from 'lucide-react';
 import { Switch } from '../ui/switch';
 import { Button } from '../common/Button';
 import NicknameModal from './ui/NicknameModal';
 import { cn } from '@/lib/utils';
 import QuestionTimeModal from './ui/QuestionTimeModal';
-import { useMatchInfo, useUpdateMatchInfo } from '@/hooks/useMatches';
-import { toast } from 'sonner';
+import { useMatchInfo } from '@/hooks/useMatches';
+import { useSettingsActions } from '@/hooks/useSettingsAction';
+import ConnectionModal from './ui/ConnectionModal';
+
 type SettingItem =
   | { id: string; label: string; subLabel?: string; type: 'modal'; onClick: () => void }
   | { id: string; label: string; type: 'switch' };
@@ -18,7 +20,10 @@ export default function Settings() {
   const [isChecked, setIsChecked] = useState(false);
   //match id추가 필요
   const { data: matchInfo } = useMatchInfo(333);
-  const { mutateAsync: updateMatchInfo } = useUpdateMatchInfo(333);
+
+  const { handleSaveTime, handleDisconnect, handleRestore, loading } = useSettingsActions(333, () =>
+    setModal(null),
+  );
 
   const settings: SettingItem[] = [
     {
@@ -41,33 +46,11 @@ export default function Settings() {
     },
     {
       id: 'disconnect',
-      label: '연결 끊기',
+      label: matchInfo?.status === 'Active' ? '연결 끊기' : '연결 복구',
       type: 'modal',
       onClick: () => setModal('disconnect'),
     },
   ];
-
-  const handleSaveTime = async (hour24: number) => {
-    try {
-      const res = await updateMatchInfo({ dailyQuestionHour: hour24 });
-
-      toast.custom(() => (
-        <div className="flex items-center gap-2 rounded-lg border border-theme-primary bg-theme-primary/10 px-4 py-3 text-theme-primary shadow-lg">
-          <CheckCircle className="h-5 w-5 text-theme-primary" />
-          <span className="font-medium">{res.message}</span>
-        </div>
-      ));
-
-      setModal(null);
-    } catch (error) {
-      toast.custom(() => (
-        <div className="flex items-center gap-2 rounded-lg border border-red-500 bg-red-500/10 px-4 py-3 text-red-600 shadow-lg">
-          <XCircle className="h-5 w-5 text-red-600" />
-          <span className="font-medium">저장에 실패했습니다</span>
-        </div>
-      ));
-    }
-  };
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center sm:pt-0 pt-[70px]">
@@ -124,7 +107,15 @@ export default function Settings() {
         initialHour={matchInfo?.dailyQuestionHour}
         onSave={handleSaveTime}
       />
-      {modal === 'disconnect' && <div>time</div>}
+      {matchInfo?.status !== undefined && (
+        <ConnectionModal
+          open={modal === 'disconnect'}
+          setIsOpen={(open) => setModal(open ? 'disconnect' : null)}
+          onClick={matchInfo.status === 'Active' ? handleDisconnect : handleRestore}
+          status={matchInfo.status}
+          loading={matchInfo.status === 'Active' ? loading.isDisconnecting : loading.isRestoring}
+        />
+      )}
     </div>
   );
 }
