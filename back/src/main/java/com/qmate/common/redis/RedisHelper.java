@@ -80,4 +80,15 @@ public class RedisHelper {
     redisTemplate.opsForValue().set(lockKey, "locked", Duration.ofHours(24));
     redisTemplate.delete(countKey);//24시간 락 이후 카운트는 삭제
   }
+  /**
+   * 사용자의 잠금 상태에 대한 남은 유효시간을 초(second) 단위로 반환합니다.
+   * @param userId 조회할 사용자 ID
+   * @return 남은 시간 (초). 키가 없으면 Optional.empty() 반환
+   */
+  public Optional<Long> getLockTimeRemaining(Long userId) {
+    String key = RedisKeyConstants.LOCK_PREFIX + userId;
+    // redisTemplate.getExpire()는 키의 남은 TTL을 초 단위로 반환합니다.
+    // 키가 없거나 TTL이 설정되지 않은 경우 null을 반환할 수 있습니다.
+    return Optional.ofNullable(redisTemplate.getExpire(key));
+  }
 }
