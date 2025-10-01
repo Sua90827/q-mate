@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface QuestionRatingRepository extends JpaRepository<QuestionRating, Long> {
+public interface QuestionRatingRepository extends JpaRepository<QuestionRating, Long>, QuestionRatingQueryRepository {
   boolean existsByQuestion_IdAndUserId(Long questionId, Long userId);
 
   @Query("""
