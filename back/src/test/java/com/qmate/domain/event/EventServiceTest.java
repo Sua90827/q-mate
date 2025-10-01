@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
 
 import com.qmate.domain.event.model.request.EventCreateRequest;
+import com.qmate.domain.event.model.request.EventUpdateRequest;
 import com.qmate.domain.event.model.response.EventResponse;
 import com.qmate.domain.event.entity.Event;
 import com.qmate.domain.event.entity.EventAlarmOption;
@@ -14,7 +16,9 @@ import com.qmate.domain.event.repository.EventRepository;
 import com.qmate.domain.event.service.EventService;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.repository.MatchRepository;
+import com.qmate.exception.custom.event.EventDeletionNotAllowedException;
 import com.qmate.exception.custom.event.EventNotFoundException;
+import com.qmate.exception.custom.event.EventRepeatModificationNotAllowedException;
 import com.qmate.exception.custom.matchinstance.MatchNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -146,5 +150,132 @@ class EventServiceTest {
     // expect
     assertThatThrownBy(() -> eventService.getEvent(matchId, userId, eventId))
         .isInstanceOf(EventNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("일정 수정 - 성공(일부 필드만 갱신, updatedAt 갱신)")
+  void updateEvent_success() {
+    // given
+    Long matchId = 1L, userId = 99L, eventId = 10L;
+    Match match = Match.builder().id(matchId).build();
+    Event event = Event.builder()
+        .id(eventId)
+        .match(match)
+        .title("old")
+        .description("desc")
+        .eventAt(LocalDate.of(2025, 10, 9))
+        .repeatType(EventRepeatType.NONE)
+        .alarmOption(EventAlarmOption.WEEK_BEFORE)
+        .anniversary(false)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now().minusDays(1))
+        .build();
+
+    given(eventRepository.findAuthorizedById(matchId, userId, eventId))
+        .willReturn(Optional.of(event));
+
+    EventUpdateRequest req = EventUpdateRequest.builder()
+        .title("new-title")
+        .repeatType(EventRepeatType.MONTHLY) // 기념일 아님 → 변경 허용
+        .build();
+
+    // saveAndFlush 후 updatedAt이 최신으로 들어간다고 가정하고 same event 반환
+    given(eventRepository.saveAndFlush(any(Event.class))).willAnswer(inv -> inv.getArgument(0));
+
+    // when
+    EventResponse res = eventService.updateEvent(matchId, userId, eventId, req);
+
+    // then
+    assertThat(res.getTitle()).isEqualTo("new-title");
+    assertThat(res.getRepeatType()).isEqualTo(EventRepeatType.MONTHLY);
+    then(eventRepository).should().findAuthorizedById(matchId, userId, eventId);
+    then(eventRepository).should().saveAndFlush(any(Event.class));
+  }
+
+  @Test
+  @DisplayName("일정 수정 - 기념일 이벤트는 repeatType 변경 불가")
+  void updateEvent_anniversary_repeatChange_forbidden() {
+    // given
+    Long matchId = 1L, userId = 99L, eventId = 10L;
+    Match match = Match.builder().id(matchId).build();
+    Event anniversary = Event.builder()
+        .id(eventId)
+        .match(match)
+        .title("anniv")
+        .eventAt(LocalDate.of(2025,10,9))
+        .repeatType(EventRepeatType.NONE)
+        .alarmOption(EventAlarmOption.WEEK_BEFORE)
+        .anniversary(true)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .build();
+
+    given(eventRepository.findAuthorizedById(matchId, userId, eventId))
+        .willReturn(Optional.of(anniversary));
+
+    EventUpdateRequest req = EventUpdateRequest.builder()
+        .repeatType(EventRepeatType.YEARLY) // 금지
+        .build();
+
+    // expect
+    assertThatThrownBy(() -> eventService.updateEvent(matchId, userId, eventId, req))
+        .isInstanceOf(EventRepeatModificationNotAllowedException.class);
+
+    then(eventRepository).should().findAuthorizedById(matchId, userId, eventId);
+    then(eventRepository).shouldHaveNoMoreInteractions();
+  }
+
+  @Test
+  @DisplayName("일정 삭제 - 성공")
+  void deleteEvent_success() {
+    // given
+    Long matchId = 1L, userId = 99L, eventId = 10L;
+    Event e = Event.builder()
+        .id(eventId)
+        .match(Match.builder().id(matchId).build())
+        .title("t")
+        .eventAt(LocalDate.of(2025,10,9))
+        .repeatType(EventRepeatType.NONE)
+        .alarmOption(EventAlarmOption.SAME_DAY)
+        .anniversary(false)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .build();
+
+    given(eventRepository.findAuthorizedById(matchId, userId, eventId)).willReturn(Optional.of(e));
+
+    // when
+    eventService.deleteEvent(matchId, userId, eventId);
+
+    // then
+    then(eventRepository).should().findAuthorizedById(matchId, userId, eventId);
+    then(eventRepository).should().delete(e);
+  }
+
+  @Test
+  @DisplayName("일정 삭제 - 기념일 이벤트는 삭제 불가")
+  void deleteEvent_anniversary_forbidden() {
+    // given
+    Long matchId = 1L, userId = 99L, eventId = 10L;
+    Event e = Event.builder()
+        .id(eventId)
+        .match(Match.builder().id(matchId).build())
+        .title("anniv")
+        .eventAt(LocalDate.of(2025,10,9))
+        .repeatType(EventRepeatType.NONE)
+        .alarmOption(EventAlarmOption.WEEK_BEFORE)
+        .anniversary(true)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .build();
+
+    given(eventRepository.findAuthorizedById(matchId, userId, eventId)).willReturn(Optional.of(e));
+
+    // expect
+    assertThatThrownBy(() -> eventService.deleteEvent(matchId, userId, eventId))
+        .isInstanceOf(EventDeletionNotAllowedException.class);
+
+    then(eventRepository).should().findAuthorizedById(matchId, userId, eventId);
+    then(eventRepository).should(never()).delete(any(Event.class));
   }
 }

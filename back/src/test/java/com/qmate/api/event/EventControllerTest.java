@@ -4,8 +4,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -18,9 +21,12 @@ import com.qmate.SecuritySliceTestConfig;
 import com.qmate.domain.event.entity.EventAlarmOption;
 import com.qmate.domain.event.entity.EventRepeatType;
 import com.qmate.domain.event.model.request.EventCreateRequest;
+import com.qmate.domain.event.model.request.EventUpdateRequest;
 import com.qmate.domain.event.model.response.EventResponse;
 import com.qmate.domain.event.service.EventService;
+import com.qmate.exception.custom.event.EventDeletionNotAllowedException;
 import com.qmate.exception.custom.event.EventNotFoundException;
+import com.qmate.exception.custom.event.EventRepeatModificationNotAllowedException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
@@ -150,6 +156,88 @@ class EventControllerTest {
             .with(AuthTestUtils.userPrincipal(userId))
             .accept(APPLICATION_JSON))
         .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.errorCode").exists())
+        .andExpect(jsonPath("$.message").exists());
+  }
+
+  @Test
+  @DisplayName("일정 수정 API - 200 OK")
+  void updateEvent_ok() throws Exception {
+    long matchId = 1L, eventId = 10L, userId = 99L;
+
+    EventUpdateRequest req = EventUpdateRequest.builder()
+        .title("new-title")
+        .repeatType(EventRepeatType.MONTHLY)
+        .build();
+
+    EventResponse stub = EventResponse.builder()
+        .eventId(eventId)
+        .title("new-title")
+        .description("설명")
+        .eventAt(LocalDate.of(2025,10,9))
+        .repeatType(EventRepeatType.MONTHLY)
+        .alarmOption(EventAlarmOption.WEEK_BEFORE)
+        .anniversary(false)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .build();
+
+    given(eventService.updateEvent(anyLong(), anyLong(), anyLong(), any())).willReturn(stub);
+
+    mockMvc.perform(patch("/api/matches/{matchId}/events/{eventId}", matchId, eventId)
+            .with(AuthTestUtils.userPrincipal(userId))
+            .contentType(APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(req)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.eventId").value((int) eventId))
+        .andExpect(jsonPath("$.title").value("new-title"))
+        .andExpect(jsonPath("$.repeatType").value("MONTHLY"));
+  }
+
+  @Test
+  @DisplayName("일정 수정 API - 기념일 repeatType 변경 시 409")
+  void updateEvent_anniversary_repeat_forbidden_409() throws Exception {
+    long matchId = 1L, eventId = 10L, userId = 99L;
+
+    EventUpdateRequest req = EventUpdateRequest.builder()
+        .repeatType(EventRepeatType.YEARLY)
+        .build();
+
+    given(eventService.updateEvent(anyLong(), anyLong(), anyLong(), any()))
+        .willThrow(new EventRepeatModificationNotAllowedException());
+
+    mockMvc.perform(patch("/api/matches/{matchId}/events/{eventId}", matchId, eventId)
+            .with(AuthTestUtils.userPrincipal(userId))
+            .contentType(APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(req)))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.errorCode").exists())
+        .andExpect(jsonPath("$.message").exists());
+  }
+
+  @Test
+  @DisplayName("일정 삭제 API - 204 No Content")
+  void deleteEvent_noContent() throws Exception {
+    long matchId = 1L, eventId = 10L, userId = 99L;
+
+    mockMvc.perform(delete("/api/matches/{matchId}/events/{eventId}", matchId, eventId)
+            .with(AuthTestUtils.userPrincipal(userId)))
+        .andExpect(status().isNoContent());
+  }
+
+  @Test
+  @DisplayName("일정 삭제 API - 기념일 삭제 시 409")
+  void deleteEvent_anniversary_forbidden_409() throws Exception {
+    long matchId = 1L, eventId = 10L, userId = 99L;
+
+    // 서비스에서 예외 던지도록
+    willThrow(new EventDeletionNotAllowedException())
+        .given(eventService)
+        .deleteEvent(anyLong(), anyLong(), anyLong());
+
+    mockMvc.perform(delete("/api/matches/{matchId}/events/{eventId}", matchId, eventId)
+            .with(AuthTestUtils.userPrincipal(userId)))
+        .andExpect(status().isConflict())
         .andExpect(jsonPath("$.errorCode").exists())
         .andExpect(jsonPath("$.message").exists());
   }
