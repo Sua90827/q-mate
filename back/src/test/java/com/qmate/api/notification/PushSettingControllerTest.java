@@ -69,7 +69,6 @@ class PushSettingControllerTest {
   }
 
   @Test
-  @Disabled("HttpMessageNotReadableException에 대한 처리 필요")
   @DisplayName("PATCH 본문 유효성 검증 - pushEnabled boolean 타입이 아닐 시 400")
   void patch_validation_type_mismatch_body() throws Exception {
     String json = """
