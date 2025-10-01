@@ -71,6 +71,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         .birthDate(user.getBirthDate())
         .role(user.getRole().name())
         .currentMatchId(user.getCurrentMatchId())
+        .pushEnabled(user.isPushEnabled())
         .build();
 
     LoginResponse body = LoginResponse.builder()
