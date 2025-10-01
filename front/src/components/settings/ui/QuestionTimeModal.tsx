@@ -84,7 +84,7 @@ export default function QuestionTimeModal({
         <DialogFooter className="flex gap-0">
           <Button
             variant="outline"
-            className="rounded-none flex-1"
+            className="rounded-none flex-1 border-1 rounded-bl-2xl"
             type="button"
             onClick={() => setIsOpen(false)}
           >
