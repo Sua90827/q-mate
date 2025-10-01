@@ -11,7 +11,7 @@ export const matchesHandlers = [
       relationType: 'FRIEND',
       startDate: '2025-09-11',
       status: 'DETACHED_PENDING_DELETE',
-      // status: 'Active',
+      // status: 'ACTIVE',
       dailyQuestionHour: 12,
       users: [
         { userId: 1, nickname: '사용자A' },

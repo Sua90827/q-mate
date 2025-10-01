@@ -8,6 +8,6 @@ export interface MatchInfo {
   relationType: 'FRIEND' | 'COUPLE';
   startDate: string | null;
   dailyQuestionHour: number;
-  status: 'Active' | 'DETACHED_PENDING_DELETE';
+  status: 'ACTIVE' | 'DETACHED_PENDING_DELETE';
   users: MatchUser[];
 }
