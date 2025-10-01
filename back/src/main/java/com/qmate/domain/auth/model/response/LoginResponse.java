@@ -26,5 +26,6 @@ public class LoginResponse {
     private final LocalDate birthDate;
     private final String role;//"USER", "ADMIN"
     private final Long currentMatchId; //null 가능
+    private final boolean pushEnabled;
   }
 }

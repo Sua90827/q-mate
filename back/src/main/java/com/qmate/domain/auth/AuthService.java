@@ -34,6 +34,7 @@ public class AuthService {
         .nickname(user.getNickname())
         .role(user.getRole().name())
         .currentMatchId(user.getCurrentMatchId())
+        .pushEnabled(user.isPushEnabled())
         .build();
 
     return LoginResponse.builder()

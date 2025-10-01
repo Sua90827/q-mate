@@ -59,6 +59,10 @@ public class User {
 
   private Long currentMatchId;
 
+  @Builder.Default
+  @Column(name = "push_enabled", nullable = false)
+  private boolean pushEnabled = false;
+
   @CreationTimestamp
   @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
