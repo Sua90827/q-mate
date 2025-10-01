@@ -11,6 +11,7 @@ export const matchesHandlers = [
       relationType: 'FRIEND',
       startDate: '2025-09-11',
       status: 'DETACHED_PENDING_DELETE',
+      // status: 'Active',
       dailyQuestionHour: 12,
       users: [
         { userId: 1, nickname: '사용자A' },
@@ -43,6 +44,6 @@ export const matchesHandlers = [
     const { matchId } = params;
     console.log('Mock POST /api/matches/:matchId/restore', matchId);
     await delay(200);
-    return HttpResponse.json({ message: '매칭dl 성공적으로 복구되었습니다.' }, { status: 200 });
+    return HttpResponse.json({ message: '매칭이 성공적으로 복구되었습니다.' }, { status: 200 });
   }),
 ];

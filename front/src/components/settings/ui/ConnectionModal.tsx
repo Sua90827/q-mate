@@ -23,7 +23,7 @@ export default function ConnectionModal({ open, setIsOpen, onClick, status, load
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogContent
         showCloseButton={false}
-        className="w-[285px] h-[165px] z-50 rounded-lg p-0 overflow-hidden"
+        className="w-[285px] h-[165px] z-50 rounded-lg p-0 overflow-hidden gap-0"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader className={cn(status === 'Active' ? 'pt-7 px-4' : 'pt-12 px-4')}>
@@ -34,9 +34,11 @@ export default function ConnectionModal({ open, setIsOpen, onClick, status, load
           </DialogTitle>
         </DialogHeader>
 
-        <DialogDescription className="text-center font-regular">
-          {status === 'Active' ? '2주 동안은 언제든 다시 복구할 수 있어요.' : ''}
-        </DialogDescription>
+        {status === 'Active' && (
+          <DialogDescription className="text-center font-regular py-0">
+            2주 동안은 언제든 다시 복구할 수 있어요.
+          </DialogDescription>
+        )}
 
         <DialogFooter className="w-full flex !flex-row align-center !justify-center gap-5">
           <Button
