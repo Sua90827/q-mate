@@ -36,10 +36,7 @@ public class EventController {
 
     EventResponse response = eventService.createEvent(matchId, userId, request);
 
-    URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
-        .path("/api/events/{id}")
-        .buildAndExpand(response.getEventId())
-        .toUri();
+    URI location = URI.create("/api/events/" + response.getEventId());
 
     return ResponseEntity.created(location).body(response);
   }
