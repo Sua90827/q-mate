@@ -4,6 +4,7 @@ import com.qmate.common.constants.match.MatchConstants;
 import com.qmate.domain.match.model.request.MatchCreationRequest;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.model.request.MatchUpdateRequest;
+import com.qmate.domain.match.model.response.DetachedMatchStatusResponse;
 import com.qmate.domain.match.model.response.LockStatusResponse;
 import com.qmate.domain.match.model.response.MatchActionResponse;
 import com.qmate.domain.match.model.response.MatchCreationResponse;
@@ -174,6 +175,18 @@ public class MatchController {
       @AuthenticationPrincipal UserPrincipal principal
   ){
     LockStatusResponse response = matchService.getLockStatus(principal.userId());
+    return ResponseEntity.ok(response);
+  }
+  //현재 로그인한 사용자가 복구 가능한 '연결 끊김' 상태의 매칭을 가지고 있는지 조회
+  @GetMapping("/detached-status")
+  @Operation(
+      summary = "복구 가능한 '연결 끊김' 상태의 매칭 조회",
+      description = "현재 로그인한 사용자가 복구 가능한 '연결 끊김' 상태의 매칭을 가지고 있는지 조회합니다."
+  )
+  public ResponseEntity<DetachedMatchStatusResponse> getDetachedMatchStatus(
+      @AuthenticationPrincipal UserPrincipal principal
+  ){
+    DetachedMatchStatusResponse response = matchService.getDetachedMatchStatus(principal.userId());
     return ResponseEntity.ok(response);
   }
 }
