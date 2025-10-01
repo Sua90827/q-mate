@@ -1,5 +1,6 @@
 package com.qmate.domain.user;
 
+import com.qmate.domain.match.Match;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -68,5 +69,13 @@ public class User {
 
   public enum Role {
     USER, ADMIN
+  }
+  //특정 매칭에 참여할 때 currentMatchId를 업데이트.
+  public void joinMatch(Match match){
+    this.currentMatchId = match.getId();
+  }
+  //매칭에서 연결이 끊어지거나 탈퇴할 때 currentMatchId를 null로 초기화 합니다.
+  public void leaveMatch(){
+    this.currentMatchId = null;
   }
 }
