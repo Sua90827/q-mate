@@ -1,6 +1,7 @@
 package com.qmate.domain.user;
 
 import com.qmate.domain.user.model.request.RegisterRequest;
+import com.qmate.exception.custom.user.EmailAlreadyInUseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ public class UserService {
 
   public Long register(RegisterRequest req) {
     if(userRepository.existsByEmail(req.getEmail())){
-      throw new IllegalArgumentException("이미 사용중인 이메일");
+      throw new EmailAlreadyInUseException();
     }
     User user = User.builder()
         .email(req.getEmail())
