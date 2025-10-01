@@ -9,6 +9,7 @@ import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,5 +40,19 @@ public class EventController {
     URI location = URI.create("/api/events/" + response.getEventId());
 
     return ResponseEntity.created(location).body(response);
+  }
+
+  /**
+   * 일정 단건 조회
+   */
+  @GetMapping("/matches/{matchId}/events/{eventId}")
+  public ResponseEntity<EventResponse> getEvent(
+      @PathVariable Long matchId,
+      @PathVariable Long eventId,
+      @AuthenticationPrincipal UserPrincipal principal
+  ) {
+    Long userId = principal.userId();
+    EventResponse response = eventService.getEvent(matchId, userId, eventId);
+    return ResponseEntity.ok(response);
   }
 }
