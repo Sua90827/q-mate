@@ -7,6 +7,7 @@ import com.qmate.domain.auth.model.response.LoginResponse;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
 import com.qmate.domain.user.UserSocialAccount.SocialProvider;
+import com.qmate.exception.custom.auth.UnsupportedPrincipalTypeException;
 import com.qmate.security.UserPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -51,7 +52,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
       String birthdate = (String) oidc.getClaims().get("birthdate");
       log.debug("GOOGLE birthdate claim = {}", birthdate);
     } else {
-      throw new IllegalStateException("Unsupported principal type: " + p.getClass());
+      throw new UnsupportedPrincipalTypeException();
     }
 
     var principal = new UserPrincipal(user.getId(), user.getEmail(), user.getRole().name());

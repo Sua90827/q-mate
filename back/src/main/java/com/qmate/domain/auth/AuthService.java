@@ -3,6 +3,7 @@ package com.qmate.domain.auth;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
 import com.qmate.domain.auth.model.response.LoginResponse;
+import com.qmate.exception.custom.auth.InvalidCredentialsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,10 +20,10 @@ public class AuthService {
 
   public LoginResponse login(String email, String rawPassword) {
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
+        .orElseThrow(InvalidCredentialsException::new);
 
     if (!passwordEncoder.matches(rawPassword, user.getPasswordHash())) {
-      throw new BadCredentialsException("Invalid email or password");
+      throw new InvalidCredentialsException();
     }
 
     JwtService.TokenPair pair = jwtService.issue(user.getId(), user.getRole().name(), user.getEmail());

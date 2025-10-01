@@ -1,6 +1,9 @@
 package com.qmate.domain.auth;
 
 import com.qmate.domain.mail.MailSender;
+import com.qmate.exception.custom.auth.AttemptsLimitExceededException;
+import com.qmate.exception.custom.auth.ResendCooldownException;
+import com.qmate.exception.custom.auth.VerificationInvalidOrExpiredException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.UUID;
@@ -37,7 +40,7 @@ public class EmailVerificationService {
 
   public void sendCode(String email, String purpose) {
     if (Boolean.TRUE.equals(redis.hasKey(resendKey(purpose, email)))) {
-      throw new IllegalStateException("RESEND_COOLDOWN");
+      throw new ResendCooldownException();
     }
     String code = String.format("%06d", RND.nextInt(1_000_000));//0~999,999 범위 난수 생성 후 6자리 0패딩 문자열로 포맷
     redis.opsForValue().set(codeKey(purpose, email), code, CODE_TTL);
@@ -50,15 +53,15 @@ public class EmailVerificationService {
 
   public String verifyAndIssueToken(String email, String purpose, String inputCode) {
     String stored = redis.opsForValue().get(codeKey(purpose, email));
-    if (!StringUtils.hasText(stored)) throw new IllegalArgumentException("만료 또는 유효하지 않음");
+    if (!StringUtils.hasText(stored)) throw new VerificationInvalidOrExpiredException();
 
     long attempts = increment(attemptKey(purpose, email), CODE_TTL);
     if (attempts > MAX_ATTEMPTS) {
       deleteAll(purpose, email);
-      throw new IllegalArgumentException("시도 한도 초과");
+      throw new AttemptsLimitExceededException();
     }
 
-    if (!stored.equals(inputCode)) throw new IllegalArgumentException("만료 또는 유효하지 않음");
+    if (!stored.equals(inputCode)) throw new VerificationInvalidOrExpiredException();
 
     //성공-----------------
     deleteAll(purpose, email);
