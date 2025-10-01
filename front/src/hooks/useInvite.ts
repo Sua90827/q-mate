@@ -1,5 +1,5 @@
-import { connectWithInviteCode, createInviteCode } from '@/api/invite';
-import { useMutation } from '@tanstack/react-query';
+import { connectWithInviteCode, createInviteCode, fetchLockStatus } from '@/api/invite';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 //초대 코드 발급
 export const useCreateInviteCode = () => {
@@ -18,5 +18,15 @@ export const useCreateInviteCode = () => {
 export const useCreateMatchId = () => {
   return useMutation({
     mutationFn: ({ inviteCode }: { inviteCode: string }) => connectWithInviteCode({ inviteCode }),
+  });
+};
+
+// 계정조회
+export const useFetchLockStatus = () => {
+  return useQuery({
+    queryKey: ['lockStatus'],
+    queryFn: fetchLockStatus,
+    staleTime: 0,
+    gcTime: 1000 * 60 * 10,
   });
 };

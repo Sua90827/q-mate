@@ -22,8 +22,8 @@ export default function QuestionList() {
   const matchId = useMatchIdStore((state) => state.matchId);
 
   // API 호출
-  const { data: questionResponse } = useQuestions(Number(matchId));
-  const { data: customResponse } = useFetchCustomQuestions(Number(matchId));
+  const { data: questionResponse } = useQuestions(matchId!);
+  const { data: customResponse } = useFetchCustomQuestions(matchId!);
 
   const questionInstances: QuestionList[] = useMemo(
     () => questionResponse?.content ?? [],

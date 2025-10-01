@@ -3,12 +3,14 @@ import { useEventMonth, useScheduleList } from '@/hooks/useSchedule';
 import React, { useMemo, useState } from 'react';
 import MainCalendar from './calendar/MainCalendar';
 import EventList from './list/EventList';
-import { Schedule } from '@/types/scheduleType';
 import { isEventOnDate } from '@/utils/date';
 import AddBtn from './ui/AddBtn';
+import { useMatchIdStore } from '@/store/useMatchIdStore';
+import { ScheduleEvent } from '@/types/scheduleType';
 
 export default function ScheduleView() {
   const [selected, setSelected] = useState<Date | undefined>(new Date());
+  const matchId = useMatchIdStore((state) => state.matchId);
 
   const currentMonth = selected ? selected.getMonth() + 1 : new Date().getMonth() + 1;
   const currentYear = selected ? selected.getFullYear() : new Date().getFullYear();
@@ -30,10 +32,10 @@ export default function ScheduleView() {
     return s;
   }, [monthData, anniversarySet]);
 
-  const { data, isLoading, isError } = useScheduleList();
+  const { data, isLoading, isError } = useScheduleList(matchId!);
 
-  const dayItems = useMemo(() => {
-    const list: Schedule[] = data ?? [];
+  const dayItems: ScheduleEvent[] = useMemo(() => {
+    const list = data?.content ?? [];
     return list.filter((event) => isEventOnDate(event, selected ?? new Date()));
   }, [data, selected]);
 

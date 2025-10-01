@@ -16,3 +16,15 @@
     color: var(--color-secondary);
   }
 }
+
+html[data-theme='day'] {
+  --calendar-bg: var(--color-day-calendar);
+}
+
+html[data-theme='sunset'] {
+  --calendar-bg: var(--color-sunset-calendar);
+}
+
+html[data-theme='night'] {
+  --calendar-bg: var(--color-night-calendar);
+}

@@ -1,11 +1,11 @@
 'use client';
 import React from 'react';
-import { Schedule } from '@/types/scheduleType';
 import { repeatTypeLabels } from '@/utils/constants/schedule';
+import { ScheduleEvent } from '@/types/scheduleType';
 
 type Props = {
   date: Date;
-  items: Schedule[];
+  items: ScheduleEvent[];
   isLoading?: boolean;
   isError?: boolean;
 };
@@ -36,7 +36,7 @@ function EventList({ date, items, isLoading, isError }: Props) {
                   <div className="font-extrabold">{title}</div>
                   <div className="text-12 text-text-secondary">
                     {isAnniversary ? '기념일' : '일정'}
-                    {repeatType !== 'none' && ` · ${repeatTypeLabels[repeatType]}`}
+                    {repeatType !== 'NONE' && ` · ${repeatTypeLabels[repeatType]}`}
                   </div>
                 </div>
               </li>

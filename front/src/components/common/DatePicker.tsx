@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import CalendarCustom from '../schedule/ui/CalendarCustom';
+import DatePickerCalendar from '../schedule/ui/DatePickerCalendar';
 
 export function DatePicker({
   label,
@@ -17,15 +17,17 @@ export function DatePicker({
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(undefined);
 
+  const formatDate = (d: Date) => d.toISOString().split('T')[0];
+
   return (
     <div className="flex flex-col gap-3">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             id="date"
-            className={`w-full border-gray h-[37px] font-semibold bg-secondary justify-between  text-14 hover:bg-secondary ${
-              schedule ? 'shadow-box  ' : '!text-text-secondary/60'
-            } `}
+            className={`w-full border-gray h-[37px] font-semibold bg-secondary justify-between text-14 hover:bg-secondary ${
+              schedule ? 'shadow-box' : '!text-text-secondary/60'
+            }`}
           >
             {date ? date.toLocaleDateString() : label}
           </Button>
@@ -35,11 +37,11 @@ export function DatePicker({
           align="start"
           style={{ width: 'var(--radix-popover-trigger-width)' }}
         >
-          <CalendarCustom
+          <DatePickerCalendar
             value={date}
             onChange={(d: Date | undefined) => {
               setDate(d);
-              onSelect?.(d ? d.toISOString() : undefined);
+              onSelect?.(d ? formatDate(d) : undefined);
               setOpen(false);
             }}
           />

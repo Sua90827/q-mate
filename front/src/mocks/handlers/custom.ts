@@ -15,7 +15,7 @@ let customQuestions: {
     customQuestionId: 901,
     sourceType: 'CUSTOM',
     relationType: 'COUPLE',
-    matchId: 1,
+    matchId: 0,
     text: '상대방의 첫 인상은 어땠나요?',
     isEditable: true,
     createdAt: new Date().toISOString(),
@@ -27,6 +27,10 @@ export const customHandlers = [
   // 조회
   http.get('/api/matches/:matchId/custom-questions', ({ params, request }) => {
     const { matchId } = params;
+
+    customQuestions = customQuestions.map((q) =>
+      q.customQuestionId === 901 ? { ...q, matchId: Number(matchId) } : q,
+    );
 
     const url = new URL(request.url);
     const page = Number(url.searchParams.get('page') ?? 0);

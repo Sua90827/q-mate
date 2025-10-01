@@ -2,17 +2,24 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Copy } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import NoticeModal from '../common/NoticeModal';
 import { useCreateInviteCode } from '@/hooks/useInvite';
+import { useMatchIdStore } from '@/store/useMatchIdStore';
+import { useMatchInfo } from '@/hooks/useMatches';
 
 export default function Invite() {
   const [code, setCode] = useState<string>('');
   const [open, setOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
-
   const params = useParams();
+
+  const matchId = useMatchIdStore((state) => state.matchId);
+  const setMatchId = useMatchIdStore((state) => state.setMatchId);
+
   const { mutate: createCode } = useCreateInviteCode();
+  const { data } = useMatchInfo(matchId!);
+  const router = useRouter();
 
   // 초대코드 가져오기
   useEffect(() => {
@@ -26,6 +33,7 @@ export default function Invite() {
       {
         onSuccess: (data) => {
           setCode(data.inviteCode);
+          setMatchId(data.matchId);
         },
         onError: () => {
           setErrorOpen(true);
@@ -39,6 +47,9 @@ export default function Invite() {
     try {
       await navigator.clipboard.writeText(text);
       setOpen(true);
+      if (data?.status === 'ACTIVE') {
+        router.push('/main');
+      }
     } catch (e) {
       setErrorOpen(true);
     }
@@ -77,7 +88,7 @@ export default function Invite() {
         open={open}
         setOpen={setOpen}
         title="상대방을 기다리는 중이에요 🐢"
-        description={
+        sub={
           <>
             상대방이 초대 코드를 입력하면 <br />
             자동으로 연결돼요
@@ -90,7 +101,7 @@ export default function Invite() {
         danger
         title={
           <>
-            복사 또는 코드 생성에 실패했어요. <br />
+            복사에 실패했어요. <br />
             다시 시도해 주세요!
           </>
         }
