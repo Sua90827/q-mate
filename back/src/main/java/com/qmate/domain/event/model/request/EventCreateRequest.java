@@ -1,5 +1,6 @@
 package com.qmate.domain.event.model.request;
 
+import com.qmate.common.constants.event.EventConstants;
 import com.qmate.domain.event.entity.EventAlarmOption;
 import com.qmate.domain.event.entity.EventRepeatType;
 import jakarta.annotation.Nullable;
@@ -18,12 +19,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class EventCreateRequest {
 
-  @NotBlank
-  @Size(max = 120)
+  @NotBlank(message = EventConstants.EVENT_TITLE_NOT_BLANK_MESSAGE)
+  @Size(max = EventConstants.EVENT_TITLE_MAX_LENGTH, message = EventConstants.EVENT_TITLE_SIZE_MESSAGE)
   private String title;
 
   @Nullable
-  @Size(max = 1000)
+  @Size(max = EventConstants.EVENT_DESCRIPTION_MAX_LENGTH, message = EventConstants.EVENT_DESCRIPTION_SIZE_MESSAGE)
   private String description; // nullable 허용
 
   @NotNull
