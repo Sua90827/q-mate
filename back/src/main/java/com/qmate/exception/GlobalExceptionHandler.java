@@ -1,6 +1,8 @@
 package com.qmate.exception;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -90,40 +92,74 @@ public class GlobalExceptionHandler {
 
   // 컨트롤러에서 본문(JSON) 파싱/바인딩 실패 예외를 처리하는 핸들러 (RequestBody 전용)
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<ErrorResponse> handleJsonEnumMismatch(HttpMessageNotReadableException ex) throws HttpMessageNotReadableException {
+  public ResponseEntity<ErrorResponse> handleNotReadable(HttpMessageNotReadableException ex) {
     Throwable cause = ex.getMostSpecificCause();
-
-    if (!(cause instanceof InvalidFormatException ife)) {
-      // enum 케이스가 아니면 전파
-      throw ex;
-    }
-
-    Class<?> targetType = ife.getTargetType();
-    if (targetType == null || !targetType.isEnum()) {
-      // enum 타깃이 아니면 전파
-      throw ex;
-    }
-
-    // enum만 메시지로 가공
-    String field = ife.getPath() == null || ife.getPath().isEmpty()
-        ? "$"
-        : ife.getPath().getLast().getFieldName();
-    String rejected = String.valueOf(ife.getValue());
-    String allowed = java.util.Arrays.stream(targetType.getEnumConstants())
-        .map(Object::toString)
-        .collect(Collectors.joining(", "));
-
     ErrorCode errorCode = CommonErrorCode.invalidInput();
-    ErrorResponse.FieldErrorDetail detail = new ErrorResponse.FieldErrorDetail(
-        field,
-        String.format("입력값 '%s'은(는) 유효한 %s 값이 아닙니다. 허용 가능한 값: %s",
-            rejected, targetType.getSimpleName(), allowed)
-    );
+    List<ErrorResponse.FieldErrorDetail> details = new ArrayList<>();
 
-    return new ResponseEntity<>(
-        new ErrorResponse(errorCode.getCode(), errorCode.getMessage(), java.util.List.of(detail)),
-        errorCode.getHttpStatus()
-    );
+    // 1) JSON 문법 오류
+    if (cause instanceof JsonParseException) {
+      details.add(new ErrorResponse.FieldErrorDetail("$", "요청 본문 JSON 형식이 올바르지 않습니다."));
+      return ResponseEntity.status(errorCode.getHttpStatus())
+          .body(new ErrorResponse(errorCode.getCode(), errorCode.getMessage(), details));
+    }
+
+    // 2) 타입 불일치(ENUM/숫자/불리언 등)
+    if (cause instanceof InvalidFormatException) {
+      InvalidFormatException ife = (InvalidFormatException) cause;
+
+      String field = "$";
+      if (ife.getPath() != null && !ife.getPath().isEmpty()) {
+        field = ife.getPath().getLast().getFieldName();
+        if (field == null) field = "$";
+      }
+
+      Object rejectedValue = ife.getValue();
+      Class<?> targetType = ife.getTargetType();
+
+      if (targetType != null && targetType.isEnum()) {
+        String allowed = Arrays.stream(targetType.getEnumConstants())
+            .map(Object::toString)
+            .collect(Collectors.joining(", "));
+        String msg = "입력값 '" + rejectedValue + "'은(는) 유효한 " + targetType.getSimpleName()
+            + " 값이 아닙니다. 허용 가능한 값: " + allowed;
+        details.add(new ErrorResponse.FieldErrorDetail(field, msg));
+      } else {
+        String expected = (targetType == null) ? "올바른 타입" : targetType.getSimpleName();
+        String msg = "필드 타입이 올바르지 않습니다. value=" + rejectedValue + ", expected=" + expected;
+        details.add(new ErrorResponse.FieldErrorDetail(field, msg));
+      }
+
+      return ResponseEntity.status(errorCode.getHttpStatus())
+          .body(new ErrorResponse(errorCode.getCode(), errorCode.getMessage(), details));
+    }
+
+    // 3) 본문 누락/매칭 불가
+    if (cause instanceof MismatchedInputException) {
+      MismatchedInputException mie = (MismatchedInputException) cause;
+
+      String field = "$";
+      if (mie.getPath() != null && !mie.getPath().isEmpty()) {
+        field = mie.getPath().getLast().getFieldName();
+        if (field == null) field = "$";
+      }
+
+      String msg;
+      if ("$".equals(field)) {
+        msg = "요청 본문이 필요합니다.";
+      } else {
+        msg = "필드 '" + field + "'의 값이 올바르지 않습니다.";
+      }
+
+      details.add(new ErrorResponse.FieldErrorDetail(field, msg));
+      return ResponseEntity.status(errorCode.getHttpStatus())
+          .body(new ErrorResponse(errorCode.getCode(), errorCode.getMessage(), details));
+    }
+
+    // 4) 그 외 NotReadable → 400 통일
+    details.add(new ErrorResponse.FieldErrorDetail("$", "요청 본문을 해석할 수 없습니다."));
+    return ResponseEntity.status(errorCode.getHttpStatus())
+        .body(new ErrorResponse(errorCode.getCode(), errorCode.getMessage(), details));
   }
 
   //인증 실패 예외를 처리하는 핸들러(401)
