@@ -2,6 +2,9 @@ package com.qmate.domain.event;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
@@ -17,11 +20,13 @@ import com.qmate.domain.event.service.EventService;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.exception.custom.event.EventDeletionNotAllowedException;
+import com.qmate.exception.custom.event.EventListDateRangeExceededException;
 import com.qmate.exception.custom.event.EventNotFoundException;
 import com.qmate.exception.custom.event.EventRepeatModificationNotAllowedException;
 import com.qmate.exception.custom.matchinstance.MatchNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +34,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
 class EventServiceTest {
@@ -277,5 +284,238 @@ class EventServiceTest {
 
     then(eventRepository).should().findAuthorizedById(matchId, userId, eventId);
     then(eventRepository).should(never()).delete(any(Event.class));
+  }
+
+  @Test
+  @DisplayName("listEvents - WEEKLY 전개: from << seed, to 포함까지 전개")
+  void listEvents_weekly_expand_from_before_seed() {
+    // given
+    long matchId = 1L, userId = 99L;
+    LocalDate seed = LocalDate.of(2025, 10, 1); // 수요일
+    Event weekly = Event.builder()
+        .id(100L)
+        .match(Match.builder().id(matchId).build())
+        .title("weekly")
+        .eventAt(seed)
+        .repeatType(EventRepeatType.WEEKLY)
+        .anniversary(false)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .build();
+
+    LocalDate from = LocalDate.of(2025, 7, 29); // 화
+    LocalDate to   = LocalDate.of(2025, 10, 15); // 수
+
+    given(eventRepository.findCandidates(eq(matchId), eq(userId), eq(from), eq(to), isNull(), isNull()))
+        .willReturn(List.of(weekly));
+
+    // when
+    Page<EventResponse> page = eventService.listEvents(
+        matchId, userId, from, to, null, null, PageRequest.of(0, 10)
+    );
+
+    // then: 10/01, 10/08, 10/15
+    assertThat(page.getContent()).extracting(EventResponse::getEventAt)
+        .containsExactly(
+            LocalDate.of(2025, 10, 1),
+            LocalDate.of(2025, 10, 8),
+            LocalDate.of(2025, 10, 15)
+        );
+  }
+
+  @Test
+  @DisplayName("listEvents - MONTHLY 전개: 8/31 → 9/30, 10/31, 11/30 (말일 클램프)")
+  void listEvents_monthly_end_of_month_clamp() {
+    // given
+    long matchId = 1L, userId = 99L;
+    Event monthly = Event.builder()
+        .id(101L)
+        .match(Match.builder().id(matchId).build())
+        .title("monthly-31")
+        .eventAt(LocalDate.of(2025, 8, 31))
+        .repeatType(EventRepeatType.MONTHLY)
+        .anniversary(false)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .build();
+
+    LocalDate from = LocalDate.of(2025, 9, 15);
+    LocalDate to   = LocalDate.of(2025, 11, 30);
+
+    given(eventRepository.findCandidates(eq(matchId), eq(userId), eq(from), eq(to), isNull(), isNull()))
+        .willReturn(List.of(monthly));
+
+    // when
+    Page<EventResponse> page = eventService.listEvents(
+        matchId, userId, from, to, null, null, PageRequest.of(0, 10)
+    );
+
+    // then
+    assertThat(page.getContent()).extracting(EventResponse::getEventAt)
+        .containsExactly(
+            LocalDate.of(2025, 9, 30),
+            LocalDate.of(2025, 10, 31),
+            LocalDate.of(2025, 11, 30)
+        );
+  }
+
+  @Test
+  @DisplayName("listEvents - YEARLY 전개: 2/29는 평년 2/28로 보정")
+  void listEvents_yearly_feb29_to_feb28_in_common_years() {
+    // given
+    long matchId = 1L, userId = 99L;
+    Event yearly = Event.builder()
+        .id(102L)
+        .match(Match.builder().id(matchId).build())
+        .title("yearly-229")
+        .eventAt(LocalDate.of(2020, 2, 29))
+        .repeatType(EventRepeatType.YEARLY)
+        .anniversary(true)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .build();
+
+    LocalDate from = LocalDate.of(2025, 1, 1);
+    LocalDate to   = LocalDate.of(2027, 12, 31);
+
+    given(eventRepository.findCandidates(eq(matchId), eq(userId), eq(from), eq(to), isNull(), isNull()))
+        .willReturn(List.of(yearly));
+
+    // when
+    Page<EventResponse> page = eventService.listEvents(
+        matchId, userId, from, to, null, null, PageRequest.of(0, 10)
+    );
+
+    // then: 2025/02/28, 2026/02/28, 2027/02/28
+    assertThat(page.getContent()).extracting(EventResponse::getEventAt)
+        .containsExactly(
+            LocalDate.of(2025, 2, 28),
+            LocalDate.of(2026, 2, 28),
+            LocalDate.of(2027, 2, 28)
+        );
+  }
+
+  @Test
+  @DisplayName("listEvents - NONE: from/to 경계 포함")
+  void listEvents_none_inclusive_bounds() {
+    // given
+    long matchId = 1L, userId = 99L;
+    LocalDate from = LocalDate.of(2025, 10, 10);
+    LocalDate to   = LocalDate.of(2025, 10, 31);
+
+    Event atFrom = Event.builder()
+        .id(201L).match(Match.builder().id(matchId).build())
+        .title("at-from").eventAt(from)
+        .repeatType(EventRepeatType.NONE).anniversary(false)
+        .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
+        .build();
+
+    Event atTo = Event.builder()
+        .id(202L).match(Match.builder().id(matchId).build())
+        .title("at-to").eventAt(to)
+        .repeatType(EventRepeatType.NONE).anniversary(false)
+        .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
+        .build();
+
+    given(eventRepository.findCandidates(eq(matchId), eq(userId), eq(from), eq(to), isNull(), isNull()))
+        .willReturn(List.of(atFrom, atTo));
+
+    // when
+    Page<EventResponse> page = eventService.listEvents(
+        matchId, userId, from, to, null, null, PageRequest.of(0, 10)
+    );
+
+    // then
+    assertThat(page.getContent()).extracting(EventResponse::getEventAt)
+        .containsExactlyInAnyOrder(from, to);
+  }
+
+  @Test
+  @DisplayName("listEvents - 정렬 타이브레이커: 동일 발생일이면 eventId 오름차순")
+  void listEvents_sort_tie_breaker_by_eventId() {
+    // given (동일 발생일 2025-10-10)
+    long matchId = 1L, userId = 99L;
+    LocalDate from = LocalDate.of(2025, 10, 1);
+    LocalDate to   = LocalDate.of(2025, 10, 31);
+
+    Event e1 = Event.builder()
+        .id(1L).match(Match.builder().id(matchId).build())
+        .title("A").eventAt(LocalDate.of(2025, 10, 10))
+        .repeatType(EventRepeatType.NONE).anniversary(false)
+        .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
+        .build();
+
+    Event e2 = Event.builder()
+        .id(2L).match(Match.builder().id(matchId).build())
+        .title("B").eventAt(LocalDate.of(2025, 10, 10))
+        .repeatType(EventRepeatType.NONE).anniversary(false)
+        .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
+        .build();
+
+    given(eventRepository.findCandidates(eq(matchId), eq(userId), eq(from), eq(to), isNull(), isNull()))
+        .willReturn(List.of(e2, e1)); // 섞어서 주입
+
+    // when
+    Page<EventResponse> page = eventService.listEvents(
+        matchId, userId, from, to, null, null, PageRequest.of(0, 10)
+    );
+
+    // then: eventId 1 → 2 순으로 정렬되어야 함
+    assertThat(page.getContent()).extracting(EventResponse::getEventId)
+        .containsExactly(1L, 2L);
+  }
+
+  @Test
+  @DisplayName("listEvents - 페이징: page=1,size=2 슬라이싱")
+  void listEvents_paging_slice() {
+    // given: 주 1회, to를 10/29까지(총 5회: 1,8,15,22,29)
+    long matchId = 1L, userId = 99L;
+    Event weekly = Event.builder()
+        .id(300L)
+        .match(Match.builder().id(matchId).build())
+        .title("weekly")
+        .eventAt(LocalDate.of(2025, 10, 1))
+        .repeatType(EventRepeatType.WEEKLY)
+        .anniversary(false)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .build();
+
+    LocalDate from = LocalDate.of(2025, 7, 1);
+    LocalDate to   = LocalDate.of(2025, 10, 29);
+
+    given(eventRepository.findCandidates(eq(matchId), eq(userId), eq(from), eq(to), isNull(), isNull()))
+        .willReturn(List.of(weekly));
+
+    // when: page=1,size=2 → [10/15, 10/22] 기대
+    Page<EventResponse> page = eventService.listEvents(
+        matchId, userId, from, to, null, null, PageRequest.of(1, 2)
+    );
+
+    // then
+    assertThat(page.getTotalElements()).isEqualTo(5);
+    assertThat(page.getContent()).extracting(EventResponse::getEventAt)
+        .containsExactly(
+            LocalDate.of(2025, 10, 15),
+            LocalDate.of(2025, 10, 22)
+        );
+  }
+
+  @Test
+  @DisplayName("listEvents - 조회 기간 3년 초과 시 예외")
+  void listEvents_range_exceeded_throws() {
+    // given
+    long matchId = 1L, userId = 99L;
+    LocalDate from = LocalDate.of(2020, 1, 1);
+    LocalDate to   = LocalDate.of(2024, 1, 2); // from.plusYears(3) 초과
+
+    // when & then
+    assertThatThrownBy(() ->
+        eventService.listEvents(matchId, userId, from, to, null, null, PageRequest.of(0, 20))
+    ).isInstanceOf(EventListDateRangeExceededException.class);
+
+    // findCandidates 호출되지 않아야 함
+    then(eventRepository).should(never())
+        .findCandidates(anyLong(), anyLong(), any(LocalDate.class), any(LocalDate.class), any(), any());
   }
 }
