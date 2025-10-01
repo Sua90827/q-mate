@@ -1,5 +1,7 @@
 package com.qmate.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -7,6 +9,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -53,7 +56,7 @@ public class GlobalExceptionHandler {
 
   }
 
-  // 컨트롤러에서 타입 미스매치 예외를 처리하는 핸들러
+  // 컨트롤러에서 타입 미스매치 예외를 처리하는 핸들러 (파라미터 전용)
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
     log.warn("파라미터 타입 불일치: {}", ex.getMessage());
@@ -81,6 +84,44 @@ public class GlobalExceptionHandler {
 
     return new ResponseEntity<>(
         new ErrorResponse(errorCode.getCode(), errorCode.getMessage(), errors),
+        errorCode.getHttpStatus()
+    );
+  }
+
+  // 컨트롤러에서 본문(JSON) 파싱/바인딩 실패 예외를 처리하는 핸들러 (RequestBody 전용)
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ErrorResponse> handleJsonEnumMismatch(HttpMessageNotReadableException ex) throws HttpMessageNotReadableException {
+    Throwable cause = ex.getMostSpecificCause();
+
+    if (!(cause instanceof InvalidFormatException ife)) {
+      // enum 케이스가 아니면 전파
+      throw ex;
+    }
+
+    Class<?> targetType = ife.getTargetType();
+    if (targetType == null || !targetType.isEnum()) {
+      // enum 타깃이 아니면 전파
+      throw ex;
+    }
+
+    // enum만 메시지로 가공
+    String field = ife.getPath() == null || ife.getPath().isEmpty()
+        ? "$"
+        : ife.getPath().getLast().getFieldName();
+    String rejected = String.valueOf(ife.getValue());
+    String allowed = java.util.Arrays.stream(targetType.getEnumConstants())
+        .map(Object::toString)
+        .collect(Collectors.joining(", "));
+
+    ErrorCode errorCode = CommonErrorCode.invalidInput();
+    ErrorResponse.FieldErrorDetail detail = new ErrorResponse.FieldErrorDetail(
+        field,
+        String.format("입력값 '%s'은(는) 유효한 %s 값이 아닙니다. 허용 가능한 값: %s",
+            rejected, targetType.getSimpleName(), allowed)
+    );
+
+    return new ResponseEntity<>(
+        new ErrorResponse(errorCode.getCode(), errorCode.getMessage(), java.util.List.of(detail)),
         errorCode.getHttpStatus()
     );
   }
