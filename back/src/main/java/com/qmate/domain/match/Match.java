@@ -77,6 +77,10 @@ public class Match {
   public void setStatus(MatchStatus status) {
     this.status = status;
   }
+  public void setMatchSetting(MatchSetting matchSetting){
+    this.matchSetting = matchSetting;
+  }
+
   public void updateStartDate(LocalDate startDate) {
     this.startDate = startDate.atStartOfDay();
   }

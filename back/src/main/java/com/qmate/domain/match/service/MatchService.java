@@ -62,6 +62,8 @@ public class MatchService {
     LocalDateTime startDateTime = parseStartDate(request.getRelationType(), request.getStartDate());
     Match newMatch = Match.create(request.getRelationType(), startDateTime);
     MatchMember inviterMember = MatchMember.create(inviter, newMatch);
+    MatchSetting newMatchSetting = new MatchSetting(newMatch);
+    newMatch.setMatchSetting(newMatchSetting);
 
     matchRepository.save(newMatch);
     matchMemberRepository.save(inviterMember);
