@@ -6,6 +6,11 @@ import TextInput from '../common/TextInput';
 import { Button } from '../common/Button';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useLoginUser } from '@/hooks/useLogin';
+import { useRouter } from 'next/navigation';
+import NoticeModal from '../common/NoticeModal';
+import LoadingCircleSpinner from '../common/LoadingCircleSpinner';
+import { useMatchIdStore } from '@/store/useMatchIdStore';
 
 /* .test() -> true/false 반환 */
 const validateEmail = (v: string) => /\S+@\S+\.\S+/.test(v);
@@ -15,21 +20,67 @@ const validatePassword = (v: string) =>
 export default function Login() {
   const [isEmailValid, setEmailValid] = useState(false);
   const [isPasswordValid, setPasswordValid] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [open, setOpen] = useState(false);
   const isFormValid = isEmailValid && isPasswordValid;
+  const router = useRouter();
+  const setMatchId = useMatchIdStore((state) => state.setMatchId);
+
+  const { mutate: loginUserMutate, isPending: isLoginLoading } = useLoginUser();
+
+  const HandleLogin = () => {
+    loginUserMutate(
+      { email, password },
+      {
+        onSuccess: (data) => {
+          if (data.user.currentMatchId !== null) {
+            setMatchId(data.user.currentMatchId);
+            router.push('/main');
+          } else {
+            router.push('/invite');
+          }
+        },
+        onError: () => {
+          setOpen(true);
+        },
+      },
+    );
+  };
 
   return (
-    <div className=" w-full h-full flex flex-col gap-3 items-center justify-center ">
+    <div className=" w-full h-full flex flex-col gap-3 items-center justify-center">
+      {/* 로딩 오버레이 */}
+      {isLoginLoading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
+          <LoadingCircleSpinner />
+        </div>
+      )}
       <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={173} height={55} />
 
       <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">
-        <TextInput label="이메일" validate={validateEmail} setActive={setEmailValid} />
+        <TextInput
+          label="이메일"
+          value={email}
+          validate={validateEmail}
+          setActive={setEmailValid}
+          onChange={(e) => setEmail(e)}
+        />
         <TextInput
           label="비밀번호"
+          value={password}
           type="password"
           validate={validatePassword}
           setActive={setPasswordValid}
+          onChange={(p) => setPassword(p)}
         />
-        <Button className="w-[295px]" disabled={!isFormValid} variant="primary">
+
+        <Button
+          className="w-[295px]"
+          disabled={!isFormValid}
+          variant="primary"
+          onClick={HandleLogin}
+        >
           로그인
         </Button>
       </form>
@@ -45,6 +96,18 @@ export default function Login() {
       </Button>
       <GoogleBtn />
       <NaverBtn />
+
+      <NoticeModal
+        open={open}
+        setOpen={setOpen}
+        title={
+          <>
+            로그인에 실패했습니다.
+            <br /> 입력 정보를 다시 확인해주세요.
+          </>
+        }
+        danger
+      />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { Button } from '../common/Button';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCreateCustomQuestion, useUpdateCustomQuestion } from '@/hooks/useCustom';
+import { useMatchIdStore } from '@/store/useMatchIdStore';
 
 export default function Custom({ value }: { value?: string }) {
   const [text, setText] = useState(value ?? '');
@@ -12,6 +13,7 @@ export default function Custom({ value }: { value?: string }) {
   const router = useRouter();
   const params = useSearchParams();
   const id = Number(params.get('id')?.replace('custom-', ''));
+  const matchId = useMatchIdStore((state) => state.matchId);
 
   const {
     mutate: createCustomMutate,
@@ -26,7 +28,8 @@ export default function Custom({ value }: { value?: string }) {
   } = useUpdateCustomQuestion();
 
   const handleCreate = () => {
-    createCustomMutate({ text: text, matchId: 1 });
+    createCustomMutate({ text: text, matchId: matchId! });
+    console.log('매치아이디', matchId);
     if (isCreateError) {
     } else {
       router.push('/record');
