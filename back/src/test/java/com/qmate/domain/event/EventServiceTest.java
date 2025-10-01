@@ -1,4 +1,4 @@
-package com.qmate.domain.event.service;
+package com.qmate.domain.event;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,8 +11,10 @@ import com.qmate.domain.event.entity.Event;
 import com.qmate.domain.event.entity.EventAlarmOption;
 import com.qmate.domain.event.entity.EventRepeatType;
 import com.qmate.domain.event.repository.EventRepository;
+import com.qmate.domain.event.service.EventService;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.repository.MatchRepository;
+import com.qmate.exception.custom.event.EventNotFoundException;
 import com.qmate.exception.custom.matchinstance.MatchNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -96,5 +98,53 @@ class EventServiceTest {
     // expect
     assertThatThrownBy(() -> eventService.createEvent(matchId, userId, req))
         .isInstanceOf(MatchNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("상세 조회 - 성공")
+  void getEvent_success() {
+    // given
+    Long matchId = 1L, userId = 99L, eventId = 10L;
+
+    Match match = Match.builder().id(matchId).build();
+    Event event = Event.builder()
+        .id(eventId)
+        .match(match)
+        .title("제목")
+        .description("설명")
+        .eventAt(LocalDate.of(2025, 10, 9))
+        .repeatType(EventRepeatType.NONE)
+        .alarmOption(EventAlarmOption.WEEK_BEFORE)
+        .anniversary(false)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .build();
+
+    given(eventRepository.findAuthorizedById(matchId, userId, eventId))
+        .willReturn(Optional.of(event));
+
+    // when
+    EventResponse res = eventService.getEvent(matchId, userId, eventId);
+
+    // then
+    assertThat(res.getEventId()).isEqualTo(eventId);
+    assertThat(res.getTitle()).isEqualTo("제목");
+    assertThat(res.getRepeatType()).isEqualTo(EventRepeatType.NONE);
+    assertThat(res.getAlarmOption()).isEqualTo(EventAlarmOption.WEEK_BEFORE);
+
+    then(eventRepository).should().findAuthorizedById(matchId, userId, eventId);
+  }
+
+  @Test
+  @DisplayName("상세 조회 - 권한/존재 실패 시 404")
+  void getEvent_notFound() {
+    // given
+    Long matchId = 1L, userId = 99L, eventId = 10L;
+    given(eventRepository.findAuthorizedById(matchId, userId, eventId))
+        .willReturn(Optional.empty());
+
+    // expect
+    assertThatThrownBy(() -> eventService.getEvent(matchId, userId, eventId))
+        .isInstanceOf(EventNotFoundException.class);
   }
 }
