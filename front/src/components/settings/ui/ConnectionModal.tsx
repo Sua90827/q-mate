@@ -15,7 +15,7 @@ type Props = {
   open: boolean;
   setIsOpen: (open: boolean) => void;
   onClick: () => Promise<void> | void; // returns 0~23
-  status: 'ACTIVE' | 'DETACHED_PENDING_DELETE';
+  status: 'ACTIVE' | 'WAITING';
   loading: boolean;
 };
 export default function ConnectionModal({ open, setIsOpen, onClick, status, loading }: Props) {
