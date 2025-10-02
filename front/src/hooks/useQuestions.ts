@@ -3,7 +3,6 @@ import { fetchQuestions, fetchQuestionDetail, fetchTodayQuestion } from '../api/
 import { QuestionResponse } from '@/types/questionType';
 
 //전체 질문 조회
-
 export const useQuestions = (matchId: number, page: number = 0, size: number = 20) => {
   return useQuery<QuestionResponse>({
     queryKey: ['questions', matchId, page, size], // 의존성에 page, size 포함

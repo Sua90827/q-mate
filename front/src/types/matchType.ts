@@ -1,6 +1,8 @@
 export interface MatchUser {
   userId: number;
   nickname: string;
+  me: boolean;
+  agreed: boolean;
 }
 
 export interface MatchInfo {

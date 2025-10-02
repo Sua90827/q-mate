@@ -32,3 +32,9 @@ export const restoreMatch = async (matchId: number) => {
   const res = await axios.post(`/api/matches/${matchId}/restore`);
   return res.data as { message: string };
 };
+
+//매칭 정보 업데이트 (닉네임 변경)
+export const updateNickname = async (nickname: string) => {
+  const res = await axios.patch('/api/users/me/nickname', { nickname });
+  return res.data;
+};
