@@ -1,5 +1,6 @@
 package com.qmate.api;
 
+import com.qmate.common.constants.user.UserProfileConstants;
 import com.qmate.domain.user.ProfileService;
 import com.qmate.security.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users/me")
-@Tag(name = "UserProfile", description = "User 데이터 변경 API")
+@Tag(name = "User Profile", description = "User 데이터 변경 API")
 public class UserProfileController {
   private final ProfileService profileService;
 
   @PatchMapping("/profile")
   @Operation(
       summary = "프로필 데이터 수정(nickname, birthdate)",
-      description = ""
+      description = UserProfileConstants.PROFILE_MD
   )
   public UpdateProfileRes updateProfile(@AuthenticationPrincipal UserPrincipal me,
       @RequestBody UpdateProfileReq req) {
@@ -33,7 +34,7 @@ public class UserProfileController {
   @PatchMapping("/nickname")
   @Operation(
       summary = "별명만 수정",
-      description = ""
+      description = UserProfileConstants.NICKNAME_MD
   )
   public UpdateProfileRes updateNickname(@AuthenticationPrincipal UserPrincipal me, @RequestBody UpdateNicknameReq req) {
     boolean updated = profileService.updateProfile(me.userId(), normalizeNick(req.nickname()), null);

@@ -1,7 +1,6 @@
 package com.qmate.api;
 
 import com.qmate.common.constants.auth.AuthConstants;
-import com.qmate.common.constants.question.QuestionCategoryConstants;
 import com.qmate.domain.auth.AuthService;
 import com.qmate.domain.auth.EmailVerificationService;
 import com.qmate.domain.auth.model.request.LoginRequest;
