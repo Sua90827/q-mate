@@ -5,6 +5,7 @@ import {
   fetchEventDetail,
   fetchEventMonth,
   fetchScheduleList,
+  updateSchedule,
 } from '@/api/schedule';
 import { EventMonthResponse, ScheduleEvent, ScheduleResponse } from '@/types/scheduleType';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -64,5 +65,35 @@ export const useEventDetail = (matchId: number, eventId: number) => {
     gcTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
+  });
+};
+
+// 스케줄 수정
+export const useUpdateSchedule = (matchId: number, eventId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: {
+      title: string;
+      description: string | null; // nullable
+      eventAt: string; // YYYY-MM-DD
+      repeatType: 'NONE' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+      alarmOption: 'NONE' | 'WEEK_BEFORE' | 'THREE_DAYS_BEFORE' | 'SAME_DAY';
+    }) =>
+      updateSchedule({
+        matchId,
+        eventId,
+        title: body.title,
+        description: body.description ?? undefined,
+        eventAt: body.eventAt,
+        repeatType: body.repeatType,
+        alarmOption: body.alarmOption,
+      }),
+
+    onSuccess: (updated) => {
+      queryClient.setQueryData(['eventDetail', matchId, eventId], updated);
+      queryClient.invalidateQueries({ queryKey: ['schedule'] });
+      queryClient.invalidateQueries({ queryKey: ['calendarMonth'] });
+    },
   });
 };
