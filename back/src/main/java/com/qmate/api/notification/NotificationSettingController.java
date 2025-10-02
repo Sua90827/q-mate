@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/push-settings")
+@RequestMapping("/api/notifications/settings")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Push Setting", description = "알림 설정 관련 API")
-public class PushSettingController {
+@Tag(name = "Notification Setting", description = "알림 설정 관련 API")
+public class NotificationSettingController {
 
   private final PushSettingService pushSettingService;
 
