@@ -1,8 +1,10 @@
 package com.qmate.domain.user;
 
+import com.qmate.exception.custom.matchinstance.UserNotFoundException;
 import com.qmate.exception.custom.user.BirthDateInFutureException;
 import com.qmate.exception.custom.user.NicknameTooLongException;
 import java.time.LocalDate;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,5 +35,10 @@ public class ProfileService {
       }
     }
     return changed;
+  }
+
+  public String findValue(Long userId) {
+    User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    return user.getNickname();
   }
 }
