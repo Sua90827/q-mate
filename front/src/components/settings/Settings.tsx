@@ -46,7 +46,7 @@ export default function Settings() {
     },
     {
       id: 'disconnect',
-      label: matchInfo?.status === 'Active' ? '연결 끊기' : '연결 복구',
+      label: matchInfo?.status === 'ACTIVE' ? '연결 끊기' : '연결 복구',
       type: 'modal',
       onClick: () => setModal('disconnect'),
     },
@@ -111,9 +111,9 @@ export default function Settings() {
         <ConnectionModal
           open={modal === 'disconnect'}
           setIsOpen={(open) => setModal(open ? 'disconnect' : null)}
-          onClick={matchInfo.status === 'Active' ? handleDisconnect : handleRestore}
+          onClick={matchInfo.status === 'ACTIVE' ? handleDisconnect : handleRestore}
           status={matchInfo.status}
-          loading={matchInfo.status === 'Active' ? loading.isDisconnecting : loading.isRestoring}
+          loading={matchInfo.status === 'ACTIVE' ? loading.isDisconnecting : loading.isRestoring}
         />
       )}
     </div>
