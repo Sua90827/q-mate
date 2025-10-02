@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BellBtn from '../common/BellBtn';
 import { ChevronRight, UserRoundPen } from 'lucide-react';
 import { Switch } from '../ui/switch';
@@ -10,25 +10,38 @@ import QuestionTimeModal from './ui/QuestionTimeModal';
 import { useMatchInfo } from '@/hooks/useMatches';
 import { useSettingsActions } from '@/hooks/useSettingsAction';
 import ConnectionModal from './ui/ConnectionModal';
+import { useMatchIdStore } from '@/store/useMatchIdStore';
 
 type SettingItem =
   | { id: string; label: string; subLabel?: string; type: 'modal'; onClick: () => void }
   | { id: string; label: string; type: 'switch' };
 
 export default function Settings() {
+  const matchId = useMatchIdStore((state) => state.matchId);
+  const { data: matchInfo } = useMatchInfo(matchId!);
+  const user = matchInfo?.users.find((u) => u.me);
   const [modal, setModal] = useState<string | null>(null);
   const [isChecked, setIsChecked] = useState(false);
-  //match id추가 필요
-  const { data: matchInfo } = useMatchInfo(333);
 
-  const { handleSaveTime, handleDisconnect, handleRestore, loading } = useSettingsActions(333, () =>
-    setModal(null),
+  const [nickname, setNickname] = useState<string>('');
+
+  useEffect(() => {
+    if (user?.nickname) {
+      setNickname(user.nickname);
+    }
+  }, [user]);
+
+  const { handleSaveTime, handleDisconnect, handleRestore, loading } = useSettingsActions(
+    matchId!,
+    () => setModal(null),
   );
+
+  if (!user) return;
 
   const settings: SettingItem[] = [
     {
       id: 'profile',
-      label: '조용한 유령',
+      label: nickname!,
       subLabel: '닉네임 수정하기',
       type: 'modal',
       onClick: () => setModal('profile'),
@@ -100,7 +113,14 @@ export default function Settings() {
 
       <Button className="w-[295px] mt-10">로그아웃</Button>
 
-      {modal === 'profile' && <NicknameModal open={modal} setIsOpen={setModal} />}
+      {modal === 'profile' && (
+        <NicknameModal
+          open={modal}
+          setIsOpen={setModal}
+          nickname={nickname!}
+          setNickname={setNickname}
+        />
+      )}
       <QuestionTimeModal
         open={modal === 'time'}
         setIsOpen={(open) => setModal(open ? 'time' : null)}
