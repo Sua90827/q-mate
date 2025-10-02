@@ -105,7 +105,7 @@ export default function SignupForm({
                 {...register('password')}
               />
             </FormControl>
-            <p className="text-14 text-dash pl-1">8자 이상 영문, 숫자, 특수 문자를 사용하세요.</p>
+
             <FormMessage className="text-xs">{errors.password?.message}</FormMessage>
           </FormItem>
         )}
