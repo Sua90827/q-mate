@@ -1,8 +1,7 @@
-package com.qmate.api;
+package com.qmate.api.match;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -10,12 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.qmate.AuthTestUtils;
 import com.qmate.SecuritySliceTestConfig;
+import com.qmate.api.MatchController;
 import com.qmate.common.constants.match.MatchConstants;
 import com.qmate.domain.match.service.MatchService;
-import com.qmate.exception.custom.matchinstance.MatchForbiddenException;
-import com.qmate.exception.custom.matchinstance.MatchNotFoundException;
 import com.qmate.exception.custom.matchinstance.MatchRecoveryExpiredException;
-import com.qmate.exception.custom.matchinstance.MatchStateConflictException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

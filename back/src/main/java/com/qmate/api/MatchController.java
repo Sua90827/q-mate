@@ -42,7 +42,7 @@ public class MatchController {
   @PostMapping
   @Operation(
       summary = "매칭 초대코드 발급",
-      description = "로그인한 매칭 요청자가 초대코드 발급합니다."
+      description = MatchConstants.CREATE_MATCH_MD
   )
   public ResponseEntity<MatchCreationResponse> createMatch(
       @RequestBody @Valid MatchCreationRequest request,
@@ -60,7 +60,7 @@ public class MatchController {
   @PostMapping("/join")
   @Operation(
       summary = "매칭 참여 초대코드 입력",
-      description = "로그인한 초대코드 전달받은 자가 초대코드 입력합니다. "
+      description = MatchConstants.JOIN_MATCH_MD
   )
   public ResponseEntity<MatchJoinResponse> joinMatch(
       @RequestBody @Valid MatchJoinRequest request,
@@ -82,7 +82,7 @@ public class MatchController {
   @GetMapping("{matchId}")
   @Operation(
       summary = "매칭 정보 조회",
-      description = "특정 매칭의 상세 정보(관계 유형, 구성원, 시작일 등)를 조회합니다."
+      description = MatchConstants.GET_MATCH_INFO_MD
   )
   public ResponseEntity<MatchInfoResponse> getMatchInfo(
       @PathVariable Long matchId,
@@ -97,7 +97,7 @@ public class MatchController {
   @GetMapping("/{matchId}/members")
   @Operation(
       summary = "특정 매칭의 구성원 목록 조회",
-      description = "매칭 구성원 목록을 조회하는 API. 두 사람의 닉네임, 생일, 요청자 본인 유무, 복구동의 유무 등 멤버 정보를 불러올 때 사용합니다."
+      description = MatchConstants.GET_MATCH_MEMBERS_MD
   )
   public ResponseEntity<MatchMembersResponse> getMatchMembers(
       @PathVariable Long matchId,
@@ -118,7 +118,7 @@ public class MatchController {
   @PatchMapping("/{matchId}/info")
   @Operation(
       summary = "특정 매칭의 정보를 업데이트 합니다.",
-      description = "특정 매칭 정보를 업데이트하는 API. 매칭이 성립된 후, 질문 받는 시간 등 설정을 변경할 때 사용합니다. "
+      description = MatchConstants.UPDATE_MATCH_INFO_MD
   )
   public ResponseEntity<Void> updateMatchInfo(
       @PathVariable Long matchId,
@@ -134,7 +134,7 @@ public class MatchController {
   @PostMapping("/{matchId}/disconnect")
   @Operation(
       summary = "매칭 연결을 끊습니다.",
-      description = "매칭을 종료하는 API. 사용자가 의도적으로 연결을 끊을 때 사용하며, 즉시 데이터가 삭제되는 것이 아니라 유예기간이 시작됩니다."
+      description = MatchConstants.DISCONNECT_MATCH_MD
   )
   public ResponseEntity<MatchActionResponse> disconnectMatch(
       @PathVariable Long matchId,
@@ -149,7 +149,7 @@ public class MatchController {
   @PostMapping("/{matchId}/restore")
   @Operation(
       summary = "매칭 연결 복구",
-      description = "2주 유예 기간 내에 매칭을 복구합니다."
+      description = MatchConstants.RESTORE_MATCH_MD
   )
   public ResponseEntity<MatchActionResponse> restoreMatch(
       @PathVariable Long matchId,
@@ -181,7 +181,7 @@ public class MatchController {
   @GetMapping("/detached-status")
   @Operation(
       summary = "복구 가능한 '연결 끊김' 상태의 매칭 조회",
-      description = "현재 로그인한 사용자가 복구 가능한 '연결 끊김' 상태의 매칭을 가지고 있는지 조회합니다."
+      description = MatchConstants.GET_DETACHED_STATUS_MD
   )
   public ResponseEntity<DetachedMatchStatusResponse> getDetachedMatchStatus(
       @AuthenticationPrincipal UserPrincipal principal

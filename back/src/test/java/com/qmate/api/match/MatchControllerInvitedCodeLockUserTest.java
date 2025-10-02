@@ -1,4 +1,4 @@
-package com.qmate.api;
+package com.qmate.api.match;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.qmate.AuthTestUtils;
 import com.qmate.SecuritySliceTestConfig;
+import com.qmate.api.MatchController;
 import com.qmate.domain.match.model.response.LockStatusResponse;
 import com.qmate.domain.match.service.MatchService;
 import org.junit.jupiter.api.DisplayName;
