@@ -1,17 +1,18 @@
 'use client';
 import { useDeleteSchedule, useScheduleList } from '@/hooks/useSchedule';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
-import { X } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
 import DeleteBtn from '../common/DeleteBtn';
 import PrevBtn from '../common/PrevBtn';
 import NextBtn from '../common/NextBtn';
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function ScheduleListWeb() {
   const matchId = useMatchIdStore((state) => state.matchId);
   const { data, isLoading, isError } = useScheduleList(matchId!);
   const [page, setPage] = useState<number>(0);
+  const router = useRouter();
   const pageSize = 20;
 
   const schedules = data?.content ?? [];
@@ -69,7 +70,7 @@ export default function ScheduleListWeb() {
               key={list.eventId}
               className="flex justify-between lists-center px-4 py-3 items-center"
             >
-              <div>
+              <div className="flex-1" onClick={() => router.push(`/schedule/edit/${list.eventId}`)}>
                 <span className="font-bold text-16">{list.title}</span>
                 <span className="block text-text-secondary font-normal">{list.eventAt}</span>
               </div>
