@@ -42,7 +42,7 @@ export default function SignupFormController() {
       const res = await sendCode.mutateAsync({ email, purpose: 'SIGNUP' });
       if (res && res.sent === true) {
         setIsCodeSent(true);
-        SuccessToast('인증 코드를 전송했습니다.', 'text-primary border-primary bg-bg-auth');
+        SuccessToast('인증 코드를 전송했습니다.', 'text-primary border-primary');
       } else {
         setIsCodeSent(false);
         ErrorToast('코드 전송에 실패했습니다.');
