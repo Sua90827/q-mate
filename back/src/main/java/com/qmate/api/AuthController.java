@@ -1,5 +1,7 @@
 package com.qmate.api;
 
+import com.qmate.common.constants.auth.AuthConstants;
+import com.qmate.common.constants.question.QuestionCategoryConstants;
 import com.qmate.domain.auth.AuthService;
 import com.qmate.domain.auth.EmailVerificationService;
 import com.qmate.domain.auth.model.request.LoginRequest;
@@ -9,6 +11,8 @@ import com.qmate.domain.user.model.request.RegisterRequest;
 import com.qmate.domain.user.model.response.RegisterResponse;
 import com.qmate.exception.custom.auth.OkTokenInvalidException;
 import com.qmate.security.UserPrincipal;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Auth", description = "인증 관련 API")
 public class AuthController {
 
   private final UserService userService;
@@ -32,6 +37,10 @@ public class AuthController {
   private final AuthService authService;
 
   @PostMapping("/register")
+  @Operation(
+      summary = "자체 회원가입",
+      description = AuthConstants.CREATE_MD
+  )
   public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest req){
     //ok 토큰 소비
     if(!emailVerificationService.consumeOkToken(req.getEmailVerifiedToken(), "signup", req.getEmail())){
