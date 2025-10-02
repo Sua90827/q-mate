@@ -1,38 +1,35 @@
+// RepeatSelector.tsx
 'use client';
 import { useState } from 'react';
 import OptionBtn from './OptionBtn';
+
 interface LabelProps {
   titleLabel: string;
-  option1: string;
-  option2: string;
-  option3: string;
-  option4: string;
+  options: { label: string; value: string }[]; // label은 한글, value는 서버용
+  onChange?: (value: string) => void;
 }
 
-export default function RepeatSelector({
-  titleLabel,
-  option1,
-  option2,
-  option3,
-  option4,
-}: LabelProps) {
-  const [selected, setSelected] = useState(option1);
+export default function RepeatSelector({ titleLabel, options, onChange }: LabelProps) {
+  const [selected, setSelected] = useState<string>(options[0].value);
+
+  const handleClick = (value: string) => {
+    setSelected(value);
+    onChange?.(value); // 부모에 서버용 value 전달
+  };
 
   return (
-    <>
-      <div className="flex flex-col gap-2 w-full">
-        <label className="text-18 text-theme-primary">{titleLabel}</label>
-        <div className="flex gap-x-3 sm:gap-x-5 shadow-box p-3 w-full">
-          {[option1, option2, option3, option4].map((opt) => (
-            <OptionBtn
-              key={opt}
-              label={opt}
-              active={selected === opt}
-              onClick={() => setSelected(opt)}
-            />
-          ))}
-        </div>
+    <div className="flex flex-col gap-2 w-full">
+      <label className="text-18 text-theme-primary">{titleLabel}</label>
+      <div className="flex gap-x-3 sm:gap-x-5 shadow-box p-3 w-full">
+        {options.map((opt) => (
+          <OptionBtn
+            key={opt.value}
+            label={opt.label}
+            active={selected === opt.value}
+            onClick={() => handleClick(opt.value)}
+          />
+        ))}
       </div>
-    </>
+    </div>
   );
 }

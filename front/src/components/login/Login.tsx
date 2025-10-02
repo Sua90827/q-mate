@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { useLoginUser } from '@/hooks/useLogin';
 import { useRouter } from 'next/navigation';
 import NoticeModal from '../common/NoticeModal';
-import LoadingCircleSpinner from '../common/LoadingCircleSpinner';
+import Loader from '../common/Loader';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 
 /* .test() -> true/false 반환 */
@@ -53,7 +53,7 @@ export default function Login() {
       {/* 로딩 오버레이 */}
       {isLoginLoading && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-          <LoadingCircleSpinner />
+          <Loader />
         </div>
       )}
       <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={173} height={55} />

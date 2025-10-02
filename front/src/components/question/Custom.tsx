@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCreateCustomQuestion, useUpdateCustomQuestion } from '@/hooks/useCustom';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
+import { ErrorToast } from '../common/CustomToast';
 
 export default function Custom({ value }: { value?: string }) {
   const [text, setText] = useState(value ?? '');
@@ -31,6 +32,7 @@ export default function Custom({ value }: { value?: string }) {
     createCustomMutate({ text: text, matchId: matchId! });
     console.log('매치아이디', matchId);
     if (isCreateError) {
+      ErrorToast('질문이 등록되지 않았습니다. 다시 시도해 주세요.');
     } else {
       router.push('/record');
     }
@@ -39,6 +41,7 @@ export default function Custom({ value }: { value?: string }) {
   const handleUpdate = () => {
     updateCustomMutate({ text: text, id: id });
     if (isUpdateError) {
+      ErrorToast('질문이 수정되지 않았습니다. 다시 시도해 주세요.');
     } else {
       router.push('/question/list');
     }

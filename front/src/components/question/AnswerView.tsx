@@ -12,7 +12,7 @@ type Props = {
 function AnswerView({ questionText, myContent, partnerContent, nickname, partnerNickname }: Props) {
   const captureID = 'answerView';
   return (
-    <div className="pt-[70px] relative flex flex-col items-center w-full sm:w-[400px] h-[550px] bg-secondary rounded-md shadow-md">
+    <div className="pt-[70px] relative flex flex-col items-center w-full h-full sm:w-[400px] sm:h-[550px] bg-secondary rounded-md shadow-md">
       <div id={captureID} className="w-full h-full flex flex-col p-10">
         <p className="text-text-secondary pt-5">#01</p>
         <h2 className="text-24 font-bold">{questionText}</h2>

@@ -10,7 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 //조회
 export const useFetchCustomQuestions = (matchId: number, page: number = 0, size: number = 20) => {
   return useQuery<CustomQuestionPage>({
-    queryKey: ['customQuestions', matchId, page, size], // 캐시 키에 page, size 포함
+    queryKey: ['customQuestions', matchId, page, size],
     queryFn: () => fetchCustomQuestions(matchId, page, size),
     staleTime: 0,
     gcTime: 1000 * 60 * 10,
