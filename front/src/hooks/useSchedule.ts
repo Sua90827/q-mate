@@ -1,6 +1,12 @@
 'use client';
-import { createSchedule, deleteSchedule, fetchEventMonth, fetchScheduleList } from '@/api/schedule';
-import { EventMonthResponse, ScheduleResponse } from '@/types/scheduleType';
+import {
+  createSchedule,
+  deleteSchedule,
+  fetchEventDetail,
+  fetchEventMonth,
+  fetchScheduleList,
+} from '@/api/schedule';
+import { EventMonthResponse, ScheduleEvent, ScheduleResponse } from '@/types/scheduleType';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 //스케줄 리스트 조회
@@ -47,5 +53,16 @@ export const useEventMonth = (year: number, month: number) => {
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 10,
     gcTime: 1000 * 60 * 60,
+  });
+};
+export const useEventDetail = (matchId: number, eventId: number) => {
+  return useQuery<ScheduleEvent>({
+    queryKey: ['eventDetail', matchId, eventId],
+    queryFn: () => fetchEventDetail(matchId, eventId),
+    enabled: Number.isFinite(matchId) && Number.isFinite(eventId),
+    staleTime: 1000 * 30,
+    gcTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   });
 };

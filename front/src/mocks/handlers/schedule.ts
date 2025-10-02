@@ -66,6 +66,20 @@ export const scheduleHandlers = [
       { status: 200 },
     );
   }),
+  // 일정 상세 조회
+  http.get('/api/matches/:matchId/events/:eventId', async () => {
+    return HttpResponse.json({
+      eventId: 1,
+      title: '회의',
+      description: '팀 회의',
+      eventAt: '2025-10-20',
+      repeatType: 'NONE',
+      alarmOption: 'SAME_DAY',
+      isAnniversary: false,
+      createdAt: '2025-09-10T09:00:00',
+      updatedAt: '2025-09-15T12:00:00',
+    });
+  }),
 
   // 등록
   http.post('/api/matches/:matchId/events', async ({ request }) => {

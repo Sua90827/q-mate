@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { EventMonthResponse, ScheduleResponse } from '@/types/scheduleType';
+import { EventMonthResponse, ScheduleEvent, ScheduleResponse } from '@/types/scheduleType';
 
 //일정리스트 조회
 export const fetchScheduleList = async (matchId: number): Promise<ScheduleResponse> => {
@@ -50,4 +50,9 @@ export const fetchEventMonth = async (year: number, month: number): Promise<Even
     params: { year, month },
   });
   return res.data;
+};
+
+export const fetchEventDetail = async (matchId: number, eventId: number) => {
+  const res = await axios.get(`/api/matches/${matchId}/events/${eventId}`);
+  return res.data as ScheduleEvent;
 };
