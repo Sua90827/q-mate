@@ -1,7 +1,7 @@
 interface TextInputProps {
   label?: string;
   type?: string;
-  value: string; // ✅ 추가
+  value: string;
   validate?: (value: string) => boolean;
   setActive: React.Dispatch<React.SetStateAction<boolean>>;
   onChange: (value: string) => void;

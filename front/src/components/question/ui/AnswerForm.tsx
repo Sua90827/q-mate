@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 
 import RatingModal from '../RatingModal';
 import { Button } from '@/components/common/Button';
+import CloseButton from '@/components/common/CloseButton';
+import { useRouter } from 'next/navigation';
 
 type AnswerFormProps = {
   mode: 'create' | 'edit';
@@ -13,13 +15,15 @@ type AnswerFormProps = {
 
 export default function AnswerForm({ questionText, mode }: AnswerFormProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <>
-      <div className="flex justify-center">
-        <Link href="/main" className="absolute py-5 block sm:hidden">
-          <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={94} height={30} />
-        </Link>
+      <div className="w-full relative top-0 h-[70px] flex justify-center items-center sm:hidden">
+        <img alt="큐메이트" width={109} height={35} className="site-logo" />
+        <div className="absolute  top-5 right-5 sm:hidden ">
+          <CloseButton onClick={() => router.push('/question/list')} />
+        </div>
       </div>
       <div className="flex flex-col items-center justify-center h-full bg-gradient-sub gap-10">
         <div className="flex flex-col h-[246px] gap-8">

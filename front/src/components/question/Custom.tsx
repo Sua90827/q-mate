@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCreateCustomQuestion, useUpdateCustomQuestion } from '@/hooks/useCustom';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { ErrorToast } from '../common/CustomToast';
+import CloseButton from '../common/CloseButton';
 
 export default function Custom({ value }: { value?: string }) {
   const [text, setText] = useState(value ?? '');
@@ -30,7 +31,6 @@ export default function Custom({ value }: { value?: string }) {
 
   const handleCreate = () => {
     createCustomMutate({ text: text, matchId: matchId! });
-    console.log('매치아이디', matchId);
     if (isCreateError) {
       ErrorToast('질문이 등록되지 않았습니다. 다시 시도해 주세요.');
     } else {
@@ -50,10 +50,13 @@ export default function Custom({ value }: { value?: string }) {
   return (
     <>
       {hideLogo ? null : (
-        <div className="flex justify-center h-[70px] items-center sm:hidden">
+        <div className="w-full relative flex justify-center h-[70px] items-center sm:hidden">
           <Link href="/main">
             <img alt="큐메이트" width={109} height={35} className="site-logo sm:hidden" />
           </Link>
+          <div className="absolute right-4">
+            <CloseButton onClick={() => router.push('/record')} />
+          </div>
         </div>
       )}
 
@@ -73,12 +76,12 @@ export default function Custom({ value }: { value?: string }) {
               <Link href="/question/list">취소하기</Link>
             </Button>
             {value ? (
-              <Button size="lg" className="w-[140px]" onClick={handleUpdate}>
-                수정하기
+              <Button size="lg" className="w-[140px]" onClick={handleUpdate} disabled={isUpdating}>
+                {isUpdating ? '수정 중...' : '수정하기'}
               </Button>
             ) : (
-              <Button size="lg" className="w-[140px]" onClick={handleCreate}>
-                등록하기
+              <Button size="lg" className="w-[140px]" onClick={handleCreate} disabled={isCreating}>
+                {isCreating ? '등록 중...' : '등록하기'}
               </Button>
             )}
           </div>

@@ -7,7 +7,7 @@ import React from 'react';
 
 export default function page() {
   return (
-    <div className=" pt-[35px] w-full h-full">
+    <div className="sm:pt-[35px] w-full h-full">
       <div className="flex w-full h-[70px] items-center justify-between sm:hidden">
         <Link href="/schedule/list" aria-label="일정 리스트로 이동">
           <CalendarDays className="text-theme-primary ml-7" />

@@ -11,6 +11,7 @@ export const fetchCustomQuestions = async (
     params: {
       page,
       size,
+      status: 'EDITABLE',
     },
   });
   return res.data;

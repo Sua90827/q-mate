@@ -12,7 +12,7 @@ export default function QuestionListLayout({ children }: { children: React.React
       </aside>
 
       {/* 우측: 라우팅 children */}
-      <section className="flex-1 ">{children}</section>
+      <section className="flex-1 h-full">{children}</section>
     </div>
   );
 }

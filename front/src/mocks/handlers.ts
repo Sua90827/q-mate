@@ -5,6 +5,7 @@ import { matchesHandlers } from './handlers/matches';
 import { questionHandlers } from './handlers/questions';
 import { signupHandlers } from './handlers/signup';
 import { scheduleHandlers } from './handlers/schedule';
+import { chartHandlers } from './handlers/chart';
 
 export const handlers = [
   ...questionHandlers,
@@ -14,5 +15,5 @@ export const handlers = [
   ...authHandlers,
   ...signupHandlers,
   ...scheduleHandlers,
-
+  ...chartHandlers,
 ];

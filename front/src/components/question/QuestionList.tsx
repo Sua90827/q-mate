@@ -40,14 +40,10 @@ export default function QuestionList() {
     completedAt: custom.updatedAt,
   }));
 
-  const editableCustom = normalizedCustomInstances.filter(
-    (instance) => instance.status === 'EDITABLE',
-  );
-
   // 질문 합치기
   const mergedInstances: QuestionList[] = useMemo(
-    () => [...editableCustom, ...questionInstances],
-    [questionInstances, editableCustom],
+    () => [...normalizedCustomInstances, ...questionInstances],
+    [questionInstances, normalizedCustomInstances],
   );
 
   let filteredInstances = mergedInstances;
@@ -61,7 +57,7 @@ export default function QuestionList() {
 
   // 커스텀 수정 가능 필터
   if (showCustomOnly) {
-    filteredInstances = editableCustom;
+    filteredInstances = normalizedCustomInstances;
   }
 
   // 페이지네이션 처리
@@ -98,7 +94,7 @@ export default function QuestionList() {
     <div className="w-full h-full">
       {/* 모바일 */}
       <div className="sm:hidden w-full h-[calc(100vh-70px)] flex flex-col">
-        <div className="flex justify-between items-center h-[70px] px-4">
+        <div className="flex justify-between items-center h-[70px] px-4 flex-shrink-0">
           <FilterBtn setShowCustomOnly={setShowCustomOnly} className="text-theme-primary" />
           <p className="text-20 font-Gumi text-theme-primary">질문 리스트</p>
           <TrashCan onClick={() => setIsDeleteMode((prev) => !prev)} />
@@ -196,7 +192,7 @@ export default function QuestionList() {
           })}
         </ul>
         {/* 페이지네이션 */}
-        <div className="sticky bottom-0 flex justify-between items-center py-3 px-4 border-t border-gray bg-secondary">
+        <div className="sticky bottom-0 flex justify-between items-center py-3 px-4 border-t border-gray bg-secondary rounded-b-md">
           <PrevBtn page={page} setPage={setPage} />
           <div className="bg-calendar w-8 h-8 rounded-full flex justify-center items-center">
             <span>{page + 1}</span>

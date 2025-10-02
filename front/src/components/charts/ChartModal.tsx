@@ -11,7 +11,7 @@ export default function ChartModal() {
 
     const seeMonth = localStorage.getItem('chartModal');
 
-    if (today === 21 && Number(seeMonth) !== month) {
+    if (today === 2 && Number(seeMonth) !== month) {
       setOpen(true);
       localStorage.setItem('chartModal', String(month));
     }
@@ -21,16 +21,8 @@ export default function ChartModal() {
       <DialogContent
         onEscapeKeyDown={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
-        className="w-[285px] h-[350px] z-50 gap-0"
+        className="w-[300px] h-[450px] z-50 !gap-0 !pb-0 !mb-0"
       >
-        <DialogHeader className="pt-8">
-          <DialogTitle className="text-16 font-semibold text-center">
-            큐메이트와 함께 한 저번달
-          </DialogTitle>
-          <DialogDescription className="!text-16 font-semibold text-center text-text-primary">
-            좋아해주신 질문들을 분석해 봤어요!
-          </DialogDescription>
-        </DialogHeader>
         <Chart />
       </DialogContent>
     </Dialog>
