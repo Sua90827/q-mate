@@ -9,6 +9,7 @@ import com.qmate.domain.match.RelationType;
 import com.qmate.domain.match.model.request.MatchCreationRequest;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.model.request.MatchUpdateRequest;
+import com.qmate.domain.match.model.response.DetachedMatchStatusResponse;
 import com.qmate.domain.match.model.response.InviteCodeValidationResponse;
 import com.qmate.domain.match.model.response.LockStatusResponse;
 import com.qmate.domain.match.model.response.MatchCreationResponse;
@@ -250,6 +251,23 @@ public class MatchService {
     return redisHelper.getLockTimeRemaining(userId)
         .map(remainingSeconds -> new LockStatusResponse(true, remainingSeconds)) // 잠겨있다면 (시간이 남아있다면)
         .orElse(new LockStatusResponse(false, 0L)); // 잠겨있지 않다면
+  }
+
+  //복구 가능 매칭 조회
+  @Transactional(readOnly = true)
+  public DetachedMatchStatusResponse getDetachedMatchStatus(Long userId){
+    //QueryDSL로 구현된 커스텀 리포지토리 메서드를 호출
+    Optional<MatchMember> detachedMemberOpt = matchMemberRepository.findDetachedMatchForUser(userId, MatchStatus.DETACHED_PENDING_DELETE);
+
+    if (detachedMemberOpt.isPresent()){
+      // 복구 가능한 매칭이 있다면, 해당 MatchMember에서 Match 객체를 꺼내고,
+      // 그 Match의 ID를 가져와 DTO에 담아 반환합니다.
+      Long matchId = detachedMemberOpt.get().getMatch().getId();
+      return new DetachedMatchStatusResponse(true, matchId);
+    }else {
+      //복구 가능한 매칭 없으면 , false와 null 반환.
+      return new DetachedMatchStatusResponse(false, null);
+    }
   }
 
 

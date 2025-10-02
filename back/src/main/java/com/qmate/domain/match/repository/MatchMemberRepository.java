@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MatchMemberRepository extends JpaRepository<MatchMember, Long> {
+public interface MatchMemberRepository extends JpaRepository<MatchMember, Long>,MatchMemberRepositoryCustom {
 
   Optional<MatchMember> findByMatch_IdAndUser_Id(Long matchId, Long id);
 
