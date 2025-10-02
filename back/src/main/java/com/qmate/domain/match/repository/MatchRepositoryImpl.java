@@ -19,13 +19,15 @@ public class MatchRepositoryImpl implements MatchRepositoryCustom{
     QMatch match = QMatch.match;
     QMatchMember matchMember = QMatchMember.matchMember;
 
+    //기존 두명 다 14일 이상에서, 한명이라도 14일 이상으로 변경.
   return queryFactory
-      .select(match)
+      .select(match).distinct()
       .from(match)
       .join(match.members, matchMember)
-      .where(match.status.eq(MatchStatus.ACTIVE))
-      .groupBy(match.id)
-      .having(matchMember.lastAnsweredAt.max().before(cutoffDate))
+      .where(match.status.eq(MatchStatus.ACTIVE),
+          matchMember.lastAnsweredAt.before(cutoffDate))
+//      .groupBy(match.id)
+//      .having(matchMember.lastAnsweredAt.max().before(cutoffDate))
       .fetch();
   }
 
