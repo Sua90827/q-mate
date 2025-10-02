@@ -1,4 +1,4 @@
-package com.qmate.api;
+package com.qmate.api.match;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -8,8 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.qmate.config.SecurityConfig;
-import com.qmate.domain.auth.JwtService;
+import com.qmate.api.MatchController;
 import com.qmate.domain.match.model.request.MatchUpdateRequest;
 import com.qmate.domain.match.service.MatchService;
 import com.qmate.exception.custom.matchinstance.MatchForbiddenException;
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
