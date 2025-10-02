@@ -35,9 +35,10 @@ public class UserProfileController {
       summary = "별명만 수정",
       description = ""
   )
-  public UpdateProfileRes updateNickname(@AuthenticationPrincipal UserPrincipal me, @RequestBody UpdateNicknameReq req) {
+  public UpdateNicknameRes updateNickname(@AuthenticationPrincipal UserPrincipal me, @RequestBody UpdateNicknameReq req) {
     boolean updated = profileService.updateProfile(me.userId(), normalizeNick(req.nickname()), null);
-    return new UpdateProfileRes(me.userId(), updated);
+    String changedNick = profileService.findValue(me.userId());
+    return new UpdateNicknameRes(me.userId(), updated, changedNick);
   }
 
   private String normalizeNick(String s) {
@@ -53,5 +54,6 @@ public class UserProfileController {
   public record UpdateProfileReq(String nickname, String birthDate) {}
   public record UpdateProfileRes(Long id, boolean updated) {}
   public record UpdateNicknameReq(String nickname) {}
+  public record UpdateNicknameRes(Long id, boolean updated, String nickname) {}
 }
 
