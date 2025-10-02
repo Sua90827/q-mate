@@ -1,4 +1,4 @@
-package com.qmate.api;
+package com.qmate.api.match;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -8,7 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.qmate.AuthTestUtils;
 import com.qmate.SecuritySliceTestConfig;
-import com.qmate.domain.match.model.response.LockStatusResponse;
+import com.qmate.api.MatchController;
+import com.qmate.domain.match.model.response.DetachedMatchStatusResponse;
 import com.qmate.domain.match.service.MatchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(controllers = MatchController.class)
 @AutoConfigureMockMvc
 @Import(SecuritySliceTestConfig.class)
-public class MatchControllerInvitedCodeLockUserTest {
+class MatchControllerDetachedStatusTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -31,34 +32,34 @@ public class MatchControllerInvitedCodeLockUserTest {
   private MatchService matchService;
 
   @Test
-  @DisplayName("잠금 상태 조회 성공: 잠겨있을 때 true와 남은 시간을 응답한다")
-  void getLockStatus_success_whenLocked() throws Exception {
-    // given: 서비스가 '잠겨있음' DTO를 반환하는 상황
+  @DisplayName("복구 가능 매칭 조회 성공: 매칭이 있을 때 true와 matchId를 응답한다")
+  void getDetachedMatchStatus_success_whenMatchExists() throws Exception {
+    // given: 서비스가 '매칭 있음' DTO를 반환하는 상황
     Long requesterId = 1L;
-    var fakeResponse = new LockStatusResponse(true, 3600L);
-    given(matchService.getLockStatus(anyLong())).willReturn(fakeResponse);
+    var fakeResponse = new DetachedMatchStatusResponse(true, 123L);
+    given(matchService.getDetachedMatchStatus(anyLong())).willReturn(fakeResponse);
 
     // expect: API를 호출하면, 200 OK 응답과 DTO 내용이 정확히 와야 함
-    mockMvc.perform(get("/api/matches/lock-status")
+    mockMvc.perform(get("/api/matches/detached-status")
             .with(AuthTestUtils.userPrincipal(requesterId)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.locked").value(true))
-        .andExpect(jsonPath("$.remainingSeconds").value(3600L));
+        .andExpect(jsonPath("$.hasDetachedMatch").value(true))
+        .andExpect(jsonPath("$.matchId").value(123L));
   }
 
   @Test
-  @DisplayName("잠금 상태 조회 성공: 잠겨있지 않을 때 false와 0을 응답한다")
-  void getLockStatus_success_whenNotLocked() throws Exception {
-    // given: 서비스가 '잠겨있지 않음' DTO를 반환하는 상황
+  @DisplayName("복구 가능 매칭 조회 성공: 매칭이 없을 때 false와 null을 응답한다")
+  void getDetachedMatchStatus_success_whenMatchDoesNotExist() throws Exception {
+    // given: 서비스가 '매칭 없음' DTO를 반환하는 상황
     Long requesterId = 2L;
-    var fakeResponse = new LockStatusResponse(false, 0L);
-    given(matchService.getLockStatus(anyLong())).willReturn(fakeResponse);
+    var fakeResponse = new DetachedMatchStatusResponse(false, null);
+    given(matchService.getDetachedMatchStatus(anyLong())).willReturn(fakeResponse);
 
     // expect
-    mockMvc.perform(get("/api/matches/lock-status")
+    mockMvc.perform(get("/api/matches/detached-status")
             .with(AuthTestUtils.userPrincipal(requesterId)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.locked").value(false))
-        .andExpect(jsonPath("$.remainingSeconds").value(0L));
+        .andExpect(jsonPath("$.hasDetachedMatch").value(false))
+        .andExpect(jsonPath("$.matchId").isEmpty());
   }
 }

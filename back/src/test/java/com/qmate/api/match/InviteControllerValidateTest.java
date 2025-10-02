@@ -1,4 +1,4 @@
-package com.qmate.api;
+package com.qmate.api.match;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qmate.AuthTestUtils;
 import com.qmate.SecuritySliceTestConfig;
+import com.qmate.api.InviteController;
 import com.qmate.domain.match.model.request.InviteCodeValidationRequest;
 import com.qmate.domain.match.model.response.InviteCodeValidationResponse;
 import com.qmate.domain.match.service.MatchService;

@@ -1,4 +1,4 @@
-package com.qmate.api;
+package com.qmate.api.match;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.qmate.AuthTestUtils; // ◀◀◀ 1. AuthTestUtils import
 import com.qmate.SecuritySliceTestConfig; // ◀◀◀ 2. SecuritySliceTestConfig import
+import com.qmate.api.MatchController;
 import com.qmate.domain.match.service.MatchService;
 import com.qmate.exception.custom.matchinstance.MatchForbiddenException;
 import com.qmate.exception.custom.matchinstance.MatchNotFoundException;
