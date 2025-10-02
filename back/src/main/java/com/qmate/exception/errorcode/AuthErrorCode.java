@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 public class AuthErrorCode extends ErrorCode {
 
   public static final String INVALID_CREDENTIALS_CODE = "AU_001";
-  private static final String INVALID_CREDENTIALS_MESSAGE = "이메일 또는 비밀번호가 올바르지 않습니다.";
+  public static final String INVALID_CREDENTIALS_MESSAGE = "이메일 또는 비밀번호가 올바르지 않습니다.";
 
   public static final String UNSUPPORTED_PRINCIPAL_TYPE_CODE = "AU_002";
   public static final String UNSUPPORTED_PRINCIPAL_TYPE_MESSAGE = "지원되지 않는 인증 Principal 타입입니다.";

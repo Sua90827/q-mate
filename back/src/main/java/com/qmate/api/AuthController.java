@@ -39,7 +39,7 @@ public class AuthController {
   @PostMapping("/register")
   @Operation(
       summary = "자체 회원가입",
-      description = AuthConstants.CREATE_MD
+      description = AuthConstants.REGISTER_MD
   )
   public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest req){
     //ok 토큰 소비
@@ -53,6 +53,10 @@ public class AuthController {
   }
 
   @PostMapping("/login")
+  @Operation(
+      summary = "자체 로그인",
+      description = AuthConstants.LOGIN_MD
+  )
   public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request){
     LoginResponse tokens = authService.login(request.getEmail(), request.getPassword());
     return ResponseEntity.ok(tokens);
@@ -60,6 +64,9 @@ public class AuthController {
 
   //@PreAuthorize("hasRole('ADMIN')")
   @GetMapping("/session")
+  @Operation(
+      summary = "백단 토큰 데이터 확인용(프론트 작업 필요 X)"
+  )
   public Map<String, Object> session(@AuthenticationPrincipal UserPrincipal me){
     var map = new java.util.LinkedHashMap<String, Object>();
     map.put("userId", me.userId());
