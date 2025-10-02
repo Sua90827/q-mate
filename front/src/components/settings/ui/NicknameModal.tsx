@@ -2,7 +2,7 @@ import { Button } from '@/components/common/Button';
 import { ErrorToast } from '@/components/common/CustomToast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useUpdateNickname } from '@/hooks/useSetting';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface nicknameModal {
   open: string;
@@ -29,9 +29,11 @@ export default function NicknameModal({ open, setIsOpen, nickname, setNickname }
     });
   };
 
-  if (updateError) {
-    ErrorToast('닉네임 변경에 실패했습니다. 다시 시도해주세요.');
-  }
+  useEffect(() => {
+    if (updateError) {
+      ErrorToast('닉네임 변경에 실패했습니다. 다시 시도해주세요.');
+    }
+  }, [updateError]);
 
   return (
     <Dialog open={open === 'profile'} onOpenChange={() => {}}>
