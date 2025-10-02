@@ -7,6 +7,7 @@ import com.qmate.domain.auth.model.response.LoginResponse;
 import com.qmate.domain.user.UserService;
 import com.qmate.domain.user.model.request.RegisterRequest;
 import com.qmate.domain.user.model.response.RegisterResponse;
+import com.qmate.exception.custom.auth.OkTokenInvalidException;
 import com.qmate.security.UserPrincipal;
 import jakarta.validation.Valid;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class AuthController {
   public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest req){
     //ok 토큰 소비
     if(!emailVerificationService.consumeOkToken(req.getEmailVerifiedToken(), "signup", req.getEmail())){
-      throw new IllegalStateException("이메일 인증이 확인되지 않음.");
+      throw new OkTokenInvalidException();
     }
     //가입
     Long id = userService.register(req);

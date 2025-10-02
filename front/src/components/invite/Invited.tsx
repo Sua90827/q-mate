@@ -6,7 +6,7 @@ import { useMatchIdStore } from '@/store/useMatchIdStore';
 import ConfirmModal from '../common/ConfirmModal';
 import NoticeModal from '../common/NoticeModal';
 import { useRouter } from 'next/navigation';
-import { useCreateMatchId } from '@/hooks/useInvite';
+import { useCreateMatchId, useFetchLockStatus } from '@/hooks/useInvite';
 import axios from 'axios';
 
 type ModalType = 'success' | 'errorConfirm' | 'errorNotice' | null;
@@ -32,8 +32,9 @@ export default function Invited() {
   const [code, setCode] = useState('');
 
   const { mutate: joinMatch, isPending: isJoining } = useCreateMatchId();
+  const { data } = useFetchLockStatus();
 
-  // 페이지 전용 에러 모달 설정
+  // 에러 모달 설정
   const errorConfig: Record<number, ModalConfig> = {
     400: {
       open: true,
@@ -106,6 +107,26 @@ export default function Invited() {
         onError: (error) => {
           if (axios.isAxiosError(error)) {
             const status = error.response?.status ?? 0;
+            if (data?.remainingSeconds && data.remainingSeconds < 24 * 60 * 60) {
+              const hours = Math.floor(data.remainingSeconds / 3600);
+              const minutes = Math.floor((data.remainingSeconds % 3600) / 60);
+
+              setModal({
+                open: true,
+                type: 'errorNotice',
+                title: (
+                  <>
+                    {hours > 0
+                      ? `${hours}시간 ${minutes}분 후 다시 시도할 수 있습니다.`
+                      : `${minutes}분 후 다시 시도할 수 있습니다.`}
+                  </>
+                ),
+                isDanger: true,
+              });
+            } else {
+              // 첫 번째 시도
+              setModal(errorConfig[403]);
+            }
             setModal(
               errorConfig[status] ?? {
                 open: true,
@@ -118,11 +139,7 @@ export default function Invited() {
             setModal({
               open: true,
               type: 'errorNotice',
-              title: (
-                <>
-                  ⚠️ <br /> 예상치 못한 오류가 발생했습니다.
-                </>
-              ),
+              title: '예상치 못한 오류가 발생했습니다.',
               sub: '잠시 후 다시 시도해 주세요.',
             });
           }

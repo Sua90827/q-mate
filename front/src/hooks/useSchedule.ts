@@ -1,14 +1,41 @@
 'use client';
-import { fetchEventMonth, fetchScheduleList } from '@/api/schedule';
+import { createSchedule, deleteSchedule, fetchEventMonth, fetchScheduleList } from '@/api/schedule';
 import { EventMonthResponse, ScheduleResponse } from '@/types/scheduleType';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export const useScheduleList = () => {
+//스케줄 리스트 조회
+export const useScheduleList = (matchId: number) => {
   return useQuery<ScheduleResponse>({
     queryKey: ['schedule'],
-    queryFn: fetchScheduleList,
-    staleTime: 1000 * 60 * 10,
+    queryFn: () => fetchScheduleList(matchId),
+    staleTime: 0,
+    refetchInterval: 1000 * 30,
     gcTime: 1000 * 60 * 60,
+  });
+};
+
+//스케줄 등록
+export const useCreateSchedule = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createSchedule,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schedule'] });
+    },
+  });
+};
+
+//스케줄 삭제
+export const useDeleteSchedule = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ matchId, eventId }: { matchId: number; eventId: number }) =>
+      deleteSchedule({ matchId, eventId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schedule'] });
+    },
   });
 };
 

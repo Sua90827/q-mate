@@ -4,6 +4,7 @@ import com.qmate.common.constants.match.MatchConstants;
 import com.qmate.domain.match.model.request.MatchCreationRequest;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.model.request.MatchUpdateRequest;
+import com.qmate.domain.match.model.response.LockStatusResponse;
 import com.qmate.domain.match.model.response.MatchActionResponse;
 import com.qmate.domain.match.model.response.MatchCreationResponse;
 import com.qmate.domain.match.model.response.MatchInfoResponse;
@@ -11,6 +12,8 @@ import com.qmate.domain.match.model.response.MatchJoinResponse;
 import com.qmate.domain.match.model.response.MatchMembersResponse;
 import com.qmate.domain.match.service.MatchService;
 import com.qmate.security.UserPrincipal;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,17 +25,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/matches")
 @RequiredArgsConstructor
+@Tag(name = "Match", description = "매칭 관련 API")
 public class MatchController {
 
   private final MatchService matchService;
 
   //매칭 생성(초대 코드 발급)
+  @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
+  @Operation(
+      summary = "매칭 초대코드 발급",
+      description = "로그인한 매칭 요청자가 초대코드 발급합니다."
+  )
   public ResponseEntity<MatchCreationResponse> createMatch(
       @RequestBody @Valid MatchCreationRequest request,
       @AuthenticationPrincipal UserPrincipal principal
@@ -47,6 +57,10 @@ public class MatchController {
 
   //매칭 참여(초대 코드 입력)
   @PostMapping("/join")
+  @Operation(
+      summary = "매칭 참여 초대코드 입력",
+      description = "로그인한 초대코드 전달받은 자가 초대코드 입력합니다. "
+  )
   public ResponseEntity<MatchJoinResponse> joinMatch(
       @RequestBody @Valid MatchJoinRequest request,
       @AuthenticationPrincipal UserPrincipal principal
@@ -65,6 +79,10 @@ public class MatchController {
    * @return 200 OK 상태 코드와 함께 매칭 정보 DTO를 반환
    */
   @GetMapping("{matchId}")
+  @Operation(
+      summary = "매칭 정보 조회",
+      description = "특정 매칭의 상세 정보(관계 유형, 구성원, 시작일 등)를 조회합니다."
+  )
   public ResponseEntity<MatchInfoResponse> getMatchInfo(
       @PathVariable Long matchId,
       @AuthenticationPrincipal UserPrincipal principal
@@ -76,6 +94,10 @@ public class MatchController {
 
   //특정 매칭의 구성원 목록(상세정보)을 조회.
   @GetMapping("/{matchId}/members")
+  @Operation(
+      summary = "특정 매칭의 구성원 목록 조회",
+      description = "매칭 구성원 목록을 조회하는 API. 두 사람의 닉네임, 생일, 요청자 본인 유무, 복구동의 유무 등 멤버 정보를 불러올 때 사용합니다."
+  )
   public ResponseEntity<MatchMembersResponse> getMatchMembers(
       @PathVariable Long matchId,
       @AuthenticationPrincipal UserPrincipal principal
@@ -93,6 +115,10 @@ public class MatchController {
    * @return 200 OK 상태 코드와 함께 성공 메시지를 반환
    */
   @PatchMapping("/{matchId}/info")
+  @Operation(
+      summary = "특정 매칭의 정보를 업데이트 합니다.",
+      description = "특정 매칭 정보를 업데이트하는 API. 매칭이 성립된 후, 질문 받는 시간 등 설정을 변경할 때 사용합니다. "
+  )
   public ResponseEntity<Void> updateMatchInfo(
       @PathVariable Long matchId,
       @RequestBody @Valid MatchUpdateRequest request,
@@ -105,6 +131,10 @@ public class MatchController {
   }
   //매칭 연결을 끊습니다.(2주간의 복구 유예 기간 시작)
   @PostMapping("/{matchId}/disconnect")
+  @Operation(
+      summary = "매칭 연결을 끊습니다.",
+      description = "매칭을 종료하는 API. 사용자가 의도적으로 연결을 끊을 때 사용하며, 즉시 데이터가 삭제되는 것이 아니라 유예기간이 시작됩니다."
+  )
   public ResponseEntity<MatchActionResponse> disconnectMatch(
       @PathVariable Long matchId,
       @AuthenticationPrincipal UserPrincipal principal
@@ -116,6 +146,10 @@ public class MatchController {
   }
   //매칭 연결 복구
   @PostMapping("/{matchId}/restore")
+  @Operation(
+      summary = "매칭 연결 복구",
+      description = "2주 유예 기간 내에 매칭을 복구합니다."
+  )
   public ResponseEntity<MatchActionResponse> restoreMatch(
       @PathVariable Long matchId,
       @AuthenticationPrincipal UserPrincipal principal
@@ -129,5 +163,17 @@ public class MatchController {
         : MatchConstants.RESTORE_AGREED_AWAITING_PARTNER_MESSAGE;
 
     return ResponseEntity.ok(new MatchActionResponse(message));
+  }
+  //현재 로그인한 사용자의 초대 코드 입력 잠금 상태를 조회
+  @GetMapping("/lock-status")
+  @Operation(
+      summary = "잠금 상태 조회",
+      description = "초대코드 입력 횟수 초과시 조회 잠금 상태 조회"
+  )
+  public ResponseEntity<LockStatusResponse> getLockStatus(
+      @AuthenticationPrincipal UserPrincipal principal
+  ){
+    LockStatusResponse response = matchService.getLockStatus(principal.userId());
+    return ResponseEntity.ok(response);
   }
 }

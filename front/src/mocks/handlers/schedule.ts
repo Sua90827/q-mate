@@ -1,0 +1,106 @@
+import { http, HttpResponse } from 'msw';
+
+interface ScheduleRequestBody {
+  title: string;
+  description?: string;
+  eventAt: string;
+  repeatType: 'NONE' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+  alarmOption: 'NONE' | 'WEEK_BEFORE' | 'THREE_DAYS_BEFORE' | 'SAME_DAY';
+  isAnniversary?: boolean;
+}
+
+const events = [
+  {
+    eventId: 1,
+    title: '회의',
+    description: '팀 회의',
+    eventAt: '2025-10-20',
+    repeatType: 'NONE',
+    alarmOption: 'SAME_DAY',
+    isAnniversary: false,
+    createdAt: '2025-09-10T09:00:00',
+    updatedAt: '2025-09-15T12:00:00',
+  },
+  {
+    eventId: 2,
+    title: '부모님 기념일',
+    description: '점심 약속',
+    eventAt: '2025-10-25',
+    repeatType: 'YEARLY',
+    alarmOption: 'ONE_DAY_BEFORE',
+    isAnniversary: true,
+    createdAt: '2025-09-01T10:00:00',
+    updatedAt: '2025-09-20T08:00:00',
+  },
+  {
+    eventId: 3,
+    title: '기념일 저녁',
+    description: '19:00 예약',
+    eventAt: '2025-10-09',
+    repeatType: 'YEARLY',
+    alarmOption: 'SAME_DAY',
+    isAnniversary: true,
+    createdAt: '2025-09-20T12:32:11',
+    updatedAt: '2025-09-28T09:10:01',
+  },
+];
+
+export const scheduleHandlers = [
+  // 조회
+  http.get('/api/matches/:matchId/events', async () => {
+    return HttpResponse.json(
+      {
+        content: events,
+        pageable: {
+          pageNumber: 0,
+          pageSize: 20,
+          sort: [{ property: 'eventAt', direction: 'ASC' }],
+        },
+        totalElements: events.length,
+        totalPages: 1,
+        last: true,
+        first: true,
+        numberOfElements: events.length,
+        empty: events.length === 0,
+      },
+      { status: 200 },
+    );
+  }),
+
+  // 등록
+  http.post('/api/matches/:matchId/events', async ({ request }) => {
+    const body = (await request.json()) as ScheduleRequestBody;
+
+    if (!body.title || !body.eventAt || !body.repeatType || !body.alarmOption) {
+      return HttpResponse.json({ message: '필수 값이 누락되었습니다.' }, { status: 400 });
+    }
+
+    const newEvent = {
+      eventId: events.length ? events[events.length - 1].eventId + 1 : 1,
+      title: body.title,
+      description: body.description ?? '',
+      eventAt: body.eventAt,
+      repeatType: body.repeatType,
+      alarmOption: body.alarmOption,
+      isAnniversary: body.isAnniversary ?? false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    events.push(newEvent);
+    return HttpResponse.json(newEvent, { status: 201 });
+  }),
+
+  // 삭제
+  http.delete('/api/matches/:matchId/events/:eventId', async ({ params }) => {
+    const eventId = Number(params.eventId);
+    const index = events.findIndex((e) => e.eventId === eventId);
+
+    if (index === -1) {
+      return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+    }
+
+    const [deleted] = events.splice(index, 1);
+    return HttpResponse.json(deleted, { status: 200 });
+  }),
+];

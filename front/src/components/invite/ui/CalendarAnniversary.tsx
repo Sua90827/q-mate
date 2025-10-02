@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Calendar } from '@/components/ui/calendar';
 
-export default function CalendarCustom({
+export default function CalendarAnniversary({
   value,
   onChange,
 }: {
@@ -16,7 +16,8 @@ export default function CalendarCustom({
       defaultMonth={value ?? new Date()}
       selected={value}
       onSelect={onChange}
-      className="rounded-lg border-none shadow-none mx-auto block"
+      className="rounded-lg border-none shadow-none mx-auto block "
+      anniversary
     />
   );
 }

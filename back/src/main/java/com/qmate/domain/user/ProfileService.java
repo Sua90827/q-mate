@@ -1,5 +1,7 @@
 package com.qmate.domain.user;
 
+import com.qmate.exception.custom.user.BirthDateInFutureException;
+import com.qmate.exception.custom.user.NicknameTooLongException;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,7 @@ public class ProfileService {
     boolean changed = false;
 
     if (nickname != null) {
-      if (nickname.length() > 50) throw new IllegalArgumentException("닉네임은 50자 이내");
+      if (nickname.length() > 50) throw new NicknameTooLongException();
       if (!nickname.equals(u.getNickname())) {
         u.setNickname(nickname);
         changed = true;
@@ -24,7 +26,7 @@ public class ProfileService {
     }
 
     if (birthDate != null) {
-      if (birthDate.isAfter(LocalDate.now())) throw new IllegalArgumentException("미래 날짜 불가");
+      if (birthDate.isAfter(LocalDate.now())) throw new BirthDateInFutureException();
       if (!birthDate.equals(u.getBirthDate())) {
         u.setBirthDate(birthDate);
         changed = true;

@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import CalendarCustom from '@/components/schedule/ui/CalendarCustom';
+import CalendarAnniversary from './CalendarAnniversary';
 
 export function AnniversaryPicker({
   label,
@@ -31,7 +31,7 @@ export function AnniversaryPicker({
           align="start"
           style={{ width: 'var(--radix-popover-trigger-width)' }}
         >
-          <CalendarCustom
+          <CalendarAnniversary
             value={date}
             onChange={(d) => {
               setDate(d);

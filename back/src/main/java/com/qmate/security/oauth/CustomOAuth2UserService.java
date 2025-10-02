@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qmate.domain.auth.SocialAccountService;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserSocialAccount.SocialProvider;
+import com.qmate.exception.custom.auth.OAuthResponseMissingIdException;
+import com.qmate.exception.custom.auth.OAuthResponseParseException;
 import java.time.LocalDate;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +38,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
       try {
         log.debug("NAVER attrs = {}", new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(resp));
       } catch (JsonProcessingException e) {
-        throw new RuntimeException(e);
+        throw new OAuthResponseParseException();
       }
 
       String providerUserId = String.valueOf(resp.get("id"));
@@ -45,7 +47,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
       LocalDate birthDate = parseNaverBirth(resp);
 
       if (providerUserId == null) {
-        throw new IllegalStateException("Naver response missing 'id'");
+        throw new OAuthResponseMissingIdException();
       }
 
       User user = socialAccountService.upsertSocialUser(

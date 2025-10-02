@@ -3,3 +3,8 @@ export interface Invited {
   message: string;
   partnerNickname: string;
 }
+
+export interface LockStatus {
+  remainingSeconds: number;
+  locked: boolean;
+}
