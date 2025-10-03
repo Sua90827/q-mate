@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import ShareBtn from './ui/ShareBtn';
 import CloseButton from '../common/CloseButton';
 import { useRouter } from 'next/navigation';
@@ -9,10 +9,19 @@ type Props = {
   partnerContent: string;
   nickname: string;
   partnerNickname: string;
+  questionInstanceId: number;
 };
 
-function AnswerView({ questionText, myContent, partnerContent, nickname, partnerNickname }: Props) {
-  const captureID = 'answerView';
+function AnswerView({
+  questionText,
+  myContent,
+  partnerContent,
+  nickname,
+  partnerNickname,
+  questionInstanceId,
+}: Props) {
+  const captureID = `shareCard-${questionInstanceId}`;
+  const cardRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   return (
     <>
@@ -23,7 +32,7 @@ function AnswerView({ questionText, myContent, partnerContent, nickname, partner
         </div>
       </div>
       <div className="pt-[70px] relative flex flex-col items-center w-full h-full sm:w-[400px] sm:h-[550px] bg-secondary sm:rounded-md shadow-md">
-        <div id={captureID} className="w-full h-full flex flex-col p-10">
+        <div ref={cardRef} id={captureID} className="w-full h-full flex flex-col p-10">
           <p className="text-text-secondary pt-5">#01</p>
           <h2 className="text-24 font-bold">{questionText}</h2>
           <div className="mt-16">
@@ -40,6 +49,7 @@ function AnswerView({ questionText, myContent, partnerContent, nickname, partner
 
           <ShareBtn
             targetId={captureID}
+            targetRef={cardRef}
             title={`${questionText} 답변`}
             text={`${nickname}: ${myContent}\n${partnerNickname}: ${partnerContent}`}
           />

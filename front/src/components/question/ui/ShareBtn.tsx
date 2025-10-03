@@ -13,20 +13,26 @@ import {
 } from '@/components/ui/dialog';
 
 type Props = {
-  targetId: string;
+  targetRef?: React.RefObject<HTMLElement | null>;
+  targetId?: string;
   title?: string;
   text?: string;
   className?: string;
 };
 
-export default function ShareBtn({ targetId, title, text, className }: Props) {
+export default function ShareBtn({ targetId, title, text, className, targetRef }: Props) {
   const [open, setOpen] = useState(false);
   const blobRef = useRef<Blob | null>(null);
 
   const handleShare = async () => {
-    const el = document.getElementById(targetId);
+    const el: HTMLElement | null =
+      (targetRef?.current as HTMLElement | null) ??
+      (targetId ? document.getElementById(targetId) : null);
+
     if (!el) {
-      console.log(`대상 요소를 찾을 수 없습니다: #${targetId}`);
+      console.log(
+        `대상 요소를 찾을 수 없습니다. ref=${!!targetRef?.current}, id=${targetId ?? '(none)'}`,
+      );
       return;
     }
 
