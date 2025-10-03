@@ -54,7 +54,33 @@ export const deleteSchedule = async ({
   const res = await axios.delete(`/api/matches/${matchId}/events/${eventId}`);
   return res.data;
 };
-
+//일정 수정
+export const updateSchedule = async ({
+  matchId,
+  eventId,
+  title,
+  description,
+  eventAt,
+  repeatType,
+  alarmOption,
+}: {
+  matchId: number;
+  eventId: number;
+  title: string;
+  description?: string;
+  eventAt: string;
+  repeatType: 'NONE' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+  alarmOption: 'NONE' | 'WEEK_BEFORE' | 'THREE_DAYS_BEFORE' | 'SAME_DAY';
+}): Promise<ScheduleEvent> => {
+  const res = await axios.patch<ScheduleEvent>(`/api/matches/${matchId}/events/${eventId}`, {
+    title,
+    description,
+    eventAt,
+    repeatType,
+    alarmOption,
+  });
+  return res.data;
+};
 export const fetchEventMonth = async (year: number, month: number): Promise<EventMonthResponse> => {
   const res = await axios.get<EventMonthResponse>(`http://localhost:3006/calendarMonth`, {
     params: { year, month },

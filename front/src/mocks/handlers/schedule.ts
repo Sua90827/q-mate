@@ -27,7 +27,7 @@ const events = [
     description: '점심 약속',
     eventAt: '2025-10-25',
     repeatType: 'YEARLY',
-    alarmOption: 'ONE_DAY_BEFORE',
+    alarmOption: 'SAME_DAY',
     isAnniversary: true,
     createdAt: '2025-09-01T10:00:00',
     updatedAt: '2025-09-20T08:00:00',
@@ -67,18 +67,13 @@ export const scheduleHandlers = [
     );
   }),
   // 일정 상세 조회
-  http.get('/api/matches/:matchId/events/:eventId', async () => {
-    return HttpResponse.json({
-      eventId: 1,
-      title: '회의',
-      description: '팀 회의',
-      eventAt: '2025-10-20',
-      repeatType: 'NONE',
-      alarmOption: 'SAME_DAY',
-      isAnniversary: false,
-      createdAt: '2025-09-10T09:00:00',
-      updatedAt: '2025-09-15T12:00:00',
-    });
+  http.get('/api/matches/:matchId/events/:eventId', ({ params }) => {
+    const eventId = Number(params.eventId);
+    const event = events.find((e) => e.eventId === eventId);
+    if (!event) {
+      return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+    }
+    return HttpResponse.json(event, { status: 200 });
   }),
 
   // 등록
@@ -116,5 +111,29 @@ export const scheduleHandlers = [
 
     const [deleted] = events.splice(index, 1);
     return HttpResponse.json(deleted, { status: 200 });
+  }),
+  // 수정
+  http.patch('/api/matches/:matchId/events/:eventId', async ({ params, request }) => {
+    const eventId = Number(params.eventId);
+    const body = (await request.json()) as ScheduleRequestBody;
+
+    const idx = events.findIndex((e) => e.eventId === eventId);
+    if (idx === -1) {
+      return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+    }
+
+    const target = events[idx];
+    const updated = {
+      ...target,
+      title: body.title,
+      description: body.description ?? '',
+      eventAt: body.eventAt,
+      repeatType: body.repeatType,
+      alarmOption: body.alarmOption,
+      updatedAt: new Date().toISOString(),
+    };
+
+    events[idx] = updated;
+    return HttpResponse.json(updated, { status: 200 });
   }),
 ];

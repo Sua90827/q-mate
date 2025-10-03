@@ -5,12 +5,15 @@ import { Skeleton } from '../ui/skeleton';
 import DeleteBtn from '../common/DeleteBtn';
 import PrevBtn from '../common/PrevBtn';
 import NextBtn from '../common/NextBtn';
-import { useState } from 'react';
-import { ErrorToast } from '../common/CustomToast';
+
+import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
 
 export default function ScheduleListWeb() {
   const matchId = useMatchIdStore((state) => state.matchId);
   const [page, setPage] = useState<number>(0);
+  const router = useRouter();
   const pageSize = 20;
 
   const today = new Date();
@@ -58,8 +61,12 @@ export default function ScheduleListWeb() {
         <h2 className="font-bold text-20 p-4">일정 리스트</h2>
         <ul className="w-full border-y divide-y divide-text-gray">
           {schedules.map((list) => (
-            <li key={list.eventId} className="flex justify-between px-4 py-3 items-center">
-              <div>
+            <li
+              key={list.eventId}
+              className="flex justify-between lists-center px-4 py-3 items-center"
+            >
+              <div className="flex-1" onClick={() => router.push(`/schedule/edit/${list.eventId}`)}>
+
                 <span className="font-bold text-16">{list.title}</span>
                 <span className="block text-text-secondary font-normal">{list.eventAt}</span>
               </div>
