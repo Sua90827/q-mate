@@ -38,12 +38,12 @@ public class EmailVerificationController {
       summary = "이메일 인증 재전송",
       description = EmailVerificationConstants.RESEND_MD
   )
-  public ResponseEntity<?> resend(@Valid @RequestBody EmailVerificationSendRequest req) {
+  public ResponseEntity<EmailResentResponse> resend(@Valid @RequestBody EmailVerificationSendRequest req) {
     try {
       emailVerificationService.sendCode(req.getEmail(), req.getPurpose());
       return ResponseEntity.ok(new EmailResentResponse(true));
     } catch (IllegalStateException e) { // RESEND_COOLDOWN
-      return ResponseEntity.status(429).body(Map.of("error","RESEND_COOLDOWN"));
+      return ResponseEntity.status(429).body(new EmailResentResponse(false));
     }
   }
 
@@ -52,7 +52,7 @@ public class EmailVerificationController {
       summary = "이메일 인증코드 검증(OK 토큰 발급)",
       description = EmailVerificationConstants.VERIFY_MD
   )
-  public ResponseEntity<?> verify(@Valid @RequestBody EmailVerificationConfirmRequest req) {
+  public ResponseEntity<EmailConfirmResponse> verify(@Valid @RequestBody EmailVerificationConfirmRequest req) {
     try {
       String token = emailVerificationService.verifyAndIssueToken(req.getEmail(), req.getPurpose(), req.getCode());
       return ResponseEntity.ok(new EmailConfirmResponse(true, token));
