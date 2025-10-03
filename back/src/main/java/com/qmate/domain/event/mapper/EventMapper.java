@@ -4,6 +4,7 @@ import com.qmate.domain.event.entity.Event;
 import com.qmate.domain.event.model.request.EventCreateRequest;
 import com.qmate.domain.event.model.response.EventResponse;
 import com.qmate.domain.match.Match;
+import java.time.LocalDate;
 import java.util.Objects;
 import lombok.NoArgsConstructor;
 
@@ -42,6 +43,20 @@ public class EventMapper {
         .eventAt(req.getEventAt())
         .repeatType(req.getRepeatType())
         .alarmOption(req.getAlarmOption())
+        .build();
+  }
+
+  public static EventResponse toResponse(Event e, LocalDate occurrenceDate) {
+    return EventResponse.builder()
+        .eventId(e.getId())
+        .title(e.getTitle())
+        .description(e.getDescription())
+        .eventAt(occurrenceDate)
+        .repeatType(e.getRepeatType())
+        .alarmOption(e.getAlarmOption())
+        .anniversary(e.isAnniversary())
+        .createdAt(e.getCreatedAt())
+        .updatedAt(e.getUpdatedAt())
         .build();
   }
 }
