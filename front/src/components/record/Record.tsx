@@ -5,8 +5,17 @@ import Link from 'next/link';
 
 import BellBtn from '../common/BellBtn';
 import QuestionCard from '../question/ui/QuestionCard';
+import { useMatchIdStore } from '@/store/useMatchIdStore';
+import { useTodayQuestion } from '@/hooks/useQuestions';
+import { Skeleton } from '../ui/skeleton';
+import Loader from '../common/Loader';
 
 export default function Record() {
+  const matchId = useMatchIdStore((state) => state.matchId);
+
+  const { data, isLoading, isError } = useTodayQuestion(matchId!);
+
+  if (!matchId) return <Loader />;
   return (
     <>
       <div className="fixed top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden ">
@@ -21,7 +30,11 @@ export default function Record() {
       </div>
       <div className="w-full h-full flex items-center justify-center">
         <div className="w-[320px] h-[481px] flex flex-col justify-center ">
-          <QuestionCard />
+          {isLoading || (isError && <Skeleton className="w-[320px] h-[320px]" />)}
+          <QuestionCard
+            questionInstanceId={data?.questionInstanceId}
+            questionText={data?.question.text}
+          />
           <div className="pt-5 flex gap-6 ">
             <Button variant="outline" size="lg" className="!w-[150px]">
               <Link href="/question/list">질문 리스트 보기</Link>

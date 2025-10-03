@@ -13,7 +13,11 @@ export default function page() {
           <CalendarDays className="text-theme-primary ml-7" />
         </Link>
 
-        <img alt="큐메이트" width={109} height={35} className="site-logo" />
+        <span
+          className="site-logo inline-block w-[109px] h-[35px]"
+          role="img"
+          aria-label="큐메이트"
+        />
         <BellBtn />
       </div>
       <div className="w-full h-full flex flex-row gap-10 justify-center md:justify-between sm:pb-[70px] md:pl-[40px] xl:pl-[120px]">

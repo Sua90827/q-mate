@@ -52,7 +52,11 @@ export default function Custom({ value }: { value?: string }) {
       {hideLogo ? null : (
         <div className="w-full relative flex justify-center h-[70px] items-center sm:hidden">
           <Link href="/main">
-            <img alt="큐메이트" width={109} height={35} className="site-logo sm:hidden" />
+            <span
+              className="site-logo inline-block w-[109px] h-[35px]"
+              role="img"
+              aria-label="큐메이트"
+            />
           </Link>
           <div className="absolute right-4">
             <CloseButton onClick={() => router.push('/record')} />

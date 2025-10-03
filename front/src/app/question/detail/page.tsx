@@ -1,1 +1,8 @@
-//모바일 화면과 웹에서의 ui 수정 필요
+import QuestionDetail from '@/components/question/QuestionDetail';
+import React from 'react';
+
+const page = () => {
+  return <QuestionDetail />;
+};
+
+export default page;
