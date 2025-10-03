@@ -286,13 +286,13 @@ export const questionHandlers = [
     await delay(200);
 
     return HttpResponse.json({
-      questionInstanceId: 123,
+      questionInstanceId: 10,
       matchId: Number(matchId),
       deliveredAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
       status: 'PENDING', // 'PENDING' | 'COMPLETED'
       completedAt: null,
       question: {
-        questionId: 777,
+        questionId: 778,
         sourceType: 'ADMIN',
         relationType: 'COUPLE',
         category: { id: 3, name: '취향' },
@@ -302,7 +302,7 @@ export const questionHandlers = [
       answers: [
         {
           answerId: 460,
-          userId: 99,
+          userId: 1,
           nickname: '내 닉네임',
           visible: true,
           content: '초밥',

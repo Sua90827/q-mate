@@ -106,6 +106,7 @@ export default function QuestionDetail() {
 
         {detail.status === 'COMPLETED' || (hasMy && hasPartner) ? (
           <AnswerView
+            questionInstanceId={detail.questionInstanceId}
             nickname={my?.nickname ?? ''}
             partnerNickname={partner?.nickname ?? ''}
             questionText={detail.question.text}
