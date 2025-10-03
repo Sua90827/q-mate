@@ -61,7 +61,7 @@ export default function MainCalendar({ selected, onSelect, anniversarySet, sched
                 {dot && (
                   <span
                     aria-hidden
-                    className={`pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 inline-block w-1.5 h-1.5 rounded-full ${dot}`}
+                    className={`pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 inline-block w-3 h-3 rounded-full ${dot}`}
                   />
                 )}
               </td>

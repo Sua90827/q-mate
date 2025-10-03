@@ -6,7 +6,7 @@ import DeleteBtn from '../common/DeleteBtn';
 import PrevBtn from '../common/PrevBtn';
 import NextBtn from '../common/NextBtn';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ErrorToast } from '../common/CustomToast';
 
