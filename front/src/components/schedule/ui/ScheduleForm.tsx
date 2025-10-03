@@ -74,7 +74,12 @@ export function ScheduleForm({
           void handleSubmit();
         }}
       >
-        <DatePicker label="날짜를 선택해주세요." schedule onSelect={(d) => setDate(d)} />
+        <DatePicker
+          label="날짜를 선택해주세요."
+          schedule
+          onSelect={(d) => setDate(d)}
+          initialDate={date}
+        />
 
         <input
           type="text"

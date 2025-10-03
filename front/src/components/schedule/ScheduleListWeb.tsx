@@ -8,7 +8,7 @@ import NextBtn from '../common/NextBtn';
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-
+import { ErrorToast } from '../common/CustomToast';
 
 export default function ScheduleListWeb() {
   const matchId = useMatchIdStore((state) => state.matchId);
@@ -66,7 +66,6 @@ export default function ScheduleListWeb() {
               className="flex justify-between lists-center px-4 py-3 items-center"
             >
               <div className="flex-1" onClick={() => router.push(`/schedule/edit/${list.eventId}`)}>
-
                 <span className="font-bold text-16">{list.title}</span>
                 <span className="block text-text-secondary font-normal">{list.eventAt}</span>
               </div>
