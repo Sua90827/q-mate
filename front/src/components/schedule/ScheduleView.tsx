@@ -1,9 +1,9 @@
 'use client';
-import { useEventMonth, useScheduleList } from '@/hooks/useSchedule';
+import { useScheduleList } from '@/hooks/useSchedule';
 import React, { useMemo, useState } from 'react';
 import MainCalendar from './calendar/MainCalendar';
 import EventList from './list/EventList';
-import { isEventOnDate } from '@/utils/date';
+import { isEventOnDate, toKey } from '@/utils/date';
 import AddBtn from './ui/AddBtn';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { ScheduleEvent } from '@/types/scheduleType';
@@ -12,27 +12,42 @@ export default function ScheduleView() {
   const [selected, setSelected] = useState<Date | undefined>(new Date());
   const matchId = useMatchIdStore((state) => state.matchId);
 
-  const currentMonth = selected ? selected.getMonth() + 1 : new Date().getMonth() + 1;
-  const currentYear = selected ? selected.getFullYear() : new Date().getFullYear();
-  const { data: monthData } = useEventMonth(currentYear, currentMonth);
+  const monthRange = useMemo(() => {
+    const base = selected ?? new Date();
+
+    // 첫째날
+    const start = new Date(base.getFullYear(), base.getMonth(), 1);
+    // 마지막날
+    const end = new Date(base.getFullYear(), base.getMonth() + 1, 0);
+
+    return {
+      from: toKey(start),
+      to: toKey(end),
+    };
+  }, [selected]);
+
+  const { data, isLoading, isError } = useScheduleList(matchId!, {
+    from: monthRange.from,
+    to: monthRange.to,
+  });
 
   const anniversarySet = useMemo(() => {
     const s = new Set<string>();
-    monthData?.days.forEach((d) => {
-      if (d.isAnniversary) s.add(d.eventAt);
+    (data?.content ?? []).forEach((e) => {
+      if (e.isAnniversary) s.add(e.eventAt);
     });
     return s;
-  }, [monthData]);
+  }, [data]);
 
   const scheduleSet = useMemo(() => {
     const s = new Set<string>();
-    monthData?.days.forEach((d) => {
-      if (!d.isAnniversary && !anniversarySet.has(d.eventAt)) s.add(d.eventAt);
+    (data?.content ?? []).forEach((e) => {
+      if (!e.isAnniversary && !anniversarySet.has(e.eventAt)) s.add(e.eventAt);
     });
     return s;
-  }, [monthData, anniversarySet]);
+  }, [data, anniversarySet]);
 
-  const { data, isLoading, isError } = useScheduleList(matchId!);
+  console.log(data);
 
   const dayItems: ScheduleEvent[] = useMemo(() => {
     const list = data?.content ?? [];

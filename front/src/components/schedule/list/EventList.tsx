@@ -2,6 +2,7 @@
 import React from 'react';
 import { repeatTypeLabels } from '@/utils/constants/schedule';
 import { ScheduleEvent } from '@/types/scheduleType';
+import { Loader2 } from 'lucide-react';
 
 type Props = {
   date: Date;
@@ -20,7 +21,10 @@ function EventList({ date, items, isLoading, isError }: Props) {
       <ul className="max-h- flex-1 min-h-0 overflow-y-auto">
         {isError && <li>일정을 불러오는 중 오류가 발생했습니다.</li>}
         {isLoading ? (
-          <li>일정을 불러오는 중...</li>
+          <li>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            일정을 불러오는 중...
+          </li>
         ) : (
           <>
             {items.length === 0 && <li>표시할 일정이 없어요.</li>}
