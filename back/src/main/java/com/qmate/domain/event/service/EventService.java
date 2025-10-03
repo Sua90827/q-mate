@@ -6,10 +6,12 @@ import com.qmate.domain.event.entity.EventRepeatType;
 import com.qmate.domain.event.mapper.EventMapper;
 import com.qmate.domain.event.model.request.EventCreateRequest;
 import com.qmate.domain.event.model.request.EventUpdateRequest;
+import com.qmate.domain.event.model.response.CalendarMonthResponse;
 import com.qmate.domain.event.model.response.EventResponse;
 import com.qmate.domain.event.repository.EventRepository;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.repository.MatchRepository;
+import com.qmate.exception.custom.event.EventCalendarDateRangeExceededException;
 import com.qmate.exception.custom.event.EventDeletionNotAllowedException;
 import com.qmate.exception.custom.event.EventListDateRangeExceededException;
 import com.qmate.exception.custom.event.EventNotFoundException;
@@ -19,12 +21,14 @@ import jakarta.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -163,6 +167,78 @@ public class EventService {
     return new PageImpl<>(content, pageable, total);
   }
 
+  /**
+   * 캘린더용 일정 조회
+   * - from~to: 최대 60일(양끝 포함), 같은 달 제한 없음
+   * - 날짜당 1개로 압축: 대표 eventId=최솟값, isAnniversary=OR
+   * - 반복 전개(expandOccurrences) 사용
+   */
+  @Transactional(readOnly = true)
+  public CalendarMonthResponse getCalendarMonth(
+      Long matchId, Long userId,
+      LocalDate from, LocalDate to
+  ) {
+    if (to.isBefore(from)) {
+      YearMonth base = YearMonth.from(from);
+      return CalendarMonthResponse.builder()
+          .year(base.getYear())
+          .month(base.getMonthValue())
+          .days(List.of())
+          .build();
+    }
+
+    // 최대 60일 (양끝 포함): between은 양끝 제외라서 59 초과면 60일 초과
+    long gap = ChronoUnit.DAYS.between(from, to);
+    if (gap > EventConstants.EVENT_CALENDAR_MAX_RANGE_DAYS - 1) {
+      throw new EventCalendarDateRangeExceededException();
+    }
+
+    YearMonth base = YearMonth.from(from); // 응답 year/month 표기를 위한 기준
+
+    // 후보 조회 (권한 포함 가정)
+    List<Event> candidates = eventRepository.findCandidates(
+        matchId, userId, from, to, null, null
+    );
+
+    // 반복 전개
+    List<Occurrence> occurrences = new ArrayList<>();
+    for (Event e : candidates) {
+      for (LocalDate d : expandOccurrences(e, from, to)) {
+        occurrences.add(new Occurrence(d, e));
+      }
+    }
+
+    // 날짜별 압축: 대표 eventId=최솟값, isAnniversary=OR
+    Map<LocalDate, Aggregate> byDate = new TreeMap<>();
+    for (Occurrence o : occurrences) {
+      LocalDate date = o.date();
+      Event ev = o.event();
+      Aggregate agg = byDate.get(date);
+      if (agg == null) {
+        byDate.put(date, new Aggregate(ev.getId(), ev.isAnniversary()));
+      } else {
+        byDate.put(date, new Aggregate(
+            Math.min(agg.representativeEventId(), ev.getId()),
+            agg.isAnniversary() || ev.isAnniversary()
+        ));
+      }
+    }
+
+    List<CalendarMonthResponse.DayItem> days = byDate.entrySet().stream()
+        .map(e -> CalendarMonthResponse.DayItem.builder()
+            .eventId(e.getValue().representativeEventId())
+            .eventAt(e.getKey())
+            .isAnniversary(e.getValue().isAnniversary())
+            .build())
+        .toList();
+
+    return CalendarMonthResponse.builder()
+        .year(base.getYear())
+        .month(base.getMonthValue())
+        .days(days)
+        .build();
+  }
+
   /* ===== 반복 전개 ===== */
 
   private List<LocalDate> expandOccurrences(Event e, LocalDate from, LocalDate to) {
@@ -276,6 +352,10 @@ public class EventService {
   }
 
   private record Occurrence(LocalDate date, Event event) {
+
+  }
+
+  private record Aggregate(long representativeEventId, boolean isAnniversary) {
 
   }
 }
