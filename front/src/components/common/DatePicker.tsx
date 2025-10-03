@@ -4,18 +4,22 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import DatePickerCalendar from '../schedule/ui/DatePickerCalendar';
+import { toKey } from '@/utils/date';
 
 export function DatePicker({
   label,
   schedule,
   onSelect,
+  initialDate,
 }: {
   label: string;
   schedule?: boolean;
   onSelect?: (date: string | undefined) => void;
+  initialDate?: string;
 }) {
+  const initial = initialDate ? new Date(initialDate) : undefined;
   const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState<Date | undefined>(undefined);
+  const [date, setDate] = React.useState<Date | undefined>(initial);
 
   const formatDate = (d: Date) => d.toISOString().split('T')[0];
 
@@ -29,7 +33,7 @@ export function DatePicker({
               schedule ? 'shadow-box' : '!text-text-secondary/60'
             }`}
           >
-            {date ? date.toLocaleDateString() : label}
+            {date ? toKey(date) : label}
           </Button>
         </PopoverTrigger>
         <PopoverContent
