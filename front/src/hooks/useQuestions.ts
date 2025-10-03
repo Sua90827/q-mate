@@ -5,7 +5,7 @@ import { QuestionResponse } from '@/types/questionType';
 //전체 질문 조회
 export const useQuestions = (matchId: number, page: number = 0, size: number = 20) => {
   return useQuery<QuestionResponse>({
-    queryKey: ['questions', matchId, page, size], // 의존성에 page, size 포함
+    queryKey: ['questions', matchId, page, size],
     queryFn: () => fetchQuestions(matchId, page, size),
     staleTime: 1000 * 60 * 60 * 24,
     gcTime: 1000 * 60 * 60 * 24,

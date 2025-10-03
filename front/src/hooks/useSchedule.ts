@@ -1,4 +1,5 @@
 'use client';
+
 import {
   createSchedule,
   deleteSchedule,
@@ -11,10 +12,20 @@ import { EventMonthResponse, ScheduleEvent, ScheduleResponse } from '@/types/sch
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 //스케줄 리스트 조회
-export const useScheduleList = (matchId: number) => {
-  return useQuery<ScheduleResponse>({
-    queryKey: ['schedule'],
-    queryFn: () => fetchScheduleList(matchId),
+export const useScheduleList = (
+  matchId: number,
+  params: {
+    from: string;
+    to: string;
+    page?: number;
+    size?: number;
+    repeatType?: 'NONE' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+    anniversary?: boolean;
+  },
+) => {
+  return useQuery({
+    queryKey: ['schedule', matchId, params],
+    queryFn: () => fetchScheduleList(matchId, params),
     staleTime: 0,
     refetchInterval: 1000 * 30,
     gcTime: 1000 * 60 * 60,

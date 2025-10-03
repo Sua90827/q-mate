@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from './Button';
 import { X } from 'lucide-react';
 
-export default function CloseButton({ onClick }: { onClick: () => void }) {
+export default function CloseButton({ onClick }: { onClick?: () => void }) {
   return (
     <Button
       variant={'icon'}

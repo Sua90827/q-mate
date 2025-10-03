@@ -2,8 +2,18 @@ import axios from 'axios';
 import { EventMonthResponse, ScheduleEvent, ScheduleResponse } from '@/types/scheduleType';
 
 //일정리스트 조회
-export const fetchScheduleList = async (matchId: number): Promise<ScheduleResponse> => {
-  const res = await axios.get<ScheduleResponse>(`/api/matches/${matchId}/events`);
+export const fetchScheduleList = async (
+  matchId: number,
+  params: {
+    from: string;
+    to: string;
+    page?: number;
+    size?: number;
+    repeatType?: 'NONE' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+    anniversary?: boolean;
+  },
+): Promise<ScheduleResponse> => {
+  const res = await axios.get<ScheduleResponse>(`/api/matches/${matchId}/events`, { params });
   return res.data;
 };
 
