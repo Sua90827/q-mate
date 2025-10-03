@@ -5,3 +5,7 @@ spring:
     import: "optional:classpath:application-local.yml"
   profiles:
     active: local
+
+webpush:
+  vapid:
+    public-key: BAyiTTiiEObOVfRK-VgIztsE5tgtNs-J84ZsIqxb1AHyC2ubQhidiJijmGi48PKL-AYiMRIfhM3U-JqWZHSlJ0I

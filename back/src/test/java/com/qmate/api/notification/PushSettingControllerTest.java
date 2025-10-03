@@ -6,15 +6,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qmate.domain.notification.model.response.PushSettingResponse;
 import com.qmate.domain.notification.service.PushSettingService;
-import com.qmate.security.UserPrincipal;
 import com.qmate.SecuritySliceTestConfig;
 import com.qmate.AuthTestUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -22,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-@WebMvcTest(PushSettingController.class)
+@WebMvcTest(NotificationSettingController.class)
 @Import(SecuritySliceTestConfig.class)
 class PushSettingControllerTest {
 
