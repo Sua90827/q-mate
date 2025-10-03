@@ -48,6 +48,7 @@ public class Notification {
   @Column(name = "resource_id")
   private Long resourceId;
 
+  @Setter
   @Column(name = "read_at")
   private LocalDateTime readAt;
 
