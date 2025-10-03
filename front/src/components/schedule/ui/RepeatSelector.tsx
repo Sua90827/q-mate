@@ -1,4 +1,3 @@
-// RepeatSelector.tsx
 'use client';
 import { useState } from 'react';
 import OptionBtn from './OptionBtn';
@@ -6,12 +5,20 @@ import OptionBtn from './OptionBtn';
 interface LabelProps {
   titleLabel: string;
   options: { label: string; value: string }[]; // label은 한글, value는 서버용
+  value?: string; // 부모가 제어할 때
+  defaultValue?: string;
   onChange?: (value: string) => void;
 }
 
-export default function RepeatSelector({ titleLabel, options, onChange }: LabelProps) {
-  const [selected, setSelected] = useState<string>(options[0].value);
-
+export default function RepeatSelector({
+  titleLabel,
+  options,
+  value,
+  defaultValue,
+  onChange,
+}: LabelProps) {
+  const [selected, setSelected] = useState<string>(defaultValue ?? options[0].value);
+  const current = value ?? selected;
   const handleClick = (value: string) => {
     setSelected(value);
     onChange?.(value); // 부모에 서버용 value 전달
@@ -25,7 +32,7 @@ export default function RepeatSelector({ titleLabel, options, onChange }: LabelP
           <OptionBtn
             key={opt.value}
             label={opt.label}
-            active={selected === opt.value}
+            active={current === opt.value}
             onClick={() => handleClick(opt.value)}
           />
         ))}
