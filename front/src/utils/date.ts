@@ -1,14 +1,10 @@
 // Date YYYY.MM.DD -> YYYY-MM-DD형태의 문자열로 변환
 
 import { ScheduleEvent } from '@/types/scheduleType';
+import { format } from 'date-fns/format';
 
 // 캘린더 날짜클릭 시 일정리스트에 사용할 키값으로 사용 용도
-export const toKey = (d: Date) => {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-};
+export const toKey = (d: Date) => format(d, 'yyyy-MM-dd');
 
 //a와 b의 날짜가 같은지 확인
 export const sameMonthDay = (a: Date, b: Date) =>
