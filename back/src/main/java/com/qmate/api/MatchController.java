@@ -189,4 +189,12 @@ public class MatchController {
     DetachedMatchStatusResponse response = matchService.getDetachedMatchStatus(principal.userId());
     return ResponseEntity.ok(response);
   }
+
+// 14일 이상 연결 끊기 테스트 컨트롤러
+//  @PostMapping("/run-inactive-check")
+//  public ResponseEntity<String> runInactiveCheck() {
+//    matchService.disconnectInactiveMatches();
+//    return ResponseEntity.ok("비활성 매칭 체크 스케줄러를 수동으로 실행했습니다.");
+//  }
+
 }
