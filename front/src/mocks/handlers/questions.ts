@@ -225,7 +225,7 @@ export const questionHandlers = [
         questionInstanceId: 10,
         matchId: 1,
         deliveredAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-        status: 'COMPLETED',
+        status: 'PENDING',
         completedAt: new Date().toISOString(),
         question: {
           questionId: 778,
@@ -250,7 +250,7 @@ export const questionHandlers = [
             nickname: '활기찬 고래',
             isMine: false,
             visible: false,
-            content: '스포츠 보기',
+            content: null,
             submittedAt: null,
           },
         ],
@@ -329,8 +329,8 @@ export const questionHandlers = [
     const { questionInstanceId } = params;
     const body = (await request.json()) as { content?: string };
 
-    const content = typeof body?.content === 'string' ? body.content.trim() : '';
-    if (!content || content.length > 100) {
+    const content = body?.content ?? '';
+    if (content.length < 1 || content.length > 100) {
       return HttpResponse.json(
         { error: 'FIELD_VALIDATION_FAILED', message: 'content(1~100자)이 필요합니다.' },
         { status: 400 },
@@ -343,14 +343,9 @@ export const questionHandlers = [
       {
         answerId: Math.floor(Math.random() * 10000),
         questionInstanceId: Number(questionInstanceId),
-        userId: 99,
-        nickname: '내 닉네임',
-        visible: true,
         content,
         submittedAt: now,
         updatedAt: now,
-        mine: true,
-        isMine: true,
       },
       { status: 201 },
     );
@@ -385,7 +380,7 @@ export const questionHandlers = [
   }),
 
   // 질문 평가 등록
-  http.post('/api/questions/:questionId/ratings', async ({ params, request }) => {
+  http.patch('/api/questions/:questionId/ratings', async ({ params, request }) => {
     const { questionId } = params;
     const body = (await request.json()) as { isLike?: boolean };
 

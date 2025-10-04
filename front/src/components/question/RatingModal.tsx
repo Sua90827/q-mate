@@ -7,12 +7,12 @@ import { DialogTitle } from '@radix-ui/react-dialog';
 
 type Props = {
   open: boolean;
-  // props로 넘겨주는 액션 전송api에사용
+  onOpenChange: () => void;
   onLike: () => void;
   onDislike: () => void;
 };
 
-export default function RatingModal({ open, onLike, onDislike }: Props) {
+export default function RatingModal({ open, onLike, onDislike, onOpenChange }: Props) {
   return (
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent

@@ -20,7 +20,7 @@ export default function page() {
         />
         <BellBtn />
       </div>
-      <div className="w-full h-full flex flex-row gap-10 justify-center md:justify-between sm:pb-[70px] md:px-[20px] lg: xl:px-[120px]">
+      <div className="w-full h-full flex flex-row gap-10 justify-center md:justify-between md:pb-[70px] md:px-[20px] lg: xl:px-[120px]">
         <div className="flex-1 justify-center hidden md:flex flex-col md:min-w-[260px] lg:max-w-[380px] h-full">
           <ScheduleListWeb />
         </div>
