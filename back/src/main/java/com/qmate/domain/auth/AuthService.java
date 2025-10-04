@@ -7,7 +7,6 @@ import com.qmate.exception.custom.auth.InvalidCredentialsException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -53,6 +52,6 @@ public class AuthService {
   }
 
   public void logout(HttpServletRequest req, HttpServletResponse res, Authentication auth) {
-    delegate.logout(req, res, auth); // 세션 쓰지 않으면 컨텍스트 클리어만 수행
+    delegate.logout(req, res, auth);
   }
 }
