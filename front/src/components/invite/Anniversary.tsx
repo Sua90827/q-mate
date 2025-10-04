@@ -10,7 +10,7 @@ export default function Anniversary() {
 
   useEffect(() => {
     if (date) {
-      router.push(`/invite/invite/${date}`);
+      router.push(`/invite/COUPLE?date=${date}`);
     }
   }, [date, router]);
 
@@ -23,12 +23,10 @@ export default function Anniversary() {
 
       <Image src="/images/bubbley/bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
 
-      <div className="w-[300px]  mt-10">
+      <div className="w-[300px] mt-10">
         <AnniversaryPicker
           label="날짜 선택"
-          onSelect={(d) => {
-            setDate(d ? d.split('T')[0] : undefined);
-          }}
+          onSelect={(d) => setDate(d ? d.split('T')[0] : undefined)}
         />
       </div>
     </>

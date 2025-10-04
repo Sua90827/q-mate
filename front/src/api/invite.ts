@@ -24,3 +24,9 @@ export const fetchLockStatus = async (): Promise<LockStatus> => {
   const res = await axios.get(`/api/matches/lock-status`);
   return res.data;
 };
+
+//초대코드 유효성 검증
+export const checkInviteCode = async ({ inviteCode }: { inviteCode: string }) => {
+  const res = await axios.post(`/api/invites/validate`, { inviteCode });
+  return res.data;
+};

@@ -32,4 +32,19 @@ export const inviteHandlers = [
       partnerNickname: '활기찬 고래',
     });
   }),
+
+  //초대 유효성 검사
+
+  http.post('/api/invites/validate', async ({ request }) => {
+    const body = (await request.json()) as { inviteCode: string };
+
+    if (body.inviteCode === 'COUPLE_V7YZXG') {
+      return HttpResponse.json({ valid: true, inviteCode: body.inviteCode }, { status: 200 });
+    }
+
+    return HttpResponse.json(
+      { valid: false, message: '유효하지 않은 초대코드입니다.' },
+      { status: 400 },
+    );
+  }),
 ];

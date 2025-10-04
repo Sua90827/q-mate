@@ -11,8 +11,8 @@ import { useRouter } from 'next/navigation';
 import NoticeModal from '../common/NoticeModal';
 import Loader from '../common/Loader';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
+import { fetchPetInfo } from '@/api/pet';
 
-/* .test() -> true/false 반환 */
 const validateEmail = (v: string) => /\S+@\S+\.\S+/.test(v);
 const validatePassword = (v: string) =>
   v.length >= 8 && /[0-9]/.test(v) && /[a-zA-Z]/.test(v) && /[^a-zA-Z0-9]/.test(v);
@@ -26,16 +26,19 @@ export default function Login() {
   const isFormValid = isEmailValid && isPasswordValid;
   const router = useRouter();
   const setMatchId = useMatchIdStore((state) => state.setMatchId);
-
   const { mutate: loginUserMutate, isPending: isLoginLoading } = useLoginUser();
 
   const HandleLogin = () => {
     loginUserMutate(
       { email, password },
       {
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
           if (data.user.currentMatchId !== null) {
             setMatchId(data.user.currentMatchId);
+            // 서버에서 현재 exp 조회
+            const petInfo = await fetchPetInfo(data.user.currentMatchId);
+            //현재 exp 셋팅
+            localStorage.setItem('prevExp', String(petInfo.exp));
             router.push('/main');
           } else {
             router.push('/invite');
@@ -50,7 +53,6 @@ export default function Login() {
 
   return (
     <div className=" w-full h-full flex flex-col gap-3 items-center justify-center">
-      {/* 로딩 오버레이 */}
       {isLoginLoading && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
           <Loader />

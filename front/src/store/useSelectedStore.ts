@@ -3,14 +3,14 @@ import { persist } from 'zustand/middleware';
 
 interface SelectedState {
   selectedMenu: string;
-  setSelectedMenu: (item: string) => void;
+  setSelectedMenu: (selectedMenu: string) => void;
 }
 
 export const useSelectedStore = create<SelectedState>()(
   persist(
     (set) => ({
       selectedMenu: '기본값',
-      setSelectedMenu: (item: string) => set({ selectedMenu: item }),
+      setSelectedMenu: (selectedMenu) => set({ selectedMenu }),
     }),
     {
       name: 'selected',

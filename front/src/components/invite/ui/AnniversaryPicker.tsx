@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import CalendarAnniversary from './CalendarAnniversary';
+import { format } from 'date-fns';
 
 export function AnniversaryPicker({
   label,
@@ -23,7 +24,7 @@ export function AnniversaryPicker({
             id="date"
             className={` border-gray  bg-secondary hover:bg-secondary h-[45px] w-[300px] !text-primary font-bold flex justify-center text-16`}
           >
-            {date ? date.toLocaleDateString() : label}
+            {date ? format(date, 'yyyy-MM-dd') : label}
           </Button>
         </PopoverTrigger>
         <PopoverContent
@@ -38,6 +39,7 @@ export function AnniversaryPicker({
               onSelect?.(d ? d.toISOString() : undefined);
               setOpen(false);
             }}
+            disabled={(d) => d > new Date()}
           />
         </PopoverContent>
       </Popover>

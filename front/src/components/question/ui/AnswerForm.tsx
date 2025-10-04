@@ -15,6 +15,7 @@ type AnswerFormProps = {
 
 export default function AnswerForm({ questionText, mode }: AnswerFormProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [text, setText] = useState('');
   const router = useRouter();
 
   return (
@@ -30,14 +31,20 @@ export default function AnswerForm({ questionText, mode }: AnswerFormProps) {
           <span className="font-bold text-24 text-center pb-5 text-theme-primary">
             {questionText}
           </span>
-          <textarea
-            placeholder="오늘의 질문에 답변을 해보세요!"
-            className="md:w-[400px] w-[310px] h-[175px] rounded-md shadow-md p-3 bg-secondary border border-gray text-[14px]"
-          />
+          <div className="relative">
+            <textarea
+              placeholder="오늘의 질문에 답변을 해보세요!"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              maxLength={99}
+              className="md:w-[400px] w-[310px] h-[175px] rounded-md shadow-md p-3 bg-secondary border border-gray text-[14px] resize-none"
+            />
+            <span className="text-text-secondary absolute right-3 bottom-4">{text.length}/100</span>
+          </div>
           <div className="w-full flex justify-center md:justify-end">
             <Button
               size={'lg'}
-              className="w-[310px] sm:w-[200px]"
+              className="w-[310px] md:w-[200px]"
               onClick={() => setIsModalOpen(true)}
             >
               {mode === 'create' ? '답변하기' : '수정하기'}

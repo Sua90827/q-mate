@@ -5,7 +5,6 @@ import * as RechartsPrimitive from 'recharts';
 
 import { cn } from '@/lib/utils';
 
-// Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: '', dark: '.dark' } as const;
 
 export type ChartConfig = {
@@ -19,7 +18,7 @@ export type ChartConfig = {
 };
 
 type ChartContextProps = {
-  config?: ChartConfig; // ✅ config를 optional로 변경
+  config?: ChartConfig;
 };
 
 const ChartContext = React.createContext<ChartContextProps | null>(null);

@@ -1,19 +1,46 @@
 'use client';
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import ExpBubble from './ui/ExpBubble';
 import Bubbley from './ui/Bubbley';
 import { ExpBar } from './ui/ExpBar';
 import ChartModal from '../charts/ChartModal';
 import { motion, AnimatePresence } from 'motion/react';
+import { useFetchPetInfo } from '@/hooks/usePet';
+import { useMatchIdStore } from '@/store/useMatchIdStore';
+import TestBtn from './ui/TestBtn';
+import { usePetStateStore } from '@/store/usePetStore';
 
 export default function Main() {
   const MotionDiv = motion.div;
+  const matchId = useMatchIdStore((s) => s.matchId);
+
+  const { currentExp, setCurrentExp, triggerBubble } = usePetStateStore();
+
+  const { data } = useFetchPetInfo(matchId!);
+
+  // 서버 exp → 현재 세팅
+  useEffect(() => {
+    if (data) setCurrentExp(data.exp);
+  }, [data, setCurrentExp]);
+
+  // exp 변화 감지 및 버블 처리
+  useEffect(() => {
+    if (currentExp === 0) return;
+
+    const prevExp = parseInt(localStorage.getItem('prevExp') ?? '0', 10);
+
+    if (currentExp > prevExp) {
+      triggerBubble();
+    }
+
+    localStorage.setItem('prevExp', String(currentExp));
+  }, [currentExp, triggerBubble]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
       <div className="fixed inset-0 pointer-events-none z-0">
         <AnimatePresence mode="wait">
-          {/* 라이트 효과 (데스크탑 전용) */}
           <MotionDiv
             key="deco-light"
             className="hidden md:block absolute inset-0 bg-deco-light"
@@ -22,8 +49,6 @@ export default function Main() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
           />
-
-          {/* 배경 장식: 모바일 / 웹 */}
           <MotionDiv
             key="deco"
             className="absolute inset-0 bg-deco"
@@ -37,8 +62,9 @@ export default function Main() {
 
       <div className="relative z-10 flex flex-col items-center justify-center w-[252px] h-[358px] mt-15">
         <ExpBubble />
-        <Bubbley exp={0} className="mb-6" />
+        <Bubbley className="mb-6" />
         <ExpBar />
+        <TestBtn />
       </div>
       <ChartModal />
     </div>
