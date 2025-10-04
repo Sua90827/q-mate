@@ -28,4 +28,16 @@ public class AuthConstants {
       + "|-----:|-----------|---------|\n"
       + "| " + HttpStatusCode.UNAUTHORIZED + " | " + AuthErrorCode.INVALID_CREDENTIALS_CODE + " | "
       + AuthErrorCode.INVALID_CREDENTIALS_MESSAGE + " |\n";
+
+  public static final String LOGOUT_MD =
+    "로그아웃을 수행합니다.\n\n"
+      + "### 동작\n"
+      + "- 서버: 인증 컨텍스트를 정리하고 204 No Content를 반환합니다.\n"
+      + "- 클라이언트: 저장된 액세스/리프레시 토큰을 삭제합니다.\n\n"
+      + "### 응답\n"
+      + "- 204 No Content: 로그아웃 성공\n\n"
+      + "### 에러 응답\n"
+      + "| HTTP | errorCode | message |\n"
+      + "|-----:|-----------|---------|\n"
+      + "| 401 | UNAUTHORIZED | 인증되지 않은 요청입니다. |\n";
 }

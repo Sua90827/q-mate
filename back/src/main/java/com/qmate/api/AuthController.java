@@ -12,12 +12,15 @@ import com.qmate.exception.custom.auth.OkTokenInvalidException;
 import com.qmate.security.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,6 +62,13 @@ public class AuthController {
   public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request){
     LoginResponse tokens = authService.login(request.getEmail(), request.getPassword());
     return ResponseEntity.ok(tokens);
+  }
+
+  @PostMapping("/logout")
+  @Operation(summary="로그아웃", description=AuthConstants.LOGOUT_MD)
+  public ResponseEntity<Void> logout(HttpServletRequest req, HttpServletResponse res, Authentication auth) {
+    authService.logout(req, res, auth);
+    return ResponseEntity.noContent().build();
   }
 
   //@PreAuthorize("hasRole('ADMIN')")
