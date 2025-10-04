@@ -8,4 +8,6 @@ spring:
 
 webpush:
   vapid:
+    subject: "mailto:demo@demo.com" # 배포 단계에서 적절한 이메일로 변경
     public-key: BAyiTTiiEObOVfRK-VgIztsE5tgtNs-J84ZsIqxb1AHyC2ubQhidiJijmGi48PKL-AYiMRIfhM3U-JqWZHSlJ0I
+    private-key: ${VAPID_PRIVATE_KEY:}
