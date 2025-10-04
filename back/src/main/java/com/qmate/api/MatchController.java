@@ -169,7 +169,7 @@ public class MatchController {
   @GetMapping("/lock-status")
   @Operation(
       summary = "잠금 상태 조회",
-      description = "초대코드 입력 횟수 초과시 조회 잠금 상태 조회"
+      description = MatchConstants.GET_LOCK_STATUS_MD
   )
   public ResponseEntity<LockStatusResponse> getLockStatus(
       @AuthenticationPrincipal UserPrincipal principal
