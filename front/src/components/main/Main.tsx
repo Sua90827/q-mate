@@ -8,7 +8,6 @@ import ChartModal from '../charts/ChartModal';
 import { motion, AnimatePresence } from 'motion/react';
 import { useFetchPetInfo } from '@/hooks/usePet';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
-import TestBtn from './ui/TestBtn';
 import { usePetStateStore } from '@/store/usePetStore';
 
 export default function Main() {
@@ -64,7 +63,6 @@ export default function Main() {
         <ExpBubble />
         <Bubbley className="mb-6" />
         <ExpBar />
-        <TestBtn />
       </div>
       <ChartModal />
     </div>
