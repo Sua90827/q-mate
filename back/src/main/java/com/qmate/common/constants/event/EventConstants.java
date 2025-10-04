@@ -15,6 +15,8 @@ public class EventConstants {
   public static final int EVENT_DESCRIPTION_MAX_LENGTH = 1000;
   // 이벤트 리스트 조회 기간 최대 범위
   public static final int EVENT_LIST_MAX_RANGE_YEARS = 3;
+  // 일정 캘린더 조회 최대 범위
+  public static final int EVENT_CALENDAR_MAX_RANGE_DAYS = 60;
 
   // validation message
   // 제목 공백 불가
@@ -84,4 +86,26 @@ public class EventConstants {
           + "|-----:|-----------|---------|\n"
           + "| " + HttpStatusCode.BAD_REQUEST + " | " + EventErrorCode.EVENT_LIST_DATE_RANGE_EXCEEDED_ERROR_CODE + " | "
           + EventErrorCode.EVENT_LIST_DATE_RANGE_EXCEEDED_MESSAGE + " |\n";
+
+  public static final String CALENDAR_MD =
+      "지정한 기간[from, to]에 대해 매치의 캘린더 이벤트를 조회합니다.\n\n"
+          + "#### 규칙\n"
+          + "- from, to **모두 포함**입니다. (예: from==발생일, to==발생일도 결과에 포함)\n"
+          + "- 조회 기간은 **최대 60일**(포함 기준)까지만 허용합니다. **같은 달 제한은 없습니다.**\n"
+          + "- **페이징 없음**: 캘린더 특성상 날짜당 최대 1개만 반환됩니다.\n"
+          + "- 집계 규칙(같은 날짜에 여러 이벤트 존재 시):\n"
+          + "  - **대표 eventId = 최솟값**\n"
+          + "  - **isAnniversary = OR** (해당 날짜에 하나라도 기념일이 있으면 true)\n"
+          + "- 정렬: **날짜(eventAt) 오름차순**.\n"
+          + "- 권한: `user.currentMatchId == {matchId}` 인 경우에만 조회되며, 미충족 시 **빈 결과**가 반환됩니다.\n"
+          + "- 날짜 형식: `YYYY-MM-DD`.\n\n"
+          + "#### 반복 전개\n"
+          + "- WEEKLY: seed 요일 기준 주 단위 전개.\n"
+          + "- MONTHLY: seed의 일(day) 기준 전개, 말일 초과 시 해당 월의 **말일로 보정**.\n"
+          + "- YEARLY: seed의 월/일 그대로 전개, **2/29는 평년에는 2/28로 보정**.\n\n"
+          + "### 에러 응답\n\n"
+          + "| HTTP | errorCode | message |\n"
+          + "|-----:|-----------|---------|\n"
+          + "| " + HttpStatusCode.BAD_REQUEST + " | " + EventErrorCode.EVENT_CALENDAR_DATE_RANGE_EXCEEDED_ERROR_CODE + " | "
+          + EventErrorCode.EVENT_CALENDAR_DATE_RANGE_EXCEEDED_MESSAGE + " |\n";
 }

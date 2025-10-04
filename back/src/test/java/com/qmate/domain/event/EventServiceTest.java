@@ -7,10 +7,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 
 import com.qmate.domain.event.model.request.EventCreateRequest;
 import com.qmate.domain.event.model.request.EventUpdateRequest;
+import com.qmate.domain.event.model.response.CalendarMonthResponse;
 import com.qmate.domain.event.model.response.EventResponse;
 import com.qmate.domain.event.entity.Event;
 import com.qmate.domain.event.entity.EventAlarmOption;
@@ -19,6 +21,7 @@ import com.qmate.domain.event.repository.EventRepository;
 import com.qmate.domain.event.service.EventService;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.repository.MatchRepository;
+import com.qmate.exception.custom.event.EventCalendarDateRangeExceededException;
 import com.qmate.exception.custom.event.EventDeletionNotAllowedException;
 import com.qmate.exception.custom.event.EventListDateRangeExceededException;
 import com.qmate.exception.custom.event.EventNotFoundException;
@@ -26,9 +29,11 @@ import com.qmate.exception.custom.event.EventRepeatModificationNotAllowedExcepti
 import com.qmate.exception.custom.matchinstance.MatchNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -517,5 +522,120 @@ class EventServiceTest {
     // findCandidates 호출되지 않아야 함
     then(eventRepository).should(never())
         .findCandidates(anyLong(), anyLong(), any(LocalDate.class), any(LocalDate.class), any(), any());
+  }
+
+  private static final Long MATCH_ID = 42L;
+  private static final Long USER_ID = 7L;
+
+  @Nested
+  @DisplayName("캘린더 조회(getCalendarMonth)")
+  class GetCalendarMonth {
+
+    @Test
+    @DisplayName("to < from 이면 빈 결과를 반환한다")
+    void returnsEmptyWhenReversedRange() {
+      // given
+      LocalDate from = LocalDate.of(2025, 9, 10);
+      LocalDate to = LocalDate.of(2025, 9, 9);
+
+      // when
+      CalendarMonthResponse res = eventService.getCalendarMonth(MATCH_ID, USER_ID, from, to);
+
+      // then
+      assertThat(res.getYear()).isEqualTo(YearMonth.from(from).getYear());
+      assertThat(res.getMonth()).isEqualTo(YearMonth.from(from).getMonthValue());
+      assertThat(res.getDays()).isEmpty();
+
+      then(eventRepository).shouldHaveNoInteractions();
+    }
+
+    @Test
+    @DisplayName("조회 기간이 60일 초과면 예외를 던진다")
+    void throwsWhenOver60Days() {
+      // given
+      LocalDate from = LocalDate.of(2025, 9, 1);
+      LocalDate to = from.plusDays(60); // 포함 기준 61일 → 예외
+
+      // when / then
+      assertThatThrownBy(() ->
+          eventService.getCalendarMonth(MATCH_ID, USER_ID, from, to)
+      ).isInstanceOf(EventCalendarDateRangeExceededException.class);
+
+      then(eventRepository).shouldHaveNoInteractions();
+    }
+
+    @Test
+    @DisplayName("같은 날짜에 여러 이벤트가 있으면 대표 eventId=최솟값, isAnniversary는 OR 집계")
+    void aggregatesSameDate() {
+      // given
+      LocalDate from = LocalDate.of(2025, 9, 1);
+      LocalDate to = LocalDate.of(2025, 9, 30);
+      LocalDate day = LocalDate.of(2025, 9, 27);
+
+      Event e1 = mock(Event.class);
+      given(e1.getId()).willReturn(10L);
+      given(e1.isAnniversary()).willReturn(false);
+      given(e1.getRepeatType()).willReturn(EventRepeatType.NONE);
+      given(e1.getEventAt()).willReturn(day);
+
+      Event e2 = mock(Event.class);
+      given(e2.getId()).willReturn(3L); // 더 작은 ID
+      given(e2.isAnniversary()).willReturn(true); // 기념일
+      given(e2.getRepeatType()).willReturn(EventRepeatType.NONE);
+      given(e2.getEventAt()).willReturn(day);
+
+      // findCandidates는 두 이벤트를 반환
+      given(eventRepository.findCandidates(MATCH_ID, USER_ID, from, to, null, null))
+          .willReturn(List.of(e1, e2));
+
+      // when
+      CalendarMonthResponse res = eventService.getCalendarMonth(MATCH_ID, USER_ID, from, to);
+
+      // then
+      assertThat(res.getDays()).hasSize(1);
+      var item = res.getDays().get(0);
+      assertThat(item.getEventAt()).isEqualTo(day);
+      assertThat(item.getEventId()).isEqualTo(3L); // 최솟값
+      assertThat(item.isAnniversary()).isTrue();   // OR → true
+
+      then(eventRepository).should().findCandidates(MATCH_ID, USER_ID, from, to, null, null);
+    }
+
+    @Test
+    @DisplayName("WEEKLY 반복 전개: 기간 내 해당 요일로 전개되어 날짜당 1개로 반환된다")
+    void expandsWeekly() {
+      // given
+      LocalDate from = LocalDate.of(2025, 9, 1);   // 월
+      LocalDate to = LocalDate.of(2025, 9, 21);    // 3주 범위
+
+      // seed: 2025-09-03(수) → 매주 수요일 전개 예상: 09-03, 09-10, 09-17
+      Event weekly = mock(Event.class);
+      given(weekly.getId()).willReturn(100L);
+      given(weekly.isAnniversary()).willReturn(false);
+      given(weekly.getRepeatType()).willReturn(EventRepeatType.WEEKLY);
+      given(weekly.getEventAt()).willReturn(LocalDate.of(2025, 9, 3));
+
+      // findCandidates는 1건 반환
+      given(eventRepository.findCandidates(MATCH_ID, USER_ID, from, to, null, null))
+          .willReturn(List.of(weekly));
+
+      // when
+      CalendarMonthResponse res = eventService.getCalendarMonth(MATCH_ID, USER_ID, from, to);
+
+      // then
+      assertThat(res.getDays())
+          .extracting(d -> d.getEventAt())
+          .containsExactly(
+              LocalDate.of(2025, 9, 3),
+              LocalDate.of(2025, 9, 10),
+              LocalDate.of(2025, 9, 17)
+          );
+
+      // 날짜당 1개 보장 & 동일 이벤트의 반복 전개이므로 eventId 동일
+      assertThat(res.getDays())
+          .allSatisfy(d -> assertThat(d.getEventId()).isEqualTo(100L));
+
+      then(eventRepository).should().findCandidates(MATCH_ID, USER_ID, from, to, null, null);
+    }
   }
 }
