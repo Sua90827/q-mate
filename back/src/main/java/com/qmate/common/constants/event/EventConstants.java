@@ -25,15 +25,14 @@ public class EventConstants {
   public static final String EVENT_DESCRIPTION_SIZE_MESSAGE = "일정 설명은 최대 " + EVENT_DESCRIPTION_MAX_LENGTH + "자까지 가능합니다.";
 
   // api doc
-  // TODO MatchErrorCode 변경 시 참조 필요
   public static final String CREATE_MD =
       "매치 하위에 일정을 생성합니다.\n\n"
           + "- matchId, userId(인증)로 권한과 존재를 함께 검증합니다.\n\n"
           + "### 에러 응답\n\n"
           + "| HTTP | errorCode | message |\n"
           + "|-----:|-----------|---------|\n"
-          + "| " + HttpStatusCode.NOT_FOUND + " | " + "MATCH_002" + " | "
-          + "해당 매칭을 찾을 수 없습니다." + " |\n";
+          + "| " + HttpStatusCode.NOT_FOUND + " | " + MatchErrorCode.MATCH_NOT_FOUND_ERROR_CODE + " | "
+          + MatchErrorCode.MATCH_NOT_FOUND_MESSAGE + " |\n";
 
   public static final String GET_DETAIL_MD =
       "일정을 조회합니다.\n\n"

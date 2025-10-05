@@ -4,6 +4,7 @@ import com.qmate.common.push.PushSender;
 import com.qmate.domain.notification.entity.Notification;
 import com.qmate.domain.notification.entity.NotificationResourceType;
 import com.qmate.domain.notification.repository.NotificationRepository;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.Valid;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin/notifications")
 @RequiredArgsConstructor
+@Hidden
 public class AdminNotificationTestController {
 
     private final NotificationRepository notificationRepository;
