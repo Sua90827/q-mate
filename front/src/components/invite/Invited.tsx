@@ -6,19 +6,9 @@ import { useMatchIdStore } from '@/store/useMatchIdStore';
 import ConfirmModal from '../common/ConfirmModal';
 import NoticeModal from '../common/NoticeModal';
 import { useRouter } from 'next/navigation';
-import { useCreateMatchId, useFetchLockStatus } from '@/hooks/useInvite';
-import axios from 'axios';
-
-type ModalType = 'success' | 'errorConfirm' | 'errorNotice' | null;
-
-interface ModalConfig {
-  open: boolean;
-  type: ModalType;
-  title: React.ReactNode;
-  sub?: string;
-  isDanger?: boolean;
-  onConfirm?: () => void;
-}
+import { useCheckInviteCode, useCreateMatchId, useFetchLockStatus } from '@/hooks/useInvite';
+import { ModalConfig } from '@/types/modal';
+import { handleInviteError } from '@/utils/handleInviteError';
 
 export default function Invited() {
   const router = useRouter();
@@ -28,9 +18,11 @@ export default function Invited() {
     open: false,
     type: null,
     title: '',
+    isDanger: true,
   });
   const [code, setCode] = useState('');
 
+  const { mutate: checkCode } = useCheckInviteCode();
   const { mutate: joinMatch, isPending: isJoining } = useCreateMatchId();
   const { data } = useFetchLockStatus();
 
@@ -88,61 +80,45 @@ export default function Invited() {
   };
 
   const handleJoin = () => {
-    joinMatch(
+    checkCode(
       { inviteCode: code },
       {
-        onSuccess: (data) => {
-          setMatchId(data.matchId);
-          setModal({
-            open: true,
-            type: 'success',
-            title: (
-              <>
-                {data.partnerNickname}님과 함께 <br /> 이야기를 기록하시겠습니까?
-              </>
-            ),
-            onConfirm: () => router.push('/main'),
-          });
-        },
-        onError: (error) => {
-          if (axios.isAxiosError(error)) {
-            const status = error.response?.status ?? 0;
-            if (data?.remainingSeconds && data.remainingSeconds < 24 * 60 * 60) {
-              const hours = Math.floor(data.remainingSeconds / 3600);
-              const minutes = Math.floor((data.remainingSeconds % 3600) / 60);
-
-              setModal({
-                open: true,
-                type: 'errorNotice',
-                title: (
-                  <>
-                    {hours > 0
-                      ? `${hours}시간 ${minutes}분 후 다시 시도할 수 있습니다.`
-                      : `${minutes}분 후 다시 시도할 수 있습니다.`}
-                  </>
-                ),
-                isDanger: true,
-              });
-            } else {
-              // 첫 번째 시도
-              setModal(errorConfig[403]);
-            }
-            setModal(
-              errorConfig[status] ?? {
-                open: true,
-                type: 'errorNotice',
-                title: '예상치 못한 오류가 발생했습니다',
-                sub: '잠시 후 다시 시도해 주세요.',
+        onSuccess: (res) => {
+          if (res.valid) {
+            joinMatch(
+              { inviteCode: code },
+              {
+                onSuccess: (data) => {
+                  setMatchId(data.matchId);
+                  setModal({
+                    open: true,
+                    type: 'success',
+                    title: (
+                      <>
+                        {data.partnerNickname}님과 함께 <br /> 이야기를 기록하시겠습니까?
+                      </>
+                    ),
+                    onConfirm: () => router.push('/main'),
+                  });
+                },
+                onError: (error) =>
+                  handleInviteError(error, setModal, errorConfig, data?.remainingSeconds),
               },
             );
-          } else {
-            setModal({
-              open: true,
-              type: 'errorNotice',
-              title: '예상치 못한 오류가 발생했습니다.',
-              sub: '잠시 후 다시 시도해 주세요.',
-            });
           }
+        },
+        onError: () => {
+          setModal({
+            open: true,
+            type: 'errorNotice',
+            title: (
+              <>
+                유효하지 않은 코드입니다.
+                <br /> 올바른 코드를 입력해주세요.
+              </>
+            ),
+            isDanger: true,
+          });
         },
       },
     );
@@ -189,6 +165,7 @@ export default function Invited() {
           setOpen={(open) => setModal((prev) => ({ ...prev, open }))}
           title={modal.title}
           sub={modal.sub}
+          danger={modal.isDanger}
         />
       )}
     </>

@@ -7,6 +7,7 @@ import { signupHandlers } from './handlers/signup';
 import { scheduleHandlers } from './handlers/schedule';
 import { chartHandlers } from './handlers/chart';
 import { notificationsHandler } from './handlers/notifications';
+import { petHandlers } from './handlers/pet';
 
 export const handlers = [
   ...questionHandlers,
@@ -18,4 +19,5 @@ export const handlers = [
   ...scheduleHandlers,
   ...chartHandlers,
   ...notificationsHandler,
+  ...petHandlers,
 ];

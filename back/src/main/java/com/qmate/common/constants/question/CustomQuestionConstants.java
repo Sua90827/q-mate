@@ -16,14 +16,13 @@ public class CustomQuestionConstants {
   public static final String SORT_KEY_UPDATED_AT = "updatedAt";
 
   // api 문서 메시지
-  // TODO MatchErrorCode 변경 시 참조 필요
   public static final String CREATE_MD =
       "특정 매치에 대한 커스텀 질문을 생성합니다.\n\n"
           + "### 에러 응답\n\n"
           + "| HTTP | errorCode | message |\n"
           + "|-----:|-----------|---------|\n"
-          + "| " + HttpStatusCode.NOT_FOUND + " | " + "MATCH_002" + " | "
-          + "해당 매칭을 찾을 수 없습니다." + " |\n";
+          + "| " + HttpStatusCode.NOT_FOUND + " | " + MatchErrorCode.MATCH_NOT_FOUND_ERROR_CODE + " | "
+          + MatchErrorCode.MATCH_NOT_FOUND_MESSAGE + " |\n";
 
   public static final String UPDATE_MD =
       "특정 커스텀 질문을 수정합니다.\n\n"

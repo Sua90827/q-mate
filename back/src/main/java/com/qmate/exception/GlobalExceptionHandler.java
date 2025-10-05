@@ -15,6 +15,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -56,6 +57,26 @@ public class GlobalExceptionHandler {
 
     );
 
+  }
+
+  @ExceptionHandler(MissingServletRequestParameterException.class)
+  public ResponseEntity<ErrorResponse> handleMissingParam(MissingServletRequestParameterException ex) {
+    log.warn("필수 파라미터 누락: {}", ex.getMessage());
+
+    ErrorCode errorCode = CommonErrorCode.invalidInput();
+    String field = ex.getParameterName();
+    String requiredType = ex.getParameterType();
+    List<ErrorResponse.FieldErrorDetail> errors = List.of(
+        new ErrorResponse.FieldErrorDetail(
+            field,
+            String.format("'%s' 파라미터가 필요합니다. (타입: %s)", field, requiredType)
+        )
+    );
+
+    return new ResponseEntity<>(
+        new ErrorResponse(errorCode.getCode(), errorCode.getMessage(), errors),
+        errorCode.getHttpStatus()
+    );
   }
 
   // 컨트롤러에서 타입 미스매치 예외를 처리하는 핸들러 (파라미터 전용)

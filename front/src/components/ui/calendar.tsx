@@ -15,7 +15,7 @@ function Calendar({
   buttonVariant = 'ghost',
   formatters,
   components,
-  anniversary = false, // ✅ 추가
+  anniversary = false,
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
   buttonVariant?: React.ComponentProps<typeof Button>['variant'];
@@ -121,7 +121,7 @@ function Calendar({
 
           return <ChevronDownIcon className={cn('size-4', className)} {...props} />;
         },
-        DayButton: (props) => <CalendarDayButton {...props} anniversary={anniversary} />, // ✅ 전달
+        DayButton: (props) => <CalendarDayButton {...props} anniversary={anniversary} />,
         WeekNumber: ({ children, ...props }) => {
           return (
             <td {...props}>

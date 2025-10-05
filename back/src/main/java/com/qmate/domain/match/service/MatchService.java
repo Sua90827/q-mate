@@ -38,9 +38,11 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MatchService {
@@ -322,5 +324,30 @@ public class MatchService {
         .filter(member -> !member.getUser().getId().equals(joinerId))
         .findFirst()
         .orElseThrow(PartnerNotFoundException::new);
+  }
+  //자동 연결 끊기 서비스 로직 구현
+  @Transactional
+  public void disconnectInactiveMatches(){
+    LocalDateTime toWeeksAgo = LocalDateTime.now().minusWeeks(2);
+    List<Match> inactiveMatches = matchRepository.findInactiveMatches(toWeeksAgo);
+
+    for (Match match : inactiveMatches){
+      match.getMembers().forEach(matchMember -> matchMember.getUser().leaveMatch());
+      match.disconnect();
+    }
+  log.info("{}개의 비활성 매칭을 연결 끊기 상태로 전환했습니다.", inactiveMatches.size());
+  }
+
+  // 유예기간 지난 상태 델리트로 변경.
+  @Transactional
+  public void finalizeExpiredMatches(){
+    LocalDateTime toWeeksAgo = LocalDateTime.now().minusWeeks(2);
+    List<Match> expiredMatches = matchRepository.findMatchesForSoftDelete(toWeeksAgo);
+
+    for (Match match : expiredMatches){
+      // user의 current_match_id는 이미 null이므로 추가 작업 필요 없음
+    match.markAsDeleted();
+    }
+    log.info("{}개의 만료된 매칭을 삭제 처리했습니다.", expiredMatches.size());
   }
 }

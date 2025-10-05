@@ -4,5 +4,5 @@ public enum MatchStatus {
   WAITING,
   ACTIVE,
   DETACHED_PENDING_DELETE,
-  DELETED
+  BROKEN
 }

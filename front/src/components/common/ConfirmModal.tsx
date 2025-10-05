@@ -31,7 +31,7 @@ export default function ConfirmModal({
         showCloseButton={false}
         onEscapeKeyDown={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
-        className="w-[285px] z-50"
+        className="w-[285px] z-50 pt-[31px]"
       >
         <DialogHeader>
           <DialogTitle className="text-16 font-bold text-center leading-relaxed">
@@ -56,7 +56,7 @@ export default function ConfirmModal({
           {/* 확인 버튼 */}
           <Button
             variant={isDanger ? 'dangerPrimary' : 'primary'}
-            className={`w-30 h-9.5`}
+            className="w-30 h-9.5"
             onClick={() => {
               setOpen(false);
               onConfirm();

@@ -1,16 +1,18 @@
 'use client';
-import { motion, transform } from 'motion/react';
+
+import { usePetStateStore } from '@/store/usePetStore';
+import { motion } from 'motion/react';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 type BubbleyProps = {
-  exp: number;
   className?: string;
 };
 
-export default function Bubbley({ exp, className }: BubbleyProps) {
+export default function Bubbley({ className }: BubbleyProps) {
   const [theme, setTheme] = useState<string | null>(null);
   const [isJumping, setIsJumping] = useState(false);
+  const exp = usePetStateStore((state) => state.currentExp); //현재 조회한 exp
 
   useEffect(() => {
     const current = document.documentElement.getAttribute('data-theme');

@@ -14,7 +14,6 @@ const NAV_ITEMS = [
 ];
 
 export default function Nav() {
-  const [active, setActive] = useState('home');
   const selectedMenu = useSelectedStore((state) => state.selectedMenu);
   const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
 
@@ -22,13 +21,12 @@ export default function Nav() {
     <>
       {/* 모바일 (하단 고정) */}
       <nav className="sm:hidden fixed bottom-0 left-0 w-full h-[70px] bg-secondary flex justify-center items-center z-50 border-t-gray border-1 shadow-[0_-2px_6px_rgba(0,0,0,0.1)]">
-        <ul className="w-[320px] gap-12 flex">
+        <ul className="w-[320px] gap-10 flex">
           {NAV_ITEMS.map(({ key, href, Icon, label }) => (
             <li key={key}>
               <Link
                 href={href}
                 onClick={() => {
-                  setActive(key);
                   setSelectedMenu(key);
                 }}
               >
@@ -55,7 +53,6 @@ export default function Nav() {
                 <Link
                   href={href}
                   onClick={() => {
-                    setActive(key);
                     setSelectedMenu(key);
                   }}
                   className={`nav-item nav-item-web ${selectedMenu === key ? 'active' : ''}`}
