@@ -19,6 +19,8 @@ import com.qmate.domain.match.model.response.MatchMembersResponse;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.match.repository.MatchSettingRepository;
+import com.qmate.domain.pet.Pet;
+import com.qmate.domain.pet.repository.PetRepository;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
 import com.qmate.exception.BusinessGlobalException;
@@ -52,6 +54,7 @@ public class MatchService {
   private final UserRepository userRepository;
   private final RedisHelper redisHelper;
   private final MatchSettingRepository matchSettingRepository;
+  private final PetRepository petRepository;
 
   //초대 코드 생성 로직
   @Transactional
@@ -103,6 +106,9 @@ public class MatchService {
       MatchMember joinerMember = MatchMember.create(joiner, match);
       matchMemberRepository.save(joinerMember);
       match.setStatus(MatchStatus.ACTIVE);
+
+      Pet newPet = new Pet(match);
+      petRepository.save(newPet);
 
       MatchMember partnerMember = findPartner(matchId, joinerId);
       User partner = partnerMember.getUser();
