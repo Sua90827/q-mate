@@ -31,4 +31,17 @@ public class MatchRepositoryImpl implements MatchRepositoryCustom{
       .fetch();
   }
 
+  @Override
+  public List<Match> findMatchesForHardDelete(LocalDateTime cutoffDate){
+    QMatch match = QMatch.match;
+
+    return queryFactory
+        .selectFrom(match)
+        .where(
+            match.status.eq(MatchStatus.DETACHED_PENDING_DELETE),
+            match.detachedAt.before(cutoffDate)
+        )
+        .fetch();
+  }
+
 }
