@@ -1,7 +1,6 @@
 package com.qmate.domain.notification.entity;
 
 import com.qmate.common.constants.notification.NotificationConstants;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
@@ -13,7 +12,7 @@ public enum NotificationCode {
 
   // EVENT
   EVENT_SAME_DAY(NotificationConstants.EVENT_SAME_DAY_MSG),
-  EVENT_THREE_DAY_BEFORE(NotificationConstants.EVENT_THREE_DAY_BEFORE_MSG),
+  EVENT_THREE_DAYS_BEFORE(NotificationConstants.EVENT_THREE_DAYS_BEFORE_MSG),
   EVENT_WEEK_BEFORE(NotificationConstants.EVENT_WEEK_BEFORE_MSG),;
 
   // MATCH

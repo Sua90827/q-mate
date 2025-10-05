@@ -1,4 +1,4 @@
-package com.qmate.domain.event;
+package com.qmate.domain.event.service;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,7 +18,6 @@ import com.qmate.domain.event.entity.Event;
 import com.qmate.domain.event.entity.EventAlarmOption;
 import com.qmate.domain.event.entity.EventRepeatType;
 import com.qmate.domain.event.repository.EventRepository;
-import com.qmate.domain.event.service.EventService;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.exception.custom.event.EventCalendarDateRangeExceededException;
