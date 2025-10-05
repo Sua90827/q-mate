@@ -196,10 +196,10 @@ public class MatchController {
 //    matchService.disconnectInactiveMatches();
 //    return ResponseEntity.ok("비활성 매칭 체크 스케줄러를 수동으로 실행했습니다.");
 //  }
-  //자동 delete모드 스케줄링 테스트 코드
-  @PostMapping("/run-finalize-check")
-  public ResponseEntity<String> runFinalizeCheck() {
-    matchService.finalizeExpiredMatches();
-    return ResponseEntity.ok("유예기간 만료 매칭 정리 스케줄러를 수동으로 실행했습니다.");
-  }
+// 자동 delete모드 스케줄링 테스트 코드
+//  @PostMapping("/run-finalize-check")
+//  public ResponseEntity<String> runFinalizeCheck() {
+//    matchService.finalizeExpiredMatches();
+//    return ResponseEntity.ok("유예기간 만료 매칭 정리 스케줄러를 수동으로 실행했습니다.");
+//  }
 }
