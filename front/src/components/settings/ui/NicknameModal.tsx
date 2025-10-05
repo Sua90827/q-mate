@@ -1,5 +1,5 @@
 import { Button } from '@/components/common/Button';
-import { ErrorToast } from '@/components/common/CustomToast';
+import { ErrorToast, SuccessToast } from '@/components/common/CustomToast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useUpdateNickname } from '@/hooks/useSetting';
 import { useEffect, useState } from 'react';
@@ -27,6 +27,7 @@ export default function NicknameModal({ open, setIsOpen, nickname, setNickname }
         onSuccess: () => {
           setNickname(pendingNickname);
           setIsOpen(null);
+          SuccessToast('닉네임이 성공적으로 변경되었습니다.');
         },
       },
     );
@@ -52,6 +53,7 @@ export default function NicknameModal({ open, setIsOpen, nickname, setNickname }
               type="text"
               placeholder="변경할 닉네임을 입력해주세요."
               className="rounded-md border border-dash pl-4 py-2"
+              maxLength={10}
               value={pendingNickname}
               onChange={(e) => setPendingNickname(e.target.value)}
             />
@@ -70,7 +72,9 @@ export default function NicknameModal({ open, setIsOpen, nickname, setNickname }
             variant="default"
             className="w-30 h-9.5 hover:opacity-80"
             onClick={handleUpdate}
-            disabled={updating}
+            disabled={
+              updating || pendingNickname.length < 2 || /^[^a-zA-Z0-9가-힣]/.test(pendingNickname)
+            }
           >
             {updating ? '변경 중...' : '변경하기'}
           </Button>

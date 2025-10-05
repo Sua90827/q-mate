@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import ShareBtn from './ui/ShareBtn';
 import CloseButton from '../common/CloseButton';
 import { useRouter } from 'next/navigation';
+import { Link } from 'lucide-react';
 
 type Props = {
   questionText: string;
@@ -26,7 +27,13 @@ function AnswerView({
   return (
     <>
       <div className="w-full relative top-0 h-[70px] flex justify-center items-center sm:hidden">
-        <img alt="큐메이트" width={109} height={35} className="site-logo" />
+        <Link href="/main">
+          <span
+            className="site-logo inline-block w-[109px] h-[35px]"
+            role="img"
+            aria-label="큐메이트"
+          />
+        </Link>{' '}
         <div className="absolute  top-5 right-5 sm:hidden ">
           <CloseButton onClick={() => router.push('/question/list')} />
         </div>

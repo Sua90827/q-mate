@@ -7,14 +7,14 @@ import { DialogTitle } from '@radix-ui/react-dialog';
 
 type Props = {
   open: boolean;
-  onOpenChange: () => void;
+  onOpenChange?: (open: boolean) => void;
   onLike: () => void;
   onDislike: () => void;
 };
 
 export default function RatingModal({ open, onLike, onDislike, onOpenChange }: Props) {
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
         //키보드 이벤트와 바깥 영역 클릭 방지로 평가를 하지 않으면 닫히지 않도록 설정

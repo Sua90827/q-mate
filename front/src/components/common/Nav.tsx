@@ -44,7 +44,11 @@ export default function Nav() {
       {/* 데스크탑 (상단 고정) */}
       <header className="hidden sm:flex fixed top-0 left-0 w-full h-[70px] items-center z-40 bg-transparent">
         <Link href="/main">
-          <img alt="큐메이트" width={109} height={35} className="mx-7 site-logo" />
+          <span
+            className="site-logo inline-block w-[109px] h-[35px] ml-7"
+            role="img"
+            aria-label="큐메이트"
+          />
         </Link>
         <nav className="w-full flex justify-end items-center">
           <ul className="gap-12 flex">

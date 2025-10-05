@@ -11,6 +11,11 @@ import { useMatchInfo } from '@/hooks/useMatches';
 import { useSettingsActions } from '@/hooks/useSettingsAction';
 import ConnectionModal from './ui/ConnectionModal';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useLogoutUser } from '@/hooks/useAuth';
+import { ErrorToast } from '../common/CustomToast';
+import { useRouter } from 'next/navigation';
+import ConfirmModal from '../common/ConfirmModal';
 
 type SettingItem =
   | { id: string; label: string; subLabel?: string; type: 'modal'; onClick: () => void }
@@ -20,10 +25,15 @@ export default function Settings() {
   const matchId = useMatchIdStore((state) => state.matchId);
   const { data: matchInfo } = useMatchInfo(matchId!);
   const user = matchInfo?.users.find((u) => u.me);
+  const resetMatchId = useMatchIdStore((state) => state.resetMatchId);
+  const resetAccessToken = useAuthStore((state) => state.resetAccessToken);
   const [modal, setModal] = useState<string | null>(null);
   const [isChecked, setIsChecked] = useState(false);
-
   const [nickname, setNickname] = useState<string>('');
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+
+  const { mutate: logoutMutate, isPending: isLogoutPending } = useLogoutUser();
+  const router = useRouter();
 
   useEffect(() => {
     if (user?.nickname) {
@@ -64,6 +74,23 @@ export default function Settings() {
       onClick: () => setModal('disconnect'),
     },
   ];
+
+  const handleLogout = () => {
+    logoutMutate(undefined, {
+      onSuccess: () => {
+        // exp 리셋
+        localStorage.clear();
+        // 매치 아이디 리셋
+        resetMatchId();
+        // 토큰 리셋
+        resetAccessToken();
+        router.push('/');
+      },
+      onError: () => {
+        ErrorToast('로그아웃에 실패했습니다. 다시 시도해 주세요.');
+      },
+    });
+  };
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center sm:pt-0 pt-[70px]">
@@ -111,7 +138,9 @@ export default function Settings() {
         </ul>
       </div>
 
-      <Button className="w-[295px] mt-10">로그아웃</Button>
+      <Button className="w-[295px] mt-10" onClick={() => setIsLogoutOpen(true)}>
+        {isLogoutPending ? '로그아웃 중...' : '로그아웃'}
+      </Button>
 
       {modal === 'profile' && (
         <NicknameModal
@@ -136,6 +165,15 @@ export default function Settings() {
           loading={matchInfo.status === 'ACTIVE' ? loading.isDisconnecting : loading.isRestoring}
         />
       )}
+
+      <ConfirmModal
+        defaultStyle
+        open={isLogoutOpen}
+        setOpen={setIsLogoutOpen}
+        onConfirm={handleLogout}
+        title="정말 로그아웃 하시겠어요?"
+        sub="로그아웃 시 시작 화면으로 돌아갑니다."
+      />
     </div>
   );
 }

@@ -25,8 +25,8 @@ export default function MainCalendar({ selected, onSelect, anniversarySet, sched
             const year = calendarMonth.date.getFullYear();
             const month = calendarMonth.date.getMonth() + 1;
             return (
-              <div className="flex flex-col items-center mt-2">
-                <span className="text-12 text-muted-foreground">{year}</span>
+              <div className="flex flex-col items-center mt-3">
+                <span className="text-14 text-muted-foreground">{year}</span>
                 <span className="text-24 font-semibold">{month}</span>
               </div>
             );
@@ -41,7 +41,7 @@ export default function MainCalendar({ selected, onSelect, anniversarySet, sched
                   props.className,
                   isSingleSelected
                     ? 'bg-calendar text-primary-foreground'
-                    : isToday && 'bg-gray-200 hover:bg-gray-200 text-theme-secondary',
+                    : isToday && 'bg-gray-200 hover:bg-gray-200 text-theme-secondary text-16',
                 )}
               />
             );
@@ -61,7 +61,7 @@ export default function MainCalendar({ selected, onSelect, anniversarySet, sched
                 {dot && (
                   <span
                     aria-hidden
-                    className={`pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 inline-block w-3 h-3 rounded-full ${dot}`}
+                    className={`pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 inline-block w-2 h-2 rounded-full  ${dot}`}
                   />
                 )}
               </td>
