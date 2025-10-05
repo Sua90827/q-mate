@@ -11,9 +11,9 @@ public class NotificationConstants {
   public static final String QI_TODAY_READY_MSG = "오늘의 질문 도착!";
   public static final String QI_REMINDER_MSG = "아직 답변하지 않은 질문이 있어요.";
   public static final String QI_COMPLETED_MSG = "상대의 답변 도착!";
-  public static final String EVENT_SAME_DAY_MSG = "당일 일정 알림";
-  public static final String EVENT_THREE_DAY_BEFORE_MSG = "3일 전 일정 알림";
-  public static final String EVENT_WEEK_BEFORE_MSG = "1주일 전 일정 알림";
+  public static final String EVENT_SAME_DAY_MSG = "[당일 일정 알림]";
+  public static final String EVENT_THREE_DAYS_BEFORE_MSG = "[3일 전 일정 알림]";
+  public static final String EVENT_WEEK_BEFORE_MSG = "[1주일 전 일정 알림]";
 
   // api docs
   public static final String GET_DETAIL_MD =
@@ -31,7 +31,7 @@ public class NotificationConstants {
           + "- QI_COMPLETED: " + QI_COMPLETED_MSG + "\n\n"
           + "### 일정(Event)\n"
           + "- EVENT_SAME_DAY: " + EVENT_SAME_DAY_MSG + "\n"
-          + "- EVENT_THREE_DAY_BEFORE: " + EVENT_THREE_DAY_BEFORE_MSG + "\n"
+          + "- EVENT_THREE_DAY_BEFORE: " + EVENT_THREE_DAYS_BEFORE_MSG + "\n"
           + "- EVENT_WEEK_BEFORE: " + EVENT_WEEK_BEFORE_MSG + "\n";
 
   public static final String GET_LIST_MD =
