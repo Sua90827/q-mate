@@ -9,7 +9,7 @@ export const signupValidation = z.object({
     .regex(/[A-Za-z]/, '영문자를 포함해야 합니다.')
     .regex(/\d/, '숫자를 포함해야 합니다.')
     .regex(/[^A-Za-z0-9]/, '특수문자를 포함해야 합니다.'),
-  nickname: z.string().min(2, '닉네임은 최소 2자 이상'),
+  nickname: z.string().min(2, '닉네임은 최소 2자 이상').max(10, '닉네임은 최대 10자 이하'),
   birth: z.string().min(1, '생년월일을 선택해주세요.'),
 });
 
