@@ -342,7 +342,7 @@ public class MatchService {
   @Transactional
   public void finalizeExpiredMatches(){
     LocalDateTime toWeeksAgo = LocalDateTime.now().minusWeeks(2);
-    List<Match> expiredMatches = matchRepository.findMatchesForHardDelete(toWeeksAgo);
+    List<Match> expiredMatches = matchRepository.findMatchesForSoftDelete(toWeeksAgo);
 
     for (Match match : expiredMatches){
       // user의 current_match_id는 이미 null이므로 추가 작업 필요 없음

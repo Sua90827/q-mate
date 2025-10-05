@@ -39,7 +39,7 @@ class MatchServiceSchedulerFinalizeTest {
         .build());
 
     // "findMatchesForHardDelete가 호출되면, 위에서 만든 '만료된 매칭' 1개만 담긴 리스트를 돌려줘"
-    given(matchRepository.findMatchesForHardDelete(any(LocalDateTime.class)))
+    given(matchRepository.findMatchesForSoftDelete(any(LocalDateTime.class)))
         .willReturn(List.of(expiredMatch));
 
     // when: 서비스 메서드를 실행하면

@@ -8,6 +8,6 @@ public interface MatchRepositoryCustom {
 
   List<Match> findInactiveMatches(LocalDateTime cutoffDate);
 
-  List<Match> findMatchesForHardDelete(LocalDateTime cutoffDate);
+  List<Match> findMatchesForSoftDelete(LocalDateTime cutoffDate);
 
 }

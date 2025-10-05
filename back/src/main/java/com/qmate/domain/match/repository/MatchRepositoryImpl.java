@@ -32,7 +32,7 @@ public class MatchRepositoryImpl implements MatchRepositoryCustom{
   }
 
   @Override
-  public List<Match> findMatchesForHardDelete(LocalDateTime cutoffDate){
+  public List<Match> findMatchesForSoftDelete(LocalDateTime cutoffDate){
     QMatch match = QMatch.match;
 
     return queryFactory
