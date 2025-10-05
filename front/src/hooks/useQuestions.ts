@@ -1,5 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchQuestions, fetchQuestionDetail, fetchTodayQuestion } from '../api/questions';
+import {
+  fetchQuestions,
+  fetchQuestionDetail,
+  fetchTodayQuestion,
+  answerQuestion,
+  updateAnswer,
+} from '../api/questions';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QuestionResponse } from '@/types/questionType';
 
 //전체 질문 조회
@@ -33,3 +40,32 @@ export function useTodayQuestion(matchId: number) {
     enabled: !!matchId,
   });
 }
+//답변
+export const useAnswerQuestion = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      questionInstanceId,
+      content,
+    }: {
+      questionInstanceId: number;
+      content: string;
+    }) => answerQuestion(questionInstanceId, content),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['todayQuestion'] });
+      queryClient.invalidateQueries({ queryKey: ['questionDetail', variables.questionInstanceId] });
+    },
+  });
+};
+//답변 수정
+export const useUpdateAnswerQuestion = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ answerId, content }: { answerId: number; content: string }) =>
+      updateAnswer(answerId, content),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['todayQuestion'] });
+      queryClient.invalidateQueries({ queryKey: ['questionDetail', variables.answerId] });
+    },
+  });
+};

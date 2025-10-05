@@ -13,7 +13,7 @@ export const matchesHandlers = [
       matchId: Number(matchId),
       relationType: 'FRIEND',
       startDate: '2025-09-11',
-      status: 'WAITING',
+      status: 'ACTIVE',
       dailyQuestionHour: 12,
       users: [
         { userId: 1, nickname: myNickname, me: true, agreed: true },

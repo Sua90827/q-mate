@@ -30,7 +30,7 @@ function EventList({ date, items, isLoading, isError }: Props) {
             {items.length === 0 && <li>표시할 일정이 없어요.</li>}
 
             {items.map(({ eventId, title, isAnniversary, repeatType }) => (
-              <li key={eventId} className="flex items-center py-2 border-y">
+              <li key={eventId} className="flex items-center py-2">
                 <span
                   className={`inline-block w-1 h-12 mr-2 ${
                     isAnniversary ? 'bg-anniversary' : 'bg-calendar'

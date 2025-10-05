@@ -24,7 +24,7 @@ export default function Edit() {
           title: payload.title,
           description: payload.description ?? '',
           eventAt: payload.eventAt,
-          repeatType: payload.repeatType ?? 'NONE',
+          repeatType: payload.repeatType,
           alarmOption: payload.alarmOption,
         },
         {
@@ -50,7 +50,7 @@ export default function Edit() {
         title: detail.title,
         description: detail?.description,
         eventAt: detail.eventAt,
-        repeatType: detail?.repeatType ?? 'NONE',
+        repeatType: detail?.repeatType,
         alarmOption: detail?.alarmOption,
         isAnniversary: detail?.isAnniversary,
       }}
