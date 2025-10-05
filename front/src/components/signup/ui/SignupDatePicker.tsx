@@ -36,7 +36,11 @@ export default function SignupDatePicker({ control }: Props) {
                 {field.value ? format(selectedDate as Date, 'yyyy-MM-dd') : '생년월일'}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent
+              className="w-auto p-0 flex justify-center items-center"
+              align="start"
+              style={{ width: 'var(--radix-popover-trigger-width)' }}
+            >
               <Calendar
                 mode="single"
                 selected={selectedDate}

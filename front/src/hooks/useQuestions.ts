@@ -24,7 +24,7 @@ export const useQuestionDetail = (questionInstanceId: number) => {
   return useQuery({
     queryKey: ['questionDetail', questionInstanceId],
     queryFn: () => fetchQuestionDetail(questionInstanceId),
-    staleTime: 1000 * 30,
+    staleTime: 1000 * 60,
     gcTime: 1000 * 60 * 5,
     enabled: !!questionInstanceId,
   });

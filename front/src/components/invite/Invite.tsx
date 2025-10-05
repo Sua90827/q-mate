@@ -1,18 +1,21 @@
 'use client';
-import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
 import { Copy } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import NoticeModal from '../common/NoticeModal';
 import { useCreateInviteCode } from '@/hooks/useInvite';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { useMatchInfo } from '@/hooks/useMatches';
 
 export default function Invite() {
-  const [code, setCode] = useState<string>('');
+  const [code, setCode] = useState('');
   const [open, setOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
-  const params = useParams();
+
+  const { relationType } = useParams<{ relationType: string }>();
+  const searchParams = useSearchParams();
+  const startDate = searchParams.get('date'); // 연인일 경우에만 존재
 
   const matchId = useMatchIdStore((state) => state.matchId);
   const setMatchId = useMatchIdStore((state) => state.setMatchId);
@@ -21,14 +24,14 @@ export default function Invite() {
   const { data } = useMatchInfo(matchId!);
   const router = useRouter();
 
-  // 초대코드 가져오기
+  // 초대코드 생성
   useEffect(() => {
-    const date = params.date as string | null;
+    if (!relationType) return;
 
     createCode(
       {
-        relationType: date === 'FRIEND' ? 'FRIEND' : 'COUPLE',
-        startDate: date,
+        relationType: relationType as 'COUPLE' | 'FRIEND',
+        startDate: relationType === 'COUPLE' ? startDate : null,
       },
       {
         onSuccess: (data) => {
@@ -40,9 +43,9 @@ export default function Invite() {
         },
       },
     );
-  }, [params.date, createCode]);
+  }, [relationType, startDate, createCode, setMatchId]);
 
-  // Clipboard API를 이용한 복사
+  // 클립보드 복사
   const handleCopyClipBoard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -50,7 +53,7 @@ export default function Invite() {
       if (data?.status === 'ACTIVE') {
         router.push('/main');
       }
-    } catch (e) {
+    } catch {
       setErrorOpen(true);
     }
   };
@@ -61,11 +64,7 @@ export default function Invite() {
         <p className="font-Gumi text-24">함께할 사람에게</p>
         <p className="font-Gumi text-24">초대 코드를 공유해주세요!</p>
         <div className="relative">
-          <div
-            onClick={() => {
-              handleCopyClipBoard(code!);
-            }}
-          >
+          <div onClick={() => handleCopyClipBoard(code!)}>
             <input
               type="text"
               value={code}
@@ -76,6 +75,7 @@ export default function Invite() {
           </div>
         </div>
       </div>
+
       <Image
         src="/images/bubbley/bubbley_baby.png"
         alt="버블리 캐릭터"
@@ -87,7 +87,7 @@ export default function Invite() {
       <NoticeModal
         open={open}
         setOpen={setOpen}
-        title="상대방을 기다리는 중이에요 🐢"
+        title="상대방을 기다리는 중이에요!"
         sub={
           <>
             상대방이 초대 코드를 입력하면 <br />

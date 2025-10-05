@@ -6,7 +6,7 @@ export const useUpdateNickname = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (nickname: string) => updateNickname(nickname),
+    mutationFn: ({ nickname }: { nickname: string }) => updateNickname({ nickname }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['nickname'] });
     },

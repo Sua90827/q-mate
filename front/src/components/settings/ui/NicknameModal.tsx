@@ -21,12 +21,15 @@ export default function NicknameModal({ open, setIsOpen, nickname, setNickname }
   const [pendingNickname, setPendingNickname] = useState(nickname);
 
   const handleUpdate = () => {
-    updateNicknameMutate(pendingNickname, {
-      onSuccess: () => {
-        setNickname(pendingNickname);
-        setIsOpen(null);
+    updateNicknameMutate(
+      { nickname: pendingNickname },
+      {
+        onSuccess: () => {
+          setNickname(pendingNickname);
+          setIsOpen(null);
+        },
       },
-    });
+    );
   };
 
   useEffect(() => {
@@ -41,7 +44,7 @@ export default function NicknameModal({ open, setIsOpen, nickname, setNickname }
         showCloseButton={false}
         onEscapeKeyDown={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
-        className="w-[285px] z-50"
+        className="w-[285px] z-50 pt-[31px]"
       >
         <DialogHeader>
           <DialogTitle className="text-center leading-relaxed">

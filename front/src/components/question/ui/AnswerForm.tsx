@@ -15,6 +15,7 @@ type AnswerFormProps = {
   initialValue?: string;
 };
 
+
 export default function AnswerForm({
   questionText,
   mode,
@@ -22,6 +23,7 @@ export default function AnswerForm({
   submitting = false,
   initialValue = '',
 }: AnswerFormProps) {
+  
   const router = useRouter();
   const [content, setContent] = useState<string>(initialValue);
   const [open, setOpen] = useState(false);
@@ -63,6 +65,7 @@ export default function AnswerForm({
           <span className="font-bold text-24 text-center pb-3 text-theme-primary">
             {questionText}
           </span>
+
           <div className="relative md:w-[400px] w-[310px] h-[175px] rounded-md shadow-md p-3 bg-secondary border border-gray text-[14px] outline-none">
             <textarea
               value={content}

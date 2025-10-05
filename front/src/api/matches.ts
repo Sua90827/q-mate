@@ -34,7 +34,7 @@ export const restoreMatch = async (matchId: number) => {
 };
 
 //매칭 정보 업데이트 (닉네임 변경)
-export const updateNickname = async (nickname: string) => {
+export const updateNickname = async ({ nickname }: { nickname: string }) => {
   const res = await axios.patch('/api/users/me/nickname', { nickname });
   return res.data;
 };

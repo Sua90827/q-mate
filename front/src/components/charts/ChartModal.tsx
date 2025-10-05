@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Dialog, DialogContent } from '../ui/dialog';
 import { Chart } from './Chart';
 
 export default function ChartModal() {
@@ -11,7 +11,7 @@ export default function ChartModal() {
 
     const seeMonth = localStorage.getItem('chartModal');
 
-    if (today === 2 && Number(seeMonth) !== month) {
+    if (today === 3 && Number(seeMonth) !== month) {
       setOpen(true);
       localStorage.setItem('chartModal', String(month));
     }

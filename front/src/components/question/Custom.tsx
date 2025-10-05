@@ -69,12 +69,16 @@ export default function Custom({ value }: { value?: string }) {
           <span className="font-bold text-[24px] pb-5 text-theme-primary">
             궁금한 질문 작성하기
           </span>
-          <textarea
-            placeholder="내용을 입력해주세요"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            className="md:w-[400px] w-[305px] h-[175px] rounded-md shadow-md p-3 bg-secondary border border-gray resize-none"
-          />
+          <div className="relative">
+            <textarea
+              placeholder="내용을 입력해주세요"
+              value={text}
+              maxLength={99}
+              onChange={(e) => setText(e.target.value)}
+              className="md:w-[400px] w-[305px] h-[175px] rounded-md shadow-md p-3 bg-secondary border border-gray resize-none"
+            />
+            <span className="absolute bottom-4 right-3 text-text-secondary">{text.length}/100</span>
+          </div>
           <div className="pt-5 flex gap-7 justify-end ">
             <Button variant="outline" size="lg" asChild className="w-[140px]">
               <Link href="/question/list">취소하기</Link>
