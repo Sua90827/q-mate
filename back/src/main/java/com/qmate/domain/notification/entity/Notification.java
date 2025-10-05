@@ -8,6 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -48,7 +49,6 @@ public class Notification {
   @Column(name = "resource_id")
   private Long resourceId;
 
-  @Setter
   @Column(name = "read_at")
   private LocalDateTime readAt;
 
