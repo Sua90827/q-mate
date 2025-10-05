@@ -43,7 +43,7 @@ export function ScheduleForm({
     if (typeof initial?.eventAt === 'string') setDate(initial.eventAt);
     if (initial?.repeatType) repeatTypeRef.current = initial.repeatType;
     if (initial?.alarmOption) alarmOptionRef.current = initial.alarmOption;
-    if (initial?.isAnniversary) repeatTypeRef.current = 'NONE';
+    // if (initial?.isAnniversary) repeatTypeRef.current = initial.repeatType;
   }, [initial]);
 
   const handleSubmit = async () => {
@@ -60,7 +60,7 @@ export function ScheduleForm({
 
     const payload: ScheduleFormPayload = {
       ...base,
-      repeatType: isAnniversary ? 'NONE' : repeatType,
+      repeatType: isAnniversary ? initial.repeatType! : repeatType,
     };
     await onSubmit(payload);
   };

@@ -169,7 +169,7 @@ public class MatchController {
   @GetMapping("/lock-status")
   @Operation(
       summary = "잠금 상태 조회",
-      description = "초대코드 입력 횟수 초과시 조회 잠금 상태 조회"
+      description = MatchConstants.GET_LOCK_STATUS_MD
   )
   public ResponseEntity<LockStatusResponse> getLockStatus(
       @AuthenticationPrincipal UserPrincipal principal
@@ -189,4 +189,12 @@ public class MatchController {
     DetachedMatchStatusResponse response = matchService.getDetachedMatchStatus(principal.userId());
     return ResponseEntity.ok(response);
   }
+
+// 14일 이상 연결 끊기 테스트 컨트롤러
+//  @PostMapping("/run-inactive-check")
+//  public ResponseEntity<String> runInactiveCheck() {
+//    matchService.disconnectInactiveMatches();
+//    return ResponseEntity.ok("비활성 매칭 체크 스케줄러를 수동으로 실행했습니다.");
+//  }
+
 }

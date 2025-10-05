@@ -30,3 +30,16 @@ export const fetchTodayQuestion = async (matchId: number): Promise<TodayQuestion
   const res = await axios.get(`/api/matches/${matchId}/questions/today`);
   return res.data;
 };
+
+// 답변 하기
+export const answerQuestion = async (questionInstanceId: number, content: string) => {
+  const res = await axios.post(`/api/question-instances/${questionInstanceId}/answers`, {
+    content,
+  });
+  return res.data;
+};
+// 답변 수정하기
+export const updateAnswer = async (answerId: number, content: string) => {
+  const res = await axios.patch(`/api/answers/${answerId}`, { content });
+  return res.data;
+};

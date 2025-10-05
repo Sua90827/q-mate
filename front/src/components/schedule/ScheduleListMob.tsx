@@ -9,9 +9,11 @@ import TrashCan from '../common/TrashCan';
 import PrevBtn from '../common/PrevBtn';
 import NextBtn from '../common/NextBtn';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function ScheduleListMob() {
   const [isDelete, setIsDelete] = useState(false);
+  const router = useRouter();
   const [page, setPage] = useState<number>(0);
   const pageSize = 20;
   const matchId = useMatchIdStore((state) => state.matchId);
@@ -80,7 +82,7 @@ export default function ScheduleListMob() {
         <ul className="w-full border-y divide-y divide-text-gray">
           {schedules.map((list) => (
             <li key={list.eventId} className="flex justify-between px-4 py-3 items-center">
-              <div>
+              <div className="flex-1" onClick={() => router.push(`/schedule/edit/${list.eventId}`)}>
                 <span className="font-bold text-16">{list.title}</span>
                 <span className="block text-text-secondary font-normal">{list.eventAt}</span>
               </div>

@@ -1,5 +1,6 @@
 package com.qmate.api;
 
+import com.qmate.common.constants.match.MatchConstants;
 import com.qmate.domain.match.model.request.InviteCodeValidationRequest;
 import com.qmate.domain.match.model.response.InviteCodeValidationResponse;
 import com.qmate.domain.match.service.MatchService;
@@ -24,7 +25,7 @@ public class InviteController {
   @PostMapping("/validate")
   @Operation(
       summary = "초대코드 유효성 검증",
-      description = "발급받은 초대코드의 유효한지 및 파트너 닉네임 리턴"
+      description = MatchConstants.VALIDATE_INVITE_CODE_MD
   )
   public ResponseEntity<InviteCodeValidationResponse> validateInviteCode(
       @RequestBody @Valid InviteCodeValidationRequest request

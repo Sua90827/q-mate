@@ -13,13 +13,13 @@ type Props = {
 };
 export default function MainCalendar({ selected, onSelect, anniversarySet, scheduleSet }: Props) {
   return (
-    <div className="flex flex-1 sm:flex-2 justify-center w-full">
+    <div className="flex flex-1 justify-center w-full">
       <Calendar
         mode="single"
         defaultMonth={selected}
         selected={selected}
         onSelect={onSelect}
-        className="w-full rounded-t-lg theme-night:bg-black"
+        className="w-full md:rounded-t-lg theme-night:bg-black"
         components={{
           MonthCaption: ({ calendarMonth }) => {
             const year = calendarMonth.date.getFullYear();
@@ -55,13 +55,13 @@ export default function MainCalendar({ selected, onSelect, anniversarySet, sched
               ? 'bg-calendar'
               : '';
             return (
-              <td {...props} className={`relative p-0 ${className ?? ''}`}>
+              <td {...props} className={`h-20 relative p-0 ${className ?? ''}`}>
                 {children}
 
                 {dot && (
                   <span
                     aria-hidden
-                    className={`pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 inline-block w-1.5 h-1.5 rounded-full ${dot}`}
+                    className={`pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 inline-block w-3 h-3 rounded-full ${dot}`}
                   />
                 )}
               </td>
