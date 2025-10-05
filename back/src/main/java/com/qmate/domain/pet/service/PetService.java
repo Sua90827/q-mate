@@ -1,5 +1,6 @@
 package com.qmate.domain.pet.service;
 
+import com.qmate.domain.match.Match;
 import com.qmate.domain.pet.entity.Pet;
 import com.qmate.domain.pet.model.response.PetExpResponse;
 import com.qmate.domain.pet.repository.PetRepository;
@@ -24,5 +25,13 @@ public class PetService {
     return PetExpResponse.builder()
         .exp(pet.getExp())
         .build();
+  }
+  //특정 매칭에 대한 새로운 펫을 생성합니다.
+  @Transactional
+  public void createPetForMatch(Match match){
+    Pet newPet = Pet.builder()
+            .match(match)
+                .build();
+    petRepository.save(newPet);
   }
 }
