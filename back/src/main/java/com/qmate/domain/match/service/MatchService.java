@@ -337,4 +337,17 @@ public class MatchService {
     }
   log.info("{}개의 비활성 매칭을 연결 끊기 상태로 전환했습니다.", inactiveMatches.size());
   }
+
+  // 유예기간 지난 상태 델리트로 변경.
+  @Transactional
+  public void finalizeExpiredMatches(){
+    LocalDateTime toWeeksAgo = LocalDateTime.now().minusWeeks(2);
+    List<Match> expiredMatches = matchRepository.findMatchesForSoftDelete(toWeeksAgo);
+
+    for (Match match : expiredMatches){
+      // user의 current_match_id는 이미 null이므로 추가 작업 필요 없음
+    match.markAsDeleted();
+    }
+    log.info("{}개의 만료된 매칭을 삭제 처리했습니다.", expiredMatches.size());
+  }
 }

@@ -114,6 +114,12 @@ public class Match {
     return false;
   }
 
+  // 상태 값 삭제로 변경 및 detachedAt 업데이트
+  public void markAsDeleted(){
+    this.status = MatchStatus.BROKEN;
+    this.deletedAt = LocalDateTime.now();
+  }
+
 
   //정적 팩토리 메서드 추가
   public static Match create(RelationType relationType, LocalDateTime startDate) {
