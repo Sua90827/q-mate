@@ -41,7 +41,7 @@ function Calendar({
         months: cn('flex gap-4 flex-col md:flex-row relative', defaultClassNames.months),
         month: cn('flex flex-col w-full gap-4', defaultClassNames.month),
         nav: cn(
-          'flex items-center gap-1 w-full absolute top-4 inset-x-0 justify-between',
+          'flex items-center gap-1 w-full absolute top-4 inset-x-0 justify-between text-gray-700',
           defaultClassNames.nav,
         ),
         button_previous: cn(
@@ -74,33 +74,36 @@ function Calendar({
             : 'rounded-md pl-2 pr-1 flex items-center gap-1 text-sm h-8 [&>svg]:text-muted-foreground [&>svg]:size-3.5',
           defaultClassNames.caption_label,
         ),
-        table: 'w-full border-collapse',
-        weekdays: cn('grid grid-cols-7', defaultClassNames.weekdays),
+        table: 'w-full border-collapse ',
+        weekdays: cn(
+          `grid grid-cols-7 [&>*:first-child]:text-red-400 [&>*:last-child]:text-blue-400`,
+          defaultClassNames.weekdays,
+        ),
         weekday: cn(
-          'text-muted-foreground font-normal text-[0.8rem] select-none h-9 grid place-items-center',
+          'text-muted-foreground font-normal text-14 text-text-secondary select-none h-9 grid place-items-center font-semibold',
           defaultClassNames.weekday,
         ),
         week: cn(
-          'grid grid-cols-7 w-full place-items-center justify-center',
+          'grid grid-cols-7 w-full place-items-center justify-center [&>*:nth-child(7n+1)]:text-red-400 [&>*:nth-child(7n)]:text-blue-400 ',
           defaultClassNames.week,
         ),
         week_number_header: cn('select-none w-(--cell-size)', defaultClassNames.week_number_header),
         week_number: cn(
-          'text-[0.8rem] select-none text-muted-foreground',
+          'text-[0.8rem] select-none text-muted-foreground ',
           defaultClassNames.week_number,
         ),
         day: cn(
-          'relative p-0 text-center group/day select-none grid place-items-center w-full aspect-square lg:aspect-auto lg:h-[80px]',
+          'relative p-0 text-center group/day select-none grid place-items-center w-full aspect-square lg:aspect-auto lg:h-[80px]  ',
           defaultClassNames.day,
         ),
         range_start: cn('bg-accent', defaultClassNames.range_start),
         range_middle: cn('bg-accent', defaultClassNames.range_middle),
         range_end: cn('bg-accent', defaultClassNames.range_end),
-        today: cn('data-[selected=true]:rounded-full', defaultClassNames.today),
-        outside: cn(
-          'text-muted-foreground aria-selected:text-muted-foreground',
-          defaultClassNames.outside,
+        today: cn(
+          'data-[selected=true]:rounded-full data-[selected=true]:text-16',
+          defaultClassNames.today,
         ),
+        outside: cn('opacity-40 aria-selected:text-muted-foreground', defaultClassNames.outside),
         disabled: cn('text-muted-foreground opacity-50', defaultClassNames.disabled),
         hidden: cn('invisible', defaultClassNames.hidden),
         ...classNames,
@@ -124,7 +127,7 @@ function Calendar({
         WeekNumber: ({ children, ...props }) => {
           return (
             <td {...props}>
-              <div className="flex size-(--cell-size) items-center justify-center text-center">
+              <div className="flex size-(--cell-size) items-center justify-center text-center ">
                 {children}
               </div>
             </td>
@@ -167,14 +170,14 @@ function CalendarDayButton({
       data-range-middle={modifiers.range_middle}
       className={cn(
         'cursor-pointer',
-        'data-[selected-single=true]:bg-primary data-[selected-single=true]:text-theme-primary',
+        ' data-[selected-single=true]:text-theme-primary  data-[selected-single=true]:text-16  data-[selected-single=true]:font-semibold',
 
-        'flex w-8 h-8 lg:w-12 lg:h-12 p-0 flex-col gap-1 leading-none font-normal text-sm',
+        'flex w-8 h-8 lg:w-12 lg:h-12 p-0 flex-col gap-1 leading-none font-normal',
         'rounded-full',
         'data-[selected-single=true]:rounded-full',
         '[&>span]:text-xs [&>span]:opacity-70',
         'items-center justify-center mx-auto',
-        'focus:outline-none focus-visible:outline-none',
+        'focus:outline-none focus-visible:outline-none text-16',
 
         defaultClassNames.day_button,
         className,

@@ -20,7 +20,7 @@ export function ErrorToast(message?: string, className?: string) {
   return toast.custom(() => (
     <div
       className={cn(
-        'flex items-center gap-2 rounded-lg border border-red-500 bg-red-500/10 px-4 py-3 text-red-600 shadow-lg',
+        'flex items-center gap-2 rounded-lg border border-red-600 bg-secondary px-4 py-3 text-red-600 shadow-lg',
         className,
       )}
     >

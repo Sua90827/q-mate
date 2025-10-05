@@ -152,11 +152,12 @@ export default function QuestionList() {
 
       {/* 데스크탑 */}
       <div className="hidden sm:flex bg-secondary rounded-md shadow-md w-[320px] h-[550px] flex-col">
-        <div className="mt-6 px-4">
+        <div className="mt-6 px-4 ">
           <SearchInput query={queryText} setQuery={setQueryText} />
         </div>
-        <div className="flex justify-between items-center px-4">
+        <div className="flex justify-between items-center px-4 overflow-visible">
           <span className="inline-block text-20 font-bold py-4 cursor-default">질문 리스트</span>
+
           <FilterBtn setShowCustomOnly={setShowCustomOnly} />
         </div>
         <ul className="flex-1 overflow-y-auto flex flex-col divide-y divide-gray border-t border-gray">

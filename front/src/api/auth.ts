@@ -11,3 +11,9 @@ export const socialLogin = async (provider: string) => {
   const res = await axios.post(`/oauth2/authorization/${provider}`);
   return res.data;
 };
+
+//로그아웃
+export const logoutUser = async () => {
+  const res = await axios.post('/auth/logout');
+  return res.data;
+};
