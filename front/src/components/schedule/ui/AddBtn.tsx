@@ -11,7 +11,7 @@ export default function AddBtn() {
       asChild
     >
       <Link href="/schedule/register">
-        <Plus className="text-secondary" />
+        <Plus className="text-secondary !w-6 !h-6" />
       </Link>
     </Button>
   );

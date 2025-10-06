@@ -6,13 +6,14 @@ import TextInput from '../common/TextInput';
 import { Button } from '../common/Button';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useLoginUser } from '@/hooks/useLogin';
+import { useLoginUser } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import NoticeModal from '../common/NoticeModal';
 import Loader from '../common/Loader';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { useSyncPushOnLogin } from '@/hooks/useSyncPush';
 import { fetchPetInfo } from '@/api/pet';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const validateEmail = (v: string) => /\S+@\S+\.\S+/.test(v);
 const validatePassword = (v: string) =>
@@ -27,6 +28,7 @@ export default function Login() {
   const isFormValid = isEmailValid && isPasswordValid;
   const router = useRouter();
   const setMatchId = useMatchIdStore((state) => state.setMatchId);
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
   const { mutate: loginUserMutate, isPending: isLoginLoading } = useLoginUser();
   const syncPushOnLogin = useSyncPushOnLogin();
 
@@ -42,11 +44,14 @@ export default function Login() {
           }
 
           if (data.user.currentMatchId !== null) {
+            //매치 아이디 셋팅
             setMatchId(data.user.currentMatchId);
             // 서버에서 현재 exp 조회
             const petInfo = await fetchPetInfo(data.user.currentMatchId);
             //현재 exp 셋팅
             localStorage.setItem('prevExp', String(petInfo.exp));
+            //accessToken 셋팅
+            setAccessToken(data.accessToken);
             router.push('/main');
           } else {
             router.push('/invite');

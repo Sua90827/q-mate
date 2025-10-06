@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
-import { AnniversaryPicker } from './ui/AnniversaryPicker';
+import { DateSelectButton } from '../common/DateSelectButton';
 import { useRouter } from 'next/navigation';
 
 export default function Anniversary() {
@@ -24,9 +24,10 @@ export default function Anniversary() {
       <Image src="/images/bubbley/bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
 
       <div className="w-[300px] mt-10">
-        <AnniversaryPicker
+        <DateSelectButton
           label="날짜 선택"
           onSelect={(d) => setDate(d ? d.split('T')[0] : undefined)}
+          isAnniversary={true}
         />
       </div>
     </>

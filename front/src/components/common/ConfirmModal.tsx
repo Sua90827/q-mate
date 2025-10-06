@@ -1,6 +1,6 @@
 import { Button } from '@/components/common/Button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 
 interface ConfirmModalProps {
   open: boolean;
@@ -10,6 +10,7 @@ interface ConfirmModalProps {
   confirmText?: string; // 기본값 "예"
   cancelText?: string; // 기본값 "아니오"
   isDanger?: boolean; // 경고 모달 여부
+  defaultStyle?: boolean;
   onConfirm: () => void;
   onCancel?: () => void;
 }
@@ -22,6 +23,7 @@ export default function ConfirmModal({
   confirmText = '예',
   cancelText = '아니오',
   isDanger = false,
+  defaultStyle = false,
   onConfirm,
   onCancel,
 }: ConfirmModalProps) {
@@ -40,10 +42,10 @@ export default function ConfirmModal({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex justify-center gap-4 py-3">
+        <div className="flex justify-center gap-4 pb-3">
           {/* 취소 버튼 */}
           <Button
-            variant={isDanger ? 'dangerOutline' : 'primaryOutline'}
+            variant={isDanger ? 'dangerOutline' : defaultStyle ? 'outline' : 'primaryOutline'}
             className="w-30 h-9.5"
             onClick={() => {
               setOpen(false);
@@ -55,7 +57,7 @@ export default function ConfirmModal({
 
           {/* 확인 버튼 */}
           <Button
-            variant={isDanger ? 'dangerPrimary' : 'primary'}
+            variant={isDanger ? 'dangerPrimary' : defaultStyle ? 'default' : 'primary'}
             className="w-30 h-9.5"
             onClick={() => {
               setOpen(false);

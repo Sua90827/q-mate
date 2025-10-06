@@ -5,7 +5,7 @@
 @layer utilities {
   .bg-calendar {
     background-color: var(--color-day-calendar) !important;
-    color: var(--color-secondary);
+    color: var(--color-secondary) !important;
   }
   html[data-theme='sunset'] .bg-calendar {
     background-color: var(--color-sunset-calendar) !important;

@@ -2,10 +2,8 @@
 
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Pie, PieChart } from 'recharts';
-
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { useFetchChart } from '@/hooks/useChart';
-import { useMatchIdStore } from '@/store/useMatchIdStore';
+import type { Chart } from '@/types/chart';
 
 const categoryColors: Record<string, string> = {
   취미: 'var(--chart-2)',
@@ -19,12 +17,7 @@ const categoryColors: Record<string, string> = {
   기타: 'var(--chart-9)',
 };
 
-export function Chart() {
-  const matchId = useMatchIdStore((state) => state.matchId);
-  const { data } = useFetchChart(matchId!);
-
-  if (!data) return null;
-
+export function Chart({ data }: { data: Chart }) {
   const chartData = data.categories.map((item) => ({
     category: item.categoryName,
     visitors: item.likeCount,
@@ -36,7 +29,7 @@ export function Chart() {
       <p className="text-16 font-bold text-center pt-8">
         큐메이트와 함께 한 저번달 <br /> 좋아해주신 질문들을 분석해 봤어요!
       </p>
-      <CardContent className=" pb-0 pt-0 px-3">
+      <CardContent className="pb-0 pt-0 px-3">
         <ChartContainer className="mx-auto aspect-square max-h-[250px] px-0">
           <PieChart className="px-0">
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
@@ -44,11 +37,10 @@ export function Chart() {
           </PieChart>
         </ChartContainer>
       </CardContent>
-
       <CardFooter className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm">
         {chartData.map((item) => (
           <div key={item.category} className="flex items-center gap-1">
-            <div className="w-6 h-3" style={{ backgroundColor: item.fill }}></div>
+            <div className="w-6 h-3" style={{ backgroundColor: item.fill }} />
             <span>{item.category}</span>
           </div>
         ))}

@@ -27,7 +27,7 @@ export default function ConnectionModal({ open, setIsOpen, onClick, status, load
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader className={cn(status === 'ACTIVE' ? 'pt-7 px-4' : 'pt-12 px-4')}>
-          <DialogTitle className="w-full text-center font-14 font-semibold whitespace-pre-line">
+          <DialogTitle className="w-full text-center font-14 font-semibold whitespace-pre-line leading-6">
             {status === 'ACTIVE'
               ? '지금까지의 이야기를 마무리하고\n연결을 해제 하시겠습니까?'
               : '끊어진 연결을 복구하고\n이야기를 계속할 수 있어요.'}
@@ -35,12 +35,12 @@ export default function ConnectionModal({ open, setIsOpen, onClick, status, load
         </DialogHeader>
 
         {status === 'ACTIVE' && (
-          <DialogDescription className="text-center font-regular py-0">
+          <DialogDescription className="text-center font-regular !text-14 py-1 text-text-secondary ">
             2주 동안은 언제든 다시 복구할 수 있어요.
           </DialogDescription>
         )}
 
-        <DialogFooter className="w-full flex !flex-row align-center !justify-center gap-5">
+        <DialogFooter className="w-full flex !flex-row align-center !justify-center gap-5 pb-[15px]">
           <Button
             className="w-[110px] rounded-xl"
             variant="outline"

@@ -1,11 +1,13 @@
 'use client';
-import React, { useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useCallback, useRef, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import CloseButton from '@/components/common/CloseButton';
 import { Button } from '@/components/common/Button';
 import { Loader2 } from 'lucide-react';
 import RatingModal from '../RatingModal';
 import Loader from '@/components/common/Loader';
+import Link from 'next/link';
+import TextTextarea, { TextTextareaRef } from './TextTextarea';
 
 type AnswerFormProps = {
   mode: 'create' | 'edit';
@@ -15,7 +17,6 @@ type AnswerFormProps = {
   initialValue?: string;
 };
 
-
 export default function AnswerForm({
   questionText,
   mode,
@@ -23,26 +24,20 @@ export default function AnswerForm({
   submitting = false,
   initialValue = '',
 }: AnswerFormProps) {
-  
   const router = useRouter();
-  const [content, setContent] = useState<string>(initialValue);
+  const textareaRef = useRef<TextTextareaRef>(null);
   const [open, setOpen] = useState(false);
-
-  const length = content.length;
-  const tooLong = length > 100;
-  const isBlank = content.trim().length === 0;
-  const canSubmit = !submitting && !tooLong && !isBlank;
-
-  const helperText = useMemo(() => {
-    if (tooLong) return '답변은 최대 100자까지 가능합니다.';
-    if (isBlank)
-      return mode === 'create' ? '답변을 입력해 주세요.' : '수정할 내용을 입력해 주세요.';
-    return '';
-  }, [tooLong, isBlank, mode]);
+  const pathName = usePathname();
+  const fromToday = pathName.startsWith('/question/detail');
+  const [isEmpty, setIsEmpty] = useState(initialValue.trim().length === 0);
+  const canSubmit = !submitting && !isEmpty;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
-    await onSubmit(content);
+    const submitText = textareaRef.current?.getValue() ?? '';
+    if (!submitText) return;
+    await onSubmit(submitText);
+
     if (mode === 'create') {
       setOpen(true);
     }
@@ -55,61 +50,45 @@ export default function AnswerForm({
       {/* 상단 닫기 버튼 (모바일 헤더) */}
       <div className="w-full relative top-0 h-[70px] flex justify-center items-center sm:hidden">
         <span aria-label="큐메이트" className="site-logo w-[109px] h-35px" />
-        <div className="absolute top-5 right-5 sm:hidden">
+        <div className="absolute  right-5 sm:hidden">
           <CloseButton onClick={() => router.push('/question/list')} />
         </div>
       </div>
 
-      <div className="flex flex-col items-center justify-center h-full bg-gradient-sub gap-10">
-        <div className="flex flex-col h-[246px] gap-3">
+      <div className="flex flex-col items-center justify-center h-full bg-gradient-sub ">
+        <div className="flex flex-col  gap-3">
           <span className="font-bold text-24 text-center pb-3 text-theme-primary">
             {questionText}
           </span>
 
-          <div className="relative md:w-[400px] w-[310px] h-[175px] rounded-md shadow-md p-3 bg-secondary border border-gray text-[14px] outline-none">
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="오늘의 질문에 답변을 해보세요! (최대 100자)"
-              className="w-full h-full resize-none outline-none"
-              maxLength={100}
-            />
+          <TextTextarea
+            ref={textareaRef}
+            defaultValue={initialValue}
+            placeholder="궁금한 질문을 입력해 보세요!"
+            textLength={(t) => setIsEmpty(t.length === 0)}
+          />
+        </div>
 
-            {/* 길이/에러 안내 및 글자수 카운터 */}
+        <div className="pt-5 flex gap-x-7">
+          <Button variant="outline" size="lg" asChild className="md:w-[180px] w-[140px]">
+            <Link href={fromToday ? '/record' : '/question/list'}>취소하기</Link>
+          </Button>
 
-            <p
-              className={`text-12 absolute bottom-5 left-3 ${
-                helperText ? 'text-red-500' : 'text-dash'
-              }`}
-            >
-              {helperText || <>&nbsp;</>}
-            </p>
-            <span
-              className={`${
-                tooLong ? 'text-red-500' : 'text-dash'
-              } text-12 absolute bottom-5 right-3`}
-            >
-              {length}/100
-            </span>
-          </div>
-
-          <div className="w-full flex justify-center md:justify-end mt-2">
-            <Button
-              size="lg"
-              className="w-[310px] sm:w-[200px]"
-              onClick={handleSubmit}
-              disabled={!canSubmit}
-              aria-busy={submitting}
-            >
-              {submitting ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : mode === 'create' ? (
-                '답변하기'
-              ) : (
-                '수정하기'
-              )}
-            </Button>
-          </div>
+          <Button
+            size="lg"
+            className="md:w-[180px] w-[140px]"
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            aria-busy={submitting}
+          >
+            {submitting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : mode === 'create' ? (
+              '답변하기'
+            ) : (
+              '수정하기'
+            )}
+          </Button>
         </div>
       </div>
       <RatingModal
