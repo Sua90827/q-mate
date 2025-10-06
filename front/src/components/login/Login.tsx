@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import NoticeModal from '../common/NoticeModal';
 import Loader from '../common/Loader';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
+import { useSyncPushOnLogin } from '@/hooks/useSyncPush';
 import { fetchPetInfo } from '@/api/pet';
 
 const validateEmail = (v: string) => /\S+@\S+\.\S+/.test(v);
@@ -27,12 +28,19 @@ export default function Login() {
   const router = useRouter();
   const setMatchId = useMatchIdStore((state) => state.setMatchId);
   const { mutate: loginUserMutate, isPending: isLoginLoading } = useLoginUser();
+  const syncPushOnLogin = useSyncPushOnLogin();
 
   const HandleLogin = () => {
     loginUserMutate(
       { email, password },
       {
         onSuccess: async (data) => {
+          try {
+            await syncPushOnLogin();
+          } catch (error) {
+            console.warn('[Push Sync Failed]', error);
+          }
+
           if (data.user.currentMatchId !== null) {
             setMatchId(data.user.currentMatchId);
             // 서버에서 현재 exp 조회
