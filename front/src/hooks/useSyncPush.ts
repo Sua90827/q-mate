@@ -3,11 +3,11 @@
 import { useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { fetchNotificationSettings, updateNotificationSettings } from '@/api/notification';
-import { usePushSubscription } from '@/hooks/useSubScription';
+import { useSubscribePush } from '@/hooks/useSubScription';
 
 export function useSyncPushOnLogin() {
   const queryClient = useQueryClient();
-  const { ensurePushSubscribed } = usePushSubscription();
+  const { subscribe } = useSubscribePush();
 
   return useCallback(async () => {
     const server = await queryClient.fetchQuery({
@@ -22,11 +22,11 @@ export function useSyncPushOnLogin() {
 
     if (server.pushEnabled === true) {
       if (permission === 'granted') {
-        await ensurePushSubscribed();
+        await subscribe();
       } else if (permission === 'default') {
         const result = await Notification.requestPermission();
         if (result === 'granted') {
-          await ensurePushSubscribed();
+          await subscribe();
         } else {
           await updateNotificationSettings(false);
 
@@ -37,5 +37,5 @@ export function useSyncPushOnLogin() {
         queryClient.invalidateQueries({ queryKey: ['notificationSettings'] });
       }
     }
-  }, [ensurePushSubscribed, queryClient]);
+  }, [subscribe, queryClient]);
 }
