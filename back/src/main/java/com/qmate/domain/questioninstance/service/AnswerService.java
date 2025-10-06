@@ -111,10 +111,8 @@ public class AnswerService {
     // 해당 매칭의 펫을 찾습니다. 펫이 없다면 로직을 중단합니다.
     petRepository.findByMatch(match).ifPresent(pet -> {
       int experienceAmount = 10; // 획득 경험치는 상수로 관리하는 것이 좋습니다.
-
       // 펫의 경험치를 올립니다.
       pet.gainExperience(experienceAmount);
-
       // 경험치 획득 로그를 생성합니다.
       PetExpLog log = PetExpLog.builder()
           .match(match)
