@@ -14,7 +14,7 @@ export default function Custom({ value }: { value?: string }) {
   const [isEmpty, setIsEmpty] = useState<boolean>(!value?.trim());
 
   const pathName = usePathname();
-  const hideLogo = pathName.startsWith('/question/list');
+  const startList = pathName.startsWith('/question/list');
   const customCreate = pathName.startsWith('/question/custom');
   const router = useRouter();
   const params = useSearchParams();
@@ -25,10 +25,10 @@ export default function Custom({ value }: { value?: string }) {
   const { mutate: updateCustomMutate, isPending: isUpdating } = useUpdateCustomQuestion();
 
   const handleCreate = () => {
-    const submitText = textareaRef.current?.getValue() ?? '';
-    if (!submitText) return;
+    const latest = textareaRef.current?.getValue() ?? '';
+    if (!latest) return;
     createCustomMutate(
-      { text: submitText, matchId: matchId! },
+      { text: latest, matchId: matchId! },
       {
         onSuccess: () => router.push('/record'),
         onError: () => ErrorToast('질문이 등록되지 않았습니다. 다시 시도해 주세요.'),
@@ -37,10 +37,10 @@ export default function Custom({ value }: { value?: string }) {
   };
 
   const handleUpdate = () => {
-    const submitText = textareaRef.current?.getValue() ?? '';
-    if (!submitText) return;
+    const latest = textareaRef.current?.getValue() ?? '';
+    if (!latest) return;
     updateCustomMutate(
-      { text: submitText, id },
+      { text: latest, id },
       {
         onSuccess: () => router.push('/question/list'),
         onError: () => ErrorToast('질문이 수정되지 않았습니다. 다시 시도해 주세요.'),
@@ -54,22 +54,22 @@ export default function Custom({ value }: { value?: string }) {
 
   return (
     <>
-      {!hideLogo && (
-        <div className="w-full relative flex justify-center h-[70px] items-center sm:hidden">
-          <Link href="/main">
-            <span
-              className="site-logo inline-block w-[109px] h-[35px]"
-              role="img"
-              aria-label="큐메이트"
-            />
-          </Link>
-          <div className="absolute right-4">
-            <CloseButton onClick={() => router.push('/record')} />
-          </div>
+      <div className="w-full relative flex justify-center h-[70px] items-center sm:hidden">
+        <Link href="/main">
+          <span
+            className="site-logo inline-block w-[109px] h-[35px]"
+            role="img"
+            aria-label="큐메이트"
+          />
+        </Link>
+        <div className="absolute right-4">
+          <CloseButton
+            onClick={startList ? () => router.push('/question/list') : () => router.push('/record')}
+          />
         </div>
-      )}
+      </div>
 
-      <div className="flex items-center justify-center h-[calc(100%-70px)] sm:h-full pb-[70px]">
+      <div className="flex items-center justify-center h-[calc(100%-70px)] sm:h-full pb-[35px]">
         <div className="flex flex-col h-[246px]">
           <span className="font-bold text-[24px] pb-5 text-theme-primary text-center">
             궁금한 질문 작성하기

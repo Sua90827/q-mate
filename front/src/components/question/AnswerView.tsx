@@ -33,8 +33,8 @@ function AnswerView({
             role="img"
             aria-label="큐메이트"
           />
-        </Link>{' '}
-        <div className="absolute  top-5 right-5 sm:hidden ">
+        </Link>
+        <div className="absolute right-5 sm:hidden ">
           <CloseButton onClick={() => router.push('/question/list')} />
         </div>
       </div>

@@ -52,6 +52,7 @@ export default function QuestionDetail() {
     try {
       await createAnswer({ questionInstanceId: detail.questionInstanceId, content });
       queryClient.invalidateQueries({ queryKey: ['pet'] });
+
       SuccessToast('답변을 제출했어요.');
     } catch {
       ErrorToast('답변 제출에 실패했어요. 잠시 후 다시 시도해 주세요.');
@@ -87,12 +88,7 @@ export default function QuestionDetail() {
   // 커스텀 질문 처리
   if (customItem) {
     return (
-      <div className="w-full h-full  p-6 flex flex-col items-center">
-        <div className="h-[40px] ">
-          <div className="absolute top-5 right-5 sm:hidden ">
-            <CloseButton onClick={() => router.push(pathname)} />
-          </div>
-        </div>
+      <div className="w-full h-full  flex flex-col items-center">
         <Custom value={customItem.text} />
       </div>
     );
