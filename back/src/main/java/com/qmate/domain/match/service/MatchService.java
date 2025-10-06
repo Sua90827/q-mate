@@ -20,6 +20,10 @@ import com.qmate.domain.match.model.response.MatchMembersResponse;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.match.repository.MatchSettingRepository;
+import com.qmate.domain.question.repository.QuestionRepository;
+import com.qmate.domain.questioninstance.entity.QuestionInstance;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
+import com.qmate.domain.questioninstance.service.RandomAdminQuestionService;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
 import com.qmate.exception.BusinessGlobalException;
@@ -40,6 +44,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +59,7 @@ public class MatchService {
   private final RedisHelper redisHelper;
   private final MatchSettingRepository matchSettingRepository;
   private final EventAnniversaryService eventAnniversaryService;
+  private final RandomAdminQuestionService randomAdminQuestionService;
 
   //초대 코드 생성 로직
   @Transactional
@@ -115,6 +121,9 @@ public class MatchService {
 
       // 기념일 생성
       eventAnniversaryService.createDefaultAnniversaries(match, joiner, partner);
+
+      // 첫 질문 생성
+      randomAdminQuestionService.createOneRandomForMatch(match);
 
       return MatchJoinResponse.builder()
           .matchId(matchId)
