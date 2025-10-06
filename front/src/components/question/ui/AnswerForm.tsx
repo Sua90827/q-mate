@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import CloseButton from '@/components/common/CloseButton';
 import { Button } from '@/components/common/Button';
@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 import RatingModal from '../RatingModal';
 import Loader from '@/components/common/Loader';
 import Link from 'next/link';
-import TextTextarea from './TextTextarea';
+import TextTextarea, { TextTextareaRef } from './TextTextarea';
 
 type AnswerFormProps = {
   mode: 'create' | 'edit';
@@ -25,20 +25,19 @@ export default function AnswerForm({
   initialValue = '',
 }: AnswerFormProps) {
   const router = useRouter();
-  const [content, setContent] = useState<string>(initialValue);
+  const textareaRef = useRef<TextTextareaRef>(null);
   const [open, setOpen] = useState(false);
   const pathName = usePathname();
   const fromToday = pathName.startsWith('/question/detail');
-  const isBlank = content.trim().length === 0;
-  const canSubmit = !submitting && !isBlank;
-
-  const handleCommit = useCallback((text: string) => {
-    setContent(text);
-  }, []);
+  const [isEmpty, setIsEmpty] = useState(initialValue.trim().length === 0);
+  const canSubmit = !submitting && !isEmpty;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
-    await onSubmit(content);
+    const submitText = textareaRef.current?.getValue() ?? '';
+    if (!submitText) return;
+    await onSubmit(submitText);
+
     if (mode === 'create') {
       setOpen(true);
     }
@@ -57,19 +56,20 @@ export default function AnswerForm({
       </div>
 
       <div className="flex flex-col items-center justify-center h-full bg-gradient-sub ">
-        <div className="flex flex-col h-[246px] gap-3">
+        <div className="flex flex-col  gap-3">
           <span className="font-bold text-24 text-center pb-3 text-theme-primary">
             {questionText}
           </span>
 
           <TextTextarea
-            defaultValue={content}
+            ref={textareaRef}
+            defaultValue={initialValue}
             placeholder="궁금한 질문을 입력해 보세요!"
-            onCommit={handleCommit}
+            textLength={(t) => setIsEmpty(t.length === 0)}
           />
         </div>
 
-        <div className="pt-5 flex gap-7">
+        <div className="pt-5 flex gap-x-7">
           <Button variant="outline" size="lg" asChild className="md:w-[180px] w-[140px]">
             <Link href={fromToday ? '/record' : '/question/list'}>취소하기</Link>
           </Button>

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useCallback } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button } from '../common/Button';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -7,10 +7,12 @@ import { useCreateCustomQuestion, useUpdateCustomQuestion } from '@/hooks/useCus
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { ErrorToast } from '../common/CustomToast';
 import CloseButton from '../common/CloseButton';
-import TextTextarea from './ui/TextTextarea';
+import TextTextarea, { TextTextareaRef } from './ui/TextTextarea';
 
 export default function Custom({ value }: { value?: string }) {
-  const [finalText, setFinalText] = useState(value ?? '');
+  const textareaRef = useRef<TextTextareaRef>(null);
+  const [isEmpty, setIsEmpty] = useState<boolean>(!value?.trim());
+
   const pathName = usePathname();
   const hideLogo = pathName.startsWith('/question/list');
   const customCreate = pathName.startsWith('/question/custom');
@@ -19,39 +21,35 @@ export default function Custom({ value }: { value?: string }) {
   const id = Number(params.get('id')?.replace('custom-', ''));
   const matchId = useMatchIdStore((state) => state.matchId);
 
-  const {
-    mutate: createCustomMutate,
-    isPending: isCreating,
-    isError: isCreateError,
-  } = useCreateCustomQuestion();
-  const {
-    mutate: updateCustomMutate,
-    isPending: isUpdating,
-    isError: isUpdateError,
-  } = useUpdateCustomQuestion();
-
-  const handleCommit = useCallback((text: string) => {
-    setFinalText(text);
-  }, []);
+  const { mutate: createCustomMutate, isPending: isCreating } = useCreateCustomQuestion();
+  const { mutate: updateCustomMutate, isPending: isUpdating } = useUpdateCustomQuestion();
 
   const handleCreate = () => {
-    if (!finalText.trim()) return;
-    createCustomMutate({ text: finalText, matchId: matchId! });
-    if (isCreateError) {
-      ErrorToast('질문이 등록되지 않았습니다. 다시 시도해 주세요.');
-    } else {
-      router.push('/record');
-    }
+    const submitText = textareaRef.current?.getValue() ?? '';
+    if (!submitText) return;
+    createCustomMutate(
+      { text: submitText, matchId: matchId! },
+      {
+        onSuccess: () => router.push('/record'),
+        onError: () => ErrorToast('질문이 등록되지 않았습니다. 다시 시도해 주세요.'),
+      },
+    );
   };
 
   const handleUpdate = () => {
-    if (!finalText.trim()) return;
-    updateCustomMutate({ text: finalText, id });
-    if (isUpdateError) {
-      ErrorToast('질문이 수정되지 않았습니다. 다시 시도해 주세요.');
-    } else {
-      router.push('/question/list');
-    }
+    const submitText = textareaRef.current?.getValue() ?? '';
+    if (!submitText) return;
+    updateCustomMutate(
+      { text: submitText, id },
+      {
+        onSuccess: () => router.push('/question/list'),
+        onError: () => ErrorToast('질문이 수정되지 않았습니다. 다시 시도해 주세요.'),
+      },
+    );
+  };
+
+  const handleTextChange = (text: string) => {
+    setIsEmpty(text.length === 0);
   };
 
   return (
@@ -78,9 +76,10 @@ export default function Custom({ value }: { value?: string }) {
           </span>
 
           <TextTextarea
+            ref={textareaRef}
             defaultValue={value ?? ''}
             placeholder="궁금한 질문을 입력해 보세요!"
-            onCommit={handleCommit}
+            textLength={handleTextChange}
           />
 
           <div className="pt-5 flex gap-7">
@@ -93,7 +92,7 @@ export default function Custom({ value }: { value?: string }) {
                 size="lg"
                 className="md:w-[180px] w-[140px]"
                 onClick={handleUpdate}
-                disabled={isUpdating || !finalText.trim()}
+                disabled={isUpdating || isEmpty}
               >
                 {isUpdating ? '수정 중...' : '수정하기'}
               </Button>
@@ -102,7 +101,7 @@ export default function Custom({ value }: { value?: string }) {
                 size="lg"
                 className="md:w-[180px] w-[140px]"
                 onClick={handleCreate}
-                disabled={isCreating || !finalText.trim()}
+                disabled={isCreating || isEmpty}
               >
                 {isCreating ? '등록 중...' : '등록하기'}
               </Button>
