@@ -1,10 +1,10 @@
-import { http, HttpResponse, delay } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 export const notificationsHandler = [
   //알림 설정 조회
   http.get('/api/notifications/settings', async () => {
     return HttpResponse.json({
-      pushEnabled: true,
+      pushEnabled: false,
     });
   }),
   //알림 설정 수정

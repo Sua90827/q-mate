@@ -1,9 +1,8 @@
-import { CheckCircle, X, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle } from 'lucide-react';
 import React from 'react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { on } from 'events';
 
 export function SuccessToast(message?: string, className?: string) {
   return toast.custom(() => (

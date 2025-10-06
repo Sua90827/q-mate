@@ -11,11 +11,13 @@ import { useMatchInfo } from '@/hooks/useMatches';
 import { useSettingsActions } from '@/hooks/useSettingsAction';
 import ConnectionModal from './ui/ConnectionModal';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
+import { useNotificationSettings } from '@/hooks/useNotificationSettings';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useLogoutUser } from '@/hooks/useAuth';
 import { ErrorToast } from '../common/CustomToast';
 import { useRouter } from 'next/navigation';
 import ConfirmModal from '../common/ConfirmModal';
+
 
 type SettingItem =
   | { id: string; label: string; subLabel?: string; type: 'modal'; onClick: () => void }
@@ -28,12 +30,18 @@ export default function Settings() {
   const resetMatchId = useMatchIdStore((state) => state.resetMatchId);
   const resetAccessToken = useAuthStore((state) => state.resetAccessToken);
   const [modal, setModal] = useState<string | null>(null);
+
+  //hook 조회 enable에 사용자가 있을때 조건 추가 필요
+  const { data: notificationSettings, toggleNotification } = useNotificationSettings();
+  const [nickname, setNickname] = useState<string>('');
+
   const [isChecked, setIsChecked] = useState(false);
   const [nickname, setNickname] = useState<string>('');
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
 
   const { mutate: logoutMutate, isPending: isLogoutPending } = useLogoutUser();
   const router = useRouter();
+
 
   useEffect(() => {
     if (user?.nickname) {
@@ -75,6 +83,8 @@ export default function Settings() {
     },
   ];
 
+  const pushEnabled = notificationSettings?.pushEnabled;
+
   const handleLogout = () => {
     logoutMutate(undefined, {
       onSuccess: () => {
@@ -91,6 +101,7 @@ export default function Settings() {
       },
     });
   };
+
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center sm:pt-0 pt-[70px]">
@@ -126,9 +137,9 @@ export default function Settings() {
               {item.type === 'switch' ? (
                 //현재는 useState로 색상변경되는지 확인했지만 유저 정보에서 알림을 받는지 끄는지 확인필요할듯
                 <Switch
-                  checked={isChecked}
-                  onCheckedChange={setIsChecked}
-                  className={cn(isChecked && 'bg-theme-primary')}
+                  checked={pushEnabled}
+                  onCheckedChange={pushEnabled}
+                  className={cn(pushEnabled && 'bg-theme-primary')}
                 />
               ) : (
                 <ChevronRight className="text-theme-secondary !w-4 !h-4" />

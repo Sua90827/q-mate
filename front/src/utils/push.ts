@@ -11,18 +11,18 @@ export const requestNotificationPermission = async (): Promise<NotificationPermi
   if (!('Notification' in window)) return 'denied';
   if (Notification.permission === 'granted') return 'granted';
   if (Notification.permission === 'denied') return 'denied';
-  // default → 사용자에게 브라우저 권한 팝업 노출
+
   return await Notification.requestPermission();
 };
 
 export const getServiceWorkerRegistration = async (): Promise<ServiceWorkerRegistration | null> => {
   if (!('serviceWorker' in navigator)) return null;
   try {
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await navigator.serviceWorker.getRegistration('/push/');
     console.log('[Push] Service Worker ready:', reg);
-    return reg;
+    return reg ?? null;
   } catch (error) {
-    console.error(error);
+    console.log('error', error);
     return null;
   }
 };

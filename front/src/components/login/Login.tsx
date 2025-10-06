@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import NoticeModal from '../common/NoticeModal';
 import Loader from '../common/Loader';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
+import { useSyncPushOnLogin } from '@/hooks/useSyncPush';
 import { fetchPetInfo } from '@/api/pet';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -29,12 +30,19 @@ export default function Login() {
   const setMatchId = useMatchIdStore((state) => state.setMatchId);
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
   const { mutate: loginUserMutate, isPending: isLoginLoading } = useLoginUser();
+  const syncPushOnLogin = useSyncPushOnLogin();
 
   const HandleLogin = () => {
     loginUserMutate(
       { email, password },
       {
         onSuccess: async (data) => {
+          try {
+            await syncPushOnLogin();
+          } catch (error) {
+            console.warn('[Push Sync Failed]', error);
+          }
+
           if (data.user.currentMatchId !== null) {
             //매치 아이디 셋팅
             setMatchId(data.user.currentMatchId);
