@@ -1,5 +1,6 @@
 package com.qmate.domain.questioninstance.repository;
 
+import com.qmate.domain.match.MatchStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import jakarta.persistence.LockModeType;
@@ -58,4 +59,22 @@ public interface QuestionInstanceRepository extends JpaRepository<QuestionInstan
   boolean existsByCustomQuestion_Id(Long customQuestionId);
 
   List<QuestionInstance> findByMatchIdAndStatus(Long matchId, QuestionInstanceStatus status);
+
+  @Query("""
+      select distinct qi
+      from QuestionInstance qi
+        join fetch qi.match m
+        join MatchSetting ms on ms.match.id = m.id
+        join fetch m.members mm
+        join fetch mm.user u
+      where qi.status = :pending
+        and qi.deliveredAt is null
+        and m.status = :active
+        and ms.dailyQuestionHour = :hour
+      """)
+  List<QuestionInstance> findPendingToDeliverForHourWithMembersAndUser(
+      @Param("hour") int hour,
+      @Param("active") MatchStatus active,
+      @Param("pending") QuestionInstanceStatus pending
+  );
 }
