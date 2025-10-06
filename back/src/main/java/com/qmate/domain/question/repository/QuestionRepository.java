@@ -19,7 +19,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long>, JpaSp
   @EntityGraph(attributePaths = "category")
   Page<Question> findAll(Specification<Question> spec, Pageable pageable);
 
-  Optional<Question> findFirstByCategory_NameAndRelationTypeAndActiveTrueOrderByIdAsc(
+  Optional<Question> findFirstByCategory_NameAndRelationTypeAndIsActiveTrueOrderByIdAsc(
       String categoryName,
       RelationType relationType
   );

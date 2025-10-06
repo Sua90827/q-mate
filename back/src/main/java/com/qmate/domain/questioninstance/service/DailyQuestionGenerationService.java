@@ -81,7 +81,7 @@ public class DailyQuestionGenerationService {
       // 기념일(100일) 또는 N주년
       // 100일: 카테고리명만으로 1개 가져와서 QI 생성
       if (isCouple(match) && isHundredthDay(match)) {
-        questionRepository.findFirstByCategory_NameAndRelationTypeAndActiveTrueOrderByIdAsc("기념일(100일)", RelationType.COUPLE)
+        questionRepository.findFirstByCategory_NameAndRelationTypeAndIsActiveTrueOrderByIdAsc("기념일(100일)", RelationType.COUPLE)
             .ifPresent(q -> qiRepository.save(QuestionInstance.builder()
                 .match(match)
                 .question(q)

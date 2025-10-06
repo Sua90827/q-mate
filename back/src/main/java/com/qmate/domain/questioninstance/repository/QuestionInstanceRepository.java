@@ -53,7 +53,7 @@ public interface QuestionInstanceRepository extends JpaRepository<QuestionInstan
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query("select qi from QuestionInstance qi where qi.id = :qiId")
-  @QueryHints(@QueryHint(name = "jakarta.persistence.lock.timeout", value = "3000")) // ms
+  @QueryHints(@QueryHint(name = "jakarta.persistence.lock.timeout", value = "1000")) // ms
   Optional<QuestionInstance> findByIdForUpdate(Long qiId);
 
   boolean existsByCustomQuestion_Id(Long customQuestionId);

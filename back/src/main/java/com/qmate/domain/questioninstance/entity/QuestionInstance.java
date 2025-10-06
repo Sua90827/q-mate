@@ -55,7 +55,7 @@ public class QuestionInstance {
   @JoinColumn(name = "custom_question_id")
   private CustomQuestion customQuestion;
 
-  @Column(name = "delivered_at", nullable = false)
+  @Column(name = "delivered_at")
   private LocalDateTime deliveredAt;
 
   @Enumerated(EnumType.STRING)

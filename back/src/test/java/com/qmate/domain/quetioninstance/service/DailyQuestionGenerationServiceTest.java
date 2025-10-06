@@ -87,7 +87,7 @@ class DailyQuestionGenerationServiceTest {
     verify(oldPending).setStatus(QuestionInstanceStatus.EXPIRED);
     verify(qiRepository, atLeastOnce()).save(oldPending);
     verify(customQuestionRepository, never()).findFirstUnusedForMatchOrderByIdAsc(anyLong(), any());
-    verify(questionRepository, never()).findFirstByCategory_NameAndRelationTypeAndActiveTrueOrderByIdAsc(anyString(), any());
+    verify(questionRepository, never()).findFirstByCategory_NameAndRelationTypeAndIsActiveTrueOrderByIdAsc(anyString(), any());
     verify(questionRepository, never()).findActiveCoupleByCategoryNameOrderByIdAsc(anyString(), any(), any());
     verify(questionRepository, never()).pickOneRandomUnusedAdminQuestion(anyLong(), any());
   }
@@ -135,7 +135,7 @@ class DailyQuestionGenerationServiceTest {
         .willReturn(List.of());
 
     Question q100 = mock(Question.class);
-    given(questionRepository.findFirstByCategory_NameAndRelationTypeAndActiveTrueOrderByIdAsc("기념일(100일)", RelationType.COUPLE))
+    given(questionRepository.findFirstByCategory_NameAndRelationTypeAndIsActiveTrueOrderByIdAsc("기념일(100일)", RelationType.COUPLE))
         .willReturn(Optional.of(q100));
 
     ArgumentCaptor<QuestionInstance> captor = ArgumentCaptor.forClass(QuestionInstance.class);
@@ -226,7 +226,7 @@ class DailyQuestionGenerationServiceTest {
 
     // then: 커스텀 선택 후 나머지는 타지 않음
     verify(qiRepository).save(any(QuestionInstance.class));
-    verify(questionRepository, never()).findFirstByCategory_NameAndRelationTypeAndActiveTrueOrderByIdAsc(anyString(), any());
+    verify(questionRepository, never()).findFirstByCategory_NameAndRelationTypeAndIsActiveTrueOrderByIdAsc(anyString(), any());
     verify(questionRepository, never()).findActiveCoupleByCategoryNameOrderByIdAsc(anyString(), any(), any());
     verify(questionRepository, never()).pickOneRandomUnusedAdminQuestion(anyLong(), any());
   }
