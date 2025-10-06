@@ -1,6 +1,7 @@
 package com.qmate.domain.match.service;
 
 import com.qmate.common.redis.RedisHelper;
+import com.qmate.domain.event.service.EventAnniversaryService;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.match.MatchSetting;
@@ -52,6 +53,7 @@ public class MatchService {
   private final UserRepository userRepository;
   private final RedisHelper redisHelper;
   private final MatchSettingRepository matchSettingRepository;
+  private final EventAnniversaryService eventAnniversaryService;
 
   //초대 코드 생성 로직
   @Transactional
@@ -110,6 +112,9 @@ public class MatchService {
       joiner.joinMatch(match);
       partner.joinMatch(match);
       redisHelper.deleteInviteCode(inviteCode);
+
+      // 기념일 생성
+      eventAnniversaryService.createDefaultAnniversaries(match, joiner, partner);
 
       return MatchJoinResponse.builder()
           .matchId(matchId)
