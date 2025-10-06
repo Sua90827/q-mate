@@ -55,8 +55,8 @@ public class QuestionInstance {
   @JoinColumn(name = "custom_question_id")
   private CustomQuestion customQuestion;
 
-  @Column(name = "delivered_at", nullable = false)
-  private LocalDateTime deliveredAt;     // 스케줄 목표
+  @Column(name = "delivered_at")
+  private LocalDateTime deliveredAt;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false, length = 20)
