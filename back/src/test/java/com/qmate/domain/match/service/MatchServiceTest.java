@@ -19,8 +19,9 @@ import com.qmate.domain.match.model.response.MatchMembersResponse;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.match.repository.MatchSettingRepository;
-import com.qmate.domain.pet.Pet;
+import com.qmate.domain.pet.entity.Pet;
 import com.qmate.domain.pet.repository.PetRepository;
+import com.qmate.domain.pet.service.PetService;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
 import com.qmate.exception.custom.matchinstance.InviteAttemptLockedException;
@@ -53,6 +54,8 @@ class MatchServiceTest {
   private MatchSettingRepository matchSettingRepository;
   @Mock
   private PetRepository petRepository;
+  @Mock
+  private PetService petService;
 
   @Test
   @DisplayName("매칭 정보 업데이트 성공")
@@ -109,7 +112,7 @@ class MatchServiceTest {
     sut.joinMatch(request, joinerId);
 
     // then: petRepository의 save 메서드가 Pet 클래스 타입의 어떤 객체로든 1번 호출되었는지 검증
-    verify(petRepository).save(any(Pet.class));
+    verify(petService).createPetForMatch(any(Match.class));
   }
 
   @Test
