@@ -68,8 +68,10 @@ export default function QuestionTimeModal({
         className="w-[260px] z-50 rounded-2xl p-0 overflow-hidden"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        <DialogHeader className="px-4 pt-4">
-          <DialogTitle className="w-full text-center">질문 시간 선택</DialogTitle>
+        <DialogHeader className="pt-4">
+          <DialogTitle className="w-full text-center font-bold border-b pb-3">
+            질문 시간 선택
+          </DialogTitle>
         </DialogHeader>
 
         <DialogDescription asChild>
@@ -81,7 +83,7 @@ export default function QuestionTimeModal({
           </div>
         </DialogDescription>
 
-        <DialogFooter className="flex gap-0">
+        <DialogFooter className="flex flex-row gap-0">
           <Button
             variant="outline"
             className="rounded-none flex-1 border-1 rounded-bl-2xl"
