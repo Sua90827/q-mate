@@ -11,6 +11,7 @@ import { useMatchInfo } from '@/hooks/useMatches';
 import { useSettingsActions } from '@/hooks/useSettingsAction';
 import ConnectionModal from './ui/ConnectionModal';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
+import { useNotificationSettings } from '@/hooks/useNotificationSettings';
 
 type SettingItem =
   | { id: string; label: string; subLabel?: string; type: 'modal'; onClick: () => void }
@@ -21,10 +22,9 @@ export default function Settings() {
   const { data: matchInfo } = useMatchInfo(matchId!);
   const user = matchInfo?.users.find((u) => u.me);
   const [modal, setModal] = useState<string | null>(null);
-  const [isChecked, setIsChecked] = useState(false);
-
+  //hook 조회 enable에 사용자가 있을때 조건 추가 필요
+  const { data: notificationSettings, toggleNotification } = useNotificationSettings();
   const [nickname, setNickname] = useState<string>('');
-
   useEffect(() => {
     if (user?.nickname) {
       setNickname(user.nickname);
@@ -64,7 +64,7 @@ export default function Settings() {
       onClick: () => setModal('disconnect'),
     },
   ];
-
+  const pushEnabled = notificationSettings?.pushEnabled;
   return (
     <div className="w-full h-full flex flex-col justify-center items-center sm:pt-0 pt-[70px]">
       {/* 모바일 상단바 */}
@@ -99,9 +99,9 @@ export default function Settings() {
               {item.type === 'switch' ? (
                 //현재는 useState로 색상변경되는지 확인했지만 유저 정보에서 알림을 받는지 끄는지 확인필요할듯
                 <Switch
-                  checked={isChecked}
-                  onCheckedChange={setIsChecked}
-                  className={cn(isChecked && 'bg-theme-primary')}
+                  checked={pushEnabled}
+                  onCheckedChange={pushEnabled}
+                  className={cn(pushEnabled && 'bg-theme-primary')}
                 />
               ) : (
                 <ChevronRight className="text-theme-secondary !w-4 !h-4" />
