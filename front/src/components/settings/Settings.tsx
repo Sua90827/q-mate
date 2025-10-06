@@ -11,7 +11,7 @@ import { useMatchInfo } from '@/hooks/useMatches';
 import { useSettingsActions } from '@/hooks/useSettingsAction';
 import ConnectionModal from './ui/ConnectionModal';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
-// import { useNotificationSettings } from '@/hooks/useNotificationSettings';
+import { useNotificationSettings } from '@/hooks/useNotificationSettings';
 
 type SettingItem =
   | { id: string; label: string; subLabel?: string; type: 'modal'; onClick: () => void }
@@ -23,7 +23,7 @@ export default function Settings() {
   const user = matchInfo?.users.find((u) => u.me);
   const [modal, setModal] = useState<string | null>(null);
   //hook 조회 enable에 사용자가 있을때 조건 추가 필요
-  // const { data: notificationSettings, toggleNotification } = useNotificationSettings();
+  const { data: notificationSettings, toggleNotification } = useNotificationSettings();
   const [nickname, setNickname] = useState<string>('');
   useEffect(() => {
     if (user?.nickname) {
