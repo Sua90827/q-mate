@@ -1,8 +1,10 @@
 package com.qmate.domain.questioninstance.repository;
 
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.QueryHint;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -54,4 +56,6 @@ public interface QuestionInstanceRepository extends JpaRepository<QuestionInstan
   Optional<QuestionInstance> findByIdForUpdate(Long qiId);
 
   boolean existsByCustomQuestion_Id(Long customQuestionId);
+
+  List<QuestionInstance> findByMatchIdAndStatus(Long matchId, QuestionInstanceStatus status);
 }
