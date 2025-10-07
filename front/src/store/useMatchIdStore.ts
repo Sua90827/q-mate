@@ -11,7 +11,7 @@ export const useMatchIdStore = create<SelectedState>()(
   persist(
     (set) => ({
       matchId: null,
-      setMatchId: (matchId) => ({ matchId }),
+      setMatchId: (id) => set({ matchId: id }),
       resetMatchId: () => set({ matchId: null }),
     }),
     {

@@ -14,6 +14,7 @@ import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { useSyncPushOnLogin } from '@/hooks/useSyncPush';
 import { fetchPetInfo } from '@/api/pet';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useSelectedStore } from '@/store/useSelectedStore';
 
 const validateEmail = (v: string) => /\S+@\S+\.\S+/.test(v);
 const validatePassword = (v: string) =>
@@ -28,26 +29,39 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [open, setOpen] = useState(false);
   const [loginErrorType, setLoginErrorType] = useState<LoginErrorType>(null);
+  const syncPushOnLogin = useSyncPushOnLogin();
 
   const isFormValid = isEmailValid && isPasswordValid;
   const router = useRouter();
+
   const setMatchId = useMatchIdStore((state) => state.setMatchId);
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
+  const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
   const { mutate: loginUserMutate, isPending: isLoginLoading } = useLoginUser();
   const { mutate: socialLoginMutate, isPending: isSocialLoading } = useSocialLogin();
 
   const handleSocialLogin = (provider: string) => {
     socialLoginMutate(provider, {
       onSuccess: async (data) => {
-        if (data.user.currentMatchId !== null) {
+        try {
+          await syncPushOnLogin();
+        } catch (error) {
+          console.warn('[Push Sync Failed]', error);
+        }
+        if (data.user.currentMatchId) {
           //매치 아이디 셋팅
           setMatchId(data.user.currentMatchId);
+
           // 서버에서 현재 exp 조회
           const petInfo = await fetchPetInfo(data.user.currentMatchId);
           //현재 exp 셋팅
           localStorage.setItem('prevExp', String(petInfo.exp));
           //accessToken 셋팅
           setAccessToken(data.accessToken);
+          const accessTokenTime = Date.now() + data.accessTokenExpiresIn * 1000;
+          localStorage.setItem('accessTokenTime', String(accessTokenTime));
+
+          setSelectedMenu('home');
           router.push('/main');
         } else {
           //accessToken 셋팅
@@ -75,8 +89,7 @@ export default function Login() {
           } catch (error) {
             console.warn('[Push Sync Failed]', error);
           }
-
-          if (data.user.currentMatchId !== null) {
+          if (data.user.currentMatchId) {
             //매치 아이디 셋팅
             setMatchId(data.user.currentMatchId);
             // 서버에서 현재 exp 조회
@@ -85,6 +98,9 @@ export default function Login() {
             localStorage.setItem('prevExp', String(petInfo.exp));
             //accessToken 셋팅
             setAccessToken(data.accessToken);
+            const accessTokenTime = Date.now() + data.accessTokenExpiresIn * 1000;
+            localStorage.setItem('accessTokenTime', String(accessTokenTime));
+            setSelectedMenu('home');
             router.push('/main');
           } else {
             //accessToken 셋팅

@@ -8,6 +8,7 @@ import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { ErrorToast } from '../common/CustomToast';
 import CloseButton from '../common/CloseButton';
 import TextTextarea, { TextTextareaRef } from './ui/TextTextarea';
+import { useSelectedStore } from '@/store/useSelectedStore';
 
 export default function Custom({ value }: { value?: string }) {
   const textareaRef = useRef<TextTextareaRef>(null);
@@ -20,6 +21,7 @@ export default function Custom({ value }: { value?: string }) {
   const params = useSearchParams();
   const id = Number(params.get('id')?.replace('custom-', ''));
   const matchId = useMatchIdStore((state) => state.matchId);
+  const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
 
   const { mutate: createCustomMutate, isPending: isCreating } = useCreateCustomQuestion();
   const { mutate: updateCustomMutate, isPending: isUpdating } = useUpdateCustomQuestion();
@@ -55,7 +57,7 @@ export default function Custom({ value }: { value?: string }) {
   return (
     <>
       <div className="w-full relative flex justify-center h-[70px] items-center sm:hidden">
-        <Link href="/main">
+        <Link href="/main" onClick={() => setSelectedMenu('home')}>
           <span
             className="site-logo inline-block w-[109px] h-[35px]"
             role="img"

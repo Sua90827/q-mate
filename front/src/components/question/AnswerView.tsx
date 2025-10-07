@@ -1,8 +1,10 @@
+'use client';
 import React, { useRef } from 'react';
 import ShareBtn from './ui/ShareBtn';
 import CloseButton from '../common/CloseButton';
 import { useRouter } from 'next/navigation';
 import { Link } from 'lucide-react';
+import { useSelectedStore } from '@/store/useSelectedStore';
 
 type Props = {
   questionText: string;
@@ -24,10 +26,12 @@ function AnswerView({
   const captureID = `shareCard-${questionInstanceId}`;
   const cardRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
+
   return (
     <>
       <div className="w-full relative top-0 h-[70px] flex justify-center items-center sm:hidden">
-        <Link href="/main">
+        <Link href="/main" onClick={() => setSelectedMenu('home')}>
           <span
             className="site-logo inline-block w-[109px] h-[35px]"
             role="img"

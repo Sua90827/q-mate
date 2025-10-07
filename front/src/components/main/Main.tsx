@@ -13,7 +13,6 @@ import { usePetStateStore } from '@/store/usePetStore';
 export default function Main() {
   const MotionDiv = motion.div;
   const matchId = useMatchIdStore((s) => s.matchId);
-
   const { currentExp, setCurrentExp, triggerBubble } = usePetStateStore();
 
   const { data } = useFetchPetInfo(matchId!);
@@ -59,7 +58,7 @@ export default function Main() {
         </AnimatePresence>
       </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center w-[252px] h-[358px] mt-15">
+      <div className="relative z-10 flex flex-col items-center justify-center w-[252px] z">
         <ExpBubble />
         <Bubbley className="mb-6" />
         <ExpBar />
