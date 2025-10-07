@@ -12,11 +12,7 @@ interface nicknameModal {
 }
 
 export default function NicknameModal({ open, setIsOpen, nickname, setNickname }: nicknameModal) {
-  const {
-    mutate: updateNicknameMutate,
-    isPending: updating,
-    isError: updateError,
-  } = useUpdateNickname();
+  const { mutate: updateNicknameMutate, isPending: updating } = useUpdateNickname();
 
   const [pendingNickname, setPendingNickname] = useState(nickname);
 
@@ -29,15 +25,12 @@ export default function NicknameModal({ open, setIsOpen, nickname, setNickname }
           setIsOpen(null);
           SuccessToast('닉네임이 성공적으로 변경되었습니다.');
         },
+        onError: () => {
+          ErrorToast('닉네임 변경에 실패했습니다. \n 다시 시도해주세요.');
+        },
       },
     );
   };
-
-  useEffect(() => {
-    if (updateError) {
-      ErrorToast('닉네임 변경에 실패했습니다. 다시 시도해주세요.');
-    }
-  }, [updateError]);
 
   return (
     <Dialog open={open === 'profile'} onOpenChange={() => {}}>

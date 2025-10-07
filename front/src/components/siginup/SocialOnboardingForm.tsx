@@ -105,9 +105,8 @@ export default function SocialOnboardingForm() {
         setOpen={setOpen}
         title={
           <>
-            정보 입력에 실패했습니다.
-            <br />
-            다시 시도해주세요.
+            정보를 저장하지 못했습니다. <br />
+            잠시 후 다시 시도해주세요.
           </>
         }
         danger
