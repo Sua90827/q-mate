@@ -31,7 +31,7 @@ export function DatePicker({
             id="date"
             className={`w-full border-gray h-[45px] font-semibold bg-secondary justify-between !text-14 hover:bg-secondary
             ${schedule ? 'shadow-box' : ''}
-            ${!date ? 'text-text-secondary/80' : ''}
+            ${!date ? 'text-text-secondary/80' : 'text-text-primary'}
             `}
           >
             {date ? toKey(date) : label}

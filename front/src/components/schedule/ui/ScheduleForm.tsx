@@ -37,7 +37,8 @@ export function ScheduleForm({
   const repeatTypeRef = useRef<RepeatType>(initial?.repeatType ?? 'NONE');
   const alarmOptionRef = useRef<AlarmOption>(initial?.alarmOption ?? 'NONE');
   const isAnniversary = initial?.isAnniversary === true;
-
+  const disabled =
+    submitting || !date || isEmpty || description.trim().length === 0 || title.trim().length === 0;
   useEffect(() => {
     if (!initial) return;
     setTitle(initial.title ?? '');
@@ -61,6 +62,7 @@ export function ScheduleForm({
   };
 
   const handleTextChange = (text: string) => {
+    setDescription(text);
     setIsEmpty(text.trim().length === 0);
   };
 
@@ -86,6 +88,7 @@ export function ScheduleForm({
           placeholder="일정을 입력해주세요."
           className="shadow-box py-2 pl-3 w-full !h-[45px] !text-14"
           onChange={(e) => setTitle(e.target.value)}
+          maxLength={30}
         />
 
         <TextTextarea
@@ -131,12 +134,7 @@ export function ScheduleForm({
           <Button variant="outline" size="lg" asChild className="w-[142px] md:w-[180px]">
             <Link href={'/schedule'}>취소하기</Link>
           </Button>
-          <Button
-            size="lg"
-            className="w-[140px] md:w-[180px]"
-            type="submit"
-            disabled={submitting && isEmpty}
-          >
+          <Button size="lg" className="w-[140px] md:w-[180px]" type="submit" disabled={disabled}>
             {submitting
               ? mode === 'edit'
                 ? '수정 중...'

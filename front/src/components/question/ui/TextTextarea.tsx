@@ -37,7 +37,7 @@ const TextTextarea = forwardRef<TextTextareaRef, TextTextareaProps>(
           value={text}
           maxLength={100}
           onChange={handleChange}
-          className={`w-full h-full rounded-md shadow-md p-3 resize-none border ${
+          className={`w-full h-full rounded-md shadow-md p-3 resize-none border text-14 ${
             showWarning
               ? 'border-gray bg-secondary placeholder-red-400'
               : 'border-gray bg-secondary'
