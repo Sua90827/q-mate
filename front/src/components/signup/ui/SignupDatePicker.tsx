@@ -29,8 +29,8 @@ export default function SignupDatePicker({ control }: Props) {
                 type="button"
                 variant="outline"
                 className={cn(
-                  'h-11 w-full justify-start rounded-md !bg-secondary !text-muted-foreground p-3 text-sm font-semibold',
-                  !field.value && 'text-muted-foreground',
+                  'h-11 w-full justify-start rounded-md !bg-secondary !text-muted-foreground p-3 !text-14 text- font-semibold',
+                  !field.value && '!text-dash text-14',
                 )}
               >
                 {field.value ? format(selectedDate as Date, 'yyyy-MM-dd') : '생년월일'}
