@@ -8,11 +8,7 @@ import ScheduleForm from './ui/ScheduleForm';
 
 export default function ScheduleRegister() {
   const router = useRouter();
-  const {
-    mutate: createScheduleMutate,
-    isPending: isCreating,
-    // isError: isCreateError,
-  } = useCreateSchedule();
+  const { mutate: createScheduleMutate, isPending: isCreating } = useCreateSchedule();
 
   const handleCreate = (payload: ScheduleFormPayload) => {
     createScheduleMutate(
