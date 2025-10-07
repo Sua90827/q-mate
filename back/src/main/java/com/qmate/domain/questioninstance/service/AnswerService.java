@@ -68,8 +68,9 @@ public class AnswerService {
     if (locked.getStatus() == QuestionInstanceStatus.PENDING &&
         answerRepository.countDistinctUserIdByQuestionInstance_Id(questionInstanceId) >= 2L) {
       locked.markCompleted(LocalDateTime.now());
+      petService.addExperienceForAnswerCompletion(locked.getMatch());
+
     }
-    petService.addExperienceForAnswerCompletion(locked.getMatch());
 
     // 응답 매핑
     return AnswerMapper.toResponse(saved);
