@@ -46,7 +46,18 @@ export default function BellBtn() {
     if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }, [entry?.isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
+    if (!selectedId) return;
+    if (isLoading || !detail) return;
+  }, [
+    entry?.isIntersecting,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    selectedId,
+    isLoading,
+    detail,
+    router,
+  ]);
 
   if (isMobile) {
     return (
@@ -63,6 +74,19 @@ export default function BellBtn() {
       </button>
     );
   }
+  const clickHandler = (item: contentItemType): void => {
+    setSelectedId(item.notificationId);
+    if (item.category === 'EVENT') {
+      router.push(`/schedule`);
+    }
+    if (item.category === 'QUESTION') {
+      router.push(`/question/detail?id=${detail?.resourceId}`);
+    }
+    if (item.category === 'MATCH') {
+      router.push(`/main`);
+    }
+  };
+
   return (
     <Sheet modal={false}>
       <SheetTrigger asChild>
@@ -86,7 +110,7 @@ export default function BellBtn() {
             {items.map((item: contentItemType) => (
               <li
                 key={item.notificationId}
-                onClick={() => setSelectedId(item.notificationId)}
+                onClick={() => clickHandler(item)}
                 className={cn(
                   `mx-3 p-3 flex items-center gap-4 ${
                     item.read === false ? 'bg-unread' : 'bg-read border-read-border border'

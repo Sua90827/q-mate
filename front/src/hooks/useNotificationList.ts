@@ -1,5 +1,9 @@
 import { fetchNotificationDetail, fetchNotifications, fetchUnreadCount } from '@/api/notification';
-import { ListParams, notificationListResponseType } from '@/types/notification';
+import {
+  ListParams,
+  notificationListResponseType,
+  notificationResponseType,
+} from '@/types/notification';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 //알림 리스트
@@ -27,7 +31,7 @@ export const useInfiniteNotifications = (params: ListParams = { size: 20, page: 
 };
 //알림 상세
 export const useNotificationDetail = (notificationId?: number) => {
-  return useQuery({
+  return useQuery<notificationResponseType>({
     queryKey: ['notificationDetail', notificationId],
     queryFn: () => fetchNotificationDetail(notificationId!),
     enabled: !!notificationId,
