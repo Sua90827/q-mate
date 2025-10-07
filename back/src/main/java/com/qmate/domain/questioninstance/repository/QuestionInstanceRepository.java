@@ -1,8 +1,11 @@
 package com.qmate.domain.questioninstance.repository;
 
+import com.qmate.domain.match.MatchStatus;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
+import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.QueryHint;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -50,8 +53,28 @@ public interface QuestionInstanceRepository extends JpaRepository<QuestionInstan
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query("select qi from QuestionInstance qi where qi.id = :qiId")
-  @QueryHints(@QueryHint(name = "jakarta.persistence.lock.timeout", value = "3000")) // ms
+  @QueryHints(@QueryHint(name = "jakarta.persistence.lock.timeout", value = "1000")) // ms
   Optional<QuestionInstance> findByIdForUpdate(Long qiId);
 
   boolean existsByCustomQuestion_Id(Long customQuestionId);
+
+  List<QuestionInstance> findByMatchIdAndStatus(Long matchId, QuestionInstanceStatus status);
+
+  @Query("""
+      select distinct qi
+      from QuestionInstance qi
+        join fetch qi.match m
+        join MatchSetting ms on ms.match.id = m.id
+        join fetch m.members mm
+        join fetch mm.user u
+      where qi.status = :pending
+        and qi.deliveredAt is null
+        and m.status = :active
+        and ms.dailyQuestionHour = :hour
+      """)
+  List<QuestionInstance> findPendingToDeliverForHourWithMembersAndUser(
+      @Param("hour") int hour,
+      @Param("active") MatchStatus active,
+      @Param("pending") QuestionInstanceStatus pending
+  );
 }

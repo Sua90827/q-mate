@@ -8,6 +8,7 @@ type MockUser = {
   birthDate: string;
   role: 'USER' | 'ADMIN' | string;
   currentMatchId: number | null;
+  pushEnabled: boolean | null;
 };
 
 const mockUsers: MockUser[] = [
@@ -19,6 +20,7 @@ const mockUsers: MockUser[] = [
     birthDate: '1998-05-10',
     role: 'USER',
     currentMatchId: 1,
+    pushEnabled: null,
   },
 ];
 
@@ -45,6 +47,7 @@ export const authHandlers = [
         birthDate: user.birthDate,
         role: user.role,
         currentMatchId: user.currentMatchId,
+        pushEnabled: user.pushEnabled,
       },
     });
   }),

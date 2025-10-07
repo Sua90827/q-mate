@@ -7,6 +7,8 @@ import LoadingProvider from '@/app/LoadingProvider';
 import Mocker from './Mocker';
 import { cookies } from 'next/headers';
 import { Toaster } from '@/components/ui/sonner';
+import ServiceWorkerRegister from './ServiceWorker';
+import ClientPushToast from '@/components/common/ClientPushToast';
 
 export const metadata: Metadata = {
   title: 'Q-mate',
@@ -31,8 +33,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <main className="h-full flex-1 pt-0 sm:pt-[70px] pb-[70px] sm:pb-0">
                   <Mocker>{children}</Mocker>
                 </main>
-                <Toaster position="top-center" offset={100} />
+                <ClientPushToast />
+                <Toaster position="top-center" offset={100} visibleToasts={1} />
               </div>
+              <ServiceWorkerRegister />
             </Providers>
           </LoadingProvider>
         </BodyWrapper>

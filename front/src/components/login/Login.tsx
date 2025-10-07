@@ -6,11 +6,12 @@ import TextInput from '../common/TextInput';
 import { Button } from '../common/Button';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useLoginUser } from '@/hooks/useAuth';
+import { useLoginUser, useSocialLogin } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import NoticeModal from '../common/NoticeModal';
 import Loader from '../common/Loader';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
+import { useSyncPushOnLogin } from '@/hooks/useSyncPush';
 import { fetchPetInfo } from '@/api/pet';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -18,23 +19,63 @@ const validateEmail = (v: string) => /\S+@\S+\.\S+/.test(v);
 const validatePassword = (v: string) =>
   v.length >= 8 && /[0-9]/.test(v) && /[a-zA-Z]/.test(v) && /[^a-zA-Z0-9]/.test(v);
 
+type LoginErrorType = 'normal' | 'social' | null;
+
 export default function Login() {
   const [isEmailValid, setEmailValid] = useState(false);
   const [isPasswordValid, setPasswordValid] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [open, setOpen] = useState(false);
+  const [loginErrorType, setLoginErrorType] = useState<LoginErrorType>(null);
+
   const isFormValid = isEmailValid && isPasswordValid;
   const router = useRouter();
   const setMatchId = useMatchIdStore((state) => state.setMatchId);
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
   const { mutate: loginUserMutate, isPending: isLoginLoading } = useLoginUser();
+  const { mutate: socialLoginMutate, isPending: isSocialLoading } = useSocialLogin();
 
-  const HandleLogin = () => {
+  const handleSocialLogin = (provider: string) => {
+    socialLoginMutate(provider, {
+      onSuccess: async (data) => {
+        if (data.user.currentMatchId !== null) {
+          //매치 아이디 셋팅
+          setMatchId(data.user.currentMatchId);
+          // 서버에서 현재 exp 조회
+          const petInfo = await fetchPetInfo(data.user.currentMatchId);
+          //현재 exp 셋팅
+          localStorage.setItem('prevExp', String(petInfo.exp));
+          //accessToken 셋팅
+          setAccessToken(data.accessToken);
+          router.push('/main');
+        } else {
+          //accessToken 셋팅
+          setAccessToken(data.accessToken);
+          //닉네임 생일 정보 있으면 저장하기
+          if (data.user?.nickname) sessionStorage.setItem('nickname', data.user.nickname);
+          if (data.user?.birthdate) sessionStorage.setItem('birthdate', data.user.birthdate);
+          router.push('/signup/onboarding');
+        }
+      },
+      onError: () => {
+        setLoginErrorType('social');
+        setOpen(true);
+      },
+    });
+  };
+
+  const handleLogin = () => {
     loginUserMutate(
       { email, password },
       {
         onSuccess: async (data) => {
+          try {
+            await syncPushOnLogin();
+          } catch (error) {
+            console.warn('[Push Sync Failed]', error);
+          }
+
           if (data.user.currentMatchId !== null) {
             //매치 아이디 셋팅
             setMatchId(data.user.currentMatchId);
@@ -46,10 +87,13 @@ export default function Login() {
             setAccessToken(data.accessToken);
             router.push('/main');
           } else {
+            //accessToken 셋팅
+            setAccessToken(data.accessToken);
             router.push('/invite');
           }
         },
         onError: () => {
+          setLoginErrorType('normal');
           setOpen(true);
         },
       },
@@ -58,11 +102,7 @@ export default function Login() {
 
   return (
     <div className=" w-full h-full flex flex-col gap-3 items-center justify-center">
-      {isLoginLoading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-          <Loader />
-        </div>
-      )}
+      {isLoginLoading || (isSocialLoading && <Loader />)}
       <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={173} height={55} />
 
       <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">
@@ -83,10 +123,11 @@ export default function Login() {
         />
 
         <Button
+          type="submit"
           className="w-[295px]"
           disabled={!isFormValid}
           variant="primary"
-          onClick={HandleLogin}
+          onClick={handleLogin}
         >
           로그인
         </Button>
@@ -101,17 +142,26 @@ export default function Login() {
       <Button variant="primaryOutline" className="w-[295px]" asChild>
         <Link href="/signup">회원가입</Link>
       </Button>
-      <GoogleBtn />
-      <NaverBtn />
+      <GoogleBtn onSocialLogin={handleSocialLogin} />
+      <NaverBtn onSocialLogin={handleSocialLogin} />
 
       <NoticeModal
         open={open}
         setOpen={setOpen}
         title={
-          <>
-            로그인에 실패했습니다.
-            <br /> 입력 정보를 다시 확인해주세요.
-          </>
+          loginErrorType === 'social' ? (
+            <>
+              소셜 로그인에 실패했습니다.
+              <br />
+              다시 시도해주세요.
+            </>
+          ) : (
+            <>
+              로그인에 실패했습니다.
+              <br />
+              입력 정보를 다시 확인해주세요.
+            </>
+          )
         }
         danger
       />

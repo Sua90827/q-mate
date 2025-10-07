@@ -46,7 +46,7 @@ export default function SignupForm({
               <FormControl>
                 <Input
                   placeholder="이메일"
-                  className="h-11 bg-secondary rounded-md text-text-secondary"
+                  className="h-11 bg-secondary rounded-md  !text-14"
                   {...register('email')}
                 />
               </FormControl>
@@ -58,7 +58,7 @@ export default function SignupForm({
           type="button"
           onClick={isCodeSent ? onClickResendCode : onClickSendCode}
           disabled={isSendingCode}
-          className="h-11"
+          className="h-11 !font-semibold !text-14 text-secondary "
         >
           {isSendingCode ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -79,7 +79,7 @@ export default function SignupForm({
               <FormControl>
                 <Input
                   placeholder="인증번호 입력"
-                  className="h-11 bg-secondary rounded-md text-text-secondary"
+                  className="h-11 bg-secondary rounded-md text-text-secondary !text-14"
                   {...register('code')}
                 />
               </FormControl>
@@ -87,8 +87,13 @@ export default function SignupForm({
             </FormItem>
           )}
         />
-        <Button type="button" onClick={onClickVerifyCode} disabled={isVerifying} className="h-11">
-          {isVerifying ? <Loader2 className="w-4 h-4 animate-spin" /> : '인증확인'}
+        <Button
+          type="button"
+          onClick={onClickVerifyCode}
+          disabled={isVerifying}
+          className="h-11 !font-semibold !text-14 text-secondary "
+        >
+          {isVerifying ? <Loader2 className="w-4 h-4 animate-spin  text-secondary " /> : '인증확인'}
         </Button>
       </div>
 
@@ -101,7 +106,7 @@ export default function SignupForm({
               <Input
                 type="password"
                 placeholder="비밀번호"
-                className="h-11 bg-secondary rounded-md text-text-secondary"
+                className="h-11 bg-secondary rounded-md text-text-secondary !text-14"
                 {...register('password')}
               />
             </FormControl>
@@ -119,7 +124,7 @@ export default function SignupForm({
             <FormControl>
               <Input
                 placeholder="닉네임"
-                className="h-11 bg-secondary rounded-md text-text-secondary"
+                className="h-11 bg-secondary rounded-md text-text-secondary !text-14"
                 {...register('nickname')}
               />
             </FormControl>
@@ -142,7 +147,11 @@ export default function SignupForm({
       />
 
       {/* 회원가입 */}
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
+      <Button
+        type="submit"
+        className="w-full h-[42px] font-semibold !text-16 text-secondary"
+        disabled={isSubmitting}
+      >
         {isSubmitting ? '회원가입 중…' : '회원가입'}
       </Button>
     </form>

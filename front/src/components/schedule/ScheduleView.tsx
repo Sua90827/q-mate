@@ -15,9 +15,7 @@ export default function ScheduleView() {
   const monthRange = useMemo(() => {
     const base = selected ?? new Date();
 
-    // 첫째날
     const start = new Date(base.getFullYear(), base.getMonth(), 1);
-    // 마지막날
     const end = new Date(base.getFullYear(), base.getMonth() + 1, 0);
 
     return {

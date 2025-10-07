@@ -40,7 +40,7 @@ export default function MainCalendar({ selected, onSelect, anniversarySet, sched
                 className={cn(
                   props.className,
                   isSingleSelected
-                    ? 'bg-calendar text-primary-foreground'
+                    ? 'bg-calendar '
                     : isToday && 'bg-gray-200 hover:bg-gray-200 text-theme-secondary text-16',
                 )}
               />
