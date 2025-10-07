@@ -1,0 +1,45 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update      # 초기 배포용. 운영 전환 시 validate 권장
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
+        format_sql: true
+        show_sql: false
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      ssl: ${REDIS_SSL:false}
+      timeout: 2s
+      connect-timeout: 2s
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    access-ttl-seconds: ${SECURITY_JWT_ACCESS_TTL_SECONDS:10800}
+    refresh-ttl-seconds: ${SECURITY_JWT_REFRESH_TTL_SECONDS:1209600}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
