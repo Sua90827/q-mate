@@ -92,7 +92,8 @@ export default function Login() {
             localStorage.setItem('prevExp', String(petInfo.exp));
             //accessToken 셋팅
             setAccessToken(data.accessToken);
-            localStorage.setItem('accessTokenTime', data.accessTokenExpiresIn);
+            const accessTokenTime = Date.now() + data.accessTokenExpiresIn * 1000;
+            localStorage.setItem('accessTokenTime', String(accessTokenTime));
 
             setSelectedMenu('home');
             router.push('/main');
