@@ -8,7 +8,7 @@ export type codeType =
   | 'EVENT_WEEK_BEFORE';
 export type resourceType = 'QUESTION_INSTANCE' | 'EVENT' | 'MATCH' | 'NONE';
 export type sortType = { sorted: boolean; empty: boolean; unsorted: boolean };
-type contentItemType = {
+export type contentItemType = {
   notificationId: number;
   category: categoryType;
   code: codeType;
@@ -66,3 +66,11 @@ export interface subScriptionsType {
 export interface vapidPublicKeyType {
   vapidPublicKey: string;
 }
+export type ListParams = {
+  category?: categoryType;
+  code?: codeType;
+  unread?: boolean;
+  page?: number;
+  size?: number;
+  sort?: sortType;
+};

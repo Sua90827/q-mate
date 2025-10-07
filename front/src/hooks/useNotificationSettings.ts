@@ -12,31 +12,29 @@ export const useNotificationSettings = () => {
   const { subscribe } = useSubscribePush();
   const { unsubscribe } = useUnsubscribePush();
 
-  // 조회 훅
+  // 조회
   const { data } = useQuery({
     queryKey: ['notificationSettings'],
     queryFn: fetchNotificationSettings,
     staleTime: 1000 * 60 * 5,
-    // enabled: 조건을 사용자가 있을때
+    // enabled: 조건을 사용자가 있을때?
   });
 
-  // 업데이트 훅
+  // 업데이트
   const { mutateAsync: toggleNotification, isPending } = useMutation({
     mutationFn: async (enabled: boolean) => {
       if (enabled) {
-        // ✅ 알림을 켜려는 경우: 브라우저 구독 보장(생성/갱신) 후 서버 상태 ON
         const result = await subscribe();
         if (!result.success) {
           ErrorToast(result.message);
-          throw new Error(result.message);
         }
         await updateNotificationSettings(true);
         return true;
       }
 
-      try {
-        await unsubscribe({ subscriptionId: data?.subscriptionId });
-      } catch {}
+      // try {
+      //   await unsubscribe({ subscriptionId: data?.subscriptionId });
+      // } catch {}
       await updateNotificationSettings(false);
       return false;
     },
