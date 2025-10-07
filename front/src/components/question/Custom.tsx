@@ -82,7 +82,7 @@ export default function Custom({ value }: { value?: string }) {
             textLength={handleTextChange}
           />
 
-          <div className="pt-5 flex gap-7">
+          <div className="pt-5 flex gap-8">
             <Button variant="outline" size="lg" asChild className="md:w-[180px] w-[140px]">
               <Link href={customCreate ? '/record' : '/question/list'}>취소하기</Link>
             </Button>

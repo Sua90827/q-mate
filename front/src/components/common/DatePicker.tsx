@@ -29,9 +29,10 @@ export function DatePicker({
         <PopoverTrigger asChild>
           <Button
             id="date"
-            className={`w-full border-gray h-[37px] font-semibold bg-secondary justify-between text-14 hover:bg-secondary ${
-              schedule ? 'shadow-box' : '!text-text-secondary/60'
-            }`}
+            className={`w-full border-gray h-[45px] font-semibold bg-secondary justify-between !text-14 hover:bg-secondary
+            ${schedule ? 'shadow-box' : ''}
+            ${!date ? 'text-text-secondary/80' : ''}
+            `}
           >
             {date ? toKey(date) : label}
           </Button>

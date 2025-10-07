@@ -116,6 +116,7 @@ export default function Login() {
         />
 
         <Button
+          type="submit"
           className="w-[295px]"
           disabled={!isFormValid}
           variant="primary"

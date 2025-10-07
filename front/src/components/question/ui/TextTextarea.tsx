@@ -43,7 +43,7 @@ const TextTextarea = forwardRef<TextTextareaRef, TextTextareaProps>(
               : 'border-gray bg-secondary'
           }`}
         />
-        <span className="absolute bottom-4 right-3 text-text-secondary">{text.length}/100</span>
+        <span className="absolute bottom-4 right-3 text-dash">{text.length}/100</span>
       </div>
     );
   },
