@@ -18,6 +18,7 @@ import { ErrorToast } from '../common/CustomToast';
 import { useRouter } from 'next/navigation';
 import ConfirmModal from '../common/ConfirmModal';
 import { useUnsubscribePush } from '@/hooks/useUnSubScription';
+import { useSelectedStore } from '@/store/useSelectedStore';
 
 type SettingItem =
   | { id: string; label: string; subLabel?: string; type: 'modal'; onClick: () => void }
@@ -29,6 +30,7 @@ export default function Settings() {
   const user = matchInfo?.users.find((u) => u.me);
   const resetMatchId = useMatchIdStore((state) => state.resetMatchId);
   const resetAccessToken = useAuthStore((state) => state.resetAccessToken);
+  const resetSelectedMenu = useSelectedStore((state) => state.resetSelectedMenu);
   const [modal, setModal] = useState<string | null>(null);
 
   //hook 조회 enable에 사용자가 있을때 조건 추가 필요
@@ -91,6 +93,8 @@ export default function Settings() {
       onSuccess: () => {
         //구독 해지
         unsubscribe();
+        //선택된 메뉴 리셋
+        resetSelectedMenu();
         // exp 리셋
         localStorage.clear();
         // 매치 아이디 리셋

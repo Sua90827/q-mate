@@ -1,3 +1,4 @@
+import { Button } from '@/components/common/Button';
 import { useThemeStore } from '@/store/useThemeStore';
 
 export default function OptionBtn({
@@ -9,20 +10,16 @@ export default function OptionBtn({
   active: boolean;
   onClick: () => void;
 }) {
-  const theme = useThemeStore((state) => state.theme);
-
   return (
-    <button
+    <Button
       onClick={onClick}
+      variant={'icon'}
       type="button"
-      className={`px-3 py-1 rounded-xl transition-colors ${
-        active
-          ? 'bg-theme-primary text-white'
-          : 'border border-theme-secondary text-theme-secondary'
+      className={`px-3 py-1 !rounded-xl h-[32px] transition-colors !text-14 ${
+        active ? 'bg-theme-primary text-white' : 'border border-dash text-text-secondary'
       }`}
-      data-theme={theme}
     >
       {label}
-    </button>
+    </Button>
   );
 }

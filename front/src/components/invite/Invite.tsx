@@ -8,10 +8,13 @@ import { useCreateInviteCode } from '@/hooks/useInvite';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { useMatchInfo } from '@/hooks/useMatches';
 
+type InviteErrorType = 'copy' | 'code' | null;
+
 export default function Invite() {
   const [code, setCode] = useState('');
   const [open, setOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
+  const [ErrorType, setErrorType] = useState<InviteErrorType>(null);
 
   const { relationType } = useParams<{ relationType: string }>();
   const searchParams = useSearchParams();
@@ -39,6 +42,7 @@ export default function Invite() {
           setMatchId(data.matchId);
         },
         onError: () => {
+          setErrorType('code');
           setErrorOpen(true);
         },
       },
@@ -54,6 +58,7 @@ export default function Invite() {
         router.push('/main');
       }
     } catch {
+      setErrorType('copy');
       setErrorOpen(true);
     }
   };
@@ -100,10 +105,17 @@ export default function Invite() {
         setOpen={setErrorOpen}
         danger
         title={
-          <>
-            복사에 실패했어요. <br />
-            다시 시도해 주세요!
-          </>
+          ErrorType === 'copy' ? (
+            <>
+              복사에 실패했어요. <br />
+              다시 시도해 주세요!
+            </>
+          ) : (
+            <>
+              코드 생성에 실패했어요. <br />
+              새로 고침을 해주세요!
+            </>
+          )
         }
       />
     </>

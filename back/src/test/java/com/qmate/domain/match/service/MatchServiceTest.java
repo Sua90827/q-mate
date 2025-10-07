@@ -19,11 +19,15 @@ import com.qmate.domain.match.model.response.MatchMembersResponse;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.match.repository.MatchSettingRepository;
+import com.qmate.domain.pet.entity.Pet;
+import com.qmate.domain.pet.repository.PetRepository;
+import com.qmate.domain.pet.service.PetService;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
 import com.qmate.exception.custom.matchinstance.InviteAttemptLockedException;
 import com.qmate.exception.custom.matchinstance.MatchForbiddenException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,6 +52,10 @@ class MatchServiceTest {
   private RedisHelper redisHelper;
   @Mock
   private MatchSettingRepository matchSettingRepository;
+  @Mock
+  private PetRepository petRepository;
+  @Mock
+  private PetService petService;
 
   @Test
   @DisplayName("매칭 정보 업데이트 성공")
@@ -76,6 +84,35 @@ class MatchServiceTest {
 
     assertThat(match.getStartDate()).isEqualTo(LocalDate.of(2023, 1, 1).atStartOfDay());
     assertThat(matchSetting.getDailyQuestionHour()).isEqualTo(22);
+  }
+
+  @Test
+  @DisplayName("매칭 참여 성공: 새로운 Pet이 생성되고 저장된다")
+  void joinMatch_success_createsNewPet() {
+    // given: 3번 유저(초대자)와 4번 유저(참여자)가 5번 매칭에 참여하는 상황
+    Long matchId = 5L;
+    Long inviterId = 3L;
+    Long joinerId = 4L;
+
+    User inviter = User.builder().id(inviterId).build();
+    User joiner = User.builder().id(joinerId).build();
+    Match match = Match.builder().id(matchId).build();
+    match.addMember(MatchMember.create(inviter, match));
+
+    var request = new MatchJoinRequest();
+    request.setInviteCode("123456");
+
+    // Repository들의 행동을 정의(stubbing)
+    given(userRepository.findById(joinerId)).willReturn(Optional.of(joiner));
+    given(redisHelper.getMatchIdByInviteCode("123456")).willReturn(Optional.of(matchId));
+    given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
+    given(matchMemberRepository.findAllByMatch_Id(matchId)).willReturn(List.of(match.getMembers().get(0)));
+
+    // when: 4번 유저가 매칭에 참여하면
+    sut.joinMatch(request, joinerId);
+
+    // then: petRepository의 save 메서드가 Pet 클래스 타입의 어떤 객체로든 1번 호출되었는지 검증
+    verify(petService).createPetForMatch(any(Match.class));
   }
 
   @Test

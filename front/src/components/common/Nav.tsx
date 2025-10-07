@@ -2,7 +2,7 @@
 
 import { CalendarMinus2, House, MessageSquareText, Settings } from 'lucide-react';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React from 'react';
 import BellBtn from './BellBtn';
 import { useSelectedStore } from '@/store/useSelectedStore';
 

@@ -8,6 +8,7 @@ import RatingModal from '../RatingModal';
 import Loader from '@/components/common/Loader';
 import Link from 'next/link';
 import TextTextarea, { TextTextareaRef } from './TextTextarea';
+import { useSelectedStore } from '@/store/useSelectedStore';
 
 type AnswerFormProps = {
   mode: 'create' | 'edit';
@@ -31,6 +32,7 @@ export default function AnswerForm({
   const fromToday = pathName.startsWith('/question/detail');
   const [isEmpty, setIsEmpty] = useState(initialValue.trim().length === 0);
   const canSubmit = !submitting && !isEmpty;
+  const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -41,7 +43,7 @@ export default function AnswerForm({
     if (mode === 'create') {
       setOpen(true);
     }
-    router.push('/record');
+    router.push(fromToday ? '/record' : '/question/list');
     <Loader />;
   };
 
@@ -49,7 +51,13 @@ export default function AnswerForm({
     <>
       {/* 상단 닫기 버튼 (모바일 헤더) */}
       <div className="w-full relative top-0 h-[70px] flex justify-center items-center sm:hidden">
-        <span aria-label="큐메이트" className="site-logo w-[109px] h-35px" />
+        <Link href="/main" onClick={() => setSelectedMenu('home')}>
+          <span
+            className="site-logo inline-block w-[109px] h-[35px]"
+            role="img"
+            aria-label="큐메이트"
+          />
+        </Link>
         <div className="absolute  right-5 sm:hidden">
           <CloseButton onClick={() => router.push('/question/list')} />
         </div>
