@@ -50,7 +50,10 @@
   --color-anniversary: #fddd69;
   --color-error: #da7173;
   --color-TimePicker: #2a2a2a;
-
+  --color-text-unread: #747a87;
+  --color-unread: #f6f7f8;
+  --color-read: #fffdfd;
+  --color-read-border: #d9d9d9;
   /* shadcn 토큰 */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
