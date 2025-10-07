@@ -29,6 +29,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [open, setOpen] = useState(false);
   const [loginErrorType, setLoginErrorType] = useState<LoginErrorType>(null);
+  const syncPushOnLogin = useSyncPushOnLogin();
 
   const isFormValid = isEmailValid && isPasswordValid;
   const router = useRouter();
@@ -42,6 +43,11 @@ export default function Login() {
   const handleSocialLogin = (provider: string) => {
     socialLoginMutate(provider, {
       onSuccess: async (data) => {
+        try {
+          await syncPushOnLogin();
+        } catch (error) {
+          console.warn('[Push Sync Failed]', error);
+        }
         if (data.user.currentMatchId) {
           //매치 아이디 셋팅
           setMatchId(data.user.currentMatchId);
@@ -78,6 +84,11 @@ export default function Login() {
       { email, password },
       {
         onSuccess: async (data) => {
+          try {
+            await syncPushOnLogin();
+          } catch (error) {
+            console.warn('[Push Sync Failed]', error);
+          }
           if (data.user.currentMatchId) {
             //매치 아이디 셋팅
             setMatchId(data.user.currentMatchId);
