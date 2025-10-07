@@ -3,19 +3,30 @@ import Image from 'next/image';
 import { Button } from '../common/Button';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
+import { useMatchIdStore } from '@/store/useMatchIdStore';
+import { useSelectedStore } from '@/store/useSelectedStore';
 
 export default function Home() {
   const accessToken = useAuthStore((state) => state.accessToken);
   const accessTokenTime = Number(localStorage.getItem('accessTokenTime'));
   const router = useRouter();
-
+  const resetMatchId = useMatchIdStore((state) => state.resetMatchId);
+  const resetAccessToken = useAuthStore((state) => state.resetAccessToken);
+  const resetSelectedMenu = useSelectedStore((state) => state.resetSelectedMenu);
   const checkLogin = () => {
     if (accessToken && Date.now() < accessTokenTime) {
       // 아직 유효하면 메인으로 이동
       router.replace('/main');
     } else if (accessToken && Date.now() >= accessTokenTime) {
       // 만료된 토큰이면 전부 정리
+      //선택된 메뉴 리셋
+      resetSelectedMenu();
+      // exp 리셋
       localStorage.clear();
+      // 매치 아이디 리셋
+      resetMatchId();
+      // 토큰 리셋
+      resetAccessToken();
       router.replace('/login');
     }
   };
