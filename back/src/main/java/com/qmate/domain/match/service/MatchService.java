@@ -20,6 +20,7 @@ import com.qmate.domain.match.model.response.MatchMembersResponse;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.match.repository.MatchSettingRepository;
+import com.qmate.domain.pet.service.PetService;
 import com.qmate.domain.question.repository.QuestionRepository;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
@@ -57,6 +58,7 @@ public class MatchService {
   private final MatchMemberRepository matchMemberRepository;
   private final UserRepository userRepository;
   private final RedisHelper redisHelper;
+  private final PetService petService;
   private final MatchSettingRepository matchSettingRepository;
   private final EventAnniversaryService eventAnniversaryService;
   private final RandomAdminQuestionService randomAdminQuestionService;
