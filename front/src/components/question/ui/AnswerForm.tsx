@@ -41,7 +41,7 @@ export default function AnswerForm({
     if (mode === 'create') {
       setOpen(true);
     }
-    router.push('/record');
+    router.push(fromToday ? '/record' : '/question/list');
     <Loader />;
   };
 
