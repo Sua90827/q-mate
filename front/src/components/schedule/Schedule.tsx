@@ -9,7 +9,6 @@ import { useSelectedStore } from '@/store/useSelectedStore';
 
 export default function Schedule() {
   const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
-
   return (
     <div className="sm:pt-[35px] w-full h-full">
       <div className="flex w-full h-[70px] items-center justify-between sm:hidden">

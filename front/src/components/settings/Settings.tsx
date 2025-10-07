@@ -19,7 +19,6 @@ import { useRouter } from 'next/navigation';
 import ConfirmModal from '../common/ConfirmModal';
 import { useSelectedStore } from '@/store/useSelectedStore';
 
-
 type SettingItem =
   | { id: string; label: string; subLabel?: string; type: 'modal'; onClick: () => void }
   | { id: string; label: string; type: 'switch' };
@@ -41,7 +40,6 @@ export default function Settings() {
 
   const { mutate: logoutMutate, isPending: isLogoutPending } = useLogoutUser();
   const router = useRouter();
-
 
   useEffect(() => {
     if (user?.nickname) {
@@ -103,7 +101,6 @@ export default function Settings() {
       },
     });
   };
-
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center sm:pt-0 pt-[70px]">

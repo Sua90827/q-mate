@@ -42,9 +42,10 @@ export default function Login() {
   const handleSocialLogin = (provider: string) => {
     socialLoginMutate(provider, {
       onSuccess: async (data) => {
-        if (data.user.currentMatchId !== null) {
+        if (data.user.currentMatchId) {
           //매치 아이디 셋팅
           setMatchId(data.user.currentMatchId);
+
           // 서버에서 현재 exp 조회
           const petInfo = await fetchPetInfo(data.user.currentMatchId);
           //현재 exp 셋팅
@@ -77,13 +78,7 @@ export default function Login() {
       { email, password },
       {
         onSuccess: async (data) => {
-          try {
-            await syncPushOnLogin();
-          } catch (error) {
-            console.warn('[Push Sync Failed]', error);
-          }
-
-          if (data.user.currentMatchId !== null) {
+          if (data.user.currentMatchId) {
             //매치 아이디 셋팅
             setMatchId(data.user.currentMatchId);
             // 서버에서 현재 exp 조회
@@ -94,7 +89,6 @@ export default function Login() {
             setAccessToken(data.accessToken);
             const accessTokenTime = Date.now() + data.accessTokenExpiresIn * 1000;
             localStorage.setItem('accessTokenTime', String(accessTokenTime));
-
             setSelectedMenu('home');
             router.push('/main');
           } else {
