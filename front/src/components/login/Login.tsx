@@ -41,12 +41,12 @@ export default function Login() {
         if (data.user.currentMatchId !== null) {
           //매치 아이디 셋팅
           setMatchId(data.user.currentMatchId);
+          setAccessToken(data.accessToken);
           // 서버에서 현재 exp 조회
           const petInfo = await fetchPetInfo(data.user.currentMatchId);
           //현재 exp 셋팅
           localStorage.setItem('prevExp', String(petInfo.exp));
           //accessToken 셋팅
-          setAccessToken(data.accessToken);
           router.push('/main');
         } else {
           //accessToken 셋팅
