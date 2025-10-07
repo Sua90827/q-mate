@@ -34,7 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <Mocker>{children}</Mocker>
                 </main>
                 <ClientPushToast />
-                <Toaster position="top-center" offset={100} />
+                <Toaster position="top-center" offset={100} visibleToasts={1} />
               </div>
               <ServiceWorkerRegister />
             </Providers>

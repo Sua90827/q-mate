@@ -1,6 +1,5 @@
 'use client';
-import React, { useRef, useState } from 'react';
-
+import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { DatePicker } from '@/components/common/DatePicker';
@@ -12,6 +11,7 @@ import {
   ScheduleFormInitial,
   ScheduleFormPayload,
 } from '@/types/scheduleType';
+import TextTextarea, { TextTextareaRef } from '@/components/question/ui/TextTextarea';
 
 export type ScheduleFormProps = {
   mode: 'create' | 'edit';
@@ -23,52 +23,53 @@ export type ScheduleFormProps = {
 export function ScheduleForm({
   mode = 'create',
   initial,
-  submitting,
+  submitting = false,
   onSubmit,
 }: ScheduleFormProps) {
   const matchId = useMatchIdStore((state) => state.matchId);
+  const textareaRef = useRef<TextTextareaRef>(null);
 
   const [date, setDate] = useState<string | undefined>(initial?.eventAt);
   const [title, setTitle] = useState(initial?.title ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
+  const [isEmpty, setIsEmpty] = useState<boolean>(false);
 
   const repeatTypeRef = useRef<RepeatType>(initial?.repeatType ?? 'NONE');
   const alarmOptionRef = useRef<AlarmOption>(initial?.alarmOption ?? 'NONE');
-
   const isAnniversary = initial?.isAnniversary === true;
-
-  React.useEffect(() => {
-    if (typeof initial?.title === 'string') setTitle(initial.title);
-    if (typeof initial?.description === 'string') setDescription(initial.description);
-    if (typeof initial?.eventAt === 'string') setDate(initial.eventAt);
-    if (initial?.repeatType) repeatTypeRef.current = initial.repeatType;
-    if (initial?.alarmOption) alarmOptionRef.current = initial.alarmOption;
-    // if (initial?.isAnniversary) repeatTypeRef.current = initial.repeatType;
+  const disabled =
+    submitting || !date || isEmpty || description.trim().length === 0 || title.trim().length === 0;
+  useEffect(() => {
+    if (!initial) return;
+    setTitle(initial.title ?? '');
+    setDescription(initial.description ?? '');
+    setDate(initial.eventAt ?? undefined);
+    repeatTypeRef.current = initial.repeatType ?? 'NONE';
+    alarmOptionRef.current = initial.alarmOption ?? 'NONE';
   }, [initial]);
 
   const handleSubmit = async () => {
     if (!date) return;
-    const repeatType = repeatTypeRef.current;
-    const alarmOption = alarmOptionRef.current;
-    const base = {
+    const payload: ScheduleFormPayload = {
       matchId: matchId!,
       title,
       description,
       eventAt: date,
-      alarmOption,
-    } as const;
-
-    const payload: ScheduleFormPayload = {
-      ...base,
-      repeatType: isAnniversary ? initial.repeatType! : repeatType,
+      alarmOption: alarmOptionRef.current,
+      repeatType: isAnniversary ? initial?.repeatType ?? 'NONE' : repeatTypeRef.current,
     };
     await onSubmit(payload);
+  };
+
+  const handleTextChange = (text: string) => {
+    setDescription(text);
+    setIsEmpty(text.trim().length === 0);
   };
 
   return (
     <div className="w-full h-full flex justify-center items-center">
       <form
-        className="flex w-[310px] sm:px-0 sm:w-[400px] flex-col gap-5"
+        className="flex w-[310px] md:px-0 md:w-[390px] flex-col gap-5"
         onSubmit={(e) => {
           e.preventDefault();
           void handleSubmit();
@@ -85,15 +86,16 @@ export function ScheduleForm({
           type="text"
           value={title}
           placeholder="일정을 입력해주세요."
-          className="shadow-box py-2 pl-3 w-full"
+          className="shadow-box py-2 pl-3 w-full !h-[45px] !text-14"
           onChange={(e) => setTitle(e.target.value)}
+          maxLength={30}
         />
 
-        <textarea
+        <TextTextarea
+          ref={textareaRef}
+          defaultValue={description ?? ''}
           placeholder="설명을 입력해주세요"
-          value={description}
-          className="w-full h-[130px] shadow-box pt-3 pl-3 resize-none"
-          onChange={(e) => setDescription(e.target.value)}
+          textLength={handleTextChange}
         />
 
         {!isAnniversary && (
@@ -128,16 +130,11 @@ export function ScheduleForm({
           }}
         />
 
-        <div className="flex gap-6 sm:gap-10 mt-3">
-          <Button variant="outline" size="lg" asChild className="w-[142px] sm:w-[180px]">
+        <div className="flex gap-8  mt-3">
+          <Button variant="outline" size="lg" asChild className="w-[142px] md:w-[180px]">
             <Link href={'/schedule'}>취소하기</Link>
           </Button>
-          <Button
-            size="lg"
-            className="w-[142px] sm:w-[180px]"
-            type="submit"
-            disabled={!!submitting}
-          >
+          <Button size="lg" className="w-[140px] md:w-[180px]" type="submit" disabled={disabled}>
             {submitting
               ? mode === 'edit'
                 ? '수정 중...'
