@@ -1,7 +1,8 @@
+import Notification from '@/components/notification/Notification';
 import React from 'react';
 
 const page = () => {
-  return <div>알림페이지</div>;
+  return <Notification />;
 };
 
 export default page;
