@@ -21,10 +21,16 @@ export function DateSelectButton({
   const [date, setDate] = React.useState<Date | undefined>(isAnniversary ? undefined : birthdate);
 
   const baseStyle =
-    'h-[45px] w-[300px] font-bold flex justify-center text-16 border rounded-md transition-colors';
-  const anniversaryStyle = 'border-gray bg-secondary hover:bg-secondary text-primary';
+    'h-[45px] w-[300px] font-bold flex justify-center border rounded-md transition-colors';
+  const anniversaryStyle = 'border-gray bg-secondary hover:bg-secondary';
   const normalStyle =
-    'w-full border-gray h-[37px] font-semibold bg-secondary justify-between !text-14 hover:bg-secondary text-text-secondary/50';
+    'w-full border-gray h-[37px] font-semibold bg-secondary justify-between !text-14 hover:bg-secondary';
+
+  const colorClass = isAnniversary
+    ? 'text-primary !text-16'
+    : date
+    ? 'text-text-secondary'
+    : 'text-text-secondary/60';
 
   return (
     <div className="flex flex-col gap-3">
@@ -32,7 +38,9 @@ export function DateSelectButton({
         <PopoverTrigger asChild>
           <Button
             id="date"
-            className={`${baseStyle} ${isAnniversary ? anniversaryStyle : normalStyle}`}
+            className={`${baseStyle} ${
+              isAnniversary ? anniversaryStyle : normalStyle
+            } ${colorClass}`}
           >
             {date ? format(date, 'yyyy-MM-dd') : label}
           </Button>

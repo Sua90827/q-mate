@@ -59,12 +59,17 @@ export default function NicknameModal({ open, setIsOpen, nickname, setNickname }
             />
             {pendingNickname.length > 0 && pendingNickname.length < 2 && (
               <p className="text-sm text-start text-red-500 pl-3 mt-2">
-                닉네임은 최소 2자 이상이어야 합니다.
+                닉네임은 최소 2자 이상으로 입력해주세요.
               </p>
             )}
             {/^[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]/.test(pendingNickname) && (
               <p className="text-sm text-start text-red-500 pl-3 mt-2">
-                닉네임은 특수문자로 시작할 수 없습니다.
+                닉네임은 특수문자로 시작할 수 없어요.
+              </p>
+            )}
+            {pendingNickname.length > 10 && (
+              <p className="text-sm text-start text-red-500 pl-3 mt-2">
+                닉네임은 최대 10자 이하로 입력해주세요.
               </p>
             )}
           </DialogTitle>
