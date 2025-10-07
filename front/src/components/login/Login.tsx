@@ -13,6 +13,7 @@ import Loader from '../common/Loader';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { fetchPetInfo } from '@/api/pet';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useSelectedStore } from '@/store/useSelectedStore';
 
 const validateEmail = (v: string) => /\S+@\S+\.\S+/.test(v);
 const validatePassword = (v: string) =>
@@ -30,8 +31,10 @@ export default function Login() {
 
   const isFormValid = isEmailValid && isPasswordValid;
   const router = useRouter();
+
   const setMatchId = useMatchIdStore((state) => state.setMatchId);
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
+  const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
   const { mutate: loginUserMutate, isPending: isLoginLoading } = useLoginUser();
   const { mutate: socialLoginMutate, isPending: isSocialLoading } = useSocialLogin();
 
@@ -41,12 +44,16 @@ export default function Login() {
         if (data.user.currentMatchId !== null) {
           //매치 아이디 셋팅
           setMatchId(data.user.currentMatchId);
-          setAccessToken(data.accessToken);
           // 서버에서 현재 exp 조회
           const petInfo = await fetchPetInfo(data.user.currentMatchId);
           //현재 exp 셋팅
           localStorage.setItem('prevExp', String(petInfo.exp));
           //accessToken 셋팅
+          setAccessToken(data.accessToken);
+          const accessTokenTime = Date.now() + data.accessTokenExpiresIn * 1000;
+          localStorage.setItem('accessTokenTime', String(accessTokenTime));
+
+          setSelectedMenu('home');
           router.push('/main');
         } else {
           //accessToken 셋팅
@@ -78,6 +85,9 @@ export default function Login() {
             localStorage.setItem('prevExp', String(petInfo.exp));
             //accessToken 셋팅
             setAccessToken(data.accessToken);
+            localStorage.setItem('accessTokenTime', data.accessTokenExpiresIn);
+
+            setSelectedMenu('home');
             router.push('/main');
           } else {
             //accessToken 셋팅
