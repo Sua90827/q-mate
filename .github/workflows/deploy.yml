@@ -3,6 +3,16 @@ name: Deploy Qmate to EC2
 on:
   push:
     branches: [ "dev" ]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "choose: build-only or deploy"
+        required: true
+        default: "build-only"
+        type: choice
+        options:
+          - build-only
+          - deploy
 
 jobs:
   build-deploy:
@@ -18,10 +28,16 @@ jobs:
           distribution: corretto
           java-version: '21'
 
+      - name: Grant execute permission for gradlew (root)
+        run: chmod +x ./gradlew
+
       - name: Build
         run: ./gradlew clean bootJar
 
       - name: Upload JAR to EC2
+        if: >
+          (github.event_name == 'push' && github.ref == 'refs/heads/dev') ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'deploy')
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -31,6 +47,9 @@ jobs:
           target: "/tmp"
 
       - name: Deploy & Restart via systemd (inject secrets as drop-in)
+        if: >
+          (github.event_name == 'push' && github.ref == 'refs/heads/dev') ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'deploy')
         uses: appleboy/ssh-action@v1.0.3
         env:
           SPRING_PROFILES_ACTIVE: "prod"
