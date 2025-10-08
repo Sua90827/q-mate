@@ -11,7 +11,7 @@ export default function Schedule() {
   const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
   return (
     <div className="sm:pt-[35px] w-full h-full">
-      <div className="flex w-full h-[70px] items-center justify-between sm:hidden">
+      <div className="fixed top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden px-4">
         <Link href="/schedule/list" aria-label="일정 리스트로 이동">
           <CalendarDays className="text-theme-primary ml-7" />
         </Link>
@@ -30,7 +30,7 @@ export default function Schedule() {
           <ScheduleListWeb />
         </div>
 
-        <div className="flex-2 flex justify-center">
+        <div className="flex-2 flex justify-center pt-[70px] sm:pt-0">
           <ScheduleView />
         </div>
       </div>

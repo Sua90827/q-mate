@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import CloseButton from '@/components/common/CloseButton';
 import { Button } from '@/components/common/Button';
@@ -10,7 +10,6 @@ import Link from 'next/link';
 import TextTextarea, { TextTextareaRef } from './TextTextarea';
 import { useSelectedStore } from '@/store/useSelectedStore';
 import ConfirmModal from '@/components/common/ConfirmModal';
-import { set } from 'zod';
 import { ratingQuestion } from '@/api/questions';
 
 type AnswerFormProps = {

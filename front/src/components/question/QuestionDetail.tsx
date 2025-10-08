@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import {
   useQuestionDetail,
   useAnswerQuestion,
@@ -10,7 +10,6 @@ import {
 import AnswerView from './AnswerView';
 import Custom from './Custom';
 import AnswerForm from './ui/AnswerForm';
-import CloseButton from '../common/CloseButton';
 import { Answer } from '@/types/questionType';
 import { useFetchCustomQuestions } from '@/hooks/useCustom';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
@@ -24,9 +23,6 @@ export default function QuestionDetail() {
   const questionInstanceId = idParam ? Number(idParam.replace('custom-', '')) : null;
   const matchId = useMatchIdStore((state) => state.matchId);
   const queryClient = useQueryClient();
-
-  const router = useRouter();
-  const pathname = usePathname();
 
   // 커스텀 질문 불러오기
   const { data } = useFetchCustomQuestions(matchId!);
