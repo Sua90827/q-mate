@@ -286,7 +286,7 @@ export const questionHandlers = [
     await delay(200);
 
     return HttpResponse.json({
-      questionInstanceId: 10,
+      questionInstanceId: 19,
       matchId: Number(matchId),
       deliveredAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
       status: 'PENDING', // 'PENDING' | 'COMPLETED'
@@ -307,8 +307,8 @@ export const questionHandlers = [
           visible: true,
           content: '초밥',
           submittedAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
-          mine: true,
-          isMine: true,
+          mine: false,
+          isMine: false,
         },
         {
           answerId: null,
@@ -380,7 +380,7 @@ export const questionHandlers = [
   }),
 
   // 질문 평가 등록
-  http.patch('/api/questions/:questionId/ratings', async ({ params, request }) => {
+  http.post('/api/questions/:questionId/ratings', async ({ params, request }) => {
     const { questionId } = params;
     const body = (await request.json()) as { isLike?: boolean };
 

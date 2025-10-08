@@ -9,6 +9,9 @@ import Loader from '@/components/common/Loader';
 import Link from 'next/link';
 import TextTextarea, { TextTextareaRef } from './TextTextarea';
 import { useSelectedStore } from '@/store/useSelectedStore';
+import ConfirmModal from '@/components/common/ConfirmModal';
+import { set } from 'zod';
+import { ratingQuestion } from '@/api/questions';
 
 type AnswerFormProps = {
   mode: 'create' | 'edit';
@@ -16,6 +19,7 @@ type AnswerFormProps = {
   onSubmit: (content: string) => Promise<void> | void;
   submitting?: boolean;
   initialValue?: string;
+  questionId?: number;
 };
 
 export default function AnswerForm({
@@ -24,10 +28,12 @@ export default function AnswerForm({
   onSubmit,
   submitting = false,
   initialValue = '',
+  questionId,
 }: AnswerFormProps) {
   const router = useRouter();
   const textareaRef = useRef<TextTextareaRef>(null);
-  const [open, setOpen] = useState(false);
+  const [ratingOpen, setRatingOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const pathName = usePathname();
   const fromToday = pathName.startsWith('/question/detail');
   const [isEmpty, setIsEmpty] = useState(initialValue.trim().length === 0);
@@ -41,10 +47,15 @@ export default function AnswerForm({
     await onSubmit(submitText);
 
     if (mode === 'create') {
-      setOpen(true);
+      setRatingOpen(true);
     }
-    router.push(fromToday ? '/record' : '/question/list');
+    // router.push(fromToday ? '/record' : '/question/list');
     <Loader />;
+  };
+  const handleRating = (questionId: number, isLike: boolean) => {
+    setRatingOpen(false);
+    ratingQuestion(questionId, isLike);
+    router.push(fromToday ? '/record' : '/question/list');
   };
 
   return (
@@ -58,13 +69,13 @@ export default function AnswerForm({
             aria-label="큐메이트"
           />
         </Link>
-        <div className="absolute  right-5 sm:hidden">
+        <div className="absolute right-5 sm:hidden">
           <CloseButton onClick={() => router.push('/question/list')} />
         </div>
       </div>
 
       <div className="flex flex-col items-center justify-center h-full bg-gradient-sub ">
-        <div className="flex flex-col  gap-3">
+        <div className="flex flex-col gap-3">
           <span className="font-bold text-24 text-center pb-3 text-theme-primary">
             {questionText}
           </span>
@@ -85,7 +96,7 @@ export default function AnswerForm({
           <Button
             size="lg"
             className="md:w-[180px] w-[140px]"
-            onClick={handleSubmit}
+            onClick={() => setConfirmOpen(true)}
             disabled={!canSubmit}
             aria-busy={submitting}
           >
@@ -99,11 +110,17 @@ export default function AnswerForm({
           </Button>
         </div>
       </div>
+      <ConfirmModal
+        open={confirmOpen}
+        setOpen={setConfirmOpen}
+        title={mode === 'create' ? '답변을 완료하시겠습니까?' : '수정을 완료하시겠습니까?'}
+        onConfirm={() => handleSubmit()}
+      />
       <RatingModal
-        open={open}
-        onOpenChange={setOpen}
-        onLike={() => router.push('/question/list')}
-        onDislike={() => router.push('/question/list')}
+        open={ratingOpen}
+        onOpenChange={setRatingOpen}
+        onLike={() => handleRating(questionId!, true)}
+        onDislike={() => handleRating(questionId!, false)}
       />
     </>
   );

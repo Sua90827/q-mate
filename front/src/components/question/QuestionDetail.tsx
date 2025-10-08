@@ -131,6 +131,7 @@ export default function QuestionDetail() {
       <div className="w-full sm:w-[400px] h-full pb-[70px] sm:pb-0 sm:h-[550px]">
         {detail.status === 'PENDING' && hasMy ? (
           <AnswerForm
+            questionId={detail.question.questionId}
             mode="edit"
             questionText={detail.question.text}
             onSubmit={handleUpdateAnswer}
@@ -142,6 +143,7 @@ export default function QuestionDetail() {
         {detail.status === 'PENDING' && !hasMy ? (
           <AnswerForm
             mode="create"
+            questionId={detail.question.questionId}
             questionText={detail.question.text}
             onSubmit={handleCreateAnswer}
             submitting={isCreating}
