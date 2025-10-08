@@ -103,7 +103,7 @@ export default function BellBtn() {
         </div>
       </SheetTrigger>
 
-      <SheetContent side="right" className="w-80 h-full">
+      <SheetContent side="right" className="w-100 h-full">
         <SheetTitle className="h-10"></SheetTitle>
         <div ref={scrollRef} className="h-full overflow-y-auto">
           <ul className="flex flex-col gap-5 items-center">
@@ -114,14 +114,16 @@ export default function BellBtn() {
                 className={cn(
                   `mx-3 p-3 flex items-center gap-4 ${
                     item.read === false ? 'bg-unread' : 'bg-read border-read-border border'
-                  } w-[250px] h-25 rounded-sm cursor-pointer`,
+                  } w-[290px] h-25 rounded-sm cursor-pointer`,
                 )}
               >
                 <div className="flex flex-col justify-center">
                   <div className="flex gap-3">
                     <CategoryIcons
                       category={item.category}
-                      className={cn(`w-6 h-6 ${item.read === false ? '!text-primary' : ''}`)}
+                      className={cn(
+                        `w-6 h-6 ${item.read === false ? '!text-primary' : '!text-text-unread'} `,
+                      )}
                     />
                     <div className="flex flex-col text-14 font-normal">
                       <div

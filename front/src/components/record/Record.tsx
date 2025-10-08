@@ -18,7 +18,7 @@ export default function Record() {
   if (!matchId) return <Loader />;
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden ">
+      <div className="fixed top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden">
         <div className="w-6" />
         <span
           className={`absolute left-1/2 -translate-x-1/2 font-Gumi text-20  text-theme-primary `}
