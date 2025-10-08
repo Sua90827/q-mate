@@ -28,6 +28,7 @@ export const notificationsHandler = [
       count: 2,
     });
   }),
+  //알림 리스트
   http.get('/api/notifications', async ({ request }) => {
     const url = new URL(request.url);
     const page = Number(url.searchParams.get('page') ?? '0');
@@ -60,62 +61,27 @@ export const notificationsHandler = [
       empty: content.length === 0,
     });
   }),
-  //알림 리스트 조회
-  // http.get('/api/notifications', async ({ params }) => {
-  //   return HttpResponse.json({
+  //알림 삭제
+  http.delete('/api/notifications/:notificationId(\\d+)', async ({ params }) => {
+    const notificationId = Number(params.notificationId);
 
-  //     content: [
-  //       {
-  //         notificationId: 1,
-  //         category: 'QUESTION',
-  //         code: 'QI_TODAY_READY',
-  //         listTitle: '오늘의 질문이 도착했어요!',
-  //         createdAt: '2025-10-04T07:00:16.313Z',
-  //         read: true,
-  //       },
-  //       {
-  //         notificationId: 2,
-  //         category: 'EVENT',
-  //         code: 'EVENT_SAME_DAY',
-  //         listTitle: '오늘은 기념일이에요 🎉',
-  //         createdAt: '2025-10-03T10:32:45.100Z',
-  //         read: false,
-  //       },
-  //       {
-  //         notificationId: 3,
-  //         category: 'MATCH',
-  //         code: 'MATCH_CONNECTED',
-  //         listTitle: '새로운 매칭이 연결되었어요.',
-  //         createdAt: '2025-10-02T22:11:00.000Z',
-  //         read: false,
-  //       },
-  //       {
-  //         notificationId: 4,
-  //         category: 'MATCH',
-  //         code: 'MATCH_CONNECTED',
-  //         listTitle: '새로운 매칭이 연결되었어요.',
-  //         createdAt: '2025-10-02T22:11:10.000Z',
-  //         read: false,
-  //       },
-  //       {
-  //         notificationId: 5,
-  //         category: 'MATCH',
-  //         code: 'MATCH_CONNECTED',
-  //         listTitle: '새로운 매칭이 연결되었어요.',
-  //         createdAt: '2025-10-02T22:11:20.000Z',
-  //         read: false,
-  //       },
-  //       {
-  //         notificationId: 6,
-  //         category: 'MATCH',
-  //         code: 'MATCH_CONNECTED',
-  //         listTitle: '새로운 매칭이 연결되었어요.',
-  //         createdAt: '2025-10-02T22:11:30.000Z',
-  //         read: false,
-  //       },
-  //     ],
-  //   });
-  // }),
+    if (!Number.isFinite(notificationId)) {
+      return HttpResponse.json(
+        { error: 'NOTIFICATION_NOT_FOUND', message: 'Notification not found' },
+        { status: 404 },
+      );
+    }
+
+    const exists = ALL.some((n) => n.notificationId === notificationId);
+    if (!exists) {
+      return HttpResponse.json(
+        { error: 'NOTIFICATION_NOT_FOUND', message: 'Notification not found' },
+        { status: 404 },
+      );
+    }
+
+    return new HttpResponse(null, { status: 204 });
+  }),
   //알림 상세 조회
   http.get('/api/notifications/:notificationId(\\d+)', async ({ params }) => {
     const { notificationId } = params;

@@ -59,6 +59,11 @@ export const fetchNotificationDetail = async (notificationId: number) => {
   const res = await axios.get(`/api/notifications/${notificationId}`);
   return res.data;
 };
+// 알림 삭제
+export const deleteNotification = async (notificationId: number) => {
+  const res = await axios.delete(`/api/notifications/${notificationId}`);
+  return res.data;
+};
 //읽지않은 알림갯수
 export const fetchUnreadCount = async () => {
   const res = await axios.get('/api/notifications/unread-count');

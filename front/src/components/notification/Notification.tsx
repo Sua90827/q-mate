@@ -1,5 +1,5 @@
 'use client';
-import { ChevronLeft, Loader2, Trash2 } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { useInfiniteNotifications, useNotificationDetail } from '@/hooks/useNotificationList';
@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useIntersectionObserver } from 'usehooks-ts';
 import { flatNotifications, formatTimeAgo } from '@/utils/notificationUtils';
 import CategoryIcons from './ui/CategoryIcons';
+import { deleteNotification } from '@/api/notification';
 
 export default function Notification() {
   const router = useRouter();
@@ -40,15 +41,34 @@ export default function Notification() {
     }
   }, [entry?.isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  const clickHandler = async (item: contentItemType): Promise<void> => {
+    setSelectedId(item.notificationId);
+
+    let href = '/';
+    switch (item.category) {
+      case 'EVENT':
+        href = '/schedule';
+        break;
+      case 'QUESTION':
+        href = `/question/detail?id=${detail?.resourceId}`;
+        break;
+      case 'MATCH':
+        href = '/main';
+        break;
+    }
+
+    try {
+      await router.prefetch(href);
+    } catch (e) {
+      console.error(e);
+    }
+    router.push(href);
+  };
+
   return (
     <div className="w-full h-full flex flex-col justify-center items-center sm:pt-0 pt-[70px]">
       <div className="fixed top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden px-4">
-        <button
-          className="relative flex ml-7 w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center"
-          onClick={() => router.back()}
-        >
-          <ChevronLeft className="w-7 h-7" />
-        </button>
+        <div className="relative flex ml-7 w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center"></div>
         <span className="absolute left-1/2 -translate-x-1/2 font-Gumi text-20 text-theme-primary">
           알림
         </span>
@@ -56,7 +76,7 @@ export default function Notification() {
           className="relative flex mr-7 w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center"
           onClick={() => router.back()}
         >
-          <Trash2 className="w-7 h-7" />
+          <X className="w-7 h-7" />
         </button>
       </div>
       <div ref={scrollRef} className="w-full h-full overflow-y-auto bg-white">
@@ -91,7 +111,7 @@ export default function Notification() {
                 } w-full h-25 cursor-pointer`,
               )}
             >
-              <div className="flex flex-col justify-center">
+              <div className="flex flex-col justify-center w-full" onClick={() => clickHandler}>
                 <div className="flex gap-3">
                   <CategoryIcons
                     category={item.category}
@@ -114,6 +134,12 @@ export default function Notification() {
                     <p className="text-text-unread">{formatTimeAgo(item.createdAt)}</p>
                   </div>
                 </div>
+              </div>
+              <div
+                className="flex h-full w-20 items-center justify-center cursor-pointer"
+                onClick={() => deleteNotification(item.notificationId)}
+              >
+                <X className="w-6 h-6" />
               </div>
             </li>
           ))}
