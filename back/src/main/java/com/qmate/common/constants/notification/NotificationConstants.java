@@ -42,4 +42,12 @@ public class NotificationConstants {
 
   public static final String GET_UNREAD_COUNT_MD =
       "읽지 않은 알림의 개수를 조회합니다.\n\n";
+
+  public static final String DELETE_MD =
+      "특정 알림을 삭제합니다.\n\n"
+          + "### 에러 응답\n\n"
+          + "| HTTP | errorCode | message |\n"
+          + "|-----:|-----------|---------|\n"
+          + "| " + HttpStatusCode.NOT_FOUND + " | " + NotificationErrorCode.NOTIFICATION_NOT_FOUND_ERROR_CODE + " | "
+          + NotificationErrorCode.NOTIFICATION_NOT_FOUND_MESSAGE + " |\n\n";
 }

@@ -74,4 +74,13 @@ public class NotificationService {
   public long getUnreadCount(Long userId) {
     return notificationRepository.countAuthorizedUnread(userId);
   }
+
+  /**
+   * 본인 소유 알림인지 확인 후 삭제 (204 No Content 용)
+   */
+  public void deleteAuthorized(long userId, long notificationId) {
+    Notification n = notificationRepository.findAuthorizedDetail(userId, notificationId)
+        .orElseThrow(NotificationNotFoundException::new);
+    notificationRepository.delete(n);
+  }
 }
