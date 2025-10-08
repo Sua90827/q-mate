@@ -58,7 +58,7 @@ export default function Main() {
         </AnimatePresence>
       </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center w-[252px] z">
+      <div className="relative z-10 flex flex-col items-center justify-center w-[252px]">
         <ExpBubble />
         <Bubbley className="mb-6" />
         <ExpBar />
