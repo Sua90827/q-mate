@@ -78,7 +78,7 @@ jobs:
             
             # 0) 통일된 배치 경로 사용
             sudo mkdir -p /opt/qmate
-            sudo mv /tmp/*SNAPSHOT.jar /opt/qmate/qmate.jar
+            JAR=$(ls -1t /tmp/*.jar | head -n1) && echo "Picked JAR: $JAR" && sudo mv "$JAR" /opt/qmate/qmate.jar
             sudo chown ec2-user:ec2-user /opt/qmate/qmate.jar
             
             # 1) 서비스 유닛은 "항상" 동일 내용으로 재생성(경로 통일)
