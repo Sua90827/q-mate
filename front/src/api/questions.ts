@@ -43,3 +43,9 @@ export const updateAnswer = async (answerId: number, content: string) => {
   const res = await axios.patch(`/api/answers/${answerId}`, { content });
   return res.data;
 };
+
+//질문 평가
+export const ratingQuestion = async (questionId: number, isLike: boolean) => {
+  const res = await axios.post(`/api/questions/${questionId}/ratings`, { isLike });
+  return res.data;
+};

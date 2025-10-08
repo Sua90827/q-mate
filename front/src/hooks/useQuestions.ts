@@ -5,6 +5,7 @@ import {
   fetchTodayQuestion,
   answerQuestion,
   updateAnswer,
+  ratingQuestion,
 } from '../api/questions';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QuestionResponse } from '@/types/questionType';
@@ -67,5 +68,13 @@ export const useUpdateAnswerQuestion = () => {
       queryClient.invalidateQueries({ queryKey: ['todayQuestion'] });
       queryClient.invalidateQueries({ queryKey: ['questionDetail', variables.answerId] });
     },
+  });
+};
+
+//질문 평가
+export const useRateQuestion = () => {
+  return useMutation({
+    mutationFn: ({ questionId, isLike }: { questionId: number; isLike: boolean }) =>
+      ratingQuestion(questionId, isLike),
   });
 };
