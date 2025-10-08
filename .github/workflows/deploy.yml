@@ -32,7 +32,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build
-        run: ./gradlew clean bootJar
+        run: ./gradlew clean :back:bootJar
 
       - name: Upload JAR to EC2
         if: >
@@ -102,8 +102,16 @@ jobs:
             sudo mv "$JAR" /opt/qmate/qmate.jar
             sudo chown ec2-user:ec2-user /opt/qmate/qmate.jar
             
-            # 1) 서비스 유닛은 "항상" 동일 내용으로 재생성(경로 통일)
-            sudo bash -c 'cat > /etc/systemd/system/qmate.service <<EOF
+            # 1) 현재 깨진 파일들을 눈으로 확인 (문제 재발 시 진단용)
+            echo "----- BEGIN CURRENT UNIT -----"
+            sudo sed -n '1,120p' /etc/systemd/system/qmate.service 2>/dev/null || true
+            echo "----- END CURRENT UNIT -----"
+            echo "----- BEGIN CURRENT DROPIN -----"
+            sudo sed -n '1,120p' /etc/systemd/system/qmate.service.d/env.conf 2>/dev/null || true
+            echo "----- END CURRENT DROPIN -----"
+            
+            # 2) 유닛: 로컬 셸에서 '비확장' heredoc으로 임시파일 생성 후 install
+            cat <<'UNIT' >/tmp/qmate.service
             [Unit]
             Description=QMate Spring Boot Service
             After=network.target
@@ -118,13 +126,12 @@ jobs:
             
             [Install]
             WantedBy=multi-user.target
-            EOF'
+            UNIT
             
-            # 2) drop-in 디렉토리 생성
-            sudo mkdir -p /etc/systemd/system/qmate.service.d
+            sudo install -o root -g root -m 644 /tmp/qmate.service /etc/systemd/system/qmate.service
+            rm -f /tmp/qmate.service
             
-            # 3) "sudo 이전에" 환경변수 확장해서 임시 파일로 만든다 (값이 실제로 들어가도록!)
-            #    주의: 여기서는 HEREDOC에 따옴표를 쓰지 않습니다(값 확장 위해).
+            # 3) 드롭인: 값 확장 필요 → 임시파일에 먼저 만들고 install
             cat > /tmp/qmate-env.conf <<EOF
             [Service]
             Environment="SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}"
@@ -145,17 +152,26 @@ jobs:
             Environment="OAUTH_NAVER_CLIENT_SECRET=${OAUTH_NAVER_CLIENT_SECRET}"
             EOF
             
-            # 4) 권한 최소화하여 drop-in 반영
+            sudo mkdir -p /etc/systemd/system/qmate.service.d
             sudo install -o root -g root -m 600 /tmp/qmate-env.conf /etc/systemd/system/qmate.service.d/env.conf
             rm -f /tmp/qmate-env.conf
             
-            # 5) 데몬 리로드 & 재시작
+            # 4) 유닛/드롭인 최종 확인(맨 앞 10줄에 [Unit]/[Service]로 시작하는지 확인)
+            echo "----- VERIFY NEW UNIT -----"
+            sudo sed -n '1,40p' /etc/systemd/system/qmate.service
+            echo "----- VERIFY NEW DROPIN -----"
+            sudo sed -n '1,40p' /etc/systemd/system/qmate.service.d/env.conf
+            
+            # 5) 리로드 & 재시작
             sudo systemctl daemon-reload
             sudo systemctl enable qmate
             sudo systemctl restart qmate
             
-            # 6) 간단 헬스체크
-            for i in $(seq 1 15); do
+            # 6) 환경변수 실제 반영 확인
+            sudo systemctl show qmate -p Environment
+            
+            # 7) 헬스체크(조금 더 여유 있게)
+            for i in $(seq 1 30); do
             code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/actuator/health || true)
             if [ "$code" = "200" ]; then
             echo "Health OK"
