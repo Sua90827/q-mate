@@ -1,5 +1,6 @@
 package com.qmate.domain.match.service;
 
+import com.qmate.common.push.PushSender;
 import com.qmate.common.redis.RedisHelper;
 import com.qmate.domain.event.service.EventAnniversaryService;
 import com.qmate.domain.match.Match;
@@ -20,6 +21,11 @@ import com.qmate.domain.match.model.response.MatchMembersResponse;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.match.repository.MatchSettingRepository;
+import com.qmate.domain.notification.entity.Notification;
+import com.qmate.domain.notification.entity.NotificationCategory;
+import com.qmate.domain.notification.entity.NotificationCode;
+import com.qmate.domain.notification.entity.NotificationResourceType;
+import com.qmate.domain.notification.repository.NotificationRepository;
 import com.qmate.domain.pet.service.PetService;
 import com.qmate.domain.question.repository.QuestionRepository;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
@@ -62,6 +68,8 @@ public class MatchService {
   private final MatchSettingRepository matchSettingRepository;
   private final EventAnniversaryService eventAnniversaryService;
   private final RandomAdminQuestionService randomAdminQuestionService;
+  private final NotificationRepository notificationRepository;
+  private final PushSender pushSender;
 
   //초대 코드 생성 로직
   @Transactional
@@ -121,6 +129,9 @@ public class MatchService {
 
       joiner.joinMatch(match);
       partner.joinMatch(match);
+      // 매칭이 성사되었으므로, 두 멤버 모두에게 알림을 보냅니다.
+      sendMatchCompletionNotification(joiner, partner, match);
+      sendMatchCompletionNotification(partner, joiner, match);
       redisHelper.deleteInviteCode(inviteCode);
 
       // 기념일 생성
@@ -291,7 +302,34 @@ public class MatchService {
   }
 
 
-  //가독성을 위한 private 헬퍼 메서드(초대 생성 관련)
+  //자동 연결 끊기 서비스 로직 구현
+  @Transactional
+  public void disconnectInactiveMatches(){
+    LocalDateTime toWeeksAgo = LocalDateTime.now().minusWeeks(2);
+    List<Match> inactiveMatches = matchRepository.findInactiveMatches(toWeeksAgo);
+
+    for (Match match : inactiveMatches){
+      match.getMembers().forEach(matchMember -> matchMember.getUser().leaveMatch());
+      match.disconnect();
+    }
+  log.info("{}개의 비활성 매칭을 연결 끊기 상태로 전환했습니다.", inactiveMatches.size());
+  }
+
+  // 유예기간 지난 상태 델리트로 변경.
+  @Transactional
+  public void finalizeExpiredMatches(){
+    LocalDateTime toWeeksAgo = LocalDateTime.now().minusWeeks(2);
+    List<Match> expiredMatches = matchRepository.findMatchesForSoftDelete(toWeeksAgo);
+
+    for (Match match : expiredMatches){
+      // user의 current_match_id는 이미 null이므로 추가 작업 필요 없음
+    match.markAsDeleted();
+    }
+    log.info("{}개의 만료된 매칭을 삭제 처리했습니다.", expiredMatches.size());
+  }
+
+
+  //=======가독성을 위한 private 헬퍼 메서드(초대 생성 관련)==========
   private void validateUserNotInActiveMatch(Long userId) {
     matchMemberRepository.findByUser_IdAndMatch_Status(userId, MatchStatus.ACTIVE)
         .ifPresent(matchMember -> {
@@ -323,7 +361,7 @@ public class MatchService {
     throw new RuntimeException("초대 코드 생성에 10회 이상 실패했습니다.");
   }
 
-  //가독성을 위한 private 헬퍼 메서드(매칭 조인 관련)
+  //========가독성을 위한 private 헬퍼 메서드(매칭 조인 관련)==========
   private void validateJoinAttempt(Match match, Long joinerId) {
     if (match.getStatus() != MatchStatus.WAITING) {
       throw new AlreadyInMatchException();
@@ -343,29 +381,33 @@ public class MatchService {
         .findFirst()
         .orElseThrow(PartnerNotFoundException::new);
   }
-  //자동 연결 끊기 서비스 로직 구현
-  @Transactional
-  public void disconnectInactiveMatches(){
-    LocalDateTime toWeeksAgo = LocalDateTime.now().minusWeeks(2);
-    List<Match> inactiveMatches = matchRepository.findInactiveMatches(toWeeksAgo);
+  //가독성을 위한 private 헬퍼 메서드(매칭알림 관련)
+  /**
+   * 매칭 완료 알림을 생성하고 발송하는 헬퍼 메서드
+   * @param recipient 알림을 받을 사용자
+   * @param partner 매칭된 상대방
+   * @param match 성사된 매칭
+   */
+  private void sendMatchCompletionNotification(User recipient, User partner, Match match) {
+    String title = partner.getNickname() + "님과 매칭되었습니다!";
 
-    for (Match match : inactiveMatches){
-      match.getMembers().forEach(matchMember -> matchMember.getUser().leaveMatch());
-      match.disconnect();
+    // 1. DB에 저장할 Notification 객체 생성 (보내주신 엔티티 구조에 맞게)
+    Notification notification = Notification.builder()
+        .userId(recipient.getId()) // Notification은 User 객체가 아닌 Long ID를 가짐
+        .matchId(match.getId())
+        .category(NotificationCategory.MATCH) // 보내주신 Enum 사용
+        .code(NotificationCode.MATCH_COMPLETED)   // 위에서 추가한 Enum 값
+        .listTitle(title)
+        .pushTitle(title)
+        .resourceType(NotificationResourceType.MATCH) // 보내주신 Enum 사용
+        .resourceId(match.getId())
+        .build();
+
+    notificationRepository.save(notification);
+
+    // 2. 사용자가 푸시 알림을 켜놨다면, 실제 푸시 알림 발송
+    if (recipient.isPushEnabled()) { // 보내주신 User 엔티티의 pushEnabled 필드 사용
+      pushSender.send(notification); // 보내주신 PushSender 인터페이스 사용
     }
-  log.info("{}개의 비활성 매칭을 연결 끊기 상태로 전환했습니다.", inactiveMatches.size());
-  }
-
-  // 유예기간 지난 상태 델리트로 변경.
-  @Transactional
-  public void finalizeExpiredMatches(){
-    LocalDateTime toWeeksAgo = LocalDateTime.now().minusWeeks(2);
-    List<Match> expiredMatches = matchRepository.findMatchesForSoftDelete(toWeeksAgo);
-
-    for (Match match : expiredMatches){
-      // user의 current_match_id는 이미 null이므로 추가 작업 필요 없음
-    match.markAsDeleted();
-    }
-    log.info("{}개의 만료된 매칭을 삭제 처리했습니다.", expiredMatches.size());
   }
 }
