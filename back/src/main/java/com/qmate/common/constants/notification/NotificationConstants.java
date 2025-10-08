@@ -14,6 +14,7 @@ public class NotificationConstants {
   public static final String EVENT_SAME_DAY_MSG = "[당일 일정 알림]";
   public static final String EVENT_THREE_DAYS_BEFORE_MSG = "[3일 전 일정 알림]";
   public static final String EVENT_WEEK_BEFORE_MSG = "[1주일 전 일정 알림]";
+  public static final String MATCH_COMPLETED_MSG = "매칭이 성사되었습니다.";
 
   // api docs
   public static final String GET_DETAIL_MD =

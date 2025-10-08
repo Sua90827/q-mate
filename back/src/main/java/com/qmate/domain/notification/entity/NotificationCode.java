@@ -13,9 +13,11 @@ public enum NotificationCode {
   // EVENT
   EVENT_SAME_DAY(NotificationConstants.EVENT_SAME_DAY_MSG),
   EVENT_THREE_DAYS_BEFORE(NotificationConstants.EVENT_THREE_DAYS_BEFORE_MSG),
-  EVENT_WEEK_BEFORE(NotificationConstants.EVENT_WEEK_BEFORE_MSG),;
+  EVENT_WEEK_BEFORE(NotificationConstants.EVENT_WEEK_BEFORE_MSG),
 
   // MATCH
+  MATCH_COMPLETED(NotificationConstants.MATCH_COMPLETED_MSG),;
+
 
   private final String description;
 
