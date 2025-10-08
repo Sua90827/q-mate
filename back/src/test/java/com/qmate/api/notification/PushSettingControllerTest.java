@@ -32,22 +32,22 @@ class PushSettingControllerTest {
   private static final Long PRINCIPAL = 1L;
 
   @Test
-  @DisplayName("GET /api/push-settings: 현재 설정 반환")
+  @DisplayName("GET /api/notifications/settings: 현재 설정 반환")
   void get_returns_current_setting() throws Exception {
     given(pushSettingService.get(1L)).willReturn(new PushSettingResponse(true));
 
-    mvc.perform(get("/api/push-settings")
+    mvc.perform(get("/api/notifications/settings")
             .with(AuthTestUtils.userPrincipal(PRINCIPAL)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.pushEnabled").value(true));
   }
 
   @Test
-  @DisplayName("PATCH /api/push-settings: 설정 변경 후 결과 반환")
+  @DisplayName("PATCH /api/notifications/settings: 설정 변경 후 결과 반환")
   void patch_updates_and_returns() throws Exception {
     given(pushSettingService.update(1L, false)).willReturn(new PushSettingResponse(false));
 
-    mvc.perform(patch("/api/push-settings")
+    mvc.perform(patch("/api/notifications/settings")
             .with(AuthTestUtils.userPrincipal(PRINCIPAL))
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"pushEnabled\": false}"))
@@ -58,7 +58,7 @@ class PushSettingControllerTest {
   @Test
   @DisplayName("PATCH 본문 유효성 검증 - pushEnabled 누락 시 400")
   void patch_validation_missing_body() throws Exception {
-    mvc.perform(patch("/api/push-settings")
+    mvc.perform(patch("/api/notifications/settings")
             .with(AuthTestUtils.userPrincipal(PRINCIPAL))
             .contentType(MediaType.APPLICATION_JSON)
             .content("{}"))
@@ -71,7 +71,7 @@ class PushSettingControllerTest {
     String json = """
         { "pushEnabled": "notBoolean" }
         """;
-    mvc.perform(patch("/api/push-settings")
+    mvc.perform(patch("/api/notifications/settings")
             .with(AuthTestUtils.userPrincipal(PRINCIPAL))
             .contentType(MediaType.APPLICATION_JSON)
             .content(json))

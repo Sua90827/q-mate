@@ -10,6 +10,7 @@ import com.qmate.domain.match.Match;
 import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.match.RelationType;
 import com.qmate.domain.match.repository.MatchMemberRepository;
+import com.qmate.domain.pet.service.PetService;
 import com.qmate.domain.questioninstance.entity.Answer;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
@@ -43,6 +44,8 @@ class AnswerServiceCreateTest {
   UserRepository userRepo;
   @Mock
   AnswerRepository answerRepo;
+  @Mock
+  PetService petService;
   @Mock
   MatchMemberRepository matchMemberRepository;
 
