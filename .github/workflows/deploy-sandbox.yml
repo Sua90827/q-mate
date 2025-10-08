@@ -31,6 +31,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Build (prod)
         run: ./gradlew :back:clean :back:bootJar -Pprofile=prod
 
