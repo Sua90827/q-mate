@@ -30,7 +30,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update      # 초기 배포용. 운영 전환 시 validate 권장
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
