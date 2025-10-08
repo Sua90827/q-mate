@@ -1,0 +1,147 @@
+name: Deploy Qmate to EC2
+
+on:
+  push:
+    branches: [ "dev" ]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "choose: build-only or deploy"
+        required: true
+        default: "build-only"
+        type: choice
+        options:
+          - build-only
+          - deploy
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: '21'
+
+      - name: Grant execute permission for gradlew (root)
+        run: chmod +x ./gradlew
+
+      - name: Build
+        run: ./gradlew clean bootJar
+
+      - name: Upload JAR to EC2
+        if: >
+          (github.event_name == 'push' && github.ref == 'refs/heads/dev') ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'deploy')
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "back/build/libs/*SNAPSHOT.jar"
+          target: "/tmp"
+
+      - name: Deploy & Restart via systemd (inject secrets as drop-in)
+        if: >
+          (github.event_name == 'push' && github.ref == 'refs/heads/dev') ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'deploy')
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          SPRING_PROFILES_ACTIVE: "prod"
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          MAIL_HOST: ${{ secrets.MAIL_HOST }}
+          MAIL_PORT: ${{ secrets.MAIL_PORT }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          APP_EMAIL_VERIFICATION_JWT_SECRET: ${{ secrets.APP_EMAIL_VERIFICATION_JWT_SECRET }}
+          OAUTH_GOOGLE_CLIENT_ID: ${{ secrets.OAUTH_GOOGLE_CLIENT_ID }}
+          OAUTH_GOOGLE_CLIENT_SECRET: ${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET }}
+          OAUTH_NAVER_CLIENT_ID: ${{ secrets.OAUTH_NAVER_CLIENT_ID }}
+          OAUTH_NAVER_CLIENT_SECRET: ${{ secrets.OAUTH_NAVER_CLIENT_SECRET }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -e
+
+            # 디렉터리
+            sudo mkdir -p /opt/qmate
+            # 최신 JAR 배치
+            sudo mv /tmp/*SNAPSHOT.jar /opt/qmate/qmate.jar
+            sudo chown root:root /opt/qmate/qmate.jar
+
+            # systemd 서비스(최초 1회 생성)
+            if [ ! -f /etc/systemd/system/qmate.service ]; then
+              sudo bash -c 'cat > /etc/systemd/system/qmate.service <<EOF
+            [Unit]
+            Description=Qmate Spring Boot Service
+            After=network.target
+
+            [Service]
+            User=ec2-user
+            WorkingDirectory=/opt/qmate
+            ExecStart=/usr/bin/java -jar /opt/qmate/qmate.jar
+            Restart=always
+            RestartSec=5
+            SuccessExitStatus=143
+
+            [Install]
+            WantedBy=multi-user.target
+            EOF'
+              sudo systemctl daemon-reload
+              sudo systemctl enable qmate
+            fi
+
+            # drop-in으로 환경변수 주입 (매 배포 때 갱신)
+            sudo mkdir -p /etc/systemd/system/qmate.service.d
+            sudo bash -c 'cat > /etc/systemd/system/qmate.service.d/env.conf <<EOF
+            [Service]
+            Environment="SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}"
+            Environment="DB_URL=${DB_URL}"
+            Environment="DB_USERNAME=${DB_USERNAME}"
+            Environment="DB_PASSWORD=${DB_PASSWORD}"
+            Environment="REDIS_HOST=${REDIS_HOST}"
+            Environment="REDIS_PORT=${REDIS_PORT}"
+            Environment="MAIL_HOST=${MAIL_HOST}"
+            Environment="MAIL_PORT=${MAIL_PORT}"
+            Environment="MAIL_USERNAME=${MAIL_USERNAME}"
+            Environment="MAIL_PASSWORD=${MAIL_PASSWORD}"
+            Environment="JWT_SECRET=${JWT_SECRET}"
+            Environment="APP_EMAIL_VERIFICATION_JWT_SECRET=${APP_EMAIL_VERIFICATION_JWT_SECRET}"
+            Environment="OAUTH_GOOGLE_CLIENT_ID=${OAUTH_GOOGLE_CLIENT_ID}"
+            Environment="OAUTH_GOOGLE_CLIENT_SECRET=${OAUTH_GOOGLE_CLIENT_SECRET}"
+            Environment="OAUTH_NAVER_CLIENT_ID=${OAUTH_NAVER_CLIENT_ID}"
+            Environment="OAUTH_NAVER_CLIENT_SECRET=${OAUTH_NAVER_CLIENT_SECRET}"
+            EOF'
+            
+            # env.conf 권한 최소화
+            sudo chmod 600 /etc/systemd/system/qmate.service.d/env.conf
+
+            # 재시작
+            sudo systemctl daemon-reload
+            sudo systemctl restart qmate
+
+            # 간단 헬스체크 (시크릿 노출 방지 위해 로그 미출력)
+            for i in $(seq 1 15); do
+              code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/actuator/health || true)
+              if [ "$code" = "200" ]; then
+                echo "Health OK"
+                exit 0
+              fi
+              sleep 2
+            done
+            echo "Health check failed"
+            sudo systemctl status qmate --no-pager
+            exit 1
