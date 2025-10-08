@@ -17,6 +17,7 @@ import { useLogoutUser } from '@/hooks/useAuth';
 import { ErrorToast } from '../common/CustomToast';
 import { useRouter } from 'next/navigation';
 import ConfirmModal from '../common/ConfirmModal';
+import { useUnsubscribePush } from '@/hooks/useUnSubScription';
 import { useSelectedStore } from '@/store/useSelectedStore';
 
 type SettingItem =
@@ -33,8 +34,8 @@ export default function Settings() {
   const [modal, setModal] = useState<string | null>(null);
 
   //hook 조회 enable에 사용자가 있을때 조건 추가 필요
-  const { data: notificationSettings, toggleNotification } = useNotificationSettings();
-
+  const { data: notificationSettings, toggleNotification, isPending } = useNotificationSettings();
+  const { unsubscribe } = useUnsubscribePush();
   const [nickname, setNickname] = useState<string>('');
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
 
@@ -83,9 +84,15 @@ export default function Settings() {
 
   const pushEnabled = notificationSettings?.pushEnabled;
 
+  console.log('pushEnabled', pushEnabled);
+  const handleTogglePush = (next: boolean) => {
+    toggleNotification(next);
+  };
   const handleLogout = () => {
     logoutMutate(undefined, {
       onSuccess: () => {
+        //구독 해지
+        unsubscribe();
         //선택된 메뉴 리셋
         resetSelectedMenu();
         // exp 리셋
@@ -137,8 +144,9 @@ export default function Settings() {
                 //현재는 useState로 색상변경되는지 확인했지만 유저 정보에서 알림을 받는지 끄는지 확인필요할듯
                 <Switch
                   checked={pushEnabled}
-                  onCheckedChange={pushEnabled}
-                  className={cn(pushEnabled && 'bg-theme-primary')}
+                  onCheckedChange={handleTogglePush}
+                  className={cn(pushEnabled && 'bg-theme-primary', 'cursor-pointer')}
+                  disabled={isPending}
                 />
               ) : (
                 <ChevronRight className="text-theme-secondary !w-4 !h-4" />

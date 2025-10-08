@@ -1,6 +1,7 @@
 import {
   categoryType,
   codeType,
+  notificationListResponseType,
   sortType,
   subScriptionsType,
   vapidPublicKeyType,
@@ -50,7 +51,7 @@ export const fetchNotifications = async (params?: {
   size?: number;
   sort?: sortType;
 }) => {
-  const res = await axios.get('/api/notifications', { params });
+  const res = await axios.get<notificationListResponseType>('/api/notifications', { params });
   return res.data;
 };
 // 알림상세 조회

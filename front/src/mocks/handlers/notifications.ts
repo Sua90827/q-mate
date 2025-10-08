@@ -1,5 +1,12 @@
 import { http, HttpResponse } from 'msw';
-
+const ALL = Array.from({ length: 73 }).map((_, i) => ({
+  notificationId: i + 1,
+  category: i % 3 === 0 ? 'QUESTION' : i % 3 === 1 ? 'EVENT' : 'MATCH',
+  code: i % 3 === 0 ? 'QI_TODAY_READY' : i % 3 === 1 ? 'EVENT_SAME_DAY' : 'MATCH_CONNECTED',
+  listTitle: `알림 #${i + 1}`,
+  createdAt: new Date(Date.now() - i * 3600_000).toISOString(),
+  read: i % 5 === 0, //표시
+}));
 export const notificationsHandler = [
   //알림 설정 조회
   http.get('/api/notifications/settings', async () => {
@@ -15,39 +22,103 @@ export const notificationsHandler = [
     });
   }),
 
-  //알림 리스트 조회
-  http.get('/api/notifications', async ({ params }) => {
+  //읽지 않은 알림개수
+  http.get('/api/notifications/unread-count', async () => {
     return HttpResponse.json({
-      content: [
-        {
-          notificationId: 1,
-          category: 'QUESTION',
-          code: 'QI_TODAY_READY',
-          listTitle: '오늘의 질문이 도착했어요!',
-          createdAt: '2025-10-04T07:00:16.313Z',
-          read: true,
-        },
-        {
-          notificationId: 2,
-          category: 'EVENT',
-          code: 'EVENT_SAME_DAY',
-          listTitle: '오늘은 기념일이에요 🎉',
-          createdAt: '2025-10-03T10:32:45.100Z',
-          read: false,
-        },
-        {
-          notificationId: 3,
-          category: 'MATCH',
-          code: 'MATCH_CONNECTED',
-          listTitle: '새로운 매칭이 연결되었어요.',
-          createdAt: '2025-10-02T22:11:00.000Z',
-          read: false,
-        },
-      ],
+      count: 2,
     });
   }),
+  http.get('/api/notifications', async ({ request }) => {
+    const url = new URL(request.url);
+    const page = Number(url.searchParams.get('page') ?? '0');
+    const size = Number(url.searchParams.get('size') ?? '20');
+
+    const totalElements = ALL.length;
+    const totalPages = size > 0 ? Math.ceil(totalElements / size) : 1;
+    const start = page * size;
+    const end = start + size;
+    const content = size > 0 ? ALL.slice(start, end) : ALL;
+
+    return HttpResponse.json({
+      totalElements,
+      totalPages,
+      pageable: {
+        paged: true,
+        pageNumber: page,
+        pageSize: size,
+        offset: start,
+        sort: { sorted: true, empty: false, unsorted: false },
+        unpaged: false,
+      },
+      size,
+      content,
+      number: page,
+      sort: { sorted: true, empty: false, unsorted: false },
+      first: page === 0,
+      last: page + 1 >= totalPages,
+      numberOfElements: content.length,
+      empty: content.length === 0,
+    });
+  }),
+  //알림 리스트 조회
+  // http.get('/api/notifications', async ({ params }) => {
+  //   return HttpResponse.json({
+
+  //     content: [
+  //       {
+  //         notificationId: 1,
+  //         category: 'QUESTION',
+  //         code: 'QI_TODAY_READY',
+  //         listTitle: '오늘의 질문이 도착했어요!',
+  //         createdAt: '2025-10-04T07:00:16.313Z',
+  //         read: true,
+  //       },
+  //       {
+  //         notificationId: 2,
+  //         category: 'EVENT',
+  //         code: 'EVENT_SAME_DAY',
+  //         listTitle: '오늘은 기념일이에요 🎉',
+  //         createdAt: '2025-10-03T10:32:45.100Z',
+  //         read: false,
+  //       },
+  //       {
+  //         notificationId: 3,
+  //         category: 'MATCH',
+  //         code: 'MATCH_CONNECTED',
+  //         listTitle: '새로운 매칭이 연결되었어요.',
+  //         createdAt: '2025-10-02T22:11:00.000Z',
+  //         read: false,
+  //       },
+  //       {
+  //         notificationId: 4,
+  //         category: 'MATCH',
+  //         code: 'MATCH_CONNECTED',
+  //         listTitle: '새로운 매칭이 연결되었어요.',
+  //         createdAt: '2025-10-02T22:11:10.000Z',
+  //         read: false,
+  //       },
+  //       {
+  //         notificationId: 5,
+  //         category: 'MATCH',
+  //         code: 'MATCH_CONNECTED',
+  //         listTitle: '새로운 매칭이 연결되었어요.',
+  //         createdAt: '2025-10-02T22:11:20.000Z',
+  //         read: false,
+  //       },
+  //       {
+  //         notificationId: 6,
+  //         category: 'MATCH',
+  //         code: 'MATCH_CONNECTED',
+  //         listTitle: '새로운 매칭이 연결되었어요.',
+  //         createdAt: '2025-10-02T22:11:30.000Z',
+  //         read: false,
+  //       },
+  //     ],
+  //   });
+  // }),
   //알림 상세 조회
-  http.get('/api/notifications/:notificationId', async ({ params }) => {
+  http.get('/api/notifications/:notificationId(\\d+)', async ({ params }) => {
+    const { notificationId } = params;
     return HttpResponse.json({
       notificationId: 1,
       userId: 99,
@@ -57,17 +128,13 @@ export const notificationsHandler = [
       listTitle: '오늘의 질문이 도착했어요!',
       pushTitle: '새로운 질문이 도착했습니다!',
       resourceType: 'QUESTION_INSTANCE',
-      resourceId: 123,
+      resourceId: 10,
       readAt: '2025-10-04T07:00:16.315Z',
       createdAt: '2025-10-04T07:00:16.313Z',
     });
   }),
-  //읽지 않은 알림개수
-  http.get('/api/notifications/unread-count', async () => {
-    return HttpResponse.json({
-      count: 2,
-    });
-  }), // VAPID 공개키 조회
+
+  // VAPID 공개키 조회
   http.get('/api/notifications/subscriptions/vapid-public-key', async () => {
     return HttpResponse.json({
       vapidPublicKey: 'BMockPublicKeyForTesting-1234567890',

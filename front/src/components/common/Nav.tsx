@@ -51,7 +51,7 @@ export default function Nav() {
           />
         </Link>
         <nav className="w-full flex justify-end items-center">
-          <ul className="gap-12 flex">
+          <ul className="gap-10 flex items-center">
             {NAV_ITEMS.map(({ key, href, label }) => (
               <li key={key}>
                 <Link
@@ -65,7 +65,7 @@ export default function Nav() {
                 </Link>
               </li>
             ))}
-            <li className="relative top-[-6px]">
+            <li className="relative">
               <BellBtn />
             </li>
           </ul>
