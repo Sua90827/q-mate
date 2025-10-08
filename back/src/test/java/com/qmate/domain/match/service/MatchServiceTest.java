@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import com.qmate.common.redis.RedisHelper;
+import com.qmate.domain.event.service.EventAnniversaryService;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.match.MatchSetting;
@@ -19,9 +20,10 @@ import com.qmate.domain.match.model.response.MatchMembersResponse;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
 import com.qmate.domain.match.repository.MatchSettingRepository;
-import com.qmate.domain.pet.entity.Pet;
+import com.qmate.domain.notification.repository.NotificationRepository;
 import com.qmate.domain.pet.repository.PetRepository;
 import com.qmate.domain.pet.service.PetService;
+import com.qmate.domain.questioninstance.service.RandomAdminQuestionService;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
 import com.qmate.exception.custom.matchinstance.InviteAttemptLockedException;
@@ -56,6 +58,13 @@ class MatchServiceTest {
   private PetRepository petRepository;
   @Mock
   private PetService petService;
+  @Mock
+  private NotificationRepository notificationRepository;
+  @Mock
+  private EventAnniversaryService eventAnniversaryService;
+  @Mock
+  RandomAdminQuestionService randomAdminQuestionService;
+
 
   @Test
   @DisplayName("매칭 정보 업데이트 성공")
@@ -176,7 +185,7 @@ class MatchServiceTest {
     match.addMember(MatchMember.create(user2, match));
 
     // matchRepository.findById(1L)이 호출되면, 위에서 만든 가짜 match 객체를 반환하도록 설정
-    given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
+    given(matchRepository.findWithMembersAndUsersById(matchId)).willReturn(Optional.of(match));
 
     // when: 서비스 메서드를 실행하면
     MatchInfoResponse response = sut.getMatchInfo(matchId, requesterId);
@@ -201,7 +210,7 @@ class MatchServiceTest {
     match.addMember(MatchMember.create(user1, match));
     match.addMember(MatchMember.create(user2, match));
 
-    given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
+    given(matchRepository.findWithMembersAndUsersById(matchId)).willReturn(Optional.of(match));
 
     // expect: getMatchInfo를 호출하면 MatchForbiddenException 예외가 발생해야 함
     assertThatThrownBy(() -> sut.getMatchInfo(matchId, outsiderId))
