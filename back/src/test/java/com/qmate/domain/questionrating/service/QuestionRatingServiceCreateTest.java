@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.qmate.common.redis.rating.RedisQuestionRatingCounter;
 import com.qmate.domain.question.entity.Question;
 import com.qmate.domain.question.repository.QuestionRepository;
 import com.qmate.domain.questionrating.entity.QuestionRating;
@@ -33,6 +34,8 @@ class QuestionRatingServiceCreateTest {
   QuestionRepository questionRepository;
   @Mock
   QuestionRatingRepository questionRatingRepository;
+  @Mock
+  RedisQuestionRatingCounter redisQuestionRatingCounter;
   @Mock
   AuditorAware<Long> auditorAware;
 
