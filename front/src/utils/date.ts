@@ -34,3 +34,23 @@ export const isEventOnDate = (event: ScheduleEvent, selected: Date): boolean => 
       return false;
   }
 };
+
+//일요일 기준 달력에 표시되는 날짜 구간
+export const getCalendarRange = (date: Date) => {
+  const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+
+  const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+  const calendarStart = new Date(firstDay);
+  const firstDayOfWeek = firstDay.getDay();
+  calendarStart.setDate(firstDay.getDate() - firstDayOfWeek);
+
+  const calendarEnd = new Date(lastDay);
+  const lastDayOfWeek = lastDay.getDay();
+  calendarEnd.setDate(lastDay.getDate() + (6 - lastDayOfWeek));
+
+  return {
+    start: calendarStart,
+    end: calendarEnd,
+  };
+};

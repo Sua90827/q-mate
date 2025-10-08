@@ -1,3 +1,4 @@
+import { EventMonthResponse } from '@/types/scheduleType';
 import { http, HttpResponse } from 'msw';
 
 interface ScheduleRequestBody {
@@ -43,6 +44,28 @@ const events = [
     createdAt: '2025-09-20T12:32:11',
     updatedAt: '2025-09-28T09:10:01',
   },
+  {
+    eventId: 4,
+    title: '기념일 저녁',
+    description: '19:00 예약',
+    eventAt: '2025-10-20',
+    repeatType: 'YEARLY',
+    alarmOption: 'SAME_DAY',
+    isAnniversary: true,
+    createdAt: '2025-09-20T12:32:11',
+    updatedAt: '2025-09-28T09:10:01',
+  },
+  {
+    eventId: 5,
+    title: '일정',
+    description: '19:00 예약',
+    eventAt: '2025-09-29',
+    repeatType: 'YEARLY',
+    alarmOption: 'SAME_DAY',
+    isAnniversary: false,
+    createdAt: '2025-09-20T12:32:11',
+    updatedAt: '2025-09-28T09:10:01',
+  },
 ];
 
 export const scheduleHandlers = [
@@ -65,6 +88,49 @@ export const scheduleHandlers = [
       },
       { status: 200 },
     );
+  }),
+  // 월별 조회
+
+  http.get('/api/matches/:matchId/events/calendar', ({ request, params }) => {
+    const url = new URL(request.url);
+    const from = url.searchParams.get('from');
+    const to = url.searchParams.get('to');
+
+    if (!from || !to) {
+      return HttpResponse.json({ error: 'from, to required' }, { status: 400 });
+    }
+
+    const fromDate = new Date(from);
+    const toDate = new Date(to);
+    const diffDays = Math.ceil((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 60) {
+      return HttpResponse.json(
+        { error: '조회 기간은 최대 60일까지만 허용합니다.' },
+        { status: 400 },
+      );
+    }
+    const year = fromDate.getFullYear();
+    const month = fromDate.getMonth() + 1;
+    const allEvents = [
+      { eventId: 1, eventAt: '2025-10-25', anniversary: false },
+      { eventId: 2, eventAt: '2025-10-29', anniversary: true },
+      { eventId: 3, eventAt: '2025-10-20', anniversary: true },
+      { eventId: 4, eventAt: '2025-10-9', anniversary: true },
+      { eventId: 5, eventAt: '2025-09-25', anniversary: false },
+    ];
+
+    const filteredDays = allEvents.filter((day) => {
+      return day.eventAt >= from && day.eventAt <= to;
+    });
+
+    const mockData: EventMonthResponse = {
+      year,
+      month,
+      days: filteredDays,
+    };
+
+    return HttpResponse.json(mockData);
   }),
   // 일정 상세 조회
   http.get('/api/matches/:matchId/events/:eventId', ({ params }) => {
@@ -101,7 +167,7 @@ export const scheduleHandlers = [
   }),
 
   // 삭제
-  http.delete('/api/matches/:matchId/events/:eventId', async ({ params }) => {
+  http.delete('/api/matches/:matchId/events/:eventId(\\d+)', async ({ params }) => {
     const eventId = Number(params.eventId);
     const index = events.findIndex((e) => e.eventId === eventId);
 

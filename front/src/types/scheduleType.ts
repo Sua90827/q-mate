@@ -54,5 +54,5 @@ export type EventMonthResponse = {
 export type EventDay = {
   eventId: number;
   eventAt: string;
-  isAnniversary: boolean;
+  anniversary: boolean;
 };
