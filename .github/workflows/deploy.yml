@@ -74,6 +74,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
+          envs: SPRING_PROFILES_ACTIVE,DB_URL,DB_USERNAME,DB_PASSWORD,REDIS_HOST,REDIS_PORT,MAIL_HOST,MAIL_PORT,MAIL_USERNAME,MAIL_PASSWORD,JWT_SECRET,APP_EMAIL_VERIFICATION_JWT_SECRET,OAUTH_GOOGLE_CLIENT_ID,OAUTH_GOOGLE_CLIENT_SECRET,OAUTH_NAVER_CLIENT_ID,OAUTH_NAVER_CLIENT_SECRET
           script: |
             set -e
 
@@ -107,7 +108,6 @@ jobs:
             sudo sed -n '1,120p' /etc/systemd/system/qmate.service 2>/dev/null || true
             echo "----- END CURRENT UNIT -----"
             echo "----- BEGIN CURRENT DROPIN -----"
-            sudo sed -n '1,120p' /etc/systemd/system/qmate.service.d/env.conf 2>/dev/null || true
             echo "----- END CURRENT DROPIN -----"
             
             # 2) 유닛: 로컬 셸에서 '비확장' heredoc으로 임시파일 생성 후 install
@@ -160,7 +160,7 @@ jobs:
             echo "----- VERIFY NEW UNIT -----"
             sudo sed -n '1,40p' /etc/systemd/system/qmate.service
             echo "----- VERIFY NEW DROPIN -----"
-            sudo sed -n '1,40p' /etc/systemd/system/qmate.service.d/env.conf
+            # sudo sed -n '1,40p' /etc/systemd/system/qmate.service.d/env.conf
             
             # 5) 리로드 & 재시작
             sudo systemctl daemon-reload
@@ -168,7 +168,8 @@ jobs:
             sudo systemctl restart qmate
             
             # 6) 환경변수 실제 반영 확인
-            sudo systemctl show qmate -p Environment
+            sudo systemctl show qmate -p Environment | sed 's/=\([^ ]*\)/=***/g'
+            
             
             # 7) 헬스체크(조금 더 여유 있게)
             for i in $(seq 1 30); do
