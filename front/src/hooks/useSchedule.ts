@@ -8,7 +8,7 @@ import {
   fetchScheduleList,
   updateSchedule,
 } from '@/api/schedule';
-import { EventMonthResponse, ScheduleEvent, ScheduleResponse } from '@/types/scheduleType';
+import { EventMonthResponse, ScheduleEvent } from '@/types/scheduleType';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 //스케줄 리스트 조회
@@ -57,14 +57,13 @@ export const useDeleteSchedule = () => {
   });
 };
 
-export const useEventMonth = (year: number, month: number) => {
+export const useEventMonth = (matchId: number, from: string, to: string) => {
   return useQuery<EventMonthResponse>({
-    queryKey: ['calendarMonth', year, month],
-    queryFn: () => fetchEventMonth(year, month),
-
+    queryKey: ['calendarMonth', matchId, from, to],
+    queryFn: () => fetchEventMonth(matchId, from, to),
+    enabled: Boolean(matchId && from && to),
     placeholderData: keepPreviousData,
-    staleTime: 1000 * 60 * 10,
-    gcTime: 1000 * 60 * 60,
+    staleTime: 1000 * 60 * 5,
   });
 };
 export const useEventDetail = (matchId: number, eventId: number) => {
@@ -75,7 +74,6 @@ export const useEventDetail = (matchId: number, eventId: number) => {
     staleTime: 1000 * 30,
     gcTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
-    placeholderData: keepPreviousData,
   });
 };
 
@@ -86,8 +84,8 @@ export const useUpdateSchedule = (matchId: number, eventId: number) => {
   return useMutation({
     mutationFn: (body: {
       title: string;
-      description: string | null; // nullable
-      eventAt: string; // YYYY-MM-DD
+      description: string | null;
+      eventAt: string;
       repeatType: 'NONE' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
       alarmOption: 'NONE' | 'WEEK_BEFORE' | 'THREE_DAYS_BEFORE' | 'SAME_DAY';
     }) =>

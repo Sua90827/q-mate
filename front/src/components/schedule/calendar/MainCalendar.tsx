@@ -10,13 +10,24 @@ type Props = {
   onSelect: (date: Date | undefined) => void;
   anniversarySet: Set<string>;
   scheduleSet: Set<string>;
+  displayMonth: Date;
+  onDisplayMonthChange: (date: Date) => void;
 };
-export default function MainCalendar({ selected, onSelect, anniversarySet, scheduleSet }: Props) {
+export default function MainCalendar({
+  selected,
+  onSelect,
+  anniversarySet,
+  scheduleSet,
+  displayMonth,
+  onDisplayMonthChange,
+}: Props) {
   return (
     <div className="flex flex-1 justify-center w-full">
       <Calendar
         mode="single"
-        defaultMonth={selected}
+        // defaultMonth={selected}
+        month={displayMonth}
+        onMonthChange={onDisplayMonthChange}
         selected={selected}
         onSelect={onSelect}
         className="w-full md:rounded-t-lg theme-night:bg-black"

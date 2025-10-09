@@ -81,9 +81,13 @@ export const updateSchedule = async ({
   });
   return res.data;
 };
-export const fetchEventMonth = async (year: number, month: number): Promise<EventMonthResponse> => {
-  const res = await axios.get<EventMonthResponse>(`http://localhost:3006/calendarMonth`, {
-    params: { year, month },
+export const fetchEventMonth = async (
+  matchId: number,
+  from: string,
+  to: string,
+): Promise<EventMonthResponse> => {
+  const res = await axios.get<EventMonthResponse>(`/api/matches/${matchId}/events/calendar`, {
+    params: { from, to },
   });
   return res.data;
 };

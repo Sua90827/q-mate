@@ -1,10 +1,15 @@
-import { fetchNotificationDetail, fetchNotifications, fetchUnreadCount } from '@/api/notification';
+import {
+  deleteNotification,
+  fetchNotificationDetail,
+  fetchNotifications,
+  fetchUnreadCount,
+} from '@/api/notification';
 import {
   ListParams,
   notificationListResponseType,
   notificationResponseType,
 } from '@/types/notification';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 //알림 리스트
 export const useNotifications = (params: ListParams) => {
@@ -39,7 +44,19 @@ export const useNotificationDetail = (notificationId?: number) => {
     staleTime: 1000 * 60 * 5,
   });
 };
+//알림 삭제
+export const useDeleteNotification = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (notificationId: number) => deleteNotification(notificationId),
+    onSuccess: () => {
+      // 무한스크롤목록 /안 읽은 카운트 최신화
 
+      queryClient.invalidateQueries({ queryKey: ['notificationsInfinite'] });
+      queryClient.invalidateQueries({ queryKey: ['unreadCount'] });
+    },
+  });
+};
 //읽지 않은 알림
 export const useUnreadCount = () => {
   return useQuery({

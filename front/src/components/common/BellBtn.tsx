@@ -1,5 +1,5 @@
 'use client';
-import { Bell, Loader2 } from 'lucide-react';
+import { Bell, Loader2, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
 import {
@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useIntersectionObserver, useMediaQuery } from 'usehooks-ts';
 import { flatNotifications, formatTimeAgo } from '@/utils/notificationUtils';
 import CategoryIcons from '../notification/ui/CategoryIcons';
+import { deleteNotification } from '@/api/notification';
 
 export default function BellBtn() {
   const isMobile = useMediaQuery('(max-width: 640px)');
@@ -74,17 +75,28 @@ export default function BellBtn() {
       </button>
     );
   }
-  const clickHandler = (item: contentItemType): void => {
+  const clickHandler = async (item: contentItemType): Promise<void> => {
     setSelectedId(item.notificationId);
-    if (item.category === 'EVENT') {
-      router.push(`/schedule`);
+
+    let href = '/';
+    switch (item.category) {
+      case 'EVENT':
+        href = '/schedule';
+        break;
+      case 'QUESTION':
+        href = `/question/detail?id=${detail?.resourceId}`;
+        break;
+      case 'MATCH':
+        href = '/main';
+        break;
     }
-    if (item.category === 'QUESTION') {
-      router.push(`/question/detail?id=${detail?.resourceId}`);
+
+    try {
+      await router.prefetch(href);
+    } catch (e) {
+      console.error(e);
     }
-    if (item.category === 'MATCH') {
-      router.push(`/main`);
-    }
+    router.push(href);
   };
 
   return (
@@ -110,19 +122,23 @@ export default function BellBtn() {
             {items.map((item: contentItemType) => (
               <li
                 key={item.notificationId}
-                onClick={() => clickHandler(item)}
                 className={cn(
                   `mx-3 p-3 flex items-center gap-4 ${
                     item.read === false ? 'bg-unread' : 'bg-read border-read-border border'
-                  } w-[290px] h-25 rounded-sm cursor-pointer`,
+                  } w-[290px] h-25 rounded-sm`,
                 )}
               >
-                <div className="flex flex-col justify-center">
-                  <div className="flex gap-3">
+                <div className="flex justify-between w-full h-full items-center">
+                  <div
+                    className="flex gap-3 w-50 h-full py-3 cursor-pointer"
+                    onClick={() => clickHandler(item)}
+                  >
                     <CategoryIcons
                       category={item.category}
                       className={cn(
-                        `w-6 h-6 ${item.read === false ? '!text-primary' : '!text-text-unread'} `,
+                        `w-6 h-6 items-start ${
+                          item.read === false ? '!text-primary' : '!text-text-unread'
+                        } `,
                       )}
                     />
                     <div className="flex flex-col text-14 font-normal">
@@ -141,6 +157,12 @@ export default function BellBtn() {
 
                       <p className="text-text-unread">{formatTimeAgo(item.createdAt)}</p>
                     </div>
+                  </div>
+                  <div
+                    className="flex h-full w-10 items-center cursor-pointer"
+                    onClick={() => deleteNotification(item.notificationId)}
+                  >
+                    <X className="w-6 h-6" />
                   </div>
                 </div>
               </li>
