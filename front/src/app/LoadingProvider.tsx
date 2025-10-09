@@ -19,7 +19,11 @@ export default function LoadingProvider({ children }: { children: React.ReactNod
     <>
       <AnimatePresence>
         {show && pathname === '/' && (
-          <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }}>
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+          >
             <MainLoading />
           </motion.div>
         )}

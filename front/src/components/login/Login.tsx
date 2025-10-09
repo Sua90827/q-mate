@@ -117,8 +117,8 @@ export default function Login() {
   };
 
   return (
-    <div className=" w-full h-full flex flex-col gap-3 items-center justify-center">
-      {(isLoginLoading || isSocialLoading) && <Loader />}
+    <div className=" w-full h-full flex flex-col gap-3 items-center justify-center pt-[70px] sm:pt-[0px] sm:pb-[70px]">
+      {isLoginLoading || (isSocialLoading && <Loader />)}
       <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={173} height={55} />
 
       <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">

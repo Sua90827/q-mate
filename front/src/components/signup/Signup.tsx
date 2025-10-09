@@ -39,7 +39,7 @@ export default function SignupFormController() {
       return;
     }
     try {
-      const res = await sendCode.mutateAsync({ email, purpose: 'SIGNUP' });
+      const res = await sendCode.mutateAsync({ email, purpose: 'signup' });
       if (res && res.sent === true) {
         setIsCodeSent(true);
         SuccessToast('인증 코드를 전송했습니다.', 'text-primary border-primary');
@@ -60,7 +60,7 @@ export default function SignupFormController() {
     }
 
     try {
-      const res = await resendCode.mutateAsync({ email, purpose: 'SIGNUP' });
+      const res = await resendCode.mutateAsync({ email, purpose: 'signup' });
       if (res && res.resent === true) {
         SuccessToast('인증 코드를 재전송했습니다.', 'text-primary border-primary bg-bg-auth');
       } else {
@@ -77,7 +77,7 @@ export default function SignupFormController() {
     if (!email || !code) return;
 
     try {
-      const res = await verify.mutateAsync({ email, code, purpose: 'SIGNUP' });
+      const res = await verify.mutateAsync({ email, code, purpose: 'signup' });
       if (res?.verified) {
         if (res.email_verified_token) setEmailVerifiedToken(res.email_verified_token);
         if (res?.verified === true) {
@@ -100,7 +100,6 @@ export default function SignupFormController() {
       const { email, password, nickname, birth } = values;
       const res = await registerMut.mutateAsync({
         body: { email, password, nickname, birthDate: birth, emailVerifiedToken },
-        emailVerifiedToken,
       });
       if (res && res.registered === true) {
         SuccessToast('회원가입이 완료되었습니다.', 'text-primary border-primary bg-bg-auth');
@@ -116,7 +115,7 @@ export default function SignupFormController() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-5 items-center justify-center pb-[70px]">
+    <div className="w-full h-full flex flex-col gap-5 items-center justify-center pt-[70px] sm:pt-[0px] sm:pb-[70px]">
       <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={173} height={55} priority />
       <Form {...form}>
         <SignupForm
