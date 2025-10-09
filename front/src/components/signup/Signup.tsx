@@ -116,7 +116,7 @@ export default function SignupFormController() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-5 items-center justify-center pb-[70px]">
+    <div className="w-full h-full flex flex-col gap-5 items-center justify-center pt-[70px] sm:pt-[0px] sm:pb-[70px]">
       <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={173} height={55} priority />
       <Form {...form}>
         <SignupForm

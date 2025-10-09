@@ -33,7 +33,7 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full h-full  flex flex-col items-center justify-center pb-[70px]">
+    <div className="w-full h-full  flex flex-col items-center justify-center pt-[70px] sm:pt-[0px] sm:pb-[70px]">
       <div className="absolute inset-0 pointer-events-none z-0">
         <picture>
           <source media="(max-width: 768px) " srcSet="/images/background_deco_M.png" />
