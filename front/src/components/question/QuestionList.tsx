@@ -96,7 +96,7 @@ export default function QuestionList() {
       <div className="sm:hidden w-full h-[calc(100vh-70px)] flex flex-col">
         <div className="flex justify-between items-center h-[70px] px-4 flex-shrink-0">
           <FilterBtn setShowCustomOnly={setShowCustomOnly} className="text-theme-primary" />
-          <p className="text-20 font-Gumi text-theme-primary">질문 리스트</p>
+          <p className="text-20 font-Gumi text-theme-primary ">질문 리스트</p>
           <TrashCan onClick={() => setIsDeleteMode((prev) => !prev)} />
         </div>
         <div className="py-4 px-4 mb-[20px]">
@@ -156,7 +156,7 @@ export default function QuestionList() {
           <SearchInput query={queryText} setQuery={setQueryText} />
         </div>
         <div className="flex justify-between items-center px-4 overflow-visible">
-          <span className="inline-block text-20 font-bold py-4 cursor-default">질문 리스트</span>
+          <span className="inline-block text-20 font-bold py-4  select-none">질문 리스트</span>
 
           <FilterBtn setShowCustomOnly={setShowCustomOnly} />
         </div>

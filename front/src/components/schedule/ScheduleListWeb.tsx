@@ -58,7 +58,7 @@ export default function ScheduleListWeb() {
   return (
     <div className="w-full h-full bg-secondary pt-4 shadow-md rounded-lg">
       <div className="w-full h-full">
-        <h2 className="font-bold text-20 p-4">일정 리스트</h2>
+        <h2 className="font-bold text-20 p-4 select-none">일정 리스트</h2>
         <ul className="w-full border-y divide-y divide-text-gray">
           {schedules.map((list) => (
             <li
