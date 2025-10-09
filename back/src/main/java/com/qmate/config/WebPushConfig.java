@@ -39,8 +39,6 @@ public class WebPushConfig {
     if (Security.getProvider("BC") == null) {
       Security.addProvider(new BouncyCastleProvider());
     }
-    log.info("private key : {}", privateKey);
-    log.info("public key : {}", publicKey);
     try {
       keyPair = new KeyPair(
           Utils.loadPublicKey(publicKey),
