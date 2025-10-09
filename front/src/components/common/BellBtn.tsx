@@ -158,7 +158,7 @@ export default function BellBtn() {
                     </div>
                   </div>
                   <div
-                    className="flex h-full w-10 items-center cursor-pointer"
+                    className="flex h-full w-10 items-center"
                     onClick={() => deleteNotification(item.notificationId)}
                   >
                     <X className="!w-5 !h-5 !text-text-secondary " />
