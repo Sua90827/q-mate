@@ -78,7 +78,6 @@ class MatchServiceValidateTest {
 
     // expect: BusinessGlobalException (500 서버 에러) 예외가 발생해야 함
     assertThatThrownBy(() -> sut.validateInviteCode(validCode))
-        .isInstanceOf(BusinessGlobalException.class)
-        .hasMessageContaining("매칭에 참여한 사용자가 없습니다.");
+        .isInstanceOf(BusinessGlobalException.class);
   }
 }

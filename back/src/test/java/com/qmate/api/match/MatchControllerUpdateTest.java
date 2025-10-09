@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.qmate.AuthTestUtils;
+import com.qmate.SecuritySliceTestConfig;
 import com.qmate.api.MatchController;
 import com.qmate.domain.match.model.request.MatchUpdateRequest;
 import com.qmate.domain.match.service.MatchService;
@@ -18,12 +20,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = MatchController.class)
-@AutoConfigureMockMvc(addFilters = false) // Security 필터 비활성화
+@AutoConfigureMockMvc
+@Import(SecuritySliceTestConfig.class)
 class MatchControllerUpdateTest {
 
   @Autowired
@@ -47,6 +51,7 @@ class MatchControllerUpdateTest {
 
     // expect: API를 호출하면, 404 Not Found 응답과 MATCH_002 에러 코드가 와야 함
     mockMvc.perform(patch("/api/matches/{matchId}/info", nonExistentMatchId)
+            .with(AuthTestUtils.userPrincipal(1L))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isNotFound())
@@ -65,6 +70,7 @@ class MatchControllerUpdateTest {
 
     // expect: API를 호출하면, 403 Forbidden 응답과 MATCH_008 에러 코드가 와야 함
     mockMvc.perform(patch("/api/matches/{matchId}/info", matchId)
+            .with(AuthTestUtils.userPrincipal(1L))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isForbidden())

@@ -3,12 +3,16 @@ package com.qmate.domain.match.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
+import com.qmate.domain.event.service.EventAnniversaryService;
 import com.qmate.domain.match.MatchStatus;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
+import com.qmate.domain.notification.repository.NotificationRepository;
+import com.qmate.domain.pet.service.PetService;
+import com.qmate.domain.questioninstance.service.RandomAdminQuestionService;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
 import java.util.List;
@@ -36,6 +40,14 @@ class MatchServiceCurrentMatchIdTest {
   private UserRepository userRepository;
   @Mock
   private RedisHelper redisHelper;
+  @Mock
+  private PetService petService;
+  @Mock
+  private NotificationRepository notificationRepository;
+  @Mock
+  private EventAnniversaryService eventAnniversaryService;
+  @Mock
+  RandomAdminQuestionService randomAdminQuestionService;
 
   @Test
   @DisplayName("매칭 참여 성공: 두 멤버의 current_match_id가 업데이트된다")

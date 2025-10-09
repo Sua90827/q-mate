@@ -4,12 +4,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
+import com.qmate.domain.event.service.EventAnniversaryService;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.match.model.request.MatchJoinRequest;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.match.repository.MatchRepository;
+import com.qmate.domain.notification.repository.NotificationRepository;
 import com.qmate.domain.pet.service.PetService; // ◀◀◀ PetService import
+import com.qmate.domain.questioninstance.service.RandomAdminQuestionService;
 import com.qmate.domain.user.User;
 import com.qmate.domain.user.UserRepository;
 import com.qmate.common.redis.RedisHelper;
@@ -38,6 +41,13 @@ class MatchServiceJoinTest {
   private RedisHelper redisHelper;
   @Mock
   private PetService petService; // ◀◀◀ PetRepository 대신 PetService를 Mock으로 주입
+  @Mock
+  private NotificationRepository notificationRepository;
+  @Mock
+  private EventAnniversaryService eventAnniversaryService;
+  @Mock
+  RandomAdminQuestionService randomAdminQuestionService;
+
 
   @Test
   @DisplayName("매칭 참여 성공: 새로운 Pet이 생성된다")
