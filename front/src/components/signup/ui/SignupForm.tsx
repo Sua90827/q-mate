@@ -58,7 +58,7 @@ export default function SignupForm({
           type="button"
           onClick={isCodeSent ? onClickResendCode : onClickSendCode}
           disabled={isSendingCode}
-          className="h-11 !font-semibold !text-14 text-secondary "
+          className="h-11 w-20 !font-semibold !text-14 text-secondary "
         >
           {isSendingCode ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -91,7 +91,7 @@ export default function SignupForm({
           type="button"
           onClick={onClickVerifyCode}
           disabled={isVerifying}
-          className="h-11 !font-semibold !text-14 text-secondary "
+          className="h-11 w-20 !font-semibold !text-14 text-secondary "
         >
           {isVerifying ? <Loader2 className="w-4 h-4 animate-spin  text-secondary " /> : '인증확인'}
         </Button>

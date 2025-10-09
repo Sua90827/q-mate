@@ -27,11 +27,7 @@ export const verifyEmailCode = async (payload: VerifyEmailCodeBody) => {
 };
 
 // 4) 자체 회원가입 (헤더에 검증 토큰 포함)
-export const registerWithEmailToken = async (body: RegisterBody, emailVerifiedToken: string) => {
-  const { data } = await instance.post('/auth/register', body, {
-    headers: {
-      'X-Email-Verified-Token': emailVerifiedToken,
-    },
-  });
+export const registerWithEmailToken = async (body: RegisterBody) => {
+  const { data } = await instance.post('/auth/register', body);
   return data as RegisterResponse; // { registered: true }
 };

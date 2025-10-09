@@ -100,7 +100,6 @@ export default function SignupFormController() {
       const { email, password, nickname, birth } = values;
       const res = await registerMut.mutateAsync({
         body: { email, password, nickname, birthDate: birth, emailVerifiedToken },
-        emailVerifiedToken,
       });
       if (res && res.registered === true) {
         SuccessToast('회원가입이 완료되었습니다.', 'text-primary border-primary bg-bg-auth');
