@@ -32,7 +32,7 @@ function EventList({ date, items, isLoading, isError }: Props) {
             )}
 
             {items.map(({ eventId, title, isAnniversary, repeatType }) => (
-              <li key={eventId} className="flex items-center py-3 ">
+              <li key={eventId} className="flex items-center py-3 cursor-pointer">
                 <span
                   className={`inline-block w-1 h-11 mr-2 ${
                     isAnniversary ? 'bg-anniversary' : 'bg-calendar'
