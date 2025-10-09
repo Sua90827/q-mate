@@ -51,7 +51,7 @@ export default function Home() {
       <div className="flex flex-col gap-5 items-center justify-center">
         <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={173} height={55} />
         <p className="font-Gumi text-24">함께 하루를 기록해봐요!</p>
-        <Button variant="invite" className="w-[300px] mt-6" onClick={checkLogin}>
+        <Button variant="invite" className="w-[300px] mt-6 cursor-pointer" onClick={checkLogin}>
           시작 하기
         </Button>
       </div>
