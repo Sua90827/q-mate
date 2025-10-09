@@ -6,7 +6,3 @@
 - **`hotfix/server-crash`**: 긴급 수정
 
 - 호버 시 opacity 80%적용 하기
-
-# Q-Mate
-
-테스트용 수정: 2025-10-09!!!
