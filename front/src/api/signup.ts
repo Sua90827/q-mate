@@ -6,7 +6,6 @@ import {
   VerifyEmailCodeBody,
   VerifyEmailCodeResponse,
 } from '@/types/signupType';
-import axios from 'axios';
 import instance from './axiosInstance';
 
 // 1) 이메일 인증 코드 발송
