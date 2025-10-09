@@ -1,23 +1,19 @@
-import axios from 'axios';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import { ErrorToast } from '@/components/common/CustomToast';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { useSelectedStore } from '@/store/useSelectedStore';
-
-const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-});
+import instance from '@/api/axiosInstance';
 
 // 요청 시 토큰 자동 첨부
-api.interceptors.request.use((config) => {
+instance.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken;
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
 // 응답 시 401(만료) 감지
-api.interceptors.response.use(
+instance.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error.response?.status === 401) {
@@ -39,5 +35,3 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-
-export default api;
