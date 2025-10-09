@@ -23,7 +23,6 @@ export default function LoadingProvider({ children }: { children: React.ReactNod
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1 }}
-            className=""
           >
             <MainLoading />
           </motion.div>
