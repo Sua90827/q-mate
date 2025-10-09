@@ -18,7 +18,7 @@ export default function Home() {
       // 아직 유효하면 메인으로 이동
       setSelectedMenu('home');
       router.replace('/main');
-    } else if (accessToken && Date.now() >= accessTokenTime) {
+    } else if ((accessToken && Date.now() >= accessTokenTime) || !accessTokenTime) {
       // 만료된 토큰이면 전부 정리
       //선택된 메뉴 리셋
       setSelectedMenu('home');
@@ -51,7 +51,7 @@ export default function Home() {
       <div className="flex flex-col gap-5 items-center justify-center">
         <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={173} height={55} />
         <p className="font-Gumi text-24">함께 하루를 기록해봐요!</p>
-        <Button variant="invite" className="w-[300px] mt-6" onClick={checkLogin}>
+        <Button variant="invite" className="w-[300px] mt-6 cursor-pointer" onClick={checkLogin}>
           시작 하기
         </Button>
       </div>

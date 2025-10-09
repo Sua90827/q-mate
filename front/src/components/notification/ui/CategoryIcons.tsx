@@ -1,5 +1,4 @@
 import { categoryType } from '@/types/notification';
-import { ca } from 'date-fns/locale';
 import { CalendarCheck, MessageSquare, UsersRound } from 'lucide-react';
 import React from 'react';
 

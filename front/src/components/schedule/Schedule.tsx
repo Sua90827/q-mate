@@ -11,9 +11,9 @@ export default function Schedule() {
   const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
   return (
     <div className="sm:pt-[35px] w-full h-full">
-      <div className="fixed top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden px-4">
+      <div className="fixed top-0 left-0 right-0 flex items-center justify-between py-5 sm:hidden ">
         <Link href="/schedule/list" aria-label="일정 리스트로 이동">
-          <CalendarDays className="text-theme-primary ml-7" />
+          <CalendarDays className="text-theme-primary ml-7 !w-8 !h-8" />
         </Link>
 
         <Link href="/main" onClick={() => setSelectedMenu('home')}>

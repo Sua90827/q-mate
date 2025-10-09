@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useFetchPetInfo } from '@/hooks/usePet';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { usePetStateStore } from '@/store/usePetStore';
+import BellBtn from '../common/BellBtn';
 
 export default function Main() {
   const MotionDiv = motion.div;
@@ -59,6 +60,9 @@ export default function Main() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center w-[252px]">
+        <div className="fixed top-0 right-0 flex py-5 sm:hidden">
+          <BellBtn />
+        </div>
         <ExpBubble />
         <Bubbley className="mb-6" />
         <ExpBar />

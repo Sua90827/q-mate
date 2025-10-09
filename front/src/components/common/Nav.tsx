@@ -43,7 +43,7 @@ export default function Nav() {
 
       {/* 데스크탑 (상단 고정) */}
       <header className="hidden sm:flex fixed top-0 left-0 w-full h-[70px] items-center z-40 bg-transparent">
-        <Link href="/main">
+        <Link href="/main" onClick={() => setSelectedMenu('home')}>
           <img
             src="/logo.svg"
             alt="큐메이트 로고"
