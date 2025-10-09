@@ -21,7 +21,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     });
 
     // 혹시 persist 이벤트가 누락될 경우를 대비한 fallback
-    const timeout = setTimeout(() => setHydrated(true), 300);
+    const timeout = setTimeout(() => setHydrated(true), 1000);
     return () => {
       clearTimeout(timeout);
       unsub();
