@@ -18,7 +18,7 @@ export default function Home() {
       // 아직 유효하면 메인으로 이동
       setSelectedMenu('home');
       router.replace('/main');
-    } else if (accessToken && Date.now() >= accessTokenTime) {
+    } else if ((accessToken && Date.now() >= accessTokenTime) || !accessTokenTime) {
       // 만료된 토큰이면 전부 정리
       //선택된 메뉴 리셋
       setSelectedMenu('home');

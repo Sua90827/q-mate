@@ -91,7 +91,7 @@ export default function QuestionList() {
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full flex items-center justify-center">
       {/* 모바일 */}
       <div className="sm:hidden w-full h-[calc(100vh-70px)] flex flex-col">
         <div className="flex justify-between items-center h-[70px] px-4 flex-shrink-0">

@@ -7,7 +7,6 @@ import {
   useNotificationDetail,
   useUnreadCount,
 } from '@/hooks/useNotificationList';
-import { Skeleton } from '../ui/skeleton';
 import { contentItemType } from '@/types/notification';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
@@ -103,7 +102,7 @@ export default function BellBtn() {
     <Sheet modal={false}>
       <SheetTrigger asChild>
         <div className="relative flex mr-7 w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center">
-          <Bell className="w-8 h-8" />
+          <Bell className="!w-8 !h-8" />
           {unread > 0 && (
             <div
               aria-label={`읽지 않은 알림 ${unread}개`}
@@ -136,7 +135,7 @@ export default function BellBtn() {
                     <CategoryIcons
                       category={item.category}
                       className={cn(
-                        `w-6 h-6 items-start ${
+                        `w-6 h-6 items-start mt-1 ${
                           item.read === false ? '!text-primary' : '!text-text-unread'
                         } `,
                       )}
@@ -162,7 +161,7 @@ export default function BellBtn() {
                     className="flex h-full w-10 items-center cursor-pointer"
                     onClick={() => deleteNotification(item.notificationId)}
                   >
-                    <X className="w-6 h-6" />
+                    <X className="!w-5 !h-5 !text-text-secondary " />
                   </div>
                 </div>
               </li>

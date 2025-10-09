@@ -73,10 +73,10 @@ export default function Notification() {
           알림
         </span>
         <button
-          className="relative flex mr-7 w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center"
+          className="relative flex w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center"
           onClick={() => router.back()}
         >
-          <X className="w-7 h-7" />
+          <X className="!w-6 !h-6" />
         </button>
       </div>
       <div ref={scrollRef} className="w-full h-full overflow-y-auto bg-white">
@@ -112,10 +112,14 @@ export default function Notification() {
               )}
             >
               <div className="flex flex-col justify-center w-full" onClick={() => clickHandler}>
-                <div className="flex gap-3">
+                <div className="flex gap-3 pl-3 ">
                   <CategoryIcons
                     category={item.category}
-                    className={cn(`w-6 h-6 ${item.read === false ? '!text-primary' : ''}`)}
+                    className={cn(
+                      `w-6 h-6 mt-1 ${
+                        item.read === false ? '!text-primary' : '!text-text-secondary'
+                      }`,
+                    )}
                   />
                   <div className="flex flex-col text-14 font-normal">
                     <div
@@ -139,7 +143,7 @@ export default function Notification() {
                 className="flex h-full w-20 items-center justify-center cursor-pointer"
                 onClick={() => deleteNotification(item.notificationId)}
               >
-                <X className="w-6 h-6" />
+                <X className="!w-5 !h-5 text-text-secondary" />
               </div>
             </li>
           ))}

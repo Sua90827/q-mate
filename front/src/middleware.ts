@@ -2,13 +2,13 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 export function middleware(req: NextRequest) {
-  const hour = new Date().getHours();
+  const now = new Date();
+  const hourKST = (now.getUTCHours() + 9) % 24; // vercel 배포 시 시간 맞추기 용
   let theme: 'day' | 'sunset' | 'night' = 'day';
 
-  if (hour >= 6 && hour < 18) theme = 'day';
-  else if (hour >= 18 && hour < 20) theme = 'sunset';
+  if (hourKST >= 6 && hourKST < 18) theme = 'day';
+  else if (hourKST >= 18 && hourKST < 20) theme = 'sunset';
   else theme = 'night';
-
   const res = NextResponse.next();
 
   // 쿠키 저장

@@ -11,7 +11,7 @@ export default function QuestionListPage() {
 
   return (
     <div className="w-full h-full flex flex-row items-center justify-center">
-      <div className="md:hidden w-full h-full">
+      <div className="md:hidden w-full h-full ">
         {idParam ? <QuestionDetail /> : <QuestionList />}
       </div>
 
