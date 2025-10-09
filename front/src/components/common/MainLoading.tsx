@@ -18,7 +18,7 @@ export default function MainLoading() {
         />
       </picture>
 
-      <p className="font-Gumi text-24 py-10 text-center">
+      <p className="font-Gumi text-24 pb-10 text-center">
         오늘도 함께
         <br />
         하루를 기록해봐요!
