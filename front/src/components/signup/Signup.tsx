@@ -70,6 +70,7 @@ export default function SignupFormController() {
       ErrorToast('코드 재전송에 실패했습니다.');
     }
   };
+  //
   const handleVerifyCode = async () => {
     const { email, code } = form.getValues();
     if (!email) form.setError('email', { message: '이메일을 먼저 입력해주세요.' });
