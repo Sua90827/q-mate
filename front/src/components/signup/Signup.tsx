@@ -39,7 +39,7 @@ export default function SignupFormController() {
       return;
     }
     try {
-      const res = await sendCode.mutateAsync({ email, purpose: 'SIGNUP' });
+      const res = await sendCode.mutateAsync({ email, purpose: 'signup' });
       if (res && res.sent === true) {
         setIsCodeSent(true);
         SuccessToast('인증 코드를 전송했습니다.', 'text-primary border-primary');
@@ -60,7 +60,7 @@ export default function SignupFormController() {
     }
 
     try {
-      const res = await resendCode.mutateAsync({ email, purpose: 'SIGNUP' });
+      const res = await resendCode.mutateAsync({ email, purpose: 'signup' });
       if (res && res.resent === true) {
         SuccessToast('인증 코드를 재전송했습니다.', 'text-primary border-primary bg-bg-auth');
       } else {
@@ -77,7 +77,7 @@ export default function SignupFormController() {
     if (!email || !code) return;
 
     try {
-      const res = await verify.mutateAsync({ email, code, purpose: 'SIGNUP' });
+      const res = await verify.mutateAsync({ email, code, purpose: 'signup' });
       if (res?.verified) {
         if (res.email_verified_token) setEmailVerifiedToken(res.email_verified_token);
         if (res?.verified === true) {
