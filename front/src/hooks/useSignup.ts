@@ -33,6 +33,5 @@ export const useVerifyEmailCode = () =>
 // 자체 회원가입
 export const useRegisterWithEmailToken = () =>
   useMutation({
-    mutationFn: (vars: { body: RegisterBody; emailVerifiedToken: string }) =>
-      registerWithEmailToken(vars.body, vars.emailVerifiedToken),
+    mutationFn: (vars: { body: RegisterBody }) => registerWithEmailToken(vars.body),
   });
