@@ -64,6 +64,7 @@ export default function Login() {
           setSelectedMenu('home');
           router.push('/main');
         } else {
+          if (!data.accessToken) return;
           //accessToken 셋팅
           setAccessToken(data.accessToken);
           //닉네임 생일 정보 있으면 저장하기

@@ -1,3 +1,4 @@
+'use client';
 import { ErrorToast } from '@/components/common/CustomToast';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
@@ -13,4 +14,5 @@ export const handleUnauthorized = () => {
   localStorage.clear();
   resetMatchId();
   resetAccessToken();
+  window.location.replace('/login');
 };
