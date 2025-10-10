@@ -44,7 +44,7 @@ spring:
             client-id: ${OAUTH_GOOGLE_CLIENT_ID}
             client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
             scope: openid, email, profile
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: "http://ec2-43-201-32-144.ap-northeast-2.compute.amazonaws.com:8080/login/oauth2/code/{registrationId}"
           naver:
             client-id: ${OAUTH_NAVER_CLIENT_ID}
             client-secret: ${OAUTH_NAVER_CLIENT_SECRET}
