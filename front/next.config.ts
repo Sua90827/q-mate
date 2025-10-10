@@ -21,6 +21,10 @@ const nextConfig: NextConfig = {
         source: '/oauth2/:path*',
         destination: `${process.env.BACKEND_ORIGIN}/oauth2/:path*`,
       },
+      {
+        source: '/login/:path*',
+        destination: `${process.env.BACKEND_ORIGIN}/login/:path*`,
+      },
     ];
   },
 };
