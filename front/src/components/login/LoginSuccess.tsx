@@ -17,7 +17,7 @@ export default function LoginSuccess() {
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const res = await axios.post('/auth/exchange', {}, { withCredentials: true });
+        const res = await axios.get('/auth/exchange', { withCredentials: true });
         const data = res.data;
         if (data?.user?.currentMatchId) {
           setMatchId(data.user.currentMatchId);
