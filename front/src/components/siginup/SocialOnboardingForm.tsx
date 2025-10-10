@@ -20,7 +20,7 @@ export default function SocialOnboardingForm() {
   const [open, setOpen] = React.useState(false);
 
   const storedNickname = sessionStorage.getItem('nickname') || '';
-  const storedBirthDate = sessionStorage.getItem('birthdate') || '';
+  const storedBirthDate = sessionStorage.getItem('birthDate') || '';
 
   const [birthDate, setBirthDate] = React.useState<string | undefined>(
     storedBirthDate || undefined,
