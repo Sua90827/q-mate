@@ -16,15 +16,6 @@ const nextConfig: NextConfig = {
         source: '/api/:path*',
         destination: `${process.env.BACKEND_ORIGIN}/:path*`,
       },
-      // 소셜 로그인 관련
-      {
-        source: '/oauth2/:path*',
-        destination: `${process.env.BACKEND_ORIGIN}/oauth2/:path*`,
-      },
-      {
-        source: '/login/:path*',
-        destination: `${process.env.BACKEND_ORIGIN}/login/:path*`,
-      },
     ];
   },
 };

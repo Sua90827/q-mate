@@ -14,8 +14,19 @@ export const logoutUser = async () => {
 
 //소셜 로그인
 export const socialLogin = (provider: string) => {
-  const url = `http://ec2-43-201-32-144.ap-northeast-2.compute.amazonaws.com:8080/oauth2/authorization/${provider}`;
-  window.location.href = url;
+  const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_ORIGIN;
+  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  const redirectUri = `${frontendUrl}/login/oauth2/code/${provider}`;
+
+  const googleUrl =
+    `https://accounts.google.com/o/oauth2/v2/auth` +
+    `?client_id=${clientId}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+    `&response_type=code` +
+    `&scope=email profile openid` +
+    `&access_type=offline`;
+
+  window.location.href = googleUrl;
 };
 
 //추가 폼 정보 입력
