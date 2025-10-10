@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
       // 일반 API 요청
       {
         source: '/api/:path*',
-        destination: `${process.env.BACKEND_ORIGIN}/api/:path*`,
+        destination: `${process.env.BACKEND_ORIGIN}/:path*`,
       },
       // 소셜 로그인 관련
       {
