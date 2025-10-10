@@ -43,12 +43,11 @@ export default function SignupDatePicker({ control }: Props) {
             >
               <Calendar
                 mode="single"
+                captionLayout="dropdown"
                 selected={selectedDate}
                 onSelect={(d) => {
                   if (d) field.onChange(toKey(d));
                 }}
-                fromYear={1930}
-                toYear={new Date().getFullYear()}
                 disabled={(d) => d > new Date()}
               />
             </PopoverContent>
