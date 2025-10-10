@@ -14,8 +14,7 @@ export const logoutUser = async () => {
 
 //소셜 로그인
 export const socialLogin = async (provider: string) => {
-  const res = await instance.post(`/oauth2/authorization/${provider}`);
-  return res.data;
+  window.location.href = `/oauth2/authorization/${provider}`;
 };
 
 //추가 폼 정보 입력
@@ -26,6 +25,6 @@ export const updateSocialProfile = async ({
   nickname: string;
   birthDate: string;
 }) => {
-  const res = await instance.patch(`/users/me/profile`, { nickname, birthDate });
+  const res = await instance.patch(`api/users/me/profile`, { nickname, birthDate });
   return res.data;
 };

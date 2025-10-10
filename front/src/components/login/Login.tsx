@@ -6,7 +6,7 @@ import TextInput from '../common/TextInput';
 import { Button } from '../common/Button';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useLoginUser, useSocialLogin } from '@/hooks/useAuth';
+import { useLoginUser } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import NoticeModal from '../common/NoticeModal';
 import Loader from '../common/Loader';
@@ -15,6 +15,7 @@ import { useSyncPushOnLogin } from '@/hooks/useSyncPush';
 import { fetchPetInfo } from '@/api/pet';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useSelectedStore } from '@/store/useSelectedStore';
+import { socialLogin } from '@/api/auth';
 
 const validateEmail = (v: string) => /\S+@\S+\.\S+/.test(v);
 const validatePassword = (v: string) =>
@@ -38,48 +39,13 @@ export default function Login() {
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
   const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
   const { mutate: loginUserMutate, isPending: isLoginLoading } = useLoginUser();
-  const { mutate: socialLoginMutate, isPending: isSocialLoading } = useSocialLogin();
 
+  // 소셜 로그인 (리다이렉트 방식)
   const handleSocialLogin = (provider: string) => {
-    socialLoginMutate(provider, {
-      onSuccess: async (data) => {
-        try {
-          await syncPushOnLogin();
-        } catch (error) {
-          console.warn('[Push Sync Failed]', error);
-        }
-        if (data.user.currentMatchId) {
-          //매치 아이디 셋팅
-          setMatchId(data.user.currentMatchId);
-
-          // 서버에서 현재 exp 조회
-          const petInfo = await fetchPetInfo(data.user.currentMatchId);
-          //현재 exp 셋팅
-          localStorage.setItem('prevExp', String(petInfo.exp));
-          //accessToken 셋팅
-          setAccessToken(data.accessToken);
-          const accessTokenTime = Date.now() + data.accessTokenExpiresIn * 1000;
-          localStorage.setItem('accessTokenTime', String(accessTokenTime));
-
-          setSelectedMenu('home');
-          router.push('/main');
-        } else {
-          if (!data.accessToken) return;
-          //accessToken 셋팅
-          setAccessToken(data.accessToken);
-          //닉네임 생일 정보 있으면 저장하기
-          if (data.user?.nickname) sessionStorage.setItem('nickname', data.user.nickname);
-          if (data.user?.birthdate) sessionStorage.setItem('birthdate', data.user.birthdate);
-          router.push('/signup/onboarding');
-        }
-      },
-      onError: () => {
-        setLoginErrorType('social');
-        setOpen(true);
-      },
-    });
+    socialLogin(provider);
   };
 
+  // 일반 로그인
   const handleLogin = () => {
     loginUserMutate(
       { email, password },
@@ -90,21 +56,25 @@ export default function Login() {
           } catch (error) {
             console.warn('[Push Sync Failed]', error);
           }
+
           if (data.user.currentMatchId) {
-            //매치 아이디 셋팅
+            // 매치 아이디 셋팅
             setMatchId(data.user.currentMatchId);
+
             // 서버에서 현재 exp 조회
             const petInfo = await fetchPetInfo(data.user.currentMatchId);
-            //현재 exp 셋팅
+            // 현재 exp 셋팅
             localStorage.setItem('prevExp', String(petInfo.exp));
-            //accessToken 셋팅
+            // accessToken 셋팅
             setAccessToken(data.accessToken);
             const accessTokenTime = Date.now() + data.accessTokenExpiresIn * 1000;
             localStorage.setItem('accessTokenTime', String(accessTokenTime));
+
+            //메뉴 메인 선택
             setSelectedMenu('home');
             router.push('/main');
           } else {
-            //accessToken 셋팅
+            // accessToken 셋팅
             setAccessToken(data.accessToken);
             router.push('/invite');
           }
@@ -118,10 +88,9 @@ export default function Login() {
   };
 
   return (
-    <div className=" w-full h-full flex flex-col gap-3 items-center justify-center pt-[70px] sm:pt-[0px] sm:pb-[70px]">
-      {isLoginLoading || (isSocialLoading && <Loader />)}
+    <div className="w-full h-full flex flex-col gap-3 items-center justify-center pt-[70px] sm:pt-[0px] sm:pb-[70px]">
+      {isLoginLoading && <Loader />} {/* ✅ socialLoading 제거 */}
       <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={173} height={55} />
-
       <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">
         <TextInput
           label="이메일"
@@ -149,19 +118,16 @@ export default function Login() {
           로그인
         </Button>
       </form>
-
       <div className="my-6 flex items-center gap-3 w-[295px]">
         <div className="h-px flex-1 bg-dash" />
         <span className="px-2 text-font-16 text-text-secondary">또는</span>
         <div className="h-px flex-1 bg-dash" />
       </div>
-
       <Button variant="primaryOutline" className="w-[295px]" asChild>
         <Link href="/signup">회원가입</Link>
       </Button>
       <GoogleBtn onSocialLogin={handleSocialLogin} />
       <NaverBtn onSocialLogin={handleSocialLogin} />
-
       <NoticeModal
         open={open}
         setOpen={setOpen}
