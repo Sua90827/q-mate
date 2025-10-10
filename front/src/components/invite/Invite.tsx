@@ -54,14 +54,17 @@ export default function Invite() {
     try {
       await navigator.clipboard.writeText(text);
       setOpen(true);
-      if (data?.status === 'ACTIVE') {
-        router.push('/main');
-      }
     } catch {
       setErrorType('copy');
       setErrorOpen(true);
     }
   };
+
+  useEffect(() => {
+    if (data?.status === 'ACTIVE') {
+      router.push('/main');
+    }
+  }, [data?.status, router]);
 
   return (
     <>

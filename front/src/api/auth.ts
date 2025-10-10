@@ -14,21 +14,8 @@ export const logoutUser = async () => {
 
 //소셜 로그인
 export const socialLogin = (provider: string) => {
-  const isMobile = window.innerWidth <= 768;
   const url = `/oauth2/authorization/${provider}`;
-
-  if (isMobile) {
-    // 전체 페이지 이동 (모바일)
-    window.location.href = url;
-  } else {
-    // 팝업창 (데스크탑)
-    const w = Math.min(500, window.innerWidth - 20);
-    const h = Math.min(650, window.innerHeight - 40);
-    const left = (window.innerWidth - w) / 2;
-    const top = (window.innerHeight - h) / 2;
-
-    window.open(url, 'oauth2', `width=${w},height=${h},left=${left},top=${top}`);
-  }
+  window.location.href = url;
 };
 
 //추가 폼 정보 입력
