@@ -17,7 +17,7 @@ jobs:
 
     # 공통 ENV로 커밋 메시지 폴백 구성
     env:
-      COMMIT_MSG: ${{ inputs.message || github.event.head_commit.message || 'chore: mirror output' }}
+      COMMIT_MSG: "${{ inputs.message || github.event.head_commit.message || 'chore: mirror output' }}"
 
     steps:
       - uses: actions/checkout@v2
