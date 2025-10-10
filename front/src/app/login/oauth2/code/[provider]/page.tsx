@@ -1,41 +1,29 @@
 'use client';
-import { useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import axios from 'axios';
-import Loader from '@/components/common/Loader';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function GoogleCallback() {
-  const router = useRouter();
   const searchParams = useSearchParams();
+  const [params, setParams] = useState<string>('');
 
   useEffect(() => {
-    const code = searchParams.get('code');
-    if (!code) {
-      // ❌ code가 없으면 로그인 페이지로 되돌림
-      router.replace('/login');
-      return;
+    // 현재 URL의 전체 쿼리 파라미터를 보기 좋게 문자열로 정리
+    const entries = Array.from(searchParams.entries());
+    if (entries.length > 0) {
+      const formatted = entries
+        .map(([key, value]) => `${key} = ${decodeURIComponent(value)}`)
+        .join('\n');
+      setParams(formatted);
+    } else {
+      setParams('❌ URL에 전달된 code/state 파라미터가 없습니다.');
     }
+  }, [searchParams]);
 
-    const exchangeCode = async () => {
-      try {
-        // ✅ 백엔드 쿠키/토큰 없이 단순히 성공 여부만 확인
-        const res = await axios.post('/auth/exchange', { code }, { withCredentials: true });
-
-        if (res.status === 200) {
-          console.log('✅ 로그인 성공 (임시 처리)');
-          router.replace('/main'); // 성공 시 메인으로 이동
-        } else {
-          console.error('❌ 로그인 실패 응답:', res.status);
-          router.replace('/login');
-        }
-      } catch (err) {
-        console.error('❌ 로그인 중 오류 발생:', err);
-        router.replace('/login');
-      }
-    };
-
-    exchangeCode();
-  }, [searchParams, router]);
-
-  return <Loader />;
+  return (
+    <div style={{ padding: '2rem', whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
+      <h2>🔍 Google OAuth 콜백 파라미터</h2>
+      <hr />
+      <p>{params}</p>
+    </div>
+  );
 }
