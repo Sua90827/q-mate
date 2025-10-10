@@ -5,10 +5,8 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { useSelectedStore } from '@/store/useSelectedStore';
-import { useLogoutUser } from '@/hooks/useAuth';
-import { ErrorToast } from '../common/CustomToast';
-import Loader from '../common/Loader';
 import { useEffect, useState } from 'react';
+import instance from '@/api/axiosInstance';
 
 export default function Home() {
   const router = useRouter();
@@ -34,6 +32,7 @@ export default function Home() {
       localStorage.clear();
       resetMatchId();
       resetAccessToken();
+      instance.defaults.headers.Authorization = '';
       router.replace('/login');
     }
   };

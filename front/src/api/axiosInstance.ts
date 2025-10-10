@@ -21,9 +21,15 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (res) => res,
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+    const requestUrl = error.config?.url;
+
+    const isAuthRoute = requestUrl?.startsWith('/login') || requestUrl?.startsWith('/signup');
+
+    if (status === 401 && !isAuthRoute) {
       handleUnauthorized();
     }
+
     return Promise.reject(error);
   },
 );
