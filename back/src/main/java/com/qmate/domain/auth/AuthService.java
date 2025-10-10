@@ -7,6 +7,7 @@ import com.qmate.exception.custom.auth.InvalidCredentialsException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -52,6 +53,18 @@ public class AuthService {
   }
 
   public void logout(HttpServletRequest req, HttpServletResponse res, Authentication auth) {
-    delegate.logout(req, res, auth);
+    delegate.logout(req, res, auth); //세션, 컨텍스트 정리
+    expireCookie(res, "ACCESS_TOKEN");// JWT 쿠키 만료
+  }
+
+  private void expireCookie(HttpServletResponse res, String name) {
+    ResponseCookie expired = ResponseCookie.from(name, "")
+        .httpOnly(true)
+        .secure(true)
+        .sameSite("None")
+        .path("/")
+        .maxAge(0)
+        .build();
+    res.addHeader("Set-Cookie", expired.toString());
   }
 }
