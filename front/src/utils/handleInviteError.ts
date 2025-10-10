@@ -11,7 +11,7 @@ export const handleInviteError = (
   if (axios.isAxiosError(error)) {
     const status = error.response?.status ?? 0;
 
-    if (remainingSeconds && remainingSeconds < 24 * 60 * 60) {
+    if (status === 403 && remainingSeconds && remainingSeconds < 24 * 60 * 60) {
       const hours = Math.floor(remainingSeconds / 3600);
       const minutes = Math.floor((remainingSeconds % 3600) / 60);
 
