@@ -11,7 +11,6 @@ import com.qmate.exception.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,7 +19,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -71,7 +69,7 @@ public class SecurityConfig {
             })
         )
         .authorizeHttpRequests(authz -> authz
-            .requestMatchers("/auth/**", "/oauth2/**",
+            .requestMatchers("/auth/**", "/oauth2/**", "/login/**",
                 "/login/oauth2/**", "/oauth2/authorization/**", "/actuator/**").permitAll()
 
             .requestMatchers(SWAGGER_WHITELIST).permitAll()

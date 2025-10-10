@@ -75,9 +75,12 @@ app:
   email-verification:
     jwt-secret: ${APP_EMAIL_VERIFICATION_JWT_SECRET}
     ttl-minutes: ${APP_EMAIL_VERIFICATION_TTL_MINUTES:10}
+  frontend:
+    success-url: https://q-mate.vercel.app/login/success
 
 server:
   port: 8080
+  forward-headers-strategy: native
 
 management:
   endpoints:
