@@ -15,8 +15,7 @@ instance.interceptors.request.use(
     const requestUrl = config.url ?? '';
 
     // 로그인 및 회원가입 요청에는 Authorization 헤더를 추가하지 않음
-    const isAuthRoute =
-      requestUrl.startsWith('/api/auth/login') || requestUrl.startsWith('/api/auth/register');
+    const isAuthRoute = requestUrl.includes('/auth/login') || requestUrl.includes('/auth/register');
 
     if (token && !isAuthRoute) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -35,8 +34,7 @@ instance.interceptors.response.use(
     const requestUrl = error.config?.url;
 
     // 로그인 및 회원가입 요청에서 발생한 401은 무시
-    const isAuthRoute =
-      requestUrl.startsWith('/api/auth/login') || requestUrl.startsWith('/api/auth/register');
+    const isAuthRoute = requestUrl.includes('/auth/login') || requestUrl.includes('/auth/register');
     if (status === 401 && !isAuthRoute) {
       handleUnauthorized();
     }
