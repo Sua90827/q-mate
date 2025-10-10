@@ -1,5 +1,4 @@
 import { MatchInfo } from '@/types/matchType';
-import axios from 'axios';
 import instance from './axiosInstance';
 
 // 매칭 정보 조회

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { EventMonthResponse, ScheduleEvent, ScheduleResponse } from '@/types/scheduleType';
+import instance from './axiosInstance';
 
 //일정리스트 조회
 export const fetchScheduleList = async (
@@ -86,13 +87,13 @@ export const fetchEventMonth = async (
   from: string,
   to: string,
 ): Promise<EventMonthResponse> => {
-  const res = await axios.get<EventMonthResponse>(`/api/matches/${matchId}/events/calendar`, {
+  const res = await instance.get<EventMonthResponse>(`/api/matches/${matchId}/events/calendar`, {
     params: { from, to },
   });
   return res.data;
 };
 
 export const fetchEventDetail = async (matchId: number, eventId: number) => {
-  const res = await axios.get(`/api/matches/${matchId}/events/${eventId}`);
+  const res = await instance.get(`/api/matches/${matchId}/events/${eventId}`);
   return res.data as ScheduleEvent;
 };
