@@ -6,7 +6,7 @@ import TextInput from '../common/TextInput';
 import { Button } from '../common/Button';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useLoginUser } from '@/hooks/useAuth'; // ✅ socialLogin 제거
+import { useLoginUser } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import NoticeModal from '../common/NoticeModal';
 import Loader from '../common/Loader';
