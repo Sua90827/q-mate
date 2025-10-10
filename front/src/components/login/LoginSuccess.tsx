@@ -35,7 +35,7 @@ export default function LoginSuccess() {
           if (data.accessToken) setAccessToken(data.accessToken);
           if (data.user.nickname) sessionStorage.setItem('nickname', data.user.nickname);
           if (data.user.birthDate) sessionStorage.setItem('birthDate', data.user.birthDate);
-          router.push('/signup/onboarding');
+          router.replace('/signup/onboarding');
         }
       } catch (err) {
         router.replace('/login');

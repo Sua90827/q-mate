@@ -1,4 +1,4 @@
-import { loginUser, logoutUser, socialLogin, updateSocialProfile } from '@/api/auth';
+import { loginUser, logoutUser, updateSocialProfile } from '@/api/auth';
 import { useMutation } from '@tanstack/react-query';
 
 //로그인
