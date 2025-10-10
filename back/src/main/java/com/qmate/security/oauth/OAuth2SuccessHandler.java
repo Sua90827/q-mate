@@ -36,7 +36,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
   private final ObjectMapper om;
   private final UserRepository userRepository;
 
-  @Value("${app.frontend.success-url}")
+  @Value("${app.frontend.success-url:https://q-mate.vercel.app/login/success}")
   private String successUrl;
 
   @Override
