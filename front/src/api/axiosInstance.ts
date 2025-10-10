@@ -20,7 +20,8 @@ instance.interceptors.request.use(
       requestUrl.includes('/auth/register') ||
       requestUrl.includes('/auth/email-verifications') ||
       requestUrl.includes('/auth/email-verifications/resend') ||
-      requestUrl.includes('/auth/email-verifications/verify');
+      requestUrl.includes('/auth/email-verifications/verify') ||
+      requestUrl.includes('/api/users/me/profile');
 
     if (token && !isAuthRoute) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -44,7 +45,8 @@ instance.interceptors.response.use(
       requestUrl.includes('/auth/register') ||
       requestUrl.includes('/auth/email-verifications') ||
       requestUrl.includes('/auth/email-verifications/resend') ||
-      requestUrl.includes('/auth/email-verifications/verify');
+      requestUrl.includes('/auth/email-verifications/verify') ||
+      requestUrl.includes('/api/users/me/profile');
 
     if (status === 401 && !isAuthRoute) {
       handleUnauthorized();
