@@ -1,6 +1,5 @@
 import { LockStatus } from '@/types/InviteType';
-import axios from 'axios';
-import instance from './axiosInstance';
+import { instance } from './axiosInstance';
 
 //초대 코드 발급
 export const createInviteCode = async ({

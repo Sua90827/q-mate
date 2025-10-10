@@ -17,7 +17,7 @@ export default function LoginSuccess() {
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const res = await axios.get('/api/me', { withCredentials: true });
+        const res = await axios.post('/auth/exchange', {}, { withCredentials: true });
         const data = res.data;
         if (data?.user?.currentMatchId) {
           setMatchId(data.user.currentMatchId);
@@ -30,7 +30,7 @@ export default function LoginSuccess() {
           const accessTokenTime = Date.now() + data.accessTokenExpiresIn * 1000;
           localStorage.setItem('accessTokenTime', String(accessTokenTime));
           setSelectedMenu('home');
-          router.push('/main');
+          router.replace('/main');
         } else {
           if (data.accessToken) setAccessToken(data.accessToken);
           if (data.user.nickname) sessionStorage.setItem('nickname', data.user.nickname);
@@ -38,7 +38,7 @@ export default function LoginSuccess() {
           router.push('/signup/onboarding');
         }
       } catch (err) {
-        router.push('/login');
+        router.replace('/login');
       }
     };
 
