@@ -15,10 +15,8 @@ export default function GoogleBtn({ onSocialLogin }: GoogleBtnProps) {
       onClick={() => onSocialLogin('google')}
       asChild
     >
-      <Link href="/signup/onboarding">
-        <Image src="/images/social/googleLogo.png" width={20} height={20} alt="구글 로그인" />
-        구글 로그인
-      </Link>
+      <Image src="/images/social/googleLogo.png" width={20} height={20} alt="구글 로그인" />
+      구글 로그인
     </Button>
   );
 }
