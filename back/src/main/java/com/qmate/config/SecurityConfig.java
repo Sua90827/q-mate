@@ -70,7 +70,7 @@ public class SecurityConfig {
         )
         .authorizeHttpRequests(authz -> authz
             .requestMatchers("/auth/**", "/oauth2/**", "/login/**",
-                "/login/oauth2/**", "/oauth2/authorization/**", "/actuator/**").permitAll()
+                "/login/oauth2/**", "/oauth2/authorization/**", "/actuator/**", "/auth/exchange").permitAll()
 
             .requestMatchers(SWAGGER_WHITELIST).permitAll()
             .requestMatchers("/api/admin/**").hasRole("ADMIN")

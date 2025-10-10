@@ -103,7 +103,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
       // 쿠키 세팅: HttpOnly + Secure + SameSite=None + Path=/
       addHttpOnlyCookie(response, "ACCESS_TOKEN", pair.getAccessToken(), 60 * 60 * 3);        // 3h
-      addHttpOnlyCookie(response, "REFRESH_TOKEN", pair.getRefreshToken(), 60 * 60 * 24 * 14); // 14d
+//      addHttpOnlyCookie(response, "REFRESH_TOKEN", pair.getRefreshToken(), 60 * 60 * 24 * 14); // 14d
 
       // 프론트 성공 페이지로 302
       response.setStatus(HttpServletResponse.SC_FOUND);
