@@ -15,10 +15,8 @@ export default function NaverBtn({ onSocialLogin }: NaverBtnProps) {
       asChild
       onClick={() => onSocialLogin('google')}
     >
-      <Link href="/signup/onboarding">
-        <Image src="/images/social/naverLogo.png" width={12} height={11} alt="네이버 로그인" />
-        네이버 로그인
-      </Link>
+      <Image src="/images/social/naverLogo.png" width={12} height={11} alt="네이버 로그인" />
+      네이버 로그인
     </Button>
   );
 }
