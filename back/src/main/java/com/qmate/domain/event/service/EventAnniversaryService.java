@@ -1,5 +1,6 @@
 package com.qmate.domain.event.service;
 
+import com.qmate.common.constants.event.EventConstants;
 import com.qmate.domain.event.entity.Event;
 import com.qmate.domain.event.entity.EventAlarmOption;
 import com.qmate.domain.event.entity.EventRepeatType;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -91,5 +93,37 @@ public class EventAnniversaryService {
       return List.of();
     }
     return eventRepository.saveAll(toSave);
+  }
+
+  @Transactional
+  public void updateBirthdayEvents(Long userId, LocalDate oldBirth, LocalDate newBirth) {
+    if (oldBirth == null) {
+      return;
+    }
+    int oldMonth = oldBirth.getMonthValue();
+    int oldDay = oldBirth.getDayOfMonth();
+
+    List<Event> birthdayEvents = eventRepository.findBirthdayEventsForUserByMonthDay(userId,
+        EventRepeatType.YEARLY, oldMonth, oldDay);
+
+    if (birthdayEvents.isEmpty()) {
+      return;
+    }
+    ;
+
+    for (Event e : birthdayEvents) {
+      //기존 로직 eventAt을 단순히 사용자의 새로운 birthDate로 변경
+      e.setEventAt(newBirth);
+    }
+    eventRepository.saveAll(birthdayEvents);
+  }
+
+  //재생성(매치 startDate 변경 시 쓰는 helper)
+  @Transactional
+  public void recreateMatchAnniversaries(Match match, User userA, User userB, String title100,
+      String titleAnniv) {
+    //삭제 후 새로 생성
+    eventRepository.deleteDefaultAnniversaryByMatchId(match.getId(), title100, titleAnniv);
+    this.createDefaultAnniversaries(match, userA, userB);
   }
 }
