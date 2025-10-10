@@ -1,60 +1,71 @@
-name: Deploy to q-mate (front)
+name: Deploy to q-mate
 
 on:
   push:
     branches: ['dev']
   workflow_dispatch:
-    inputs:
-      message:
-        description: 'Mirror commit message (optional)'
-        required: false
-        default: 'chore: mirror output'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: pandoc/latex
 
-    # 공통 ENV로 커밋 메시지 폴백 구성
-    env:
-      COMMIT_MSG: ${{ inputs.message || github.event.head_commit.message || 'chore: mirror output' }}
+    container: pandoc/latex
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Install mustache (to update the date)
+
         run: apk add ruby && gem install mustache
 
       - name: creates output
+
         run: sh ./front/build.sh
 
-      - name: Pushes to another repository (yuhyeon9808/q-mate)
+      - name: Pushes to another repository
+
         id: push_directory1
+
         uses: cpina/github-action-push-to-another-repository@main
+
         env:
           API_TOKEN_GITHUB: ${{ secrets.AUTO_ACTIONS }}
+
         with:
           source-directory: 'output'
+
           destination-github-username: yuhyeon9808
+
           destination-repository-name: q-mate
-          user-name: 'qmate-bot'
+
           user-email: ${{ secrets.EMAIL }}
-          commit-message: ${{ env.COMMIT_MSG }}
+
+          commit-message: ${{ github.event.commits[0].message }}
+
           target-branch: main
 
-      - name: Pushes to another repository (leejicircle/q-mate)
+      - name: Pushes to another repository
+
         id: push_directory2
+
         uses: cpina/github-action-push-to-another-repository@main
+
         env:
           API_TOKEN_GITHUB: ${{ secrets.AUTO_ACTIONS2 }}
+
         with:
           source-directory: 'output'
+
           destination-github-username: leejicircle
+
           destination-repository-name: q-mate
-          user-name: 'qmate-bot'
+
           user-email: ${{ secrets.EMAIL2 }}
-          commit-message: ${{ env.COMMIT_MSG }}
+
+          commit-message: ${{ github.event.commits[0].message }}
+
           target-branch: main
 
       - name: Test get variable exported by push-to-another-repository
-        run: echo "$DESTINATION_CLONED_DIRECTORY"
+
+        run: echo $DESTINATION_CLONED_DIRECTORY
