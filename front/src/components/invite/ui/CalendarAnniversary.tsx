@@ -15,6 +15,7 @@ export default function CalendarAnniversary({
 }) {
   return (
     <Calendar
+      captionLayout="dropdown"
       mode="single"
       defaultMonth={value ?? new Date()}
       selected={value}
