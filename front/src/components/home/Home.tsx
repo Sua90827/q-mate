@@ -17,7 +17,6 @@ export default function Home() {
   const resetAccessToken = useAuthStore((state) => state.resetAccessToken);
   const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
   const resetSelectedMenu = useSelectedStore((state) => state.resetSelectedMenu);
-  const { mutate: logoutMutate, isPending } = useLogoutUser();
 
   const [accessTokenTime, setAccessTokenTime] = useState<number | null>(null);
 
@@ -31,22 +30,13 @@ export default function Home() {
       setSelectedMenu('home');
       router.replace('/main');
     } else {
-      logoutMutate(undefined, {
-        onSuccess: () => {
-          resetSelectedMenu();
-          localStorage.clear();
-          resetMatchId();
-          resetAccessToken();
-          router.replace('/login');
-        },
-        onError: () => {
-          ErrorToast('다시 시도해주세요.');
-        },
-      });
+      resetSelectedMenu();
+      localStorage.clear();
+      resetMatchId();
+      resetAccessToken();
+      router.replace('/login');
     }
   };
-
-  if (isPending) return <Loader />;
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center pt-[70px] sm:pt-[0px] sm:pb-[70px]">
