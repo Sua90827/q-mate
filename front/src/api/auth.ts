@@ -14,7 +14,7 @@ export const logoutUser = async () => {
 
 //소셜 로그인
 export const socialLogin = (provider: string) => {
-  const url = `/oauth2/authorization/${provider}`;
+  const url = `http://ec2-43-201-32-144.ap-northeast-2.compute.amazonaws.com:8080/oauth2/authorization/${provider}`;
   window.location.href = url;
 };
 
