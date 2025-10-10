@@ -32,10 +32,12 @@ export default function LoginSuccess() {
           setSelectedMenu('home');
           router.replace('/main');
         } else {
-          if (data.accessToken) setAccessToken(data.accessToken);
-          if (data.user.nickname) sessionStorage.setItem('nickname', data.user.nickname);
-          if (data.user.birthDate) sessionStorage.setItem('birthDate', data.user.birthDate);
-          router.replace('/signup/onboarding');
+          if (data?.user?.accessToken) {
+            if (data.accessToken) setAccessToken(data.accessToken);
+            if (data.user.nickname) sessionStorage.setItem('nickname', data.user.nickname);
+            if (data.user.birthDate) sessionStorage.setItem('birthDate', data.user.birthDate);
+            router.replace('/signup/onboarding');
+          }
         }
       } catch (err) {
         router.replace('/login');
