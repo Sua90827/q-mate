@@ -6,15 +6,14 @@ import { useRouter } from 'next/navigation';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { useSelectedStore } from '@/store/useSelectedStore';
 import { useEffect, useState } from 'react';
-import instance from '@/api/axiosInstance';
 
 export default function Home() {
   const router = useRouter();
+
   const accessToken = useAuthStore((state) => state.accessToken);
-  const resetMatchId = useMatchIdStore((state) => state.resetMatchId);
   const resetAccessToken = useAuthStore((state) => state.resetAccessToken);
-  const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
-  const resetSelectedMenu = useSelectedStore((state) => state.resetSelectedMenu);
+  const resetMatchId = useMatchIdStore((state) => state.resetMatchId);
+  const { setSelectedMenu, resetSelectedMenu } = useSelectedStore();
 
   const [accessTokenTime, setAccessTokenTime] = useState<number | null>(null);
 
@@ -23,18 +22,29 @@ export default function Home() {
     if (savedTime) setAccessTokenTime(Number(savedTime));
   }, []);
 
+  const handleLogout = () => {
+    localStorage.clear();
+    resetAccessToken();
+    resetMatchId();
+    resetSelectedMenu();
+    router.replace('/login');
+  };
+
   const checkLogin = () => {
-    if (accessToken && accessTokenTime && Date.now() < accessTokenTime) {
-      setSelectedMenu('home');
-      router.replace('/main');
-    } else {
-      resetSelectedMenu();
-      localStorage.clear();
-      resetMatchId();
-      resetAccessToken();
-      instance.defaults.headers.Authorization = '';
-      router.replace('/login');
+    if (!accessToken || !accessTokenTime) {
+      handleLogout();
+      return;
     }
+
+    // 만료 확인
+    if (Date.now() >= accessTokenTime) {
+      handleLogout();
+      return;
+    }
+
+    // 유효할 경우
+    setSelectedMenu('home');
+    router.replace('/main');
   };
 
   return (
