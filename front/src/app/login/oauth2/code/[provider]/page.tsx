@@ -30,7 +30,7 @@ export default function GoogleCallback() {
 
   const exchangeCode = async (code: string) => {
     try {
-      const res = await socialAxios.post('/auth/google/exchange', {
+      const res = await socialAxios.post('/google/exchange', {
         code,
         redirectUri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
       });
