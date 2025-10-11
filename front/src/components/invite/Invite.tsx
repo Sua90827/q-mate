@@ -7,6 +7,7 @@ import NoticeModal from '../common/NoticeModal';
 import { useCreateInviteCode } from '@/hooks/useInvite';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { useMatchInfo } from '@/hooks/useMatches';
+import { useSelectedStore } from '@/store/useSelectedStore';
 
 type InviteErrorType = 'copy' | 'code' | null;
 
@@ -22,6 +23,7 @@ export default function Invite() {
 
   const matchId = useMatchIdStore((state) => state.matchId);
   const setMatchId = useMatchIdStore((state) => state.setMatchId);
+  const setSelectedMenu = useSelectedStore((s) => s.setSelectedMenu);
 
   const { mutate: createCode } = useCreateInviteCode();
   const { data } = useMatchInfo(matchId!);
@@ -62,7 +64,8 @@ export default function Invite() {
 
   useEffect(() => {
     if (data?.status === 'ACTIVE') {
-      router.push('/main');
+      setSelectedMenu('home');
+      router.replace('/main');
     }
   }, [data?.status, router]);
 
