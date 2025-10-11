@@ -7,7 +7,7 @@ export const fetchCustomQuestions = async (
   page: number = 0,
   size: number = 20,
 ): Promise<CustomQuestionPage> => {
-  const res = await instance.get(`/apia/matches/${matchId}/custom-questions`, {
+  const res = await instance.get(`/api/matches/${matchId}/custom-questions`, {
     params: {
       page,
       size,

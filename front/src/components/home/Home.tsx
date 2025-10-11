@@ -5,7 +5,6 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { useSelectedStore } from '@/store/useSelectedStore';
-import { useEffect, useState } from 'react';
 
 export default function Home() {
   const router = useRouter();
@@ -16,13 +15,6 @@ export default function Home() {
   const { setSelectedMenu, resetSelectedMenu } = useSelectedStore();
   const matchId = useMatchIdStore((state) => state.matchId);
 
-  const [accessTokenTime, setAccessTokenTime] = useState<number | null>(null);
-
-  useEffect(() => {
-    const savedTime = localStorage.getItem('accessTokenTime');
-    if (savedTime) setAccessTokenTime(Number(savedTime));
-  }, []);
-
   const handleLogout = () => {
     localStorage.clear();
     resetAccessToken();
@@ -32,21 +24,27 @@ export default function Home() {
   };
 
   const checkLogin = () => {
-    if (!accessToken || !accessTokenTime) {
+    const savedTime = Number(localStorage.getItem('accessTokenTime'));
+
+    // 토큰이나 만료 정보가 없으면 로그아웃
+    if (!accessToken || !savedTime) {
       handleLogout();
       return;
     }
 
-    if (Date.now() >= accessTokenTime) {
+    // 만료된 토큰이면 로그아웃
+    if (Date.now() >= savedTime) {
       handleLogout();
       return;
     }
 
+    // 매칭은 아직 안 되어 있을 때
     if (accessToken && !matchId) {
       router.replace('/invite');
       return;
     }
 
+    // 정상 로그인 상태 → 홈으로
     setSelectedMenu('home');
     router.replace('/main');
   };

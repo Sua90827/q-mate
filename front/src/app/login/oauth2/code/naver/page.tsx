@@ -58,6 +58,8 @@ export default function NaverCallbackPage() {
           localStorage.setItem('prevExp', String(petInfo.exp));
           setSelectedMenu('home');
           router.replace('/main');
+        } else if (!user.currentMatchId && accessToken) {
+          router.replace('/invite');
         } else {
           if (user.nickname) sessionStorage.setItem('nickname', user.nickname);
           if (user.birthDate) sessionStorage.setItem('birthDate', user.birthDate);
