@@ -52,31 +52,38 @@ export default function Login() {
       {
         onSuccess: async (data) => {
           try {
-            await syncPushOnLogin();
-          } catch (error) {
-            console.warn('[Push Sync Failed]', error);
-          }
-
-          if (data.user.currentMatchId) {
-            // 매치 아이디 셋팅
-            setMatchId(data.user.currentMatchId);
-
-            // 서버에서 현재 exp 조회
-            const petInfo = await fetchPetInfo(data.user.currentMatchId);
-            // 현재 exp 셋팅
-            localStorage.setItem('prevExp', String(petInfo.exp));
-            // accessToken 셋팅
+            // 1) 토큰을 가장 먼저 저장 (이후 호출들에서 Authorization 헤더가 붙도록)
             setAccessToken(data.accessToken);
             const accessTokenTime = Date.now() + data.accessTokenExpiresIn * 1000;
             localStorage.setItem('accessTokenTime', String(accessTokenTime));
 
-            //메뉴 메인 선택
-            setSelectedMenu('home');
-            router.push('/main');
-          } else {
-            // accessToken 셋팅
-            setAccessToken(data.accessToken);
-            router.push('/invite');
+            // 2) 푸시 동기화 (보호 API일 수 있으므로 토큰 저장 후)
+            try {
+              await syncPushOnLogin();
+            } catch (error) {
+              console.warn('[Push Sync Failed]', error);
+            }
+
+            if (data.user.currentMatchId) {
+              // 매치 아이디 셋팅
+              setMatchId(data.user.currentMatchId);
+
+              // 서버에서 현재 exp 조회 (이제 Authorization 헤더가 포함됨)
+              const petInfo = await fetchPetInfo(data.user.currentMatchId);
+              // 현재 exp 셋팅
+              localStorage.setItem('prevExp', String(petInfo.exp));
+
+              // 메뉴 메인 선택
+              setSelectedMenu('home');
+              router.push('/main');
+            } else {
+              router.push('/invite');
+            }
+          } catch (e) {
+            // 혹시 모를 예외에 대한 방어
+            console.error('[Login onSuccess handler error]', e);
+            setLoginErrorType('normal');
+            setOpen(true);
           }
         },
         onError: () => {
