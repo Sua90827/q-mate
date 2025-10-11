@@ -47,7 +47,7 @@ export default function NoticeModal({
         <DialogHeader className="flex justify-center pt-[10.5px]">
           <DialogTitle className="text-center leading-relaxed text-16">{title}</DialogTitle>
           {sub && (
-            <DialogDescription className="text-14 font-semibold text-center text-text-secondary">
+            <DialogDescription className="text-16 font-semibold text-center text-text-secondary">
               {sub}
             </DialogDescription>
           )}

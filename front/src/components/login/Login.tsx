@@ -15,7 +15,8 @@ import { useSyncPushOnLogin } from '@/hooks/useSyncPush';
 import { fetchPetInfo } from '@/api/pet';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useSelectedStore } from '@/store/useSelectedStore';
-import { googleLogin } from '@/api/auth';
+import { googleLogin } from '@/utils/googleLogin';
+import { buildNaverAuthorizeUrl } from '@/utils/buildNaverAuthUrl';
 
 const validateEmail = (v: string) => /\S+@\S+\.\S+/.test(v);
 const validatePassword = (v: string) =>
@@ -40,7 +41,9 @@ export default function Login() {
   const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
   const { mutate: loginUserMutate, isPending: isLoginLoading } = useLoginUser();
 
-  const onSocialLogin = () => {}; //네이버 임시
+  const naverLogin = () => {
+    window.location.href = buildNaverAuthorizeUrl();
+  };
 
   // 일반 로그인
   const handleLogin = () => {
@@ -123,8 +126,8 @@ export default function Login() {
       <Button variant="primaryOutline" className="w-[295px]" asChild>
         <Link href="/signup">회원가입</Link>
       </Button>
-      <GoogleBtn onSocialLogin={() => googleLogin('google')} />
-      <NaverBtn onSocialLogin={onSocialLogin} />
+      <GoogleBtn onSocialLogin={googleLogin} />
+      <NaverBtn onSocialLogin={naverLogin} />
       <NoticeModal
         open={open}
         setOpen={setOpen}
