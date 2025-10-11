@@ -40,6 +40,22 @@ public class SocialAccountService {
     );
   }
 
+  @Transactional
+  public User upsertNaverUser(String naverId, String email, String nickname, LocalDate birthDate) {
+    String normalizedEmail = (email != null) ? email.trim().toLowerCase() : null;
+    String safeNickname = (nickname != null && !nickname.isBlank())
+        ? nickname
+        : (normalizedEmail != null ? normalizedEmail : "user_naver_" + naverId);
+
+    return upsertSocialUser(
+        UserSocialAccount.SocialProvider.NAVER,
+        naverId,
+        normalizedEmail,
+        safeNickname,
+        birthDate
+    );
+  }
+
   /**
    * 소셜 로그인 정보로 사용자 upsert + 소셜계정 연결
    * 규칙:

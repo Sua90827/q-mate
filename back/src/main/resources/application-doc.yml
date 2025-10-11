@@ -42,10 +42,13 @@ app:
   #    success-url: https://q-mate.vercel.app/login/success
   oauth:
     google:
-      client-id: dummy-client-id                 # ← 고정값
-      client-secret: dummy-client-secret         # ← 고정값
-      redirect-uri: https://example.com/callback # 아무 문자열 OK
-
+      client-id: dummy-client-id
+      client-secret: dummy-client-secret
+      redirect-uri: https://example.com/callback
+    naver:
+      client-id: dummy-client-id
+      client-secret: dummy-client-secret
+      redirect-uri: https://q-mate.vercel.app/login/oauth2/code/naver
 # 필요 시 springdoc 커스터마이즈(옵션)
 # springdoc:
 #   api-docs:

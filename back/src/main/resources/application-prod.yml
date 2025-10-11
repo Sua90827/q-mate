@@ -82,9 +82,11 @@ app:
     google:
       client-id: ${OAUTH_GOOGLE_CLIENT_ID}
       client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
-      # 프론트가 code를 받는 콜백 주소
       redirect-uri: https://q-mate.vercel.app/login/oauth2/code/google
-
+    naver:
+      client-id: ${OAUTH_NAVER_CLIENT_ID}
+      client-secret: ${OAUTH_NAVER_CLIENT_SECRET}
+      redirect-uri: https://q-mate.vercel.app/login/oauth2/code/naver
 server:
   port: 8080
   forward-headers-strategy: native
