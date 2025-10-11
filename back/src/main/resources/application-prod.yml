@@ -76,7 +76,14 @@ app:
     jwt-secret: ${APP_EMAIL_VERIFICATION_JWT_SECRET}
     ttl-minutes: ${APP_EMAIL_VERIFICATION_TTL_MINUTES:10}
   frontend:
-    success-url: https://q-mate.vercel.app/login/success
+    origin: https://q-mate.vercel.app
+#    success-url: https://q-mate.vercel.app/login/success
+  oauth:
+    google:
+      client-id: ${OAUTH_GOOGLE_CLIENT_ID}
+      client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
+      # 프론트가 code를 받는 콜백 주소
+      redirect-uri: https://q-mate.vercel.app/login/oauth2/code/google
 
 server:
   port: 8080

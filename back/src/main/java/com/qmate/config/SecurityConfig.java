@@ -8,6 +8,7 @@ import com.qmate.security.oauth.OAuth2SuccessHandler;
 import com.qmate.exception.CommonErrorCode;
 import com.qmate.exception.ErrorCode;
 import com.qmate.exception.ErrorResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -70,7 +74,7 @@ public class SecurityConfig {
         )
         .authorizeHttpRequests(authz -> authz
             .requestMatchers("/auth/**", "/oauth2/**", "/login/**",
-                "/login/oauth2/**", "/oauth2/authorization/**", "/actuator/**", "/auth/exchange").permitAll()
+                "/login/oauth2/**", "/oauth2/authorization/**", "/actuator/**", "/auth/exchange", "/auth/google/exchange").permitAll()
 
             .requestMatchers(SWAGGER_WHITELIST).permitAll()
             .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -84,5 +88,16 @@ public class SecurityConfig {
         .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);  // JWT 필터 추가
 
     return http.build();
+  }
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    var cfg = new CorsConfiguration();
+    cfg.setAllowedOrigins(List.of("https://q-mate.vercel.app"));
+    cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+    cfg.setAllowedHeaders(List.of("*"));
+    cfg.setAllowCredentials(true); //쿠키 주고받기
+    var src = new UrlBasedCorsConfigurationSource();
+    src.registerCorsConfiguration("/**", cfg);
+    return src;
   }
 }
