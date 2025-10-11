@@ -6,6 +6,7 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import com.qmate.common.push.PushSender;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.match.RelationType;
@@ -48,6 +49,8 @@ class AnswerServiceCreateTest {
   PetService petService;
   @Mock
   MatchMemberRepository matchMemberRepository;
+  @Mock
+  PushSender pushSender;
 
   @InjectMocks
   AnswerService sut;
@@ -93,6 +96,9 @@ class AnswerServiceCreateTest {
     given(answerRepo.save(any(Answer.class))).willReturn(saved);
     given(answerRepo.countDistinctUserIdByQuestionInstance_Id(qiId)).willReturn(2L);
     given(qiRepo.findByIdForUpdate(qiId)).willReturn(Optional.of(qi));
+
+    given(matchMemberRepository.findAllUser_IdByMatch_Id(matchId))
+        .willReturn(java.util.List.of(userId, 88L)); // 상대방 id
 
     // when
     var res = sut.create(qiId, userId, req);
