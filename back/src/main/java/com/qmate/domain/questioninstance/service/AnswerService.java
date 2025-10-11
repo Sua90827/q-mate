@@ -1,8 +1,13 @@
 package com.qmate.domain.questioninstance.service;
 
+import com.qmate.common.push.PushSender;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.match.repository.MatchMemberRepository;
+import com.qmate.domain.notification.entity.Notification;
+import com.qmate.domain.notification.entity.NotificationCategory;
+import com.qmate.domain.notification.entity.NotificationCode;
+import com.qmate.domain.notification.entity.NotificationResourceType;
 import com.qmate.domain.pet.entity.PetExpLog;
 import com.qmate.domain.pet.entity.PetExpReason;
 import com.qmate.domain.pet.repository.PetExpLogRepository;
@@ -33,6 +38,7 @@ public class AnswerService {
   private final AnswerRepository answerRepository;
   private final MatchMemberRepository matchMemberRepository;
   private final PetService petService;
+  private final PushSender pushSender;
 
   @Transactional
   public AnswerResponse create(Long questionInstanceId, Long userId, AnswerContentRequest req) {
@@ -69,7 +75,32 @@ public class AnswerService {
         answerRepository.countDistinctUserIdByQuestionInstance_Id(questionInstanceId) >= 2L) {
       locked.markCompleted(LocalDateTime.now());
       petService.addExperienceForAnswerCompletion(locked.getMatch());
-
+      // 알림 보내기
+      // 내 알림
+      Notification myNotification = Notification.builder()
+          .userId(userId)
+          .matchId(locked.getMatch().getId())
+          .category(NotificationCategory.QUESTION)
+          .code(NotificationCode.QI_COMPLETED)
+          .listTitle(NotificationCode.QI_COMPLETED.getDescription())
+          .pushTitle(NotificationCode.QI_COMPLETED.getDescription())
+          .resourceType(NotificationResourceType.QUESTION_INSTANCE)
+          .resourceId(locked.getId())
+          .build();
+      // 상대 알림
+      Notification partnerNotification = Notification.builder()
+          .userId(matchMemberRepository.findAllUser_IdByMatch_Id(locked.getMatch().getId())
+              .stream().filter(id -> !id.equals(userId)).findFirst().orElseThrow())
+          .matchId(locked.getMatch().getId())
+          .category(NotificationCategory.QUESTION)
+          .code(NotificationCode.QI_COMPLETED)
+          .listTitle(NotificationCode.QI_COMPLETED.getDescription())
+          .pushTitle(NotificationCode.QI_COMPLETED.getDescription())
+          .resourceType(NotificationResourceType.QUESTION_INSTANCE)
+          .resourceId(locked.getId())
+          .build();
+      pushSender.send(myNotification);
+      pushSender.send(partnerNotification);
     }
 
     // 응답 매핑
