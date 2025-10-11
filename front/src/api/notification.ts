@@ -56,16 +56,16 @@ export const fetchNotifications = async (params?: {
 };
 // 알림상세 조회
 export const fetchNotificationDetail = async (notificationId: number) => {
-  const res = await instance.get(`/notifications/${notificationId}`);
+  const res = await instance.get(`/api/notifications/${notificationId}`);
   return res.data;
 };
 // 알림 삭제
 export const deleteNotification = async (notificationId: number) => {
-  const res = await instance.delete(`/notifications/${notificationId}`);
+  const res = await instance.delete(`/api/notifications/${notificationId}`);
   return res.data;
 };
 //읽지않은 알림갯수
 export const fetchUnreadCount = async () => {
-  const res = await instance.get('/notifications/unread-count');
+  const res = await instance.get('/api/notifications/unread-count');
   return res.data;
 };

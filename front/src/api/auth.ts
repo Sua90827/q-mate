@@ -2,13 +2,13 @@ import { instance } from '../lib/axiosInstance';
 
 //자체 로그인
 export const loginUser = async ({ email, password }: { email: string; password: string }) => {
-  const res = await instance.post(`/auth/login`, { email, password });
+  const res = await instance.post(`/api/auth/login`, { email, password });
   return res.data;
 };
 
 //로그아웃
 export const logoutUser = async () => {
-  const res = await instance.post('/auth/logout', {}, { withCredentials: true });
+  const res = await instance.post('/apiㄴ/auth/logout', {}, { withCredentials: true });
   return res.data;
 };
 
@@ -20,6 +20,6 @@ export const updateSocialProfile = async ({
   nickname: string;
   birthDate: string;
 }) => {
-  const res = await instance.patch(`/users/me/profile`, { nickname, birthDate });
+  const res = await instance.patch(`/api/users/me/profile`, { nickname, birthDate });
   return res.data;
 };

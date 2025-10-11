@@ -45,7 +45,7 @@ export default function NicknameModal({ open, setIsOpen, nickname, setNickname }
             <input
               type="text"
               placeholder="변경할 닉네임을 입력해주세요."
-              className="appearance-none outline-none bg-white rounded-md border border-dash pl-4 py-2 w-full text-center" //기본 브라우저 스타일 초기화 추가
+              className="appearance-none outline-none bg-white rounded-md border border-dash pl-4 py-2 w-full " //기본 브라우저 스타일 초기화 추가
               maxLength={10}
               value={pendingNickname}
               onChange={(e) => setPendingNickname(e.target.value)}
