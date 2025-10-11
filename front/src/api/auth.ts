@@ -45,6 +45,6 @@ export const updateSocialProfile = async ({
   nickname: string;
   birthDate: string;
 }) => {
-  const res = await instance.patch(`/users/me/profile`, { nickname, birthDate });
+  const res = await instance.patch(`api/users/me/profile`, { nickname, birthDate });
   return res.data;
 };
