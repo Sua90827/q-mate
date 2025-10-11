@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { EventMonthResponse, ScheduleEvent, ScheduleResponse } from '@/types/scheduleType';
-import instance from './axiosInstance';
+import instance from '../lib/axiosInstance';
 
 //일정리스트 조회
 export const fetchScheduleList = async (

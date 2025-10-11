@@ -1,6 +1,6 @@
 import { AnswerResponseItem, QuestionResponse, TodayQuestion } from '@/types/questionType';
 import axios from 'axios';
-import instance from './axiosInstance';
+import instance from '../lib/axiosInstance';
 
 // 전체 질문 리스트 가져오기
 export const fetchQuestions = async (

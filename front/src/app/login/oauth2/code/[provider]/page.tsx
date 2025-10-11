@@ -1,12 +1,13 @@
 'use client';
-import { ErrorToast } from '@/components/common/CustomToast';
-import Loader from '@/components/common/Loader';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ErrorToast } from '@/components/common/CustomToast';
+import Loader from '@/components/common/Loader';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { useSelectedStore } from '@/store/useSelectedStore';
 import { fetchPetInfo } from '@/api/pet';
+import { socialAxios } from '@/lib/socialAxios';
 
 export default function GoogleCallback() {
   const [error, setError] = useState<string | null>(null);
@@ -29,25 +30,19 @@ export default function GoogleCallback() {
 
   const exchangeCode = async (code: string) => {
     try {
-      const res = await fetch(`/auth/google/exchange`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          code,
-          redirectUri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
-        }),
+      const res = await socialAxios.post('/auth/google/exchange', {
+        code,
+        redirectUri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
       });
 
-      if (!res.ok) throw new Error(`교환 실패: ${res.status}`);
-
-      const data = await res.json();
-      const { accessToken, accessTokenExpiresIn, user } = data;
-
+      const { accessToken, accessTokenExpiresIn, user } = res.data;
       if (!accessToken || !user) throw new Error('잘못된 응답');
 
+      // 액세스 토큰 저장
       setAccessToken(accessToken);
       localStorage.setItem('accessTokenTime', String(Date.now() + accessTokenExpiresIn * 1000));
 
+      // 매칭 여부 분기
       if (user.currentMatchId) {
         setMatchId(user.currentMatchId);
         const petInfo = await fetchPetInfo(user.currentMatchId);
@@ -61,7 +56,7 @@ export default function GoogleCallback() {
       }
     } catch (e) {
       const err = e as Error;
-      setError(err.message);
+      setError(`교환 실패: ${err.message}`);
     }
   };
 

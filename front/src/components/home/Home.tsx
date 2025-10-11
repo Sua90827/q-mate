@@ -14,6 +14,7 @@ export default function Home() {
   const resetAccessToken = useAuthStore((state) => state.resetAccessToken);
   const resetMatchId = useMatchIdStore((state) => state.resetMatchId);
   const { setSelectedMenu, resetSelectedMenu } = useSelectedStore();
+  const matchId = useMatchIdStore((state) => state.matchId);
 
   const [accessTokenTime, setAccessTokenTime] = useState<number | null>(null);
 
@@ -29,6 +30,11 @@ export default function Home() {
     resetSelectedMenu();
     router.replace('/login');
   };
+
+  if (!matchId) {
+    router.replace('/invite');
+    return;
+  }
 
   const checkLogin = () => {
     if (!accessToken || !accessTokenTime) {

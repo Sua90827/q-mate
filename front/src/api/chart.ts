@@ -1,4 +1,4 @@
-import instance from './axiosInstance';
+import instance from '../lib/axiosInstance';
 
 //차트 통계 조회
 export const fetchChart = async (matchId: number) => {

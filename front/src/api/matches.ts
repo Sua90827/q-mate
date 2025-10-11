@@ -1,5 +1,5 @@
 import { MatchInfo } from '@/types/matchType';
-import instance from './axiosInstance';
+import instance from '../lib/axiosInstance';
 
 // 매칭 정보 조회
 export const getMatchInfo = async (matchId: number): Promise<MatchInfo> => {
