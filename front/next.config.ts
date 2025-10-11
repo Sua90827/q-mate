@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
+      // 일반 API 요청
+      {
+        source: '/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_ORIGIN}/:path*`,
+      },
       // 소셜 로그인 관련 요청 (백엔드 직접 호출)
       {
         source: '/oauth2/:path*',
@@ -19,11 +24,6 @@ const nextConfig: NextConfig = {
       {
         source: '/auth/:path*',
         destination: `${process.env.NEXT_PUBLIC_BACKEND_ORIGIN}/auth/:path*`,
-      },
-      // 일반 API 요청
-      {
-        source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_BACKEND_ORIGIN}/:path*`,
       },
     ];
   },
