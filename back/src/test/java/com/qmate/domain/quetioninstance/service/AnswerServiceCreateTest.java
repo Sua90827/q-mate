@@ -11,6 +11,7 @@ import com.qmate.domain.match.Match;
 import com.qmate.domain.match.MatchMember;
 import com.qmate.domain.match.RelationType;
 import com.qmate.domain.match.repository.MatchMemberRepository;
+import com.qmate.domain.notification.repository.NotificationRepository;
 import com.qmate.domain.pet.service.PetService;
 import com.qmate.domain.questioninstance.entity.Answer;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
@@ -50,6 +51,8 @@ class AnswerServiceCreateTest {
   @Mock
   MatchMemberRepository matchMemberRepository;
   @Mock
+  NotificationRepository notificationRepository;
+  @Mock
   PushSender pushSender;
 
   @InjectMocks
@@ -72,6 +75,7 @@ class AnswerServiceCreateTest {
     Long matchId = 7L;
     var req = new AnswerContentRequest("  안녕\r\n하세요  ");
     var user = User.builder().id(userId).currentMatchId(matchId).build();
+    var partner = User.builder().id(100L).currentMatchId(matchId).build();
     var qi = qi(qiId, matchId, QuestionInstanceStatus.PENDING);
     Match match = Match.builder()
         .id(matchId)
@@ -84,10 +88,17 @@ class AnswerServiceCreateTest {
         .user(user)
         .build();
 
+    MatchMember partnerMember = MatchMember.builder()
+        .id(100L)
+        .match(match)
+        .user(partner)
+        .build();
+
     qi.setMatch(match);
+    match.addMember(matchMember);
+    match.addMember(partnerMember);
 
     given(qiRepo.findAuthorizedByIdForUser(qiId, userId)).willReturn(Optional.of(qi));
-    given(matchMemberRepository.findByMatch_IdAndUser_Id(matchId, userId)).willReturn(Optional.of(matchMember));
 
     // 저장 시 id/시간 세팅된 엔티티 리턴
     var saved = Answer.builder()
@@ -96,9 +107,6 @@ class AnswerServiceCreateTest {
     given(answerRepo.save(any(Answer.class))).willReturn(saved);
     given(answerRepo.countDistinctUserIdByQuestionInstance_Id(qiId)).willReturn(2L);
     given(qiRepo.findByIdForUpdate(qiId)).willReturn(Optional.of(qi));
-
-    given(matchMemberRepository.findAllUser_IdByMatch_Id(matchId))
-        .willReturn(java.util.List.of(userId, 88L)); // 상대방 id
 
     // when
     var res = sut.create(qiId, userId, req);

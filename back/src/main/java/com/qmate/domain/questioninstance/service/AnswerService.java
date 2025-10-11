@@ -8,6 +8,7 @@ import com.qmate.domain.notification.entity.Notification;
 import com.qmate.domain.notification.entity.NotificationCategory;
 import com.qmate.domain.notification.entity.NotificationCode;
 import com.qmate.domain.notification.entity.NotificationResourceType;
+import com.qmate.domain.notification.repository.NotificationRepository;
 import com.qmate.domain.pet.entity.PetExpLog;
 import com.qmate.domain.pet.entity.PetExpReason;
 import com.qmate.domain.pet.repository.PetExpLogRepository;
@@ -21,6 +22,7 @@ import com.qmate.domain.questioninstance.model.request.AnswerContentRequest;
 import com.qmate.domain.questioninstance.model.response.AnswerResponse;
 import com.qmate.domain.questioninstance.repository.AnswerRepository;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
+import com.qmate.domain.user.User;
 import com.qmate.exception.custom.questioninstance.AnswerAlreadyExistsException;
 import com.qmate.exception.custom.questioninstance.AnswerCannotModifyException;
 import com.qmate.exception.custom.questioninstance.AnswerNotFoundException;
@@ -37,6 +39,7 @@ public class AnswerService {
   private final QuestionInstanceRepository questionInstanceRepository;
   private final AnswerRepository answerRepository;
   private final MatchMemberRepository matchMemberRepository;
+  private final NotificationRepository notificationRepository;
   private final PetService petService;
   private final PushSender pushSender;
 
@@ -64,9 +67,11 @@ public class AnswerService {
     Answer saved = answerRepository.save(entity);
 
     // matchMember의 lastAnsweredAt 갱신
-    MatchMember matchMember = matchMemberRepository.findByMatch_IdAndUser_Id(qi.getMatch().getId(),
-        userId).orElseThrow();
-    matchMember.updateLastAnsweredAt();
+    MatchMember myMember = qi.getMatch().getMembers().stream()
+        .filter(mm -> mm.getUser().getId().equals(userId))
+        .findFirst()
+        .orElseThrow();
+    myMember.updateLastAnsweredAt();
 
     // 완료 전이 (QI 행 잠금)
     QuestionInstance locked = questionInstanceRepository.findByIdForUpdate(questionInstanceId)
@@ -77,6 +82,12 @@ public class AnswerService {
       petService.addExperienceForAnswerCompletion(locked.getMatch());
       // 알림 보내기
       // 내 알림
+      User me = myMember.getUser();
+      User partner = qi.getMatch().getMembers().stream()
+          .filter(mm -> !mm.getUser().getId().equals(userId))
+          .findFirst()
+          .orElseThrow()
+          .getUser();
       Notification myNotification = Notification.builder()
           .userId(userId)
           .matchId(locked.getMatch().getId())
@@ -89,8 +100,7 @@ public class AnswerService {
           .build();
       // 상대 알림
       Notification partnerNotification = Notification.builder()
-          .userId(matchMemberRepository.findAllUser_IdByMatch_Id(locked.getMatch().getId())
-              .stream().filter(id -> !id.equals(userId)).findFirst().orElseThrow())
+          .userId(partner.getId())
           .matchId(locked.getMatch().getId())
           .category(NotificationCategory.QUESTION)
           .code(NotificationCode.QI_COMPLETED)
@@ -99,8 +109,14 @@ public class AnswerService {
           .resourceType(NotificationResourceType.QUESTION_INSTANCE)
           .resourceId(locked.getId())
           .build();
-      pushSender.send(myNotification);
-      pushSender.send(partnerNotification);
+      notificationRepository.save(myNotification);
+      notificationRepository.save(partnerNotification);
+      if (me.isPushEnabled()) {
+        pushSender.send(myNotification);
+      }
+      if (partner.isPushEnabled()) {
+        pushSender.send(partnerNotification);
+      }
     }
 
     // 응답 매핑

@@ -39,6 +39,9 @@ public interface QuestionInstanceRepository extends JpaRepository<QuestionInstan
   @Query("""
     select qi
     from QuestionInstance qi
+    join fetch qi.match m
+    join fetch m.members mm
+    join fetch mm.user u
     where qi.id = :qiId
       and qi.match.id = (
         select u.currentMatchId
