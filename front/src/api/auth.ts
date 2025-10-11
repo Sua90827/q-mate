@@ -12,13 +12,12 @@ export const logoutUser = async () => {
   return res.data;
 };
 
-//소셜 로그인
-export const socialLogin = (provider: string) => {
+//구글 소셜 로그인
+export const googleLogin = (provider: string) => {
   const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_ORIGIN;
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
   if (!frontendUrl || !clientId) {
-    console.error('❌ 환경변수가 누락되었습니다. (FRONTEND_ORIGIN 또는 GOOGLE_CLIENT_ID)');
     return;
   }
 

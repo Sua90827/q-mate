@@ -90,7 +90,6 @@ export default function Invited() {
               { inviteCode: code },
               {
                 onSuccess: (data) => {
-                  setMatchId(data.matchId);
                   setModal({
                     open: true,
                     type: 'success',
@@ -100,6 +99,7 @@ export default function Invited() {
                       </>
                     ),
                     onConfirm: () => {
+                      setMatchId(data.matchId);
                       setSelectedMenu('home');
                       router.replace('/main');
                     },

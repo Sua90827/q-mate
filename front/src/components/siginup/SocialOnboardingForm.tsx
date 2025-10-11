@@ -52,7 +52,7 @@ export default function SocialOnboardingForm() {
     socialProfileMutate(
       { nickname: values.nickname.trim(), birthDate },
       {
-        onSuccess: () => router.push('/invite'),
+        onSuccess: () => router.replace('/invite'),
         onError: () => setOpen(true),
       },
     );
