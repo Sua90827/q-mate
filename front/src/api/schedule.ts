@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { EventMonthResponse, ScheduleEvent, ScheduleResponse } from '@/types/scheduleType';
 import instance from '../lib/axiosInstance';
 
@@ -14,7 +13,7 @@ export const fetchScheduleList = async (
     anniversary?: boolean;
   },
 ): Promise<ScheduleResponse> => {
-  const res = await axios.get<ScheduleResponse>(`/api/matches/${matchId}/events`, { params });
+  const res = await instance.get<ScheduleResponse>(`/api/matches/${matchId}/events`, { params });
   return res.data;
 };
 
@@ -34,7 +33,7 @@ export const createSchedule = async ({
   repeatType: 'WEEKLY' | 'MONTHLY' | 'YEARLY' | 'NONE';
   alarmOption: 'NONE' | 'WEEK_BEFORE' | 'THREE_DAYS_BEFORE' | 'SAME_DAY';
 }) => {
-  const res = await axios.post(`/api/matches/${matchId}/events`, {
+  const res = await instance.post(`/api/matches/${matchId}/events`, {
     title,
     description,
     eventAt,
@@ -52,7 +51,7 @@ export const deleteSchedule = async ({
   matchId: number;
   eventId: number;
 }) => {
-  const res = await axios.delete(`/api/matches/${matchId}/events/${eventId}`);
+  const res = await instance.delete(`/api/matches/${matchId}/events/${eventId}`);
   return res.data;
 };
 //일정 수정
@@ -73,7 +72,7 @@ export const updateSchedule = async ({
   repeatType: 'NONE' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
   alarmOption: 'NONE' | 'WEEK_BEFORE' | 'THREE_DAYS_BEFORE' | 'SAME_DAY';
 }): Promise<ScheduleEvent> => {
-  const res = await axios.patch<ScheduleEvent>(`/api/matches/${matchId}/events/${eventId}`, {
+  const res = await instance.patch<ScheduleEvent>(`/api/matches/${matchId}/events/${eventId}`, {
     title,
     description,
     eventAt,
