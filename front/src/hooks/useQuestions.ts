@@ -21,13 +21,13 @@ export const useQuestions = (matchId: number, page: number = 0, size: number = 2
 };
 
 //질문 상세 조회
-export const useQuestionDetail = (questionInstanceId: number) => {
+export const useQuestionDetail = (questionInstanceId?: number | null) => {
   return useQuery({
     queryKey: ['questionDetail', questionInstanceId],
-    queryFn: () => fetchQuestionDetail(questionInstanceId),
+    queryFn: () => fetchQuestionDetail(questionInstanceId!),
+    enabled: !!questionInstanceId,
     staleTime: 1000 * 60,
     gcTime: 1000 * 60 * 5,
-    enabled: !!questionInstanceId,
   });
 };
 

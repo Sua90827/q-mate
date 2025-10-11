@@ -16,11 +16,13 @@ export default function Home() {
   const matchId = useMatchIdStore((state) => state.matchId);
 
   const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('accessTokenTime');
+
     resetAccessToken();
     resetMatchId();
     resetSelectedMenu();
-    localStorage.removeItem('accessToken');
-    localStorage.clear();
+
     router.replace('/login');
   };
 
