@@ -7,6 +7,8 @@ import NoticeModal from '../common/NoticeModal';
 import { useCreateInviteCode } from '@/hooks/useInvite';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { useMatchInfo } from '@/hooks/useMatches';
+import { useSelectedStore } from '@/store/useSelectedStore';
+import Loader from '../common/Loader';
 
 type InviteErrorType = 'copy' | 'code' | null;
 
@@ -19,9 +21,11 @@ export default function Invite() {
   const { relationType } = useParams<{ relationType: string }>();
   const searchParams = useSearchParams();
   const startDate = searchParams.get('date'); // 연인일 경우에만 존재
+  const [loading, setLoading] = useState(false);
 
   const matchId = useMatchIdStore((state) => state.matchId);
   const setMatchId = useMatchIdStore((state) => state.setMatchId);
+  const setSelectedMenu = useSelectedStore((s) => s.setSelectedMenu);
 
   const { mutate: createCode } = useCreateInviteCode();
   const { data } = useMatchInfo(matchId!);
@@ -62,9 +66,12 @@ export default function Invite() {
 
   useEffect(() => {
     if (data?.status === 'ACTIVE') {
-      router.push('/main');
+      setSelectedMenu('home');
+      router.replace('/main');
     }
-  }, [data?.status, router]);
+  }, [data?.status]);
+
+  if (loading) return <Loader />;
 
   return (
     <>
@@ -102,6 +109,7 @@ export default function Invite() {
             자동으로 연결돼요
           </>
         }
+        onConfirm={() => setLoading(true)}
       />
       <NoticeModal
         open={errorOpen}

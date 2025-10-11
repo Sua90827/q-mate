@@ -31,24 +31,22 @@ export default function Home() {
     router.replace('/login');
   };
 
-  if (!matchId) {
-    router.replace('/invite');
-    return;
-  }
-
   const checkLogin = () => {
     if (!accessToken || !accessTokenTime) {
       handleLogout();
       return;
     }
 
-    // 만료 확인
     if (Date.now() >= accessTokenTime) {
       handleLogout();
       return;
     }
 
-    // 유효할 경우
+    if (accessToken && !matchId) {
+      router.replace('/invite');
+      return;
+    }
+
     setSelectedMenu('home');
     router.replace('/main');
   };

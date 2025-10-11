@@ -15,7 +15,8 @@ import { useSyncPushOnLogin } from '@/hooks/useSyncPush';
 import { fetchPetInfo } from '@/api/pet';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useSelectedStore } from '@/store/useSelectedStore';
-import { socialLogin } from '@/api/auth';
+import { googleLogin } from '@/utils/googleLogin';
+import { buildNaverAuthorizeUrl } from '@/utils/buildNaverAuthUrl';
 
 const validateEmail = (v: string) => /\S+@\S+\.\S+/.test(v);
 const validatePassword = (v: string) =>
@@ -40,9 +41,8 @@ export default function Login() {
   const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
   const { mutate: loginUserMutate, isPending: isLoginLoading } = useLoginUser();
 
-  // 소셜 로그인 (리다이렉트 방식)
-  const handleSocialLogin = (provider: string) => {
-    socialLogin(provider);
+  const naverLogin = () => {
+    window.location.href = buildNaverAuthorizeUrl();
   };
 
   // 일반 로그인
@@ -89,7 +89,7 @@ export default function Login() {
 
   return (
     <div className="w-full h-full flex flex-col gap-3 items-center justify-center pt-[70px] sm:pt-[0px] sm:pb-[70px]">
-      {isLoginLoading && <Loader />} {/* ✅ socialLoading 제거 */}
+      {isLoginLoading && <Loader />}
       <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={173} height={55} />
       <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">
         <TextInput
@@ -126,8 +126,8 @@ export default function Login() {
       <Button variant="primaryOutline" className="w-[295px]" asChild>
         <Link href="/signup">회원가입</Link>
       </Button>
-      <GoogleBtn onSocialLogin={handleSocialLogin} />
-      <NaverBtn onSocialLogin={handleSocialLogin} />
+      <GoogleBtn onSocialLogin={googleLogin} />
+      <NaverBtn onSocialLogin={naverLogin} />
       <NoticeModal
         open={open}
         setOpen={setOpen}

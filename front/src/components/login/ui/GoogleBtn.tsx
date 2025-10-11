@@ -3,7 +3,7 @@ import { Button } from '../../common/Button';
 import Image from 'next/image';
 
 interface GoogleBtnProps {
-  onSocialLogin: (provider: string) => void;
+  onSocialLogin: () => void;
 }
 
 export default function GoogleBtn({ onSocialLogin }: GoogleBtnProps) {
@@ -11,7 +11,7 @@ export default function GoogleBtn({ onSocialLogin }: GoogleBtnProps) {
     <Button
       variant="icon"
       className="text-text-secondary bg-secondary border-2 border-gray w-[295px]"
-      onClick={() => onSocialLogin('google')}
+      onClick={onSocialLogin}
     >
       <Image src="/images/social/googleLogo.png" width={20} height={20} alt="구글 로그인" />
       구글 로그인
