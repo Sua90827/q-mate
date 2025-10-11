@@ -1,8 +1,8 @@
 package com.qmate.domain.event.service;
 
 import com.qmate.common.push.PushSender;
+import com.qmate.domain.event.entity.DueEventRow;
 import com.qmate.domain.event.repository.EventQueryRepository;
-import com.qmate.domain.event.repository.EventQueryRepository.DueEventRow;
 import com.qmate.domain.event.repository.EventRepository;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.notification.entity.Notification;
@@ -30,16 +30,16 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 @RequiredArgsConstructor
 public class EventAlarmService {
 
-  private final EventRepository eventRepository;
   private final MatchMemberRepository matchMemberRepository;
   private final UserRepository userRepository;
   private final NotificationRepository notificationRepository;
   private final PushSender pushSender;
+  private final EventService eventService;
 
   @Transactional
   public int registerAndSendAll(LocalDate today) {
     // 1) due 이벤트 일괄 조회
-    List<DueEventRow> due = eventRepository.findDueEventAlarmRows(today);
+    List<DueEventRow> due = eventService.findDueEventAlarmRows(today);
     if (due.isEmpty()) {
       return 0;
     }
@@ -47,7 +47,7 @@ public class EventAlarmService {
     // 2) 매치별 멤버 userIds 수집 및 캐시
     Map<Long, List<Long>> matchToUserIds = new HashMap<>();
     Set<Long> allUserIds = new HashSet<>();
-    for (Long matchId : due.stream().map(EventQueryRepository.DueEventRow::matchId).collect(Collectors.toSet())) {
+    for (Long matchId : due.stream().map(DueEventRow::matchId).collect(Collectors.toSet())) {
       List<Long> userIds = matchMemberRepository.findAllUser_IdByMatch_Id(matchId);
       matchToUserIds.put(matchId, userIds);
       allUserIds.addAll(userIds);

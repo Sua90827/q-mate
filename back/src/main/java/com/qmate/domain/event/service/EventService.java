@@ -1,16 +1,20 @@
 package com.qmate.domain.event.service;
 
 import com.qmate.common.constants.event.EventConstants;
+import com.qmate.domain.event.entity.DueEventRow;
 import com.qmate.domain.event.entity.Event;
+import com.qmate.domain.event.entity.EventAlarmOption;
 import com.qmate.domain.event.entity.EventRepeatType;
 import com.qmate.domain.event.mapper.EventMapper;
 import com.qmate.domain.event.model.request.EventCreateRequest;
 import com.qmate.domain.event.model.request.EventUpdateRequest;
 import com.qmate.domain.event.model.response.CalendarMonthResponse;
 import com.qmate.domain.event.model.response.EventResponse;
+import com.qmate.domain.event.repository.EventQueryRepository;
 import com.qmate.domain.event.repository.EventRepository;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.repository.MatchRepository;
+import com.qmate.domain.notification.entity.NotificationCode;
 import com.qmate.exception.custom.event.EventCalendarDateRangeExceededException;
 import com.qmate.exception.custom.event.EventDeletionNotAllowedException;
 import com.qmate.exception.custom.event.EventListDateRangeExceededException;
@@ -237,6 +241,52 @@ public class EventService {
         .month(base.getMonthValue())
         .days(days)
         .build();
+  }
+
+  @Transactional(readOnly = true)
+  public List<DueEventRow> findDueEventAlarmRows(LocalDate today) {
+    LocalDate from = today;
+    LocalDate to = today.plusDays(7);
+
+    // 권한 제약 없이 알림 옵션이 설정된 후보만 가져오는 전용 쿼리
+    List<Event> candidates = eventRepository.findAlarmCandidates(to);
+
+    List<DueEventRow> out = new ArrayList<>();
+    for (Event e : candidates) {
+      for (LocalDate occ : expandOccurrences(e, from, to)) {
+        long d = ChronoUnit.DAYS.between(today, occ); // 관심: 0,3,7
+        NotificationCode code = toCodeByOffset(d);
+        if (code == null) continue;
+        if (!matchesAlarmOption(e.getAlarmOption(), d)) continue;
+
+        out.add(new DueEventRow(
+            code.name(),
+            e.getId(),
+            e.getMatch().getId(),
+            e.getTitle(),
+            occ
+        ));
+      }
+    }
+    return out;
+  }
+
+  private NotificationCode toCodeByOffset(long d) {
+    return switch ((int) d) {
+      case 0 -> NotificationCode.EVENT_SAME_DAY;
+      case 3 -> NotificationCode.EVENT_THREE_DAYS_BEFORE;
+      case 7 -> NotificationCode.EVENT_WEEK_BEFORE;
+      default -> null;
+    };
+  }
+
+  private boolean matchesAlarmOption(EventAlarmOption opt, long d) {
+    return switch ((int) d) {
+      case 0 -> opt == EventAlarmOption.SAME_DAY;
+      case 3 -> opt == EventAlarmOption.THREE_DAYS_BEFORE;
+      case 7 -> opt == EventAlarmOption.WEEK_BEFORE;
+      default -> false;
+    };
   }
 
   /* ===== 반복 전개 ===== */

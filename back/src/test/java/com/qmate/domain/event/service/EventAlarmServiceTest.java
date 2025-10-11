@@ -4,8 +4,7 @@ import static org.mockito.BDDMockito.*;
 import static org.assertj.core.api.Assertions.*;
 
 import com.qmate.common.push.PushSender;
-import com.qmate.domain.event.repository.EventQueryRepository.DueEventRow;
-import com.qmate.domain.event.repository.EventRepository;
+import com.qmate.domain.event.entity.DueEventRow;
 import com.qmate.domain.match.repository.MatchMemberRepository;
 import com.qmate.domain.notification.entity.Notification;
 import com.qmate.domain.notification.entity.NotificationCategory;
@@ -30,11 +29,11 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 @ExtendWith(MockitoExtension.class)
 class EventAlarmServiceTest {
 
-  @Mock private EventRepository eventRepository;
   @Mock private MatchMemberRepository matchMemberRepository;
   @Mock private UserRepository userRepository;
   @Mock private NotificationRepository notificationRepository;
   @Mock private PushSender pushSender;
+  @Mock private EventService eventService;
 
   @InjectMocks
   private EventAlarmService service;
@@ -58,7 +57,7 @@ class EventAlarmServiceTest {
     DueEventRow row2 = new DueEventRow(
         NotificationCode.EVENT_WEEK_BEFORE.name(), 102L, 12L, "TITLE2", today.plusDays(7));
 
-    given(eventRepository.findDueEventAlarmRows(today)).willReturn(List.of(row1, row2));
+    given(eventService.findDueEventAlarmRows(today)).willReturn(List.of(row1, row2));
 
     // match 11 → users: 1,2 / match 12 → users: 3
     given(matchMemberRepository.findAllUser_IdByMatch_Id(11L)).willReturn(List.of(1L, 2L));
