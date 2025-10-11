@@ -63,6 +63,8 @@ public class WebPushSender implements PushSender {
           log.warn("Non-2xx push response. user={} subId={} status={}",
               userId, sub.getId(), status);
         }
+        log.info("Push sent. user={} subId={} notif={} status={}",
+            userId, sub.getId(), notificationId, status);
       } catch (Exception e) {
         log.error("Push send failed. user={} subId={} notif={}",
             userId, sub.getId(), notificationId, e);
