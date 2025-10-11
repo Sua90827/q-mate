@@ -1,6 +1,8 @@
 package com.qmate.domain.event.repository;
 
 import com.qmate.domain.event.entity.Event;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +23,12 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventQueryR
   Optional<Event> findAuthorizedById(@Param("matchId") Long matchId,
       @Param("userId") Long userId,
       @Param("eventId") Long eventId);
+
+  @Query("""
+      select e
+      from Event e
+      where e.alarmOption <> com.qmate.domain.event.entity.EventAlarmOption.NONE
+        and e.eventAt <= :to
+      """)
+  List<Event> findAlarmCandidates(@Param("to") LocalDate to);
 }
