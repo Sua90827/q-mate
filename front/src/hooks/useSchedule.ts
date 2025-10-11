@@ -38,8 +38,10 @@ export const useCreateSchedule = () => {
 
   return useMutation({
     mutationFn: createSchedule,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['schedule'] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['schedule', variables.matchId],
+      });
     },
   });
 };
