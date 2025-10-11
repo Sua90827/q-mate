@@ -15,18 +15,18 @@ export const createInviteCode = async ({
 
 //초대 코드 연결
 export const connectWithInviteCode = async ({ inviteCode }: { inviteCode: string }) => {
-  const res = await instance.post(`/api/matches/join`, { inviteCode });
+  const res = await instance.post(`api/matches/join`, { inviteCode });
   return res.data;
 };
 
 // 계정 잠김 조회
 export const fetchLockStatus = async (): Promise<LockStatus> => {
-  const res = await instance.get(`/api/matches/lock-status`);
+  const res = await instance.get(`api/matches/lock-status`);
   return res.data;
 };
 
 //초대코드 유효성 검증
 export const checkInviteCode = async ({ inviteCode }: { inviteCode: string }) => {
-  const res = await instance.post(`/api/invites/validate`, { inviteCode });
+  const res = await instance.post(`api/invites/validate`, { inviteCode });
   return res.data;
 };

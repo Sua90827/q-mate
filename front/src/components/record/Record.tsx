@@ -30,7 +30,7 @@ export default function Record() {
       </div>
       <div className="w-full h-full flex items-center justify-center">
         <div className="w-[320px] h-[481px] flex flex-col justify-center ">
-          {isLoading || (isError && <Skeleton className="w-[320px] h-[320px]" />)}
+          {isLoading && <Skeleton className="w-[320px] h-[320px]" />}
           <QuestionCard
             questionInstanceId={data?.questionInstanceId}
             questionText={data?.question.text}

@@ -7,7 +7,7 @@ export const fetchCustomQuestions = async (
   page: number = 0,
   size: number = 20,
 ): Promise<CustomQuestionPage> => {
-  const res = await instance.get(`/api/matches/${matchId}/custom-questions`, {
+  const res = await instance.get(`api/matches/${matchId}/custom-questions`, {
     params: {
       page,
       size,
@@ -25,18 +25,18 @@ export const createCustomQuestion = async ({
   text: string;
   matchId: number;
 }) => {
-  const res = await instance.post(`/api/matches/${matchId}/custom-questions`, { text });
+  const res = await instance.post(`api/matches/${matchId}/custom-questions`, { text });
   return res.data;
 };
 
 // 커스텀 질문 수정
 export const updateCustomQuestion = async ({ text, id }: { text: string; id: number }) => {
-  const res = await instance.patch(`/api/custom-questions/${id}`, { text });
+  const res = await instance.patch(`api/custom-questions/${id}`, { text });
   return res.data;
 };
 
 // 커스텀 질문 삭제
 export const deleteCustomQuestion = async (id: number) => {
-  const res = await instance.delete(`/api/custom-questions/${id}`);
+  const res = await instance.delete(`api/custom-questions/${id}`);
   return res.data;
 };
