@@ -18,7 +18,7 @@ export const updateMatchInfo = async (
     body.startDate = startDate;
   }
 
-  const response = await instance.patch(`/matches/${matchId}/info`, body);
+  const response = await instance.patch(`/api/matches/${matchId}/info`, body);
   return response.data as { message: string };
 };
 

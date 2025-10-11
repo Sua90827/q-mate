@@ -5,7 +5,6 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { useSelectedStore } from '@/store/useSelectedStore';
-import { useEffect } from 'react';
 
 export default function Home() {
   const router = useRouter();
@@ -17,10 +16,11 @@ export default function Home() {
   const matchId = useMatchIdStore((state) => state.matchId);
 
   const handleLogout = () => {
-    localStorage.clear();
     resetAccessToken();
     resetMatchId();
     resetSelectedMenu();
+    localStorage.removeItem('accessToken');
+    localStorage.clear();
     router.replace('/login');
   };
 
@@ -49,10 +49,6 @@ export default function Home() {
     setSelectedMenu('home');
     router.replace('/main');
   };
-
-  useEffect(() => {
-    checkLogin();
-  }, []);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center pt-[70px] sm:pt-[0px] sm:pb-[70px]">
