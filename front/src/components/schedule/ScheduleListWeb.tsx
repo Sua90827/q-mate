@@ -33,7 +33,7 @@ export default function ScheduleListWeb() {
 
   if (isLoading)
     return (
-      <div className="bg-secondary pt-4 shadow-md rounded-lg">
+      <div className="hidden md:flex flex-col w-[320px] lg:w-[400px] h-[654px] bg-secondary pt-4 shadow-md rounded-lg">
         <h2 className="font-bold text-20 p-4">일정 리스트</h2>
         <ul className="w-full border-y divide-y divide-text-gray">
           <Skeleton />
@@ -43,7 +43,7 @@ export default function ScheduleListWeb() {
 
   if (isError)
     return (
-      <div className="hidden md:flex flex-col w-[320px] lg:w-[400px] h-full bg-secondary pt-4 shadow-md rounded-lg">
+      <div className="hidden md:flex flex-col w-[320px] lg:w-[400px] h-[654px] bg-secondary pt-4 shadow-md rounded-lg">
         <h2 className="font-bold text-20 p-4">일정 리스트</h2>
         <ul className="w-full border-y divide-y divide-text-gray">
           <p className="text-16">에러가 발생했습니다.</p>

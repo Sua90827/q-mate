@@ -1,15 +1,15 @@
+import { useAuthStore } from '@/store/useAuthStore';
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: '/api', // 프록시 경로
+  baseURL: '',
   withCredentials: true,
 });
-
 api.interceptors.request.use((config) => {
-  const access = localStorage.getItem('accessToken');
-  if (access) {
+  const token = useAuthStore.getState().accessToken;
+  if (token) {
     config.headers = config.headers ?? {};
-    config.headers['Authorization'] = `Bearer ${access}`;
+    config.headers['Authorization'] = `Bearer ${token}`;
   }
   return config;
 });

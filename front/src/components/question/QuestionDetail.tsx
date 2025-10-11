@@ -37,7 +37,7 @@ export default function QuestionDetail() {
     data: detail,
     isLoading,
     isError,
-  } = useQuestionDetail(shouldFetch ? questionInstanceId! : -1);
+  } = useQuestionDetail(shouldFetch ? questionInstanceId! : undefined);
 
   const { mutateAsync: createAnswer, isPending: isCreating } = useAnswerQuestion();
   const { mutateAsync: updateAnswer, isPending: isUpdating } = useUpdateAnswerQuestion();

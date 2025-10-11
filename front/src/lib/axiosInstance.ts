@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useAuthStore } from '@/store/useAuthStore';
 import { handleUnauthorized } from '@/lib/redirectHandler';
 
-//일반api용
+// 일반 API용 axios 인스턴스
 export const instance = axios.create({
   baseURL: '/api',
   withCredentials: false,
@@ -14,14 +14,10 @@ instance.interceptors.request.use(
     const token = useAuthStore.getState().accessToken;
     const requestUrl = config.url ?? '';
 
-    // 인증 제외 라우트
-    const isPublicRoute =
-      requestUrl.includes('/auth/login') ||
-      requestUrl.includes('/auth/register') ||
-      requestUrl.includes('/auth/email-verifications') ||
-      requestUrl.includes('/auth/email-verifications/resend') ||
-      requestUrl.includes('/auth/email-verifications/verify') ||
-      requestUrl.includes('/auth/google/exchange');
+    // 인증 제외 라우트 (정규식 기반)
+    const isPublicRoute = /\/auth\/(login|register|email-verifications|google\/exchange)/.test(
+      requestUrl,
+    );
 
     if (token && !isPublicRoute) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -39,13 +35,10 @@ instance.interceptors.response.use(
     const status = error.response?.status;
     const requestUrl = error.config?.url ?? '';
 
-    const isAuthRoute =
-      requestUrl.includes('/auth/login') ||
-      requestUrl.includes('/auth/register') ||
-      requestUrl.includes('/auth/email-verifications') ||
-      requestUrl.includes('/auth/email-verifications/resend') ||
-      requestUrl.includes('/auth/email-verifications/verify') ||
-      requestUrl.includes('/auth/google/exchange');
+    // 인증 관련 라우트 (정규식 기반)
+    const isAuthRoute = /\/auth\/(login|register|email-verifications|google\/exchange)/.test(
+      requestUrl,
+    );
 
     if (status === 401 && !isAuthRoute) {
       handleUnauthorized();
