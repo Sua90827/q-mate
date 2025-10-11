@@ -29,7 +29,7 @@ export default function GoogleCallback() {
 
   const exchangeCode = async (code: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_ORIGIN}/auth/google/exchange`, {
+      const res = await fetch(`/auth/google/exchange`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
