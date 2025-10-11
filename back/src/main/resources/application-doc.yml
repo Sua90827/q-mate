@@ -35,17 +35,16 @@ security:
 
 app:
   email-verification:
-    jwt-secret: ${APP_EMAIL_VERIFICATION_JWT_SECRET}
+    jwt-secret: dummy-doc-email-jwt
     ttl-minutes: ${APP_EMAIL_VERIFICATION_TTL_MINUTES:10}
   frontend:
     origin: https://q-mate.vercel.app
   #    success-url: https://q-mate.vercel.app/login/success
   oauth:
     google:
-      client-id: ${OAUTH_GOOGLE_CLIENT_ID}
-      client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
-      # 프론트가 code를 받는 콜백 주소
-      redirect-uri: https://q-mate.vercel.app/login/oauth2/code/google
+      client-id: dummy-client-id                 # ← 고정값
+      client-secret: dummy-client-secret         # ← 고정값
+      redirect-uri: https://example.com/callback # 아무 문자열 OK
 
 # 필요 시 springdoc 커스터마이즈(옵션)
 # springdoc:
