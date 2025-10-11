@@ -6,7 +6,7 @@ import {
   VerifyEmailCodeBody,
   VerifyEmailCodeResponse,
 } from '@/types/signupType';
-import instance from './axiosInstance';
+import instance from '../lib/axiosInstance';
 
 // 1) 이메일 인증 코드 발송
 export const sendEmailVerification = async (payload: SendEmailVerificationBody) => {

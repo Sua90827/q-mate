@@ -1,4 +1,4 @@
-import { instance } from './axiosInstance';
+import { instance } from '../lib/axiosInstance';
 
 //자체 로그인
 export const loginUser = async ({ email, password }: { email: string; password: string }) => {
@@ -45,6 +45,6 @@ export const updateSocialProfile = async ({
   nickname: string;
   birthDate: string;
 }) => {
-  const res = await instance.patch(`api/users/me/profile`, { nickname, birthDate });
+  const res = await instance.patch(`/users/me/profile`, { nickname, birthDate });
   return res.data;
 };

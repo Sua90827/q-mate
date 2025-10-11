@@ -15,7 +15,7 @@ export function DateSelectButton({
   onSelect?: (date: string | undefined) => void;
   isAnniversary?: boolean;
 }) {
-  const birthdateStr = sessionStorage.getItem('birthdate') || '';
+  const birthdateStr = sessionStorage.getItem('birthDate') || '';
   const birthdate = birthdateStr ? new Date(birthdateStr) : undefined;
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(isAnniversary ? undefined : birthdate);

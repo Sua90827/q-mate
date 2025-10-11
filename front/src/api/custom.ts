@@ -1,5 +1,5 @@
 import { CustomQuestionPage } from '@/types/questionType';
-import instance from './axiosInstance';
+import instance from '../lib/axiosInstance';
 
 // 커스텀 질문 조회
 export const fetchCustomQuestions = async (

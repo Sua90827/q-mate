@@ -6,7 +6,7 @@ import {
   subScriptionsType,
   vapidPublicKeyType,
 } from '@/types/notification';
-import instance from './axiosInstance';
+import instance from '../lib/axiosInstance';
 
 //푸시 알림 구독 갱신
 export const fetchSubscription = async (subscription: subScriptionsType) => {
