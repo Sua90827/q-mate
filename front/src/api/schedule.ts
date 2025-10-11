@@ -14,7 +14,7 @@ export const fetchScheduleList = async (
     anniversary?: boolean;
   },
 ): Promise<ScheduleResponse> => {
-  const res = await axios.get<ScheduleResponse>(`api/matches/${matchId}/events`, { params });
+  const res = await axios.get<ScheduleResponse>(`/matches/${matchId}/events`, { params });
   return res.data;
 };
 
@@ -34,7 +34,7 @@ export const createSchedule = async ({
   repeatType: 'WEEKLY' | 'MONTHLY' | 'YEARLY' | 'NONE';
   alarmOption: 'NONE' | 'WEEK_BEFORE' | 'THREE_DAYS_BEFORE' | 'SAME_DAY';
 }) => {
-  const res = await axios.post(`api/matches/${matchId}/events`, {
+  const res = await axios.post(`/matches/${matchId}/events`, {
     title,
     description,
     eventAt,
@@ -52,7 +52,7 @@ export const deleteSchedule = async ({
   matchId: number;
   eventId: number;
 }) => {
-  const res = await axios.delete(`api/matches/${matchId}/events/${eventId}`);
+  const res = await axios.delete(`/matches/${matchId}/events/${eventId}`);
   return res.data;
 };
 //일정 수정
@@ -73,7 +73,7 @@ export const updateSchedule = async ({
   repeatType: 'NONE' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
   alarmOption: 'NONE' | 'WEEK_BEFORE' | 'THREE_DAYS_BEFORE' | 'SAME_DAY';
 }): Promise<ScheduleEvent> => {
-  const res = await axios.patch<ScheduleEvent>(`/api/matches/${matchId}/events/${eventId}`, {
+  const res = await axios.patch<ScheduleEvent>(`/matches/${matchId}/events/${eventId}`, {
     title,
     description,
     eventAt,
@@ -87,13 +87,13 @@ export const fetchEventMonth = async (
   from: string,
   to: string,
 ): Promise<EventMonthResponse> => {
-  const res = await instance.get<EventMonthResponse>(`api/matches/${matchId}/events/calendar`, {
+  const res = await instance.get<EventMonthResponse>(`/matches/${matchId}/events/calendar`, {
     params: { from, to },
   });
   return res.data;
 };
 
 export const fetchEventDetail = async (matchId: number, eventId: number) => {
-  const res = await instance.get(`api/matches/${matchId}/events/${eventId}`);
+  const res = await instance.get(`/matches/${matchId}/events/${eventId}`);
   return res.data as ScheduleEvent;
 };
