@@ -54,7 +54,7 @@ public class AuthService {
 
   public void logout(HttpServletRequest req, HttpServletResponse res, Authentication auth) {
     delegate.logout(req, res, auth); //세션, 컨텍스트 정리
-    expireCookie(res, "ACCESS_TOKEN");// JWT 쿠키 만료
+//    expireCookie(res, "ACCESS_TOKEN");// JWT 쿠키 만료
   }
 
   private void expireCookie(HttpServletResponse res, String name) {
