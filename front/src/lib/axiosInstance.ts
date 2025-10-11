@@ -18,7 +18,10 @@ instance.interceptors.request.use(
     const isPublicRoute =
       requestUrl.includes('/auth/login') ||
       requestUrl.includes('/auth/register') ||
-      requestUrl.includes('/auth/email-verifications');
+      requestUrl.includes('/auth/email-verifications') ||
+      requestUrl.includes('/auth/email-verifications/resend') ||
+      requestUrl.includes('/auth/email-verifications/verify') ||
+      requestUrl.includes('/auth/google/exchange');
 
     if (token && !isPublicRoute) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -39,7 +42,10 @@ instance.interceptors.response.use(
     const isAuthRoute =
       requestUrl.includes('/auth/login') ||
       requestUrl.includes('/auth/register') ||
-      requestUrl.includes('/auth/email-verifications');
+      requestUrl.includes('/auth/email-verifications') ||
+      requestUrl.includes('/auth/email-verifications/resend') ||
+      requestUrl.includes('/auth/email-verifications/verify') ||
+      requestUrl.includes('/auth/google/exchange');
 
     if (status === 401 && !isAuthRoute) {
       handleUnauthorized();
