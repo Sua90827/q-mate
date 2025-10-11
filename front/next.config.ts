@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
       // 일반 API 요청
       {
         source: '/api/:path*',
-        destination: `${process.env.BACKEND_ORIGIN}/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_ORIGIN}/:path*`,
       },
     ];
   },
