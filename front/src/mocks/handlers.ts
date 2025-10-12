@@ -17,7 +17,7 @@ export const handlers = [
   // ...authHandlers,
   // ...signupHandlers,
   ...scheduleHandlers,
-  ...chartHandlers,
+  //...chartHandlers,
   ...notificationsHandler,
   ...petHandlers,
 ];
