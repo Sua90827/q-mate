@@ -108,7 +108,7 @@ export default function QuestionList() {
 
         {/* 리스트 */}
         <div className="flex-1 overflow-y-auto bg-secondary">
-          <ul className="flex-1 overflow-y-auto flex flex-col divide-y divide-dash border-t border-gray pb-[70px]">
+          <ul className="flex-1 overflow-y-auto flex flex-col divide-y divide-dash border-t border-gray ">
             {pagedInstances.map((instance) => {
               const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
 
