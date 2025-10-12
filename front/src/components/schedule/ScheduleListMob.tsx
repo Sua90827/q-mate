@@ -78,8 +78,8 @@ export default function ScheduleListMob() {
         </div>
       </div>
 
-      <div className="w-full flex-1 h-full bg-secondary overflow-scroll">
-        <ul className="w-full border-y divide-y divide-text-gray">
+      <div className="w-full flex-1 h-full bg-secondary ">
+        <ul className="w-full border-y divide-y divide-text-gray overflow-y-auto">
           {schedules.map((list) => (
             <li key={list.eventId} className="flex justify-between px-4 py-3 items-center">
               <div className="flex-1" onClick={() => router.push(`/schedule/edit/${list.eventId}`)}>

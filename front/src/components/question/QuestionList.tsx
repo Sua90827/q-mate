@@ -93,7 +93,7 @@ export default function QuestionList() {
   return (
     <div className="w-full h-full flex items-center justify-center">
       {/* 모바일 */}
-      <div className="sm:hidden w-full h-[calc(100vh-140px)] flex flex-col">
+      <div className="sm:hidden w-full h-[100dvh] flex flex-col">
         <div className="flex justify-between items-center h-[70px] px-4 flex-shrink-0">
           <FilterBtn setShowCustomOnly={setShowCustomOnly} className="text-theme-primary" />
           <p className="text-20 font-Gumi text-theme-primary ">질문 리스트</p>
