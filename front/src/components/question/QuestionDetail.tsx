@@ -85,7 +85,7 @@ export default function QuestionDetail() {
   if (customItem) {
     return (
       <div className="w-full h-full  flex flex-col items-center">
-        <Custom value={customItem.text} />
+        <Custom key={questionInstanceId} value={customItem.text} />
       </div>
     );
   }
