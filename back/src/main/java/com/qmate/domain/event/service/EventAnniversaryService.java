@@ -118,12 +118,21 @@ public class EventAnniversaryService {
     eventRepository.saveAll(birthdayEvents);
   }
 
-  //재생성(매치 startDate 변경 시 쓰는 helper)
   @Transactional
-  public void recreateMatchAnniversaries(Match match, User userA, User userB, String title100,
-      String titleAnniv) {
-    //삭제 후 새로 생성
-    eventRepository.deleteDefaultAnniversaryByMatchId(match.getId(), title100, titleAnniv);
-    this.createDefaultAnniversaries(match, userA, userB);
+  public void updateMatchAnniversaries(Match match) {
+    if (match.getStartDate() == null) return;
+
+    LocalDate startDate = match.getStartDate().toLocalDate();
+
+    // 100일 이벤트 업데이트
+    eventRepository.findHundredDayEventByMatchId(match.getId())
+        .ifPresent(event -> event.setEventAt(startDate.plusDays(100)));
+
+    // N주년 이벤트 업데이트
+    eventRepository.findAnniversaryEventByMatchId(match.getId())
+        .ifPresent(event -> event.setEventAt(startDate.plusYears(1)));
+
+    // 변경된 이벤트 저장
+    eventRepository.flush();
   }
 }

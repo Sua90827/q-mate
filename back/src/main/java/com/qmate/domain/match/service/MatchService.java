@@ -197,21 +197,14 @@ public class MatchService {
       throw new MatchForbiddenException();
     }
     if (request.getStartDate() != null) {
-      LocalDate oldStatDate = match.getStartDate().toLocalDate();
+      LocalDate oldStatDate = match.getStartDate() != null
+          ? match.getStartDate().toLocalDate()
+          : null;
       LocalDate newStatDate = request.getStartDate();
       if (!newStatDate.equals(oldStatDate)) {
         match.updateStartDate(newStatDate);
-        List<User> users = match.getMembers().stream()
-            .map(matchMember -> matchMember.getUser())
-            .toList();
-        User userA = users.size() > 0 ? users.get(0) : null;
-        User userB = users.size() > 1 ? users.get(1) : null;
 
-        //삭제/ 재생성 호출(title 값은 앱에서 사용하는 실제 문자열로)
-        String title100 = "100일";
-        String titleAnniv = "주년";
-        eventAnniversaryService.recreateMatchAnniversaries(match, userA, userB, title100,
-            titleAnniv);
+        eventAnniversaryService.updateMatchAnniversaries(match);
       }
     }
     if (request.getDailyQuestionHour() != null) {

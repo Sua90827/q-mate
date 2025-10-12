@@ -7,6 +7,7 @@ import com.qmate.domain.event.repository.EventRepository;
 import com.qmate.domain.match.Match;
 import com.qmate.domain.match.RelationType;
 import com.qmate.domain.user.User;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -87,28 +88,16 @@ class AnniversaryEventServiceTest {
     eventAnniversaryService.updateBirthdayEvents(1L, oldBirth, newBirth);
   }
   @Test
-  void testRecreateMatchAnniversaries() {
-    // given
-    doNothing().when(eventRepository)
-        .deleteDefaultAnniversaryByMatchId(anyLong(), anyString(), anyString());
+  void testUpdateMatchAnniversaries() {
+    when(eventRepository.findHundredDayEventByMatchId(anyLong()))
+        .thenReturn(Optional.of(Event.builder().eventAt(LocalDate.now()).build()));
+    when(eventRepository.findAnniversaryEventByMatchId(anyLong()))
+        .thenReturn(Optional.of(Event.builder().eventAt(LocalDate.now()).build()));
 
-    when(eventRepository.saveAll(any())).thenAnswer(inv -> inv.getArgument(0));
+    eventAnniversaryService.updateMatchAnniversaries(match);
 
-    // when
-    eventAnniversaryService.recreateMatchAnniversaries(
-        match, userA, userB, "100일", "주년");
-
-    // then
-    verify(eventRepository, times(1))
-        .deleteDefaultAnniversaryByMatchId(eq(match.getId()), eq("100일"), eq("주년"));
-
-    // capture saveAll result
-    List<Event> savedEvents = eventAnniversaryService.createDefaultAnniversaries(match, userA, userB);
-
-    assertThat(savedEvents).isNotEmpty();
-    assertThat(savedEvents.stream().anyMatch(e -> e.getTitle().equals("100일"))).isTrue();
-    assertThat(savedEvents.stream().anyMatch(e -> e.getTitle().equals("주년"))).isTrue();
-    assertThat(savedEvents.stream().anyMatch(e -> e.getRepeatType() == EventRepeatType.YEARLY)).isTrue();
+    verify(eventRepository, times(1)).findHundredDayEventByMatchId(eq(match.getId()));
+    verify(eventRepository, times(1)).findAnniversaryEventByMatchId(eq(match.getId()));
   }
 
   @Test

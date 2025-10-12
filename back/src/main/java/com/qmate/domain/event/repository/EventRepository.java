@@ -42,18 +42,23 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventQueryR
       @Param("day") int day
   );
 
-  // 매치의 기본 기념일 삭제 (100일, 주년) - 타이틀로 삭제 (하드코딩으로 인한 title 문자열 변경 시 같이 수정 필요)
-  @Modifying
+  // 매치의 100일 이벤트 조회 (반복 없음)
   @Query("""
-        delete from Event e
-        where e.match.id = :matchId
-          and e.anniversary = true
-          and (e.title = :title100 or e.title = :titleAnniv)
-      """)
-  void deleteDefaultAnniversaryByMatchId(
-      @Param("matchId") Long matchId,
-      @Param("title100") String title100,
-      @Param("titleAnniv") String titleAnniv
-  );
+      select e from Event e
+      where e.match.id = :matchId
+        and e.anniversary = true
+        and e.repeatType = 'NONE'
+    """)
+  Optional<Event> findHundredDayEventByMatchId(@Param("matchId") Long matchId);
+
+  // 매치의 주년 이벤트 조회 (반복 YEARLY)
+  @Query("""
+      select e from Event e
+      where e.match.id = :matchId
+        and e.anniversary = true
+        and e.repeatType = 'YEARLY'
+    """)
+  Optional<Event> findAnniversaryEventByMatchId(@Param("matchId") Long matchId);
+
 
 }
