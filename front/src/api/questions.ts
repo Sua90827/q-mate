@@ -11,7 +11,6 @@ export const fetchQuestions = async (
     params: {
       page,
       size,
-      status: ['PENDING', 'COMPLETED'],
     },
   });
   return res.data;

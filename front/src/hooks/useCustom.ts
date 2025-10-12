@@ -46,11 +46,11 @@ export const useUpdateCustomQuestion = () => {
 //삭제
 export const useDeleteCustomQuestion = () => {
   const queryClient = useQueryClient();
-  const matchId = useMatchIdStore.getState().matchId;
 
   return useMutation({
     mutationFn: (id: number) => deleteCustomQuestion(id),
     onSuccess: () => {
+      const matchId = useMatchIdStore.getState().matchId;
       queryClient.invalidateQueries({ queryKey: ['customQuestions', matchId] });
     },
   });

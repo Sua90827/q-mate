@@ -6,7 +6,6 @@ import {
   useAnswerQuestion,
   useUpdateAnswerQuestion,
 } from '@/hooks/useQuestions';
-
 import AnswerView from './AnswerView';
 import Custom from './Custom';
 import AnswerForm from './ui/AnswerForm';
@@ -20,7 +19,9 @@ import { useQueryClient } from '@tanstack/react-query';
 export default function QuestionDetail() {
   const searchParams = useSearchParams();
   const idParam = searchParams.get('id');
+  const isCustom = idParam?.startsWith('custom-');
   const questionInstanceId = idParam ? Number(idParam.replace('custom-', '')) : null;
+
   const matchId = useMatchIdStore((state) => state.matchId);
   const queryClient = useQueryClient();
 
@@ -28,11 +29,13 @@ export default function QuestionDetail() {
   const { data } = useFetchCustomQuestions(matchId!);
   const customQuestions = data?.content ?? [];
 
-  // 수정 가능한 커스텀 질문 찾기
-  const customItem = customQuestions.find((q) => q.customQuestionId === questionInstanceId);
+  // 수정 가능한 커스텀 질문 찾기 (custom- 일 때만)
+  const customItem = isCustom
+    ? customQuestions.find((q) => q.customQuestionId === questionInstanceId)
+    : null;
 
-  //커스텀일때 API 호출막기
-  const shouldFetch = questionInstanceId !== null && !customItem;
+  // 커스텀일 때만 API 호출 막기
+  const shouldFetch = questionInstanceId !== null && !isCustom;
   const {
     data: detail,
     isLoading,
@@ -42,20 +45,19 @@ export default function QuestionDetail() {
   const { mutateAsync: createAnswer, isPending: isCreating } = useAnswerQuestion();
   const { mutateAsync: updateAnswer, isPending: isUpdating } = useUpdateAnswerQuestion();
 
-  // 생성 핸들러
+  // 답변 생성 핸들러
   const handleCreateAnswer = async (content: string) => {
     if (!detail) return;
     try {
       await createAnswer({ questionInstanceId: detail.questionInstanceId, content });
       queryClient.invalidateQueries({ queryKey: ['pet'] });
-
       SuccessToast('답변을 제출했어요.');
     } catch {
       ErrorToast('답변 제출에 실패했어요. 잠시 후 다시 시도해 주세요.');
     }
   };
 
-  // 수정 핸들러
+  // 답변 수정 핸들러
   const handleUpdateAnswer = async (content: string) => {
     if (!detail) return;
     const myAns = detail.answers.find((a: Answer) => a.isMine && a.answerId != null);
@@ -70,11 +72,11 @@ export default function QuestionDetail() {
     }
   };
 
-  // 질문 id 없음
+  // 질문 ID 없음
   if (questionInstanceId === null) {
     return (
       <div className="w-full h-full flex justify-center items-center">
-        <div className="flex items-center justify-center  w-full sm:w-[400px] h-full sm:h-[550px] bg-secondary/80 rounded-md shadow-md">
+        <div className="flex items-center justify-center w-full sm:w-[400px] h-full sm:h-[550px] bg-secondary/80 rounded-md shadow-md">
           <p className="text-24 opacity-80">선택된 질문이 없습니다.</p>
         </div>
       </div>
@@ -84,8 +86,8 @@ export default function QuestionDetail() {
   // 커스텀 질문 처리
   if (customItem) {
     return (
-      <div className="w-full h-full  flex flex-col items-center">
-        <Custom value={customItem.text} />
+      <div className="w-full h-full flex flex-col items-center">
+        <Custom key={questionInstanceId} value={customItem.text} />
       </div>
     );
   }
@@ -102,7 +104,7 @@ export default function QuestionDetail() {
   if (isError)
     return (
       <div className="w-full h-full flex justify-center items-center">
-        <div className="flex items-center justify-center  w-full sm:w-[400px] h-full sm:h-[550px] bg-secondary/80 rounded-md shadow-md">
+        <div className="flex items-center justify-center w-full sm:w-[400px] h-full sm:h-[550px] bg-secondary/80 rounded-md shadow-md">
           <p className="text-24 opacity-80">에러가 발생했습니다.</p>
         </div>
       </div>
