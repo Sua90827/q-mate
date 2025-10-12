@@ -1,5 +1,6 @@
 package com.qmate.domain.match.service;
 
+import com.qmate.common.constants.event.EventConstants;
 import com.qmate.common.push.PushSender;
 import com.qmate.common.redis.RedisHelper;
 import com.qmate.domain.event.service.EventAnniversaryService;
@@ -196,7 +197,15 @@ public class MatchService {
       throw new MatchForbiddenException();
     }
     if (request.getStartDate() != null) {
-      match.updateStartDate(request.getStartDate());
+      LocalDate oldStatDate = match.getStartDate() != null
+          ? match.getStartDate().toLocalDate()
+          : null;
+      LocalDate newStatDate = request.getStartDate();
+      if (!newStatDate.equals(oldStatDate)) {
+        match.updateStartDate(newStatDate);
+
+        eventAnniversaryService.updateMatchAnniversaries(match);
+      }
     }
     if (request.getDailyQuestionHour() != null) {
       Optional<MatchSetting> optMatchSetting = matchSettingRepository.findById(matchId);
@@ -216,16 +225,17 @@ public class MatchService {
 
   /**
    * 특정 매칭의 연결을 끊습니다.
+   *
    * @param matchId 연결을 끊을 매칭의 ID
-   * @param userId 요청을 보낸 사용자의 ID(권한 검증용)
+   * @param userId  요청을 보낸 사용자의 ID(권한 검증용)
    */
   @Transactional
-  public void disconnectMatch(Long matchId, Long userId){
+  public void disconnectMatch(Long matchId, Long userId) {
     Match match = matchRepository.findWithMembersAndUsersById(matchId)
         .orElseThrow(MatchNotFoundException::new);
     boolean isMember = match.getMembers().stream()
         .anyMatch(matchMember -> matchMember.getUser().getId().equals(userId));
-    if (!isMember){
+    if (!isMember) {
       throw new MatchForbiddenException();
     }
     match.getMembers().forEach(matchMember -> matchMember.getUser().leaveMatch());
@@ -234,26 +244,27 @@ public class MatchService {
 
   /**
    * 끊어진 매칭 연결 복구를 시도합니다.
+   *
    * @return 최종 복구 여부 (true: 완전 복구, false: 내 동의만 완료)
    */
   @Transactional
-  public boolean restoreMatch(Long matchId, Long userId){
+  public boolean restoreMatch(Long matchId, Long userId) {
     Match match = matchRepository.findWithMembersAndUsersById(matchId)
         .orElseThrow(MatchNotFoundException::new);
     boolean isMember = match.getMembers().stream()
         .anyMatch(matchMember -> matchMember.getUser().getId().equals(userId));
-    if (!isMember){
+    if (!isMember) {
       throw new MatchForbiddenException();
     }
     //요청자의 MatchMember를 찾습니다.
     MatchMember requester = match.getMembers().stream()
-            .filter(matchMember -> matchMember.getUser().getId().equals(userId))
-                .findFirst()
-                    .orElseThrow();
+        .filter(matchMember -> matchMember.getUser().getId().equals(userId))
+        .findFirst()
+        .orElseThrow();
     requester.agreeToRestore();
 
     boolean isFullyRestored = match.attemptToRestore();
-    if (isFullyRestored){
+    if (isFullyRestored) {
       match.getMembers().forEach(matchMember -> matchMember.getUser().joinMatch(match));
     }
 
@@ -262,13 +273,13 @@ public class MatchService {
 
   //초대 코드의 유효성 검증하고, 코드를 생성한 파트너의 닉네임을 반환합니다.
   @Transactional(readOnly = true)
-  public InviteCodeValidationResponse validateInviteCode(String inviteCode){
+  public InviteCodeValidationResponse validateInviteCode(String inviteCode) {
     Long matchId = redisHelper.getMatchIdByInviteCode(inviteCode)
         .orElseThrow(InviteCodeExpiredException::new);//코드가 없거나 만료됨
 
     Match match = matchRepository.findWithMembersAndUsersById(matchId)
         .orElseThrow(MatchNotFoundException::new);
-    if (match.getMembers().isEmpty()){
+    if (match.getMembers().isEmpty()) {
       throw new BusinessGlobalException(CommonErrorCode.internalServerError());
       //500번 처리 이유: 사용자가 무언가를 잘못했다(4xx)"가 아닌, 우리가 코드를 잘못 짜서 시스템이 고장 났다(500)"는 것을 의미
     }
@@ -277,25 +288,27 @@ public class MatchService {
   }
 
   //사용자의 초대 코드 입력 잠금 상태와 남은 시간을 조회합니다.
-  public LockStatusResponse getLockStatus(Long userId){
+  public LockStatusResponse getLockStatus(Long userId) {
     // RedisHelper를 통해 사용자의 잠금 남은 시간을 가져옴.
     return redisHelper.getLockTimeRemaining(userId)
-        .map(remainingSeconds -> new LockStatusResponse(true, remainingSeconds)) // 잠겨있다면 (시간이 남아있다면)
+        .map(
+            remainingSeconds -> new LockStatusResponse(true, remainingSeconds)) // 잠겨있다면 (시간이 남아있다면)
         .orElse(new LockStatusResponse(false, 0L)); // 잠겨있지 않다면
   }
 
   //복구 가능 매칭 조회
   @Transactional(readOnly = true)
-  public DetachedMatchStatusResponse getDetachedMatchStatus(Long userId){
+  public DetachedMatchStatusResponse getDetachedMatchStatus(Long userId) {
     //QueryDSL로 구현된 커스텀 리포지토리 메서드를 호출
-    Optional<MatchMember> detachedMemberOpt = matchMemberRepository.findDetachedMatchForUser(userId, MatchStatus.DETACHED_PENDING_DELETE);
+    Optional<MatchMember> detachedMemberOpt = matchMemberRepository.findDetachedMatchForUser(userId,
+        MatchStatus.DETACHED_PENDING_DELETE);
 
-    if (detachedMemberOpt.isPresent()){
+    if (detachedMemberOpt.isPresent()) {
       // 복구 가능한 매칭이 있다면, 해당 MatchMember에서 Match 객체를 꺼내고,
       // 그 Match의 ID를 가져와 DTO에 담아 반환합니다.
       Long matchId = detachedMemberOpt.get().getMatch().getId();
       return new DetachedMatchStatusResponse(true, matchId);
-    }else {
+    } else {
       //복구 가능한 매칭 없으면 , false와 null 반환.
       return new DetachedMatchStatusResponse(false, null);
     }
@@ -304,26 +317,26 @@ public class MatchService {
 
   //자동 연결 끊기 서비스 로직 구현
   @Transactional
-  public void disconnectInactiveMatches(){
+  public void disconnectInactiveMatches() {
     LocalDateTime toWeeksAgo = LocalDateTime.now().minusWeeks(2);
     List<Match> inactiveMatches = matchRepository.findInactiveMatches(toWeeksAgo);
 
-    for (Match match : inactiveMatches){
+    for (Match match : inactiveMatches) {
       match.getMembers().forEach(matchMember -> matchMember.getUser().leaveMatch());
       match.disconnect();
     }
-  log.info("{}개의 비활성 매칭을 연결 끊기 상태로 전환했습니다.", inactiveMatches.size());
+    log.info("{}개의 비활성 매칭을 연결 끊기 상태로 전환했습니다.", inactiveMatches.size());
   }
 
   // 유예기간 지난 상태 델리트로 변경.
   @Transactional
-  public void finalizeExpiredMatches(){
+  public void finalizeExpiredMatches() {
     LocalDateTime toWeeksAgo = LocalDateTime.now().minusWeeks(2);
     List<Match> expiredMatches = matchRepository.findMatchesForSoftDelete(toWeeksAgo);
 
-    for (Match match : expiredMatches){
+    for (Match match : expiredMatches) {
       // user의 current_match_id는 이미 null이므로 추가 작업 필요 없음
-    match.markAsDeleted();
+      match.markAsDeleted();
     }
     log.info("{}개의 만료된 매칭을 삭제 처리했습니다.", expiredMatches.size());
   }
@@ -382,11 +395,13 @@ public class MatchService {
         .orElseThrow(PartnerNotFoundException::new);
   }
   //가독성을 위한 private 헬퍼 메서드(매칭알림 관련)
+
   /**
    * 매칭 완료 알림을 생성하고 발송하는 헬퍼 메서드
+   *
    * @param recipient 알림을 받을 사용자
-   * @param partner 매칭된 상대방
-   * @param match 성사된 매칭
+   * @param partner   매칭된 상대방
+   * @param match     성사된 매칭
    */
   private void sendMatchCompletionNotification(User recipient, User partner, Match match) {
     String title = partner.getNickname() + "님과 매칭되었습니다!";

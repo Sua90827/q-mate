@@ -1,5 +1,6 @@
 package com.qmate.domain.event.service;
 
+import com.qmate.common.constants.event.EventConstants;
 import com.qmate.domain.event.entity.Event;
 import com.qmate.domain.event.entity.EventAlarmOption;
 import com.qmate.domain.event.entity.EventRepeatType;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -91,5 +93,46 @@ public class EventAnniversaryService {
       return List.of();
     }
     return eventRepository.saveAll(toSave);
+  }
+
+  @Transactional
+  public void updateBirthdayEvents(Long userId, LocalDate oldBirth, LocalDate newBirth) {
+    if (oldBirth == null) {
+      return;
+    }
+    int oldMonth = oldBirth.getMonthValue();
+    int oldDay = oldBirth.getDayOfMonth();
+
+    List<Event> birthdayEvents = eventRepository.findBirthdayEventsForUserByMonthDay(userId,
+        EventRepeatType.YEARLY, oldMonth, oldDay);
+
+    if (birthdayEvents.isEmpty()) {
+      return;
+    }
+    ;
+
+    for (Event e : birthdayEvents) {
+      //기존 로직 eventAt을 단순히 사용자의 새로운 birthDate로 변경
+      e.setEventAt(newBirth);
+    }
+    eventRepository.saveAll(birthdayEvents);
+  }
+
+  @Transactional
+  public void updateMatchAnniversaries(Match match) {
+    if (match.getStartDate() == null) return;
+
+    LocalDate startDate = match.getStartDate().toLocalDate();
+
+    // 100일 이벤트 업데이트
+    eventRepository.findHundredDayEventByMatchId(match.getId())
+        .ifPresent(event -> event.setEventAt(startDate.plusDays(100)));
+
+    // N주년 이벤트 업데이트
+    eventRepository.findAnniversaryEventByMatchId(match.getId())
+        .ifPresent(event -> event.setEventAt(startDate.plusYears(1)));
+
+    // 변경된 이벤트 저장
+    eventRepository.flush();
   }
 }
