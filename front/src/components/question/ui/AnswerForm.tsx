@@ -82,7 +82,7 @@ export default function AnswerForm({
           <TextTextarea
             ref={textareaRef}
             defaultValue={initialValue}
-            placeholder="궁금한 질문을 입력해 보세요!"
+            placeholder="오늘의 질문에 답변해보세요!"
             textLength={(t) => setIsEmpty(t.length === 0)}
           />
         </div>
@@ -98,14 +98,17 @@ export default function AnswerForm({
             onClick={() => setConfirmOpen(true)}
             disabled={!canSubmit}
             aria-busy={submitting}
+            asChild
           >
-            {submitting ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : mode === 'create' ? (
-              '답변하기'
-            ) : (
-              '수정하기'
-            )}
+            <Link href={fromToday ? '/record' : '/question/list'}>
+              {submitting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : mode === 'create' ? (
+                '답변하기'
+              ) : (
+                '수정하기'
+              )}
+            </Link>
           </Button>
         </div>
       </div>
