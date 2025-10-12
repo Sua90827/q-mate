@@ -111,6 +111,7 @@ export default function AnswerForm({
         </div>
       </div>
       <ConfirmModal
+        defaultStyle
         open={confirmOpen}
         setOpen={setConfirmOpen}
         title={mode === 'create' ? '답변을 완료하시겠습니까?' : '수정을 완료하시겠습니까?'}
