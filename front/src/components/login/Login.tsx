@@ -68,7 +68,7 @@ export default function Login() {
               // 매치 아이디 셋팅
               setMatchId(data.user.currentMatchId);
 
-              // 서버에서 현재 exp 조회 (이제 Authorization 헤더가 포함됨)
+              // 서버에서 현재 exp 조회
               const petInfo = await fetchPetInfo(data.user.currentMatchId);
               // 현재 exp 셋팅
               localStorage.setItem('prevExp', String(petInfo.exp));
@@ -81,7 +81,6 @@ export default function Login() {
             }
           } catch (e) {
             // 혹시 모를 예외에 대한 방어
-            console.error('[Login onSuccess handler error]', e);
             setLoginErrorType('normal');
             setOpen(true);
           }

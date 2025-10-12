@@ -41,7 +41,7 @@ export default function TextInput({
         disabled ? 'opacity-50 cursor-not-allowed' : ''
       }`}
       placeholder={placeholder ?? label}
-      value={value}
+      value={value?.trim()}
       onChange={register ? undefined : handleChange}
       disabled={disabled}
       {...register}

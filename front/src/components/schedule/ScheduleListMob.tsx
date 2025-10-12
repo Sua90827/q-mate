@@ -78,7 +78,7 @@ export default function ScheduleListMob() {
         </div>
       </div>
 
-      <div className="w-full flex-1 h-full bg-secondary">
+      <div className="w-full flex-1 h-full bg-secondary overflow-scroll">
         <ul className="w-full border-y divide-y divide-text-gray">
           {schedules.map((list) => (
             <li key={list.eventId} className="flex justify-between px-4 py-3 items-center">
