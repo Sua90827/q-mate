@@ -38,10 +38,9 @@ export const useCreateSchedule = () => {
 
   return useMutation({
     mutationFn: createSchedule,
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ['schedule', variables.matchId],
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schedule'] });
+      queryClient.invalidateQueries({ queryKey: ['calendarMonth'] });
     },
   });
 };
@@ -55,6 +54,7 @@ export const useDeleteSchedule = () => {
       deleteSchedule({ matchId, eventId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['schedule'] });
+      queryClient.invalidateQueries({ queryKey: ['calendarMonth'] });
     },
   });
 };
@@ -64,8 +64,6 @@ export const useEventMonth = (matchId: number, from: string, to: string) => {
     queryKey: ['calendarMonth', matchId, from, to],
     queryFn: () => fetchEventMonth(matchId, from, to),
     enabled: Boolean(matchId && from && to),
-    placeholderData: keepPreviousData,
-    staleTime: 1000 * 60 * 5,
   });
 };
 export const useEventDetail = (matchId: number, eventId: number) => {
