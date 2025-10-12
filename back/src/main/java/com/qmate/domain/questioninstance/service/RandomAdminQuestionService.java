@@ -5,6 +5,7 @@ import com.qmate.domain.question.entity.Question;
 import com.qmate.domain.question.repository.QuestionRepository;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class RandomAdminQuestionService {
     QuestionInstance instance = QuestionInstance.builder()
         .match(match)
         .question(question)
+        .deliveredAt(LocalDateTime.now())
         .build();
 
     QuestionInstance saved = questionInstanceRepository.save(instance);

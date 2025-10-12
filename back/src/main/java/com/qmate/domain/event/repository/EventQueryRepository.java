@@ -17,17 +17,4 @@ public interface EventQueryRepository {
       @Nullable Boolean anniversaryFilter
   );
 
-  /**
-   * 오늘/3일후/7일후 알림 대상 "이벤트"만 조회
-   * 매치 ACTIVE 검증 포함
-   */
-  List<DueEventRow> findDueEventAlarmRows(LocalDate today);
-
-  record DueEventRow(
-      String code,
-      Long eventId,
-      Long matchId,
-      String title,
-      LocalDate occurDate
-  ) {}
 }

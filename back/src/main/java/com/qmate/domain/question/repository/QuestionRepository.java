@@ -40,24 +40,26 @@ public interface QuestionRepository extends JpaRepository<Question, Long>, JpaSp
   );
 
   @Query("""
-  select q
-  from Question q
-    join Match m on m.id = :matchId
-  where q.isActive = true
-    and (
-         q.relationType = com.qmate.domain.question.entity.RelationType.BOTH
-      or (m.relationType = com.qmate.domain.match.RelationType.COUPLE
-          and q.relationType = com.qmate.domain.question.entity.RelationType.COUPLE)
-      or (m.relationType = com.qmate.domain.match.RelationType.FRIEND
-          and q.relationType = com.qmate.domain.question.entity.RelationType.FRIEND)
-    )
-    and not exists (
-      select 1
-      from QuestionInstance qi
-      where qi.match.id = :matchId
-        and qi.question.id = q.id
-    )
-  order by function('rand')
-  """)
+      select q
+      from Question q
+        join Match m on m.id = :matchId
+        join q.category c
+      where q.isActive = true
+        and c.name not like '기념일%'
+        and (
+             q.relationType = com.qmate.domain.question.entity.RelationType.BOTH
+          or (m.relationType = com.qmate.domain.match.RelationType.COUPLE
+              and q.relationType = com.qmate.domain.question.entity.RelationType.COUPLE)
+          or (m.relationType = com.qmate.domain.match.RelationType.FRIEND
+              and q.relationType = com.qmate.domain.question.entity.RelationType.FRIEND)
+        )
+        and not exists (
+          select 1
+          from QuestionInstance qi
+          where qi.match.id = :matchId
+            and qi.question.id = q.id
+        )
+      order by function('rand')
+      """)
   List<Question> pickOneRandomUnusedAdminQuestion(@Param("matchId") Long matchId, Pageable pageable);
 }

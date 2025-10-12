@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useCheckInviteCode, useCreateMatchId, useFetchLockStatus } from '@/hooks/useInvite';
 import { ModalConfig } from '@/types/modal';
 import { handleInviteError } from '@/utils/handleInviteError';
+import { useSelectedStore } from '@/store/useSelectedStore';
 
 export default function Invited() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export default function Invited() {
     isDanger: true,
   });
   const [code, setCode] = useState('');
-
+  const setSelectedMenu = useSelectedStore((s) => s.setSelectedMenu);
   const { mutate: checkCode } = useCheckInviteCode();
   const { mutate: joinMatch, isPending: isJoining } = useCreateMatchId();
   const { data } = useFetchLockStatus();
@@ -89,7 +90,6 @@ export default function Invited() {
               { inviteCode: code },
               {
                 onSuccess: (data) => {
-                  setMatchId(data.matchId);
                   setModal({
                     open: true,
                     type: 'success',
@@ -98,7 +98,11 @@ export default function Invited() {
                         {data.partnerNickname}님과 함께 <br /> 이야기를 기록하시겠습니까?
                       </>
                     ),
-                    onConfirm: () => router.push('/main'),
+                    onConfirm: () => {
+                      setMatchId(data.matchId);
+                      setSelectedMenu('home');
+                      router.replace('/main');
+                    },
                   });
                 },
                 onError: (error) =>

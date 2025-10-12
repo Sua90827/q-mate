@@ -5,7 +5,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { TriangleAlert } from 'lucide-react';
 import React from 'react';
 import { Button } from './Button';
 
@@ -18,6 +17,16 @@ interface NoticeModalProps {
   showCloseButton?: boolean; // 닫기 버튼 표시 여부 (기본값 true)
 }
 
+interface NoticeModalProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  danger?: boolean;
+  title: React.ReactNode;
+  sub?: React.ReactNode;
+  showCloseButton?: boolean;
+  onConfirm?: () => void;
+}
+
 export default function NoticeModal({
   open,
   setOpen,
@@ -25,6 +34,7 @@ export default function NoticeModal({
   title,
   sub,
   showCloseButton = false,
+  onConfirm,
 }: NoticeModalProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -37,17 +47,17 @@ export default function NoticeModal({
         <DialogHeader className="flex justify-center pt-[10.5px]">
           <DialogTitle className="text-center leading-relaxed text-16">{title}</DialogTitle>
           {sub && (
-            <DialogDescription className="text-14 font-semibold text-center text-text-secondary">
+            <DialogDescription className="text-16 font-semibold text-center text-text-secondary">
               {sub}
             </DialogDescription>
           )}
           <div className="flex justify-center gap-4 py-3">
-            {/* 확인 버튼 */}
             <Button
               variant={danger ? 'dangerPrimary' : 'primary'}
-              className={`w-full h-9.5`}
+              className="w-full h-9.5"
               onClick={() => {
                 setOpen(false);
+                onConfirm?.();
               }}
             >
               확인

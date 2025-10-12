@@ -44,7 +44,7 @@ spring:
             client-id: ${OAUTH_GOOGLE_CLIENT_ID}
             client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
             scope: openid, email, profile
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: "http://ec2-43-201-32-144.ap-northeast-2.compute.amazonaws.com:8080/login/oauth2/code/{registrationId}"
           naver:
             client-id: ${OAUTH_NAVER_CLIENT_ID}
             client-secret: ${OAUTH_NAVER_CLIENT_SECRET}
@@ -75,9 +75,21 @@ app:
   email-verification:
     jwt-secret: ${APP_EMAIL_VERIFICATION_JWT_SECRET}
     ttl-minutes: ${APP_EMAIL_VERIFICATION_TTL_MINUTES:10}
-
+  frontend:
+    origin: https://q-mate.vercel.app
+#    success-url: https://q-mate.vercel.app/login/success
+  oauth:
+    google:
+      client-id: ${OAUTH_GOOGLE_CLIENT_ID}
+      client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
+      redirect-uri: https://q-mate.vercel.app/login/oauth2/code/google
+    naver:
+      client-id: ${OAUTH_NAVER_CLIENT_ID}
+      client-secret: ${OAUTH_NAVER_CLIENT_SECRET}
+      redirect-uri: https://q-mate.vercel.app/login/oauth2/code/naver
 server:
   port: 8080
+  forward-headers-strategy: native
 
 management:
   endpoints:
@@ -88,3 +100,9 @@ management:
     health:
       probes:
         enabled: true   # /actuator/health/liveness, /readiness 포함
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

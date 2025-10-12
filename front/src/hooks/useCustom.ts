@@ -4,6 +4,7 @@ import {
   fetchCustomQuestions,
   updateCustomQuestion,
 } from '@/api/custom';
+import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { CustomQuestionPage } from '@/types/questionType';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -45,11 +46,12 @@ export const useUpdateCustomQuestion = () => {
 //삭제
 export const useDeleteCustomQuestion = () => {
   const queryClient = useQueryClient();
+  const matchId = useMatchIdStore.getState().matchId;
 
   return useMutation({
     mutationFn: (id: number) => deleteCustomQuestion(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['customQuestions'] });
+      queryClient.invalidateQueries({ queryKey: ['customQuestions', matchId] });
     },
   });
 };

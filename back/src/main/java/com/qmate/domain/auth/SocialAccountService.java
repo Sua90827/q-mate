@@ -16,6 +16,46 @@ import org.springframework.transaction.annotation.Transactional;
 public class SocialAccountService {
   private final UserRepository userRepository;
   private final UserSocialAccountRepository socialRepository;
+
+  /**
+   * Google 로그인용 upsert (google sub 기반)
+   * @param googleSub        Google 고유 ID (sub)
+   * @param email            구글에서 받은 이메일 (null 가능성 고려)
+   * @param nickname         구글 display name (없으면 email/대체키 사용)
+   */
+  @Transactional
+  public User upsertGoogleUser(String googleSub, String email, String nickname) {
+    // 필요 시 이메일 정규화
+    String normalizedEmail = (email != null) ? email.trim().toLowerCase() : null;
+    String safeNickname = (nickname != null && !nickname.isBlank())
+        ? nickname
+        : (normalizedEmail != null ? normalizedEmail : "user_google_" + googleSub);
+
+    return upsertSocialUser(
+        SocialProvider.GOOGLE,
+        googleSub,
+        normalizedEmail,
+        safeNickname,
+        null
+    );
+  }
+
+  @Transactional
+  public User upsertNaverUser(String naverId, String email, String nickname, LocalDate birthDate) {
+    String normalizedEmail = (email != null) ? email.trim().toLowerCase() : null;
+    String safeNickname = (nickname != null && !nickname.isBlank())
+        ? nickname
+        : (normalizedEmail != null ? normalizedEmail : "user_naver_" + naverId);
+
+    return upsertSocialUser(
+        UserSocialAccount.SocialProvider.NAVER,
+        naverId,
+        normalizedEmail,
+        safeNickname,
+        birthDate
+    );
+  }
+
   /**
    * 소셜 로그인 정보로 사용자 upsert + 소셜계정 연결
    * 규칙:

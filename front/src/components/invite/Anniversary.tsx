@@ -10,7 +10,7 @@ export default function Anniversary() {
 
   useEffect(() => {
     if (date) {
-      router.push(`/invite/COUPLE?date=${date}`);
+      router.replace(`/invite/COUPLE?date=${date}`);
     }
   }, [date, router]);
 

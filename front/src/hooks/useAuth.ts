@@ -1,4 +1,4 @@
-import { loginUser, logoutUser, socialLogin, updateSocialProfile } from '@/api/auth';
+import { loginUser, logoutUser, updateSocialProfile } from '@/api/auth';
 import { useMutation } from '@tanstack/react-query';
 
 //로그인
@@ -13,13 +13,6 @@ export const useLoginUser = () => {
 export const useLogoutUser = () => {
   return useMutation({
     mutationFn: () => logoutUser(),
-  });
-};
-
-//소셜 로그인
-export const useSocialLogin = () => {
-  return useMutation({
-    mutationFn: (provider: string) => socialLogin(provider),
   });
 };
 
