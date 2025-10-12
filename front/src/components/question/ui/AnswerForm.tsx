@@ -100,15 +100,13 @@ export default function AnswerForm({
             aria-busy={submitting}
             asChild
           >
-            <Link href={fromToday ? '/record' : '/question/list'}>
-              {submitting ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : mode === 'create' ? (
-                '답변하기'
-              ) : (
-                '수정하기'
-              )}
-            </Link>
+            {submitting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : mode === 'create' ? (
+              '답변하기'
+            ) : (
+              '수정하기'
+            )}
           </Button>
         </div>
       </div>
