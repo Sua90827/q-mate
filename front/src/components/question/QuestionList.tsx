@@ -92,23 +92,28 @@ export default function QuestionList() {
 
   return (
     <div className="w-full h-full flex items-center justify-center">
-      {/* 모바일 */}
-      <div className="sm:hidden w-full h-[100dvh] flex flex-col">
-        <div className="flex justify-between items-center h-[70px] px-4 flex-shrink-0">
+      {/*  모바일 */}
+      <div className="sm:hidden w-full h-full flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+        {/* 헤더 */}
+        <div className="flex justify-between items-center h-[70px] px-4 flex-shrink-0 ">
           <FilterBtn setShowCustomOnly={setShowCustomOnly} className="text-theme-primary" />
           <p className="text-20 font-Gumi text-theme-primary ">질문 리스트</p>
           <TrashCan onClick={() => setIsDeleteMode((prev) => !prev)} />
         </div>
-        <div className="py-4 px-4 mb-[20px]">
+
+        {/* 검색 */}
+        <div className="py-4 px-4 flex-shrink-0 bg-secondary">
           <SearchInput query={queryText} setQuery={setQueryText} />
         </div>
-        <div className="bg-secondary flex flex-col flex-1">
+
+        {/* 리스트 */}
+        <div className="flex-1 overflow-y-auto bg-secondary">
           <ul className="flex-1 overflow-y-auto flex flex-col divide-y divide-dash border-t border-gray pb-[70px]">
             {pagedInstances.map((instance) => {
               const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
 
               let itemClassName =
-                'text-16 py-7 cursor-pointer last:border-b last:border-dash last:border-gray';
+                'text-16 py-7 cursor-pointer last:border-b last:border-dash last:border-gray px-4';
               if (isSelected) itemClassName += ' font-bold bg-theme-list-active';
               if (instance.status === 'EDITABLE')
                 itemClassName += ' text-text-secondary bg-gray font-bold';
@@ -117,7 +122,7 @@ export default function QuestionList() {
               return (
                 <li
                   key={instance.questionInstanceId}
-                  className={`${itemClassName} px-4`}
+                  className={itemClassName}
                   onClick={() => openDetailByQuery(instance.questionInstanceId)}
                 >
                   <div className="flex justify-between">
@@ -139,25 +144,25 @@ export default function QuestionList() {
               );
             })}
           </ul>
-          {/* 페이지네이션 */}
-          <div className="sticky bottom-[70px] flex justify-between items-center py-3 px-4 border-t border-gray bg-secondary">
-            <PrevBtn page={page} setPage={setPage} />
-            <div className="bg-calendar w-8 h-8 rounded-full flex justify-center items-center">
-              <span>{page + 1}</span>
-            </div>
-            <NextBtn page={page} setPage={setPage} totalPages={totalPages} />
+        </div>
+
+        {/* 페이지네이션 */}
+        <div className="flex-shrink-0 sticky bottom-[70px] pb-[env(safe-area-inset-bottom)] flex justify-between items-center py-3 px-4 border-t border-gray bg-secondary">
+          <PrevBtn page={page} setPage={setPage} />
+          <div className="bg-calendar w-8 h-8 rounded-full flex justify-center items-center">
+            <span>{page + 1}</span>
           </div>
+          <NextBtn page={page} setPage={setPage} totalPages={totalPages} />
         </div>
       </div>
 
-      {/* 데스크탑 */}
+      {/*  데스크탑 */}
       <div className="hidden sm:flex bg-secondary rounded-md shadow-md w-[320px] h-[550px] flex-col">
         <div className="mt-6 px-4 ">
           <SearchInput query={queryText} setQuery={setQueryText} />
         </div>
         <div className="flex justify-between items-center px-4 overflow-visible">
           <span className="inline-block text-20 font-bold py-4  select-none">질문 리스트</span>
-
           <FilterBtn setShowCustomOnly={setShowCustomOnly} />
         </div>
         <ul className="flex-1 overflow-y-auto flex flex-col divide-y divide-gray border-t border-gray">
@@ -165,7 +170,7 @@ export default function QuestionList() {
             const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
 
             let itemClassName =
-              'py-5 cursor-pointer last:border-b last:border-gray last:border-solid';
+              'py-5 cursor-pointer last:border-b last:border-gray last:border-solid px-4';
             if (isSelected) itemClassName += ' bg-theme-list-active';
             if (instance.status === 'PENDING') itemClassName += ' text-theme-accent2';
             if (instance.status === 'EDITABLE')
@@ -174,7 +179,7 @@ export default function QuestionList() {
             return (
               <li
                 key={instance.questionInstanceId}
-                className={`${itemClassName} px-4`}
+                className={itemClassName}
                 onClick={() => openDetailByQuery(instance.questionInstanceId)}
               >
                 <div className="flex justify-between">
@@ -192,6 +197,7 @@ export default function QuestionList() {
             );
           })}
         </ul>
+
         {/* 페이지네이션 */}
         <div className="sticky bottom-0 flex justify-between items-center py-3 px-4 border-t border-gray bg-secondary rounded-b-md">
           <PrevBtn page={page} setPage={setPage} />

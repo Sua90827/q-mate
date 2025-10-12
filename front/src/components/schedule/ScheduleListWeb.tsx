@@ -56,31 +56,31 @@ export default function ScheduleListWeb() {
   }
 
   return (
-    <div className="w-full h-full bg-secondary pt-4 shadow-md rounded-lg ">
-      <div className="w-full h-full">
-        <h2 className="font-bold text-20 p-4 select-none">일정 리스트</h2>
-        <ul className="w-full border-y divide-y divide-text-gray overflow-y-auto">
-          {schedules.map((list) => (
-            <li
-              key={list.eventId}
-              className="flex justify-between lists-center px-4 py-3 items-center cursor-pointer"
-            >
-              <div className="flex-1" onClick={() => router.push(`/schedule/edit/${list.eventId}`)}>
-                <span className="font-bold text-16">{list.title}</span>
-                <span className="block text-text-secondary font-normal">{list.eventAt}</span>
-              </div>
-              {!list.isAnniversary && (
-                <DeleteBtn
-                  onClick={() => deleteScheduleMutate({ matchId: matchId!, eventId: list.eventId })}
-                />
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
+    <div className="hidden md:flex flex-col w-[320px] lg:w-[400px] h-[736px] bg-secondary shadow-md rounded-lg">
+      <h2 className="font-bold text-20 p-4 select-none flex-shrink-0">일정 리스트</h2>
+
+      {/* 스크롤 영역 */}
+      <ul className="flex-1 border-y divide-y divide-text-gray overflow-y-auto">
+        {schedules.map((list) => (
+          <li
+            key={list.eventId}
+            className="flex justify-between items-center px-4 py-3 cursor-pointer"
+          >
+            <div className="flex-1" onClick={() => router.push(`/schedule/edit/${list.eventId}`)}>
+              <span className="font-bold text-16">{list.title}</span>
+              <span className="block text-text-secondary font-normal">{list.eventAt}</span>
+            </div>
+            {!list.isAnniversary && (
+              <DeleteBtn
+                onClick={() => deleteScheduleMutate({ matchId: matchId!, eventId: list.eventId })}
+              />
+            )}
+          </li>
+        ))}
+      </ul>
 
       {/* 페이지네이션 */}
-      <div className="sticky bottom-[70px] flex justify-between items-center py-3 px-4 border-t border-gray bg-secondary rounded-b-md">
+      <div className="flex-shrink-0 sticky bottom-0 flex justify-between items-center py-3 px-4 border-t border-gray bg-secondary rounded-b-md">
         <PrevBtn page={page} setPage={setPage} />
         <div className="bg-calendar w-8 h-8 rounded-full flex justify-center items-center">
           <span>{page + 1}</span>
