@@ -98,7 +98,6 @@ export default function AnswerForm({
             onClick={() => setConfirmOpen(true)}
             disabled={!canSubmit}
             aria-busy={submitting}
-            asChild
           >
             {submitting ? (
               <Loader2 className="w-4 h-4 animate-spin" />
