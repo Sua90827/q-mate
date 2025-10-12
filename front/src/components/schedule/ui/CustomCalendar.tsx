@@ -74,7 +74,7 @@ function Calendar({
             : 'rounded-md pl-2 pr-1 flex items-center gap-1 text-sm h-8 [&>svg]:text-muted-foreground [&>svg]:size-3.5',
           defaultClassNames.caption_label,
         ),
-        table: 'w-full border-collapse ',
+        table: 'w-full border-collapse',
         weekdays: cn(
           `grid grid-cols-7 [&>*:first-child]:text-red-400 [&>*:last-child]:text-blue-400`,
           defaultClassNames.weekdays,
@@ -93,7 +93,7 @@ function Calendar({
           defaultClassNames.week_number,
         ),
         day: cn(
-          'relative p-0 text-center group/day select-none grid place-items-center w-full aspect-square lg:aspect-auto lg:h-[80px]  ',
+          'relative p-0 text-center group/day select-none grid place-items-center w-full h-[60px] lg:aspect-auto lg:h-[65px]  ',
           defaultClassNames.day,
         ),
         range_start: cn('bg-accent', defaultClassNames.range_start),
