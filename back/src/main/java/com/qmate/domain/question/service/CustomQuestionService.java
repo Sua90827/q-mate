@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class CustomQuestionService {
 
   private final CustomQuestionRepository customQuestionRepository;
@@ -95,6 +94,7 @@ public class CustomQuestionService {
    * @param id 조회할 커스텀 질문 ID
    * @return 커스텀 질문 정보
    */
+  @Transactional(readOnly = true)
   public CustomQuestionResponse getOne(Long userId, Long id) {
     CustomQuestion entity = customQuestionRepository.findByIdAndCreatedBy(id, userId)
         .orElseThrow(CustomQuestionNotFoundException::new);
@@ -113,6 +113,7 @@ public class CustomQuestionService {
    * @param pageable    페이징 정보
    * @return 필터링된 커스텀 질문 목록 (페이징)
    */
+  @Transactional(readOnly = true)
   public Page<CustomQuestionResponse> findPageByOwnerAndStatusFilter(Long ownerUserId, Long matchId, CustomQuestionStatusFilter status,
       Pageable pageable) {
     return customQuestionRepository.findPageByOwnerAndStatusFilter(ownerUserId, matchId, status, pageable);
