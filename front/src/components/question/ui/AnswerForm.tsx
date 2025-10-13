@@ -47,9 +47,9 @@ export default function AnswerForm({
 
     if (mode === 'create') {
       setRatingOpen(true);
+    } else {
+      router.push(fromToday ? '/record' : '/question/list');
     }
-    // router.push(fromToday ? '/record' : '/question/list');
-    <Loader />;
   };
   const handleRating = (questionId: number, isLike: boolean) => {
     setRatingOpen(false);
