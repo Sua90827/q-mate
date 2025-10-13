@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Calendar, CalendarDayButton } from '../ui/CustomCalendar';
-import { toKey } from '@/utils/date';
 import { cn } from '@/lib/utils';
+import { dateToString } from '@/utils/date';
 
 type Props = {
   selected?: Date;
@@ -25,7 +25,6 @@ export default function MainCalendar({
     <div className="flex flex-1 justify-center w-full">
       <Calendar
         mode="single"
-        // defaultMonth={selected}
         month={displayMonth}
         onMonthChange={onDisplayMonthChange}
         selected={selected}
@@ -59,14 +58,14 @@ export default function MainCalendar({
           },
 
           Day: ({ className, children, day, ...props }) => {
-            const key = toKey(day.date);
+            const key = dateToString(day.date);
             const dot = anniversarySet.has(key)
               ? 'bg-anniversary'
               : scheduleSet.has(key)
               ? 'bg-calendar'
               : '';
             return (
-              <td {...props} className={`h-20 relative p-0 ${className ?? ''}`}>
+              <td {...props} className={`h-20 relative py-0 ${className ?? ''}`}>
                 {children}
 
                 {dot && (

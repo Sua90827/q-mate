@@ -1,9 +1,9 @@
 'use client';
-import { useEventDetail, useEventMonth, useScheduleList } from '@/hooks/useSchedule';
+import { useEventMonth, useScheduleList } from '@/hooks/useSchedule';
 import React, { useMemo, useState } from 'react';
 import MainCalendar from './calendar/MainCalendar';
 import EventList from './list/EventList';
-import { getCalendarRange, isEventOnDate, toKey } from '@/utils/date';
+import { dateToString, getCalendarRange } from '@/utils/date';
 import AddBtn from './ui/AddBtn';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { ScheduleEvent } from '@/types/scheduleType';
@@ -18,27 +18,23 @@ export default function ScheduleView() {
     const { start, end } = getCalendarRange(base);
 
     return {
-      from: toKey(start),
-      to: toKey(end),
+      from: dateToString(start),
+      to: dateToString(end),
     };
   }, [displayMonth]);
 
-  // const { data, isLoading, isError } = useScheduleList(matchId!, {
-  //   from: monthRange.from,
-  //   to: monthRange.to,
-  // });
   const { data: monthEvent } = useEventMonth(matchId!, monthRange.from, monthRange.to);
 
-  const eventId: number | undefined = useMemo(() => {
-    //날짜 자르기 yyyy-mm-dd
-    const ymd = toKey(selected ?? new Date());
-    return monthEvent?.days.find((d) => d.eventAt === ymd)?.eventId;
-  }, [monthEvent, selected]);
+  const dayRange = useMemo(() => {
+    const ymd = dateToString(selected ?? new Date());
+    return { from: ymd, to: ymd };
+  }, [selected]);
+
   const {
-    data: detail,
-    isLoading: isDetailLoading,
-    isError: isDetailError,
-  } = useEventDetail(matchId!, eventId!);
+    data: dayList,
+    isLoading: isDayLoading,
+    isError: isDayError,
+  } = useScheduleList(matchId!, dayRange);
 
   const anniversarySet = useMemo(() => {
     const s = new Set<string>();
@@ -56,9 +52,11 @@ export default function ScheduleView() {
     return s;
   }, [monthEvent]);
 
+  // 리스트 표시용
   const dayItems: ScheduleEvent[] = useMemo(() => {
-    return detail ? [detail] : [];
-  }, [detail]);
+    const list = dayList?.content ?? [];
+    return list;
+  }, [dayList]);
   const handleDateSelect = (date: Date | undefined) => {
     if (!date) return;
 
@@ -86,8 +84,8 @@ export default function ScheduleView() {
         <EventList
           date={selected ?? new Date()}
           items={dayItems}
-          isLoading={isDetailLoading}
-          isError={isDetailError}
+          isLoading={isDayLoading}
+          isError={isDayError}
         />
         <AddBtn />
       </div>

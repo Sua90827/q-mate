@@ -9,7 +9,7 @@ export default function DeleteBtn({
 }) {
   return (
     <Button
-      className="text-text-secondary !h-5 px-1 py-3"
+      className="text-text-secondary !h-5 px-1 py-3 cursor-pointer"
       variant={'icon'}
       onClick={onClick}
       aria-label="삭제"
