@@ -22,7 +22,7 @@ export default function BellBtn() {
 
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const unread = unreadData?.count ?? 0;
+  const unread = unreadData ?? 0;
   const { data: detail, isLoading } = useNotificationDetail(selectedId ?? undefined);
 
   const {
@@ -141,14 +141,14 @@ export default function BellBtn() {
                     <div className="flex flex-col text-14 font-normal">
                       <div
                         className={cn(
-                          `flex text-16 font-bold items-center gap-2 ${
-                            item.read === false ? '!text-text-primary' : '!text-text-unread'
+                          `flex !text-16 font-bold items-center gap-2 ${
+                            item.read === false ? 'text-theme-accent2' : '!text-text-unread'
                           }`,
                         )}
                       >
                         {item.listTitle}
                         {item.read === false && (
-                          <span className="w-2 h-2 text-theme-accent rounded-full"></span>
+                          <span className="w-2 h-2 bg-theme-primary rounded-full"></span>
                         )}
                       </div>
 

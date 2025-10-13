@@ -50,8 +50,6 @@ export const useDeleteNotification = () => {
   return useMutation({
     mutationFn: (notificationId: number) => deleteNotification(notificationId),
     onSuccess: () => {
-      // 무한스크롤목록 /안 읽은 카운트 최신화
-
       queryClient.invalidateQueries({ queryKey: ['notificationsInfinite'] });
       queryClient.invalidateQueries({ queryKey: ['unreadCount'] });
     },

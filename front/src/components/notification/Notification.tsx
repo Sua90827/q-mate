@@ -116,22 +116,21 @@ export default function Notification() {
                   <CategoryIcons
                     category={item.category}
                     className={cn(
-                      `w-6 h-6 mt-1 ${
-                        item.read === false ? '!text-primary' : '!text-text-secondary'
-                      }`,
+                      'w-6 h-6 items-start mt-1 nav-item-mob',
+                      item.read === false ? 'active' : 'text-text-unread',
                     )}
                   />
                   <div className="flex flex-col text-14 font-normal">
                     <div
                       className={cn(
-                        `flex text-16 font-bold items-center gap-2 ${
-                          item.read === false ? '!text-text-primary' : '!text-text-unread'
+                        `flex !text-16 font-bold items-center gap-2 ${
+                          item.read === false ? 'text-theme-accent2' : '!text-text-unread'
                         }`,
                       )}
                     >
                       {item.listTitle}
                       {item.read === false && (
-                        <span className="w-2 h-2 bg-primary rounded-full"></span>
+                        <span className="w-2 h-2 bg-theme-primary rounded-full"></span>
                       )}
                     </div>
 
