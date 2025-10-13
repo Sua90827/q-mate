@@ -12,7 +12,7 @@ import Loader from '../common/Loader';
 export default function Record() {
   const matchId = useMatchIdStore((state) => state.matchId);
 
-  const { data, isLoading, isError } = useTodayQuestion(matchId!);
+  const { data, isLoading } = useTodayQuestion(matchId!);
 
   if (!matchId) return <Loader />;
   return (
