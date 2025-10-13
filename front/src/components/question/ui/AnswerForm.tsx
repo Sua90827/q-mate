@@ -88,7 +88,7 @@ export default function AnswerForm({
 
       <div className="flex flex-col items-center justify-center h-full bg-gradient-sub ">
         <div className="flex flex-col gap-3">
-          <span className="font-bold text-24 text-center pb-3 text-theme-primary">
+          <span className="font-bold text-24 text-center pb-3 text-theme-primary md:w-[390px] w-[310px]">
             {questionText}
           </span>
 

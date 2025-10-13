@@ -17,7 +17,7 @@ export default function QuestionCard({ questionInstanceId, questionText, isLoadi
       onClick={() => router.push(`/question/detail?id=${questionInstanceId}`)}
     >
       <span className="text-16 font-extrabold text-theme-accent ">TODAY’S QUESTION</span>
-      <p className="text-24">{questionText}</p>
+      <p className="text-24 text-center break-keep wrap-break-word">{questionText}</p>
     </div>
   );
 }
