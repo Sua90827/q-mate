@@ -3,14 +3,6 @@
 import { Button } from '@/components/common/Button';
 import { Share2 } from 'lucide-react';
 import React, { useState, useRef } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog';
 import ConfirmModal from '@/components/common/ConfirmModal';
 
 type Props = {
