@@ -79,7 +79,11 @@ export default function ScheduleView() {
           anniversarySet={anniversarySet}
           scheduleSet={scheduleSet}
           displayMonth={displayMonth}
-          onDisplayMonthChange={(d) => setDisplayMonth(new Date(d.getFullYear(), d.getMonth(), 1))}
+          onDisplayMonthChange={(d) => {
+            const firstDay = new Date(d.getFullYear(), d.getMonth(), 1);
+            setDisplayMonth(firstDay);
+            setSelected(firstDay);
+          }}
         />
         <EventList
           date={selected ?? new Date()}
