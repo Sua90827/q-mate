@@ -82,7 +82,7 @@ export default function AnswerForm({
           <TextTextarea
             ref={textareaRef}
             defaultValue={initialValue}
-            placeholder="궁금한 질문을 입력해 보세요!"
+            placeholder="오늘의 질문에 답변해보세요!"
             textLength={(t) => setIsEmpty(t.length === 0)}
           />
         </div>
@@ -110,6 +110,7 @@ export default function AnswerForm({
         </div>
       </div>
       <ConfirmModal
+        defaultStyle
         open={confirmOpen}
         setOpen={setConfirmOpen}
         title={mode === 'create' ? '답변을 완료하시겠습니까?' : '수정을 완료하시겠습니까?'}

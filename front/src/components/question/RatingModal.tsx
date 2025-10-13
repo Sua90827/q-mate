@@ -23,7 +23,9 @@ export default function RatingModal({ open, onLike, onDislike, onOpenChange }: P
         className="w-[285px] h-[160px] z-50  !pb-2 !gap-0"
       >
         <DialogHeader>
-          <DialogTitle className="text-16 font-semibold">오늘의 질문은 어땠나요?</DialogTitle>
+          <DialogTitle className="text-16 font-semibold text-center">
+            오늘의 질문은 어땠나요?
+          </DialogTitle>
           <DialogDescription className="!text-16 font-semibold text-text-primary ">
             마음에 들었다면 좋아요를 눌러주세요.
           </DialogDescription>

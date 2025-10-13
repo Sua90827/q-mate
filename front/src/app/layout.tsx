@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: 'Q-mate',
   description: '매일의 질문으로 관계를 기록하는 친구·커플 전용 서비스',
   icons: {
-    icon: '/favicon.svg',
+    icon: '/favicon1.svg',
   },
 };
 

@@ -36,7 +36,7 @@ instance.interceptors.response.use(
     const requestUrl = error.config?.url ?? '';
 
     // 인증 관련 라우트 (정규식 기반)
-    const isAuthRoute = /\/auth\/(login|register|email-verifications|google\/exchange)/.test(
+    const isAuthRoute = /\/auth\/(login|register|email-verifications|logout|google\/exchange)/.test(
       requestUrl,
     );
 
