@@ -42,6 +42,11 @@ export default function GoogleCallback() {
       setAccessToken(accessToken);
       localStorage.setItem('accessTokenTime', String(Date.now() + accessTokenExpiresIn * 1000));
 
+      if (!user.nickname || !user.birthDate) {
+        router.replace('/signup/onboarding');
+        return;
+      }
+
       // 매칭 여부 분기
       if (user.currentMatchId) {
         setMatchId(user.currentMatchId);
@@ -49,6 +54,8 @@ export default function GoogleCallback() {
         localStorage.setItem('prevExp', String(petInfo.exp));
         setSelectedMenu('home');
         router.replace('/main');
+      } else if (!user.currentMatchId && accessToken) {
+        router.replace('/invite');
       } else {
         if (user.nickname) sessionStorage.setItem('nickname', user.nickname);
         if (user.birthDate) sessionStorage.setItem('birthDate', user.birthDate);

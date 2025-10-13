@@ -91,6 +91,7 @@ export default function Settings() {
   const handleLogout = () => {
     logoutMutate(undefined, {
       onSuccess: () => {
+        sessionStorage.clear();
         //선택된 메뉴 리셋
         resetSelectedMenu();
         // exp 리셋

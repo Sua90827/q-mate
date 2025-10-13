@@ -52,6 +52,11 @@ export default function NaverCallbackPage() {
         setAccessToken(accessToken);
         localStorage.setItem('accessTokenTime', String(Date.now() + accessTokenExpiresIn * 1000));
 
+        if (!user.nickname || !user.birthDate) {
+          router.replace('/signup/onboarding');
+          return;
+        }
+
         if (user.currentMatchId) {
           setMatchId(user.currentMatchId);
           const petInfo = await fetchPetInfo(user.currentMatchId);
