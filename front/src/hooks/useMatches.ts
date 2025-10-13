@@ -1,13 +1,17 @@
 'use client';
 import { disconnectMatch, getMatchInfo, restoreMatch, updateMatchInfo } from '@/api/matches';
 import { MatchInfo } from '@/types/matchType';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 
-export function useMatchInfo(matchId: number) {
+export function useMatchInfo(
+  matchId: number,
+  options?: Omit<UseQueryOptions<MatchInfo>, 'queryKey' | 'queryFn'>,
+) {
   return useQuery<MatchInfo>({
     queryKey: ['matchInfo', matchId],
     queryFn: () => getMatchInfo(matchId),
     enabled: !!matchId,
+    ...options, // 페이지별로 옵션 덮어쓰기 가능
   });
 }
 
