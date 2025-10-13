@@ -3,8 +3,8 @@ import React, { useRef } from 'react';
 import ShareBtn from './ui/ShareBtn';
 import CloseButton from '../common/CloseButton';
 import { useRouter } from 'next/navigation';
-import { Link } from 'lucide-react';
 import { useSelectedStore } from '@/store/useSelectedStore';
+import Link from 'next/link';
 
 type Props = {
   questionText: string;
