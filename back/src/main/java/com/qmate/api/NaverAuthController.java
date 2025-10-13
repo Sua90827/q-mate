@@ -9,9 +9,11 @@ import com.qmate.domain.auth.model.response.LoginResponse;
 import com.qmate.domain.user.User;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class NaverAuthController {
@@ -45,6 +47,8 @@ public class NaverAuthController {
       } catch (Exception ignored) {}
     }
 
+    log.info("Naver profile: id={}, email={}, nickname={}, birth={}",
+        naverId, email, nickname, birth);
     User user = socialAccountService.upsertNaverUser(naverId, email, nickname, birth);
 
     // 4) 앱 JWT 발급
