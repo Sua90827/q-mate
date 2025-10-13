@@ -1,5 +1,3 @@
-import { ScheduleEvent } from '@/types/scheduleType';
-
 // 날짜 → 'YYYY-MM-DD' 문자열
 export const dateToString = (d: Date) => {
   const y = d.getFullYear();
