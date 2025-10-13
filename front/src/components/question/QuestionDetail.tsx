@@ -1,10 +1,11 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   useQuestionDetail,
   useAnswerQuestion,
   useUpdateAnswerQuestion,
+  useRateQuestion,
 } from '@/hooks/useQuestions';
 import AnswerView from './AnswerView';
 import Custom from './Custom';
@@ -15,12 +16,19 @@ import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { Skeleton } from '../ui/skeleton';
 import { SuccessToast, ErrorToast } from '../common/CustomToast';
 import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import RatingModal from './RatingModal';
 
 export default function QuestionDetail() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const idParam = searchParams.get('id');
   const isCustom = idParam?.startsWith('custom-');
   const questionInstanceId = idParam ? Number(idParam.replace('custom-', '')) : null;
+
+  const [ratingOpen, setRatingOpen] = useState(false);
+  const pathName = usePathname();
+  const fromToday = pathName.startsWith('/question/detail');
 
   const matchId = useMatchIdStore((state) => state.matchId);
   const queryClient = useQueryClient();
@@ -44,7 +52,7 @@ export default function QuestionDetail() {
 
   const { mutateAsync: createAnswer, isPending: isCreating } = useAnswerQuestion();
   const { mutateAsync: updateAnswer, isPending: isUpdating } = useUpdateAnswerQuestion();
-
+  const rateMutate = useRateQuestion();
   // 답변 생성 핸들러
   const handleCreateAnswer = async (content: string) => {
     if (!detail) return;
@@ -70,6 +78,22 @@ export default function QuestionDetail() {
     } catch {
       ErrorToast('답변 수정에 실패했어요. 잠시 후 다시 시도해 주세요.');
     }
+  };
+  const handleRating = (questionId: number, isLike: boolean) => {
+    if (!questionId) return;
+    setRatingOpen(false);
+    rateMutate.mutate(
+      { questionId, isLike },
+      {
+        onSuccess: () => {
+          SuccessToast('평가가 완료되었어요');
+          router.push(fromToday ? '/record' : '/question/list');
+        },
+        onError: () => {
+          ErrorToast('평가에 실패했어요.');
+        },
+      },
+    );
   };
 
   // 질문 ID 없음
@@ -129,6 +153,7 @@ export default function QuestionDetail() {
       <div className="w-full sm:w-[400px] h-full pb-[70px] sm:pb-0 sm:h-[550px]">
         {detail.status === 'PENDING' && hasMy ? (
           <AnswerForm
+            key={`form-${detail.questionInstanceId}-edit`}
             questionId={detail.question.questionId}
             mode="edit"
             questionText={detail.question.text}
@@ -140,6 +165,7 @@ export default function QuestionDetail() {
 
         {detail.status === 'PENDING' && !hasMy ? (
           <AnswerForm
+            key={`form-${detail.questionInstanceId}-create`}
             mode="create"
             questionId={detail.question.questionId}
             questionText={detail.question.text}
@@ -158,6 +184,13 @@ export default function QuestionDetail() {
             partnerContent={partner?.content ?? ''}
           />
         ) : null}
+
+        <RatingModal
+          open={ratingOpen}
+          onOpenChange={setRatingOpen}
+          onLike={() => handleRating(detail?.question.questionId, true)}
+          onDislike={() => handleRating(detail?.question.questionId, false)}
+        />
       </div>
     </div>
   );

@@ -32,7 +32,7 @@ export default function AnswerForm({
 }: AnswerFormProps) {
   const router = useRouter();
   const textareaRef = useRef<TextTextareaRef>(null);
-  const [ratingOpen, setRatingOpen] = useState(false);
+  // const [ratingOpen, setRatingOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const pathName = usePathname();
   const fromToday = pathName.startsWith('/question/detail');
@@ -49,15 +49,13 @@ export default function AnswerForm({
 
     if (mode === 'create') {
       setConfirmOpen(false);
-
-      requestAnimationFrame(() => setRatingOpen(true));
     } else {
       setConfirmOpen(false);
       router.push(fromToday ? '/record' : '/question/list');
     }
   };
   const handleRating = (questionId: number, isLike: boolean) => {
-    setRatingOpen(false);
+    // setRatingOpen(false);
     rateMutate.mutate(
       { questionId, isLike },
       {
@@ -130,12 +128,12 @@ export default function AnswerForm({
         title={mode === 'create' ? '답변을 완료하시겠습니까?' : '수정을 완료하시겠습니까?'}
         onConfirm={() => handleSubmit()}
       />
-      <RatingModal
+      {/* <RatingModal
         open={ratingOpen}
         onOpenChange={setRatingOpen}
         onLike={() => handleRating(questionId!, true)}
         onDislike={() => handleRating(questionId!, false)}
-      />
+      /> */}
     </>
   );
 }
