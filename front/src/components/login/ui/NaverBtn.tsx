@@ -11,7 +11,7 @@ export default function NaverBtn({ onSocialLogin }: NaverBtnProps) {
     <Button
       variant="icon"
       className="bg-naver w-[295px] hover:bg-naver/80 text-secondary"
-      onClick={() => onSocialLogin('naver')}
+      onClick={() => onSocialLogin}
     >
       <Image src="/images/social/naverLogo.png" width={12} height={11} alt="네이버 로그인" />
       네이버 로그인
