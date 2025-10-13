@@ -56,7 +56,7 @@ export default function ScheduleListWeb() {
   }
 
   return (
-    <div className="hidden md:flex flex-col w-[320px] lg:w-[400px] h-[736px] bg-secondary shadow-md rounded-lg">
+    <div className="hidden md:flex flex-col w-full  h-[736px] bg-secondary shadow-md rounded-lg">
       <h2 className="font-bold text-20 p-4 select-none flex-shrink-0">일정 리스트</h2>
 
       {/* 스크롤 영역 */}
