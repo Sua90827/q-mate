@@ -44,6 +44,7 @@ export default function SignupDatePicker({ control }: Props) {
               <Calendar
                 mode="single"
                 captionLayout="dropdown"
+                anniversary={true}
                 selected={selectedDate}
                 onSelect={(d) => {
                   if (d) field.onChange(dateToString(d));

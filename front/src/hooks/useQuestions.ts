@@ -55,6 +55,7 @@ export const useAnswerQuestion = () => {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['todayQuestion'] });
       queryClient.invalidateQueries({ queryKey: ['questionDetail', variables.questionInstanceId] });
+      queryClient.invalidateQueries({ queryKey: ['questions'] });
     },
   });
 };
@@ -64,9 +65,10 @@ export const useUpdateAnswerQuestion = () => {
   return useMutation({
     mutationFn: ({ answerId, content }: { answerId: number; content: string }) =>
       updateAnswer(answerId, content),
-    onSuccess: (_data, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todayQuestion'] });
-      queryClient.invalidateQueries({ queryKey: ['questionDetail', variables.answerId] });
+      queryClient.invalidateQueries({ queryKey: ['questionDetail'] });
+      queryClient.invalidateQueries({ queryKey: ['questions'] });
     },
   });
 };

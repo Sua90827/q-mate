@@ -20,7 +20,7 @@ function EventList({ date, items, isLoading, isError }: Props) {
   const router = useRouter();
   const matchId = useMatchIdStore((state) => state.matchId);
   return (
-    <div className="flex-1 border-t flex flex-col border-text-text-primary rounded-b-lg bg-secondary shadow-sm h-full px-10 overflow-hidden min-h-0">
+    <div className="flex-1 border-t flex flex-col border-text-text-primary md:rounded-b-lg bg-secondary shadow-sm h-full px-10 overflow-hidden min-h-0">
       <h2 className="font-extrabold text-18 mt-4">
         {date.getDate()}. {date.toLocaleString('ko-KR', { weekday: 'narrow' })}
       </h2>

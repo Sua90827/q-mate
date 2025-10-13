@@ -3,14 +3,7 @@
 import { Button } from '@/components/common/Button';
 import { Share2 } from 'lucide-react';
 import React, { useState, useRef } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog';
+import ConfirmModal from '@/components/common/ConfirmModal';
 
 type Props = {
   targetRef?: React.RefObject<HTMLElement | null>;
@@ -97,20 +90,15 @@ export default function ShareBtn({ targetId, title, text, className, targetRef }
       >
         <Share2 className="text-secondary" />
       </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>이미지로 저장할까요?</DialogTitle>
-          </DialogHeader>
-          <DialogDescription />
-          <DialogFooter className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setOpen(false)}>
-              취소
-            </Button>
-            <Button onClick={doDownload}>확인</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmModal
+        defaultStyle
+        open={open}
+        setOpen={setOpen}
+        title="이미지로 저장할까요?"
+        confirmText="확인"
+        cancelText="취소"
+        onConfirm={doDownload}
+      />
     </>
   );
 }
