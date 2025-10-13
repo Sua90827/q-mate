@@ -30,7 +30,6 @@ export default function BellBtn() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    status,
   } = useInfiniteNotifications({ size: 20 });
 
   const items: contentItemType[] = flatNotifications(infinity);
@@ -135,9 +134,8 @@ export default function BellBtn() {
                     <CategoryIcons
                       category={item.category}
                       className={cn(
-                        `w-6 h-6 items-start mt-1 ${
-                          item.read === false ? '!text-primary' : '!text-text-unread'
-                        } `,
+                        'w-6 h-6 items-start mt-1 nav-item-mob',
+                        item.read === false ? 'active' : 'text-text-unread',
                       )}
                     />
                     <div className="flex flex-col text-14 font-normal">
@@ -150,7 +148,7 @@ export default function BellBtn() {
                       >
                         {item.listTitle}
                         {item.read === false && (
-                          <span className="w-2 h-2 bg-primary rounded-full"></span>
+                          <span className="w-2 h-2 text-theme-accent rounded-full"></span>
                         )}
                       </div>
 
