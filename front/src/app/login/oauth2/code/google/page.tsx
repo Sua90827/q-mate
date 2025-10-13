@@ -42,6 +42,11 @@ export default function GoogleCallback() {
       setAccessToken(accessToken);
       localStorage.setItem('accessTokenTime', String(Date.now() + accessTokenExpiresIn * 1000));
 
+      if (!user.nickname || !user.birthDate) {
+        router.replace('/signup/onboarding');
+        return;
+      }
+
       // 매칭 여부 분기
       if (user.currentMatchId) {
         setMatchId(user.currentMatchId);
