@@ -6,9 +6,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 
-import { toKey } from '@/utils/date'; // Date → YYYY-MM-DD 변환 함수
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { dateToString } from '@/utils/date';
 
 type Props = {
   control: Control<SignupFormValues>;
@@ -46,7 +46,7 @@ export default function SignupDatePicker({ control }: Props) {
                 captionLayout="dropdown"
                 selected={selectedDate}
                 onSelect={(d) => {
-                  if (d) field.onChange(toKey(d));
+                  if (d) field.onChange(dateToString(d));
                 }}
                 disabled={(d) => d > new Date()}
               />

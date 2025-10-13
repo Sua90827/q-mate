@@ -10,8 +10,8 @@ export function useSettingsActions(matchId: number, closeModal: () => void) {
 
   const handleSaveTime = async (hour24: number) => {
     try {
-      const res = await updateMatchInfo({ dailyQuestionHour: hour24 });
-      SuccessToast(res?.message);
+      await updateMatchInfo({ dailyQuestionHour: hour24 });
+      SuccessToast('질문 시간 저장 완료되었습니다.');
       closeModal();
     } catch {
       ErrorToast('질문 시간 저장에 실패했습니다');
