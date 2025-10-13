@@ -54,21 +54,21 @@ export default function AnswerForm({
       router.push(fromToday ? '/record' : '/question/list');
     }
   };
-  const handleRating = (questionId: number, isLike: boolean) => {
-    // setRatingOpen(false);
-    rateMutate.mutate(
-      { questionId, isLike },
-      {
-        onSuccess: () => {
-          SuccessToast('평가가 완료되었어요');
-          router.push(fromToday ? '/record' : '/question/list');
-        },
-        onError: () => {
-          ErrorToast('평가에 실패했어요.');
-        },
-      },
-    );
-  };
+  // const handleRating = (questionId: number, isLike: boolean) => {
+  //   // setRatingOpen(false);
+  //   rateMutate.mutate(
+  //     { questionId, isLike },
+  //     {
+  //       onSuccess: () => {
+  //         SuccessToast('평가가 완료되었어요');
+  //         router.push(fromToday ? '/record' : '/question/list');
+  //       },
+  //       onError: () => {
+  //         ErrorToast('평가에 실패했어요.');
+  //       },
+  //     },
+  //   );
+  // };
 
   return (
     <>
@@ -123,6 +123,7 @@ export default function AnswerForm({
         </div>
       </div>
       <ConfirmModal
+        defaultStyle
         open={confirmOpen}
         setOpen={setConfirmOpen}
         title={mode === 'create' ? '답변을 완료하시겠습니까?' : '수정을 완료하시겠습니까?'}

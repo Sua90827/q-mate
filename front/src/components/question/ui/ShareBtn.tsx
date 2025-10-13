@@ -91,6 +91,7 @@ export default function ShareBtn({ targetId, title, text, className, targetRef }
         <Share2 className="text-secondary" />
       </Button>
       <ConfirmModal
+        defaultStyle
         open={open}
         setOpen={setOpen}
         title="이미지로 저장할까요?"
