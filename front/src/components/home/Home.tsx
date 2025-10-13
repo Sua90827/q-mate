@@ -19,7 +19,7 @@ export default function Home() {
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('accessTokenTime');
-
+    sessionStorage.clear();
     resetAccessToken();
     resetMatchId();
     resetSelectedMenu();
