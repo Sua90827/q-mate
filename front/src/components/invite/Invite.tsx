@@ -28,7 +28,9 @@ export default function Invite() {
   const setSelectedMenu = useSelectedStore((s) => s.setSelectedMenu);
 
   const { mutate: createCode } = useCreateInviteCode();
-  const { data } = useMatchInfo(matchId!);
+  const { data } = useMatchInfo(matchId!, {
+    refetchInterval: 2000,
+  });
   const router = useRouter();
 
   // 초대코드 생성

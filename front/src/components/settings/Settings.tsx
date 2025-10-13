@@ -26,7 +26,7 @@ type SettingItem =
 
 export default function Settings() {
   const matchId = useMatchIdStore((state) => state.matchId);
-  const { data: matchInfo } = useMatchInfo(matchId!);
+  const { data: matchInfo } = useMatchInfo(matchId!, { refetchInterval: false });
   const user = matchInfo?.users.find((u) => u.me);
   const resetMatchId = useMatchIdStore((state) => state.resetMatchId);
   const resetAccessToken = useAuthStore((state) => state.resetAccessToken);
@@ -91,6 +91,9 @@ export default function Settings() {
   const handleLogout = () => {
     logoutMutate(undefined, {
       onSuccess: () => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('accessTokenTime');
+        localStorage.removeItem('prevExp');
         sessionStorage.clear();
         //선택된 메뉴 리셋
         resetSelectedMenu();

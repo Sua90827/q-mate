@@ -6,7 +6,7 @@ import React from 'react';
 export default function page() {
   return (
     <>
-      <div className="mb-10 font-Gumi text-24 text-center">
+      <div className="mb-10 font-Gumi text-24 text-center ">
         <p>버블리와 함께할 </p>
         <p>방법을 선택해 주세요</p>
       </div>

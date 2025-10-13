@@ -19,6 +19,7 @@ export default function Home() {
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('accessTokenTime');
+    localStorage.removeItem('prevExp');
     sessionStorage.clear();
     resetAccessToken();
     resetMatchId();
