@@ -33,7 +33,7 @@ export default function ChartModal() {
       <DialogContent
         onEscapeKeyDown={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
-        className="w-[300px] h-[450px] z-50 !gap-0 !pb-0 !mb-0"
+        className="w-[300px] max-h-[450px] z-50 !gap-0 !pb-0 !mb-0 flex flex-col justify-center"
       >
         <Chart data={data} />
       </DialogContent>
