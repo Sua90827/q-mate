@@ -27,13 +27,13 @@ export function Chart({ data }: { data: Chart }) {
   const chartConfig = { visitors: { label: '좋아요' } } as const;
 
   return (
-    <Card className="flex flex-col items-center bg-none border-none shadow-none py-6 px-0">
+    <Card className="flex flex-col items-center bg-none border-none shadow-none py-6 px-0 !gap-0">
       <p className="text-16 font-bold text-center mb-4">
         큐메이트와 함께 한 저번달 <br /> 좋아해주신 질문들을 분석해 봤어요!
       </p>
 
       <CardContent className="p-0 flex justify-center mb-8">
-        <div className="flex justify-center items-center min-h-[220px] min-w-[240px]">
+        <div className="flex justify-center items-center min-h-[220px] min-w-[220px]">
           <ChartContainer
             config={chartConfig}
             className="flex justify-center items-center w-full h-full"
