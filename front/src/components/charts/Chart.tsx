@@ -31,12 +31,18 @@ export function Chart({ data }: { data: Chart }) {
       </p>
 
       <CardContent className="pb-0 pt-0 px-3 flex justify-center">
-        <ChartContainer className="mx-auto aspect-square max-h-[250px]">
-          <PieChart>
+        <div className="w-[200px] h-[200px] flex justify-center items-center">
+          <PieChart width={200} height={200}>
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-            <Pie data={chartData} dataKey="visitors" nameKey="category" innerRadius={60} />
+            <Pie
+              data={chartData}
+              dataKey="visitors"
+              nameKey="category"
+              innerRadius={60}
+              outerRadius={90}
+            />
           </PieChart>
-        </ChartContainer>
+        </div>
       </CardContent>
 
       <CardFooter className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm pb-6">
