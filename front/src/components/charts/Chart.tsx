@@ -32,8 +32,8 @@ export function Chart({ data }: { data: Chart }) {
         큐메이트와 함께 한 저번달 <br /> 좋아해주신 질문들을 분석해 봤어요!
       </p>
 
-      <CardContent className="p-0 flex justify-center mt-2 mb-8">
-        <div className="flex justify-center items-center min-h-[260px] min-w-[260px]">
+      <CardContent className="p-0 flex justify-center mb-8">
+        <div className="flex justify-center items-center min-h-[220px] min-w-[240px]">
           <ChartContainer
             config={chartConfig}
             className="flex justify-center items-center w-full h-full"
@@ -44,8 +44,8 @@ export function Chart({ data }: { data: Chart }) {
                 data={chartData}
                 dataKey="visitors"
                 nameKey="category"
-                innerRadius={65}
-                outerRadius={95}
+                innerRadius={60}
+                outerRadius={90}
                 isAnimationActive={false}
               />
             </PieChart>
@@ -53,7 +53,7 @@ export function Chart({ data }: { data: Chart }) {
         </div>
       </CardContent>
 
-      <CardFooter className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm pb-4">
+      <CardFooter className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm pb-8">
         {chartData.map((item) => (
           <div key={item.category} className="flex items-center gap-1">
             <div className="w-6 h-3" style={{ backgroundColor: item.fill }} />
