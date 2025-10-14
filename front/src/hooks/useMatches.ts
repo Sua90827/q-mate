@@ -6,7 +6,7 @@ import {
   restoreMatch,
   updateMatchInfo,
 } from '@/api/matches';
-import { MatchDetachedInfo, MatchInfo } from '@/types/matchType';
+import { MatchInfo } from '@/types/matchType';
 import { useQuery, useMutation, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 
 export function useMatchInfo(
