@@ -20,6 +20,7 @@ type AnswerFormProps = {
   submitting?: boolean;
   initialValue?: string;
   questionId?: number;
+  onOpenRating?: () => void;
 };
 
 export default function AnswerForm({
@@ -29,6 +30,7 @@ export default function AnswerForm({
   submitting = false,
   initialValue = '',
   questionId,
+  onOpenRating,
 }: AnswerFormProps) {
   const router = useRouter();
   const textareaRef = useRef<TextTextareaRef>(null);
@@ -49,6 +51,7 @@ export default function AnswerForm({
 
     if (mode === 'create') {
       setConfirmOpen(false);
+      onOpenRating?.();
     } else {
       setConfirmOpen(false);
       router.push(fromToday ? '/record' : '/question/list');
@@ -88,7 +91,7 @@ export default function AnswerForm({
 
       <div className="flex flex-col items-center justify-center h-full bg-gradient-sub ">
         <div className="flex flex-col gap-3">
-          <span className="font-bold text-24 text-center pb-3 text-theme-primary md:w-[390px] w-[310px]">
+          <span className="text-24 text-center leading-snug break-keep break-words whitespace-pre-line mx-auto pb-3 text-theme-primary md:max-w-[390px] max-w-[310px]">
             {questionText}
           </span>
 

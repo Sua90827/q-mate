@@ -171,6 +171,7 @@ export default function QuestionDetail() {
             questionText={detail.question.text}
             onSubmit={handleCreateAnswer}
             submitting={isCreating}
+            onOpenRating={() => setRatingOpen(true)}
           />
         ) : null}
 
