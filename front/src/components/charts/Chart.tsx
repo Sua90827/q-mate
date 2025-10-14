@@ -33,10 +33,7 @@ export function Chart({ data }: { data: Chart }) {
       </p>
 
       <CardContent className="pb-0 pt-0 px-3 flex justify-center">
-        <ChartContainer
-          config={chartConfig}
-          className="grid place-items-center mx-auto min-w-[220px] min-h-[220px] w-[240px] h-[240px]"
-        >
+        <ChartContainer config={chartConfig} className="flex justify-center items-center">
           <PieChart width={220} height={220}>
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
             <Pie
