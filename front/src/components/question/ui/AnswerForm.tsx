@@ -4,14 +4,10 @@ import { usePathname, useRouter } from 'next/navigation';
 import CloseButton from '@/components/common/CloseButton';
 import { Button } from '@/components/common/Button';
 import { Loader2 } from 'lucide-react';
-import RatingModal from '../RatingModal';
 import Link from 'next/link';
 import TextTextarea, { TextTextareaRef } from './TextTextarea';
 import { useSelectedStore } from '@/store/useSelectedStore';
 import ConfirmModal from '@/components/common/ConfirmModal';
-import { ratingQuestion } from '@/api/questions';
-import { useRateQuestion } from '@/hooks/useQuestions';
-import { ErrorToast, SuccessToast } from '@/components/common/CustomToast';
 
 type AnswerFormProps = {
   mode: 'create' | 'edit';
@@ -29,7 +25,6 @@ export default function AnswerForm({
   onSubmit,
   submitting = false,
   initialValue = '',
-  questionId,
   onOpenRating,
 }: AnswerFormProps) {
   const router = useRouter();
@@ -41,7 +36,6 @@ export default function AnswerForm({
   const [isEmpty, setIsEmpty] = useState(initialValue.trim().length === 0);
   const canSubmit = !submitting && !isEmpty;
   const setSelectedMenu = useSelectedStore((state) => state.setSelectedMenu);
-  const rateMutate = useRateQuestion();
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -57,21 +51,6 @@ export default function AnswerForm({
       router.push(fromToday ? '/record' : '/question/list');
     }
   };
-  // const handleRating = (questionId: number, isLike: boolean) => {
-  //   // setRatingOpen(false);
-  //   rateMutate.mutate(
-  //     { questionId, isLike },
-  //     {
-  //       onSuccess: () => {
-  //         SuccessToast('평가가 완료되었어요');
-  //         router.push(fromToday ? '/record' : '/question/list');
-  //       },
-  //       onError: () => {
-  //         ErrorToast('평가에 실패했어요.');
-  //       },
-  //     },
-  //   );
-  // };
 
   return (
     <>

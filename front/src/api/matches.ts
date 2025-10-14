@@ -38,3 +38,8 @@ export const updateNickname = async ({ nickname }: { nickname: string }) => {
   const res = await instance.patch('/api/users/me/nickname', { nickname });
   return res.data;
 };
+//복구 가능한 연결끊김 상태의 매칭 정보 조회
+export const fetchDetachedStatus = async () => {
+  const res = await instance.get(`/api/matches/detached-status`);
+  return res.data;
+};

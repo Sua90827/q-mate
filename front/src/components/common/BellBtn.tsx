@@ -124,7 +124,7 @@ export default function BellBtn() {
                 className={cn(
                   `mx-3 p-3 flex items-center gap-4 ${
                     item.read === false ? 'bg-unread' : 'bg-read border-read-border border'
-                  } w-[290px] h-25 rounded-sm`,
+                  } w-[290px] h-[120x] rounded-sm`,
                 )}
               >
                 <div className="flex justify-between w-full h-full items-center">
@@ -132,13 +132,16 @@ export default function BellBtn() {
                     className="flex gap-3 w-50 h-full py-3 cursor-pointer"
                     onClick={() => clickHandler(item)}
                   >
-                    <CategoryIcons
-                      category={item.category}
-                      className={cn(
-                        'w-6 h-6 items-start mt-1 nav-item-mob',
-                        item.read === false ? 'active' : 'text-text-unread',
-                      )}
-                    />
+                    <div>
+                      <CategoryIcons
+                        category={item.category}
+                        className={cn(
+                          'w-[24px] h-[24px] items-start mt-1 nav-item-mob',
+                          item.read === false ? 'active' : 'text-text-unread',
+                        )}
+                      />
+                    </div>
+
                     <div className="flex flex-col text-14 font-normal">
                       <div
                         className={cn(
@@ -148,13 +151,15 @@ export default function BellBtn() {
                         )}
                       >
                         {item.listTitle}
-                        {item.read === false && (
-                          <span className="w-2 h-2 bg-theme-primary rounded-full"></span>
-                        )}
                       </div>
 
                       <p className="text-text-unread">{formatTimeAgo(item.createdAt)}</p>
                     </div>
+                    {item.read === false && (
+                      <div className="flex h-full items-start">
+                        <span className="w-[8px] h-[8px] mt-2 bg-theme-primary rounded-full"></span>
+                      </div>
+                    )}
                   </div>
                   <div
                     className="flex h-full w-10 items-center"
