@@ -1,6 +1,5 @@
-import { Button } from '@/components/common/Button';
+import MainInvite from '@/components/invite/MainInvite';
 import Image from 'next/image';
-import Link from 'next/link';
 import React from 'react';
 
 export default function page() {
@@ -12,12 +11,7 @@ export default function page() {
       </div>
       <Image src="/images/bubbley/bubbley_baby.png" alt="버블리 캐릭터" width={120} height={167} />
       <div className="mt-10 flex flex-col gap-5">
-        <Button variant="invite" className="w-[300px] z-10" asChild>
-          <Link href="invite/relationship_select">초대 하기</Link>
-        </Button>
-        <Button variant="primary" className="w-[300px] z-10" asChild>
-          <Link href="/invite/invited">초대 코드 입력하기</Link>
-        </Button>
+        <MainInvite />
       </div>
     </>
   );
