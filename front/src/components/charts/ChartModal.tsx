@@ -17,9 +17,10 @@ export default function ChartModal() {
     const seeMonth = localStorage.getItem('chartModal');
 
     // 좋아요 데이터가 존재하고, 이번 달에 아직 안봤을 때만 모달 오픈
-    const hasLikes = data.categories?.some((item) => item.likeCount > 0);
+    const hasLikes = data.totalLikes > 0;
 
-    if (today === 14 && Number(seeMonth) !== month && hasLikes) {
+    if (today === 14 && hasLikes) {
+      //&& Number(seeMonth) !== month
       setOpen(true);
       localStorage.setItem('chartModal', String(month));
     }
