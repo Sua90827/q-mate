@@ -9,7 +9,14 @@ import {
   notificationListResponseType,
   notificationResponseType,
 } from '@/types/notification';
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type InfiniteData,
+  type QueryKey,
+} from '@tanstack/react-query';
 
 //알림 리스트
 export const useNotifications = (params: ListParams) => {
@@ -28,10 +35,8 @@ export const useInfiniteNotifications = (params: ListParams = { size: 20, page: 
         ...params,
         page: pageParam as number,
       }),
-    // lastPage.number / lastPage.last 로 다음 페이지 계산
-    getNextPageParam: (lastPage) => (lastPage.last ? undefined : lastPage.number + 1),
 
-    refetchOnWindowFocus: false,
+    getNextPageParam: (lastPage) => (lastPage.last ? undefined : lastPage.number + 1),
   });
 };
 //알림 상세
@@ -40,16 +45,65 @@ export const useNotificationDetail = (notificationId?: number) => {
     queryKey: ['notificationDetail', notificationId],
     queryFn: () => fetchNotificationDetail(notificationId!),
     enabled: !!notificationId,
-    //알림 상세는 캐싱이 필요할거라 생각이되어 작성
     staleTime: 1000 * 60 * 5,
   });
 };
-//알림 삭제
+//알림 삭제 (낙관적 업데이트 + 롤백 + 최종 리패치)
 export const useDeleteNotification = () => {
   const queryClient = useQueryClient();
-  return useMutation({
+
+  type Snapshot = [QueryKey, InfiniteData<notificationListResponseType> | undefined][];
+
+  return useMutation<unknown, Error, number, { snapshot: Snapshot; prevUnread?: number }>({
     mutationFn: (notificationId: number) => deleteNotification(notificationId),
-    onSuccess: () => {
+
+    onMutate: async (notificationId) => {
+      await queryClient.cancelQueries({ queryKey: ['notificationsInfinite'] });
+
+      const snapshot = queryClient.getQueriesData<InfiniteData<notificationListResponseType>>({
+        queryKey: ['notificationsInfinite'],
+      });
+
+      snapshot.forEach(([key, data]) => {
+        if (!data) return;
+
+        const pages = data.pages.map((page) => {
+          const existed = page.content.some((c) => c.notificationId === notificationId);
+          if (!existed) return page;
+
+          const content = page.content.filter((c) => c.notificationId !== notificationId);
+          return {
+            ...page,
+            content,
+            numberOfElements: Math.max(0, page.numberOfElements - (existed ? 1 : 0)),
+            totalElements: Math.max(0, page.totalElements - (existed ? 1 : 0)),
+            empty: content.length === 0,
+          };
+        });
+
+        queryClient.setQueryData<InfiniteData<notificationListResponseType>>(key, {
+          ...data,
+          pages: pages as InfiniteData<notificationListResponseType>['pages'],
+        });
+      });
+
+      const prevUnread = queryClient.getQueryData<number>(['unreadCount']);
+      if (typeof prevUnread === 'number') {
+        queryClient.setQueryData(['unreadCount'], Math.max(0, prevUnread - 1));
+      }
+
+      return { snapshot, prevUnread };
+    },
+
+    onError: (_err, _vars, ctx) => {
+      ctx?.snapshot?.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data);
+      });
+      if (typeof ctx?.prevUnread === 'number') {
+        queryClient.setQueryData(['unreadCount'], ctx.prevUnread);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['notificationsInfinite'] });
       queryClient.invalidateQueries({ queryKey: ['unreadCount'] });
     },
