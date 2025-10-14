@@ -33,7 +33,6 @@ export default function Settings() {
   const resetSelectedMenu = useSelectedStore((state) => state.resetSelectedMenu);
   const [modal, setModal] = useState<string | null>(null);
 
-  //hook 조회 enable에 사용자가 있을때 조건 추가 필요
   const { data: notificationSettings, toggleNotification, isPending } = useNotificationSettings();
   const { unsubscribe } = useUnsubscribePush();
   const [nickname, setNickname] = useState<string>('');
@@ -145,7 +144,6 @@ export default function Settings() {
                 )}
               </div>
               {item.type === 'switch' ? (
-                //현재는 useState로 색상변경되는지 확인했지만 유저 정보에서 알림을 받는지 끄는지 확인필요할듯
                 <Switch
                   checked={pushEnabled}
                   onCheckedChange={handleTogglePush}
