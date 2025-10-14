@@ -8,7 +8,7 @@ import instance from '../lib/axiosInstance';
 
 export const fetchChart = async (matchId: number) => {
   const res = await instance.get(`/api/matches/${matchId}/stats/likes-by-category/monthly`, {
-    params: { anchorDate: '2024-11-01' },
+    params: { anchorDate: '2025-11-01' },
   });
   return res.data;
 };
