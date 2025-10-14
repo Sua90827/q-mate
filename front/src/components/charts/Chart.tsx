@@ -24,6 +24,8 @@ export function Chart({ data }: { data: Chart }) {
     fill: categoryColors[item.categoryName] ?? 'var(--chart-9)',
   }));
 
+  const chartConfig = { visitors: { label: '좋아요' } } as const;
+
   return (
     <Card className="flex flex-col bg-none border-none shadow-none px-0 py-0">
       <p className="text-16 font-bold text-center pt-8 pb-4">
@@ -31,21 +33,25 @@ export function Chart({ data }: { data: Chart }) {
       </p>
 
       <CardContent className="pb-0 pt-0 px-3 flex justify-center">
-        <div className="w-[200px] h-[200px] flex justify-center items-center">
-          <PieChart width={200} height={200}>
+        <ChartContainer
+          config={chartConfig}
+          className="grid place-items-center mx-auto min-w-[220px] min-h-[220px] w-[240px] h-[240px]"
+        >
+          <PieChart width={220} height={220}>
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
             <Pie
               data={chartData}
               dataKey="visitors"
               nameKey="category"
-              innerRadius={60}
-              outerRadius={90}
+              innerRadius={70}
+              outerRadius={100}
+              isAnimationActive={false}
             />
           </PieChart>
-        </div>
+        </ChartContainer>
       </CardContent>
 
-      <CardFooter className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm pb-6">
+      <CardFooter className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm pb-6 mt-2">
         {chartData.map((item) => (
           <div key={item.category} className="flex items-center gap-1">
             <div className="w-6 h-3" style={{ backgroundColor: item.fill }} />
