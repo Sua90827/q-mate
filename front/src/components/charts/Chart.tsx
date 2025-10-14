@@ -27,16 +27,16 @@ export function Chart({ data }: { data: Chart }) {
   const chartConfig = { visitors: { label: '좋아요' } } as const;
 
   return (
-    <Card className="flex flex-col items-center bg-none border-none shadow-none py-6 px-0">
+    <Card className="flex flex-col items-center bg-none border-none shadow-none py-6 px-0 !gap-0">
       <p className="text-16 font-bold text-center mb-4">
         큐메이트와 함께 한 저번달 <br /> 좋아해주신 질문들을 분석해 봤어요!
       </p>
 
-      <CardContent className="p-0 flex justify-center items-center mb-6">
-        <div className="flex justify-center items-center min-h-[260px] min-w-[260px] overflow-visible">
+      <CardContent className="p-0 flex justify-center mb-4">
+        <div className="flex justify-center items-center min-h-[220px] min-w-[220px]">
           <ChartContainer
             config={chartConfig}
-            className="flex justify-center items-center w-full h-full overflow-visible"
+            className="flex justify-center items-center w-full h-full"
           >
             <PieChart width={200} height={200}>
               <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
@@ -44,8 +44,8 @@ export function Chart({ data }: { data: Chart }) {
                 data={chartData}
                 dataKey="visitors"
                 nameKey="category"
-                innerRadius={70}
-                outerRadius={95}
+                innerRadius={60}
+                outerRadius={90}
                 isAnimationActive={false}
               />
             </PieChart>
@@ -53,7 +53,7 @@ export function Chart({ data }: { data: Chart }) {
         </div>
       </CardContent>
 
-      <CardFooter className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm pb-4">
+      <CardFooter className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm pb-8">
         {chartData.map((item) => (
           <div key={item.category} className="flex items-center gap-1">
             <div className="w-6 h-3" style={{ backgroundColor: item.fill }} />
