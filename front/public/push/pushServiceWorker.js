@@ -22,7 +22,7 @@ self.addEventListener('push', (event) => {
   const title = data.title ?? '알림이도착했습니다.';
   const options = {
     body: data.body ?? '',
-    icon: data.icon ?? '/favicon.svg',
+    icon: data.icon ?? '/favicon1.svg',
     data: data.data ?? {},
   };
 
@@ -48,7 +48,7 @@ self.addEventListener('push', (event) => {
 // 알림 클릭 시 동작 수정필요
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const url = event.notification.data?.url ?? '/';
+  const url = event.notification.data?.url ?? '/notification';
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
