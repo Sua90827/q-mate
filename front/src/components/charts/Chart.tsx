@@ -32,20 +32,20 @@ export function Chart({ data }: { data: Chart }) {
         큐메이트와 함께 한 저번달 <br /> 좋아해주신 질문들을 분석해 봤어요!
       </p>
 
-      <CardContent className="p-0 flex justify-center items-center mb-8">
-        <div className="flex justify-center items-center min-h-[240px] min-w-[240px]">
+      <CardContent className="p-0 flex justify-center items-center mb-6">
+        <div className="flex justify-center items-center min-h-[260px] min-w-[260px] overflow-visible">
           <ChartContainer
             config={chartConfig}
-            className="flex justify-center items-center w-full h-full"
+            className="flex justify-center items-center w-full h-full overflow-visible"
           >
-            <PieChart width={220} height={220}>
+            <PieChart width={200} height={200}>
               <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
               <Pie
                 data={chartData}
                 dataKey="visitors"
                 nameKey="category"
                 innerRadius={70}
-                outerRadius={100}
+                outerRadius={95}
                 isAnimationActive={false}
               />
             </PieChart>
