@@ -33,19 +33,24 @@ export function Chart({ data }: { data: Chart }) {
       </p>
 
       <CardContent className="pb-0 pt-0 px-3 flex justify-center">
-        <ChartContainer config={chartConfig} className="flex justify-center items-center">
-          <PieChart width={220} height={220}>
-            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-            <Pie
-              data={chartData}
-              dataKey="visitors"
-              nameKey="category"
-              innerRadius={70}
-              outerRadius={100}
-              isAnimationActive={false}
-            />
-          </PieChart>
-        </ChartContainer>
+        <div className="flex justify-center items-center min-h-[240px] min-w-[240px]">
+          <ChartContainer
+            config={chartConfig}
+            className="flex justify-center items-center w-full h-full"
+          >
+            <PieChart width={220} height={220}>
+              <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+              <Pie
+                data={chartData}
+                dataKey="visitors"
+                nameKey="category"
+                innerRadius={70}
+                outerRadius={100}
+                isAnimationActive={false}
+              />
+            </PieChart>
+          </ChartContainer>
+        </div>
       </CardContent>
 
       <CardFooter className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm pb-6 mt-2">
