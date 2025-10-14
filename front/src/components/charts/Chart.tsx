@@ -32,7 +32,7 @@ export function Chart({ data }: { data: Chart }) {
         큐메이트와 함께 한 저번달 <br /> 좋아해주신 질문들을 분석해 봤어요!
       </p>
 
-      <CardContent className="p-0 flex justify-center mb-8">
+      <CardContent className="p-0 flex justify-center mb-4">
         <div className="flex justify-center items-center min-h-[220px] min-w-[220px]">
           <ChartContainer
             config={chartConfig}
