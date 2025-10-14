@@ -32,11 +32,11 @@ export function Chart({ data }: { data: Chart }) {
         큐메이트와 함께 한 저번달 <br /> 좋아해주신 질문들을 분석해 봤어요!
       </p>
 
-      <CardContent className="p-0 flex justify-center items-center mb-6">
-        <div className="flex justify-center items-center min-h-[260px] min-w-[260px] overflow-visible">
+      <CardContent className="p-0 flex justify-center mt-2 mb-8">
+        <div className="flex justify-center items-center min-h-[260px] min-w-[260px]">
           <ChartContainer
             config={chartConfig}
-            className="flex justify-center items-center w-full h-full overflow-visible"
+            className="flex justify-center items-center w-full h-full"
           >
             <PieChart width={200} height={200}>
               <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
@@ -44,7 +44,7 @@ export function Chart({ data }: { data: Chart }) {
                 data={chartData}
                 dataKey="visitors"
                 nameKey="category"
-                innerRadius={70}
+                innerRadius={65}
                 outerRadius={95}
                 isAnimationActive={false}
               />
