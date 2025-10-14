@@ -25,19 +25,21 @@ export function Chart({ data }: { data: Chart }) {
   }));
 
   return (
-    <Card className="flex flex-col bg-none border-none shadow-none px-0 py-0 gap-0">
-      <p className="text-16 font-bold text-center pt-8">
+    <Card className="flex flex-col bg-none border-none shadow-none px-0 py-0">
+      <p className="text-16 font-bold text-center pt-8 pb-4">
         큐메이트와 함께 한 저번달 <br /> 좋아해주신 질문들을 분석해 봤어요!
       </p>
-      <CardContent className="pb-0 pt-0 px-3">
-        <ChartContainer className="mx-auto aspect-square max-h-[250px] px-0">
-          <PieChart className="px-0">
+
+      <CardContent className="pb-0 pt-0 px-3 flex justify-center">
+        <ChartContainer className="mx-auto aspect-square max-h-[250px]">
+          <PieChart>
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
             <Pie data={chartData} dataKey="visitors" nameKey="category" innerRadius={60} />
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm">
+
+      <CardFooter className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm pb-6">
         {chartData.map((item) => (
           <div key={item.category} className="flex items-center gap-1">
             <div className="w-6 h-3" style={{ backgroundColor: item.fill }} />
