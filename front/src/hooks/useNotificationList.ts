@@ -48,23 +48,23 @@ export const useNotificationDetail = (notificationId?: number) => {
     staleTime: 1000 * 60 * 5,
   });
 };
-//알림 삭제 (낙관적 업데이트 + 롤백 + 최종 리패치)
+//알림 삭제
 export const useDeleteNotification = () => {
   const queryClient = useQueryClient();
 
-  type Snapshot = [QueryKey, InfiniteData<notificationListResponseType> | undefined][];
+  type prevList = [QueryKey, InfiniteData<notificationListResponseType> | undefined][];
 
-  return useMutation<unknown, Error, number, { snapshot: Snapshot; prevUnread?: number }>({
+  return useMutation<unknown, Error, number, { prevList: prevList; prevUnread?: number }>({
     mutationFn: (notificationId: number) => deleteNotification(notificationId),
 
     onMutate: async (notificationId) => {
       await queryClient.cancelQueries({ queryKey: ['notificationsInfinite'] });
 
-      const snapshot = queryClient.getQueriesData<InfiniteData<notificationListResponseType>>({
+      const prevList = queryClient.getQueriesData<InfiniteData<notificationListResponseType>>({
         queryKey: ['notificationsInfinite'],
       });
 
-      snapshot.forEach(([key, data]) => {
+      prevList.forEach(([key, data]) => {
         if (!data) return;
 
         const pages = data.pages.map((page) => {
@@ -92,11 +92,11 @@ export const useDeleteNotification = () => {
         queryClient.setQueryData(['unreadCount'], Math.max(0, prevUnread - 1));
       }
 
-      return { snapshot, prevUnread };
+      return { prevList, prevUnread };
     },
 
     onError: (_err, _vars, ctx) => {
-      ctx?.snapshot?.forEach(([key, data]) => {
+      ctx?.prevList?.forEach(([key, data]) => {
         queryClient.setQueryData(key, data);
       });
       if (typeof ctx?.prevUnread === 'number') {
