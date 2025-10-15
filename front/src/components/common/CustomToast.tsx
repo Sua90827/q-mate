@@ -8,25 +8,27 @@ export function SuccessToast(message?: string, className?: string) {
   return toast.custom(() => (
     <div
       className={cn(
-        'inline-flex items-center gap-2 rounded-lg border border-theme-primary bg-secondary px-4 py-3 text-theme-accent shadow-lg',
+        // ⬇ 중앙 정렬 핵심 부분
+        'relative left-1/2 -translate-x-1/2 inline-flex items-center gap-2 rounded-lg border border-theme-primary bg-secondary px-4 py-3 text-theme-accent shadow-lg',
         className,
       )}
     >
-      <CheckCircle className={cn('h-5 w-5 text-theme-accent', className)} />
-      <span className="font-medium  whitespace-nowrap">{message}</span>
+      <CheckCircle className="h-5 w-5 text-theme-accent" />
+      <span className="font-medium whitespace-nowrap">{message}</span>
     </div>
   ));
 }
+
 export function ErrorToast(message?: string, className?: string) {
   return toast.custom(() => (
     <div
       className={cn(
-        'flex items-center gap-2 rounded-lg border border-red-600 bg-secondary px-4 py-3 text-red-600 shadow-lg',
+        'relative left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-lg border border-red-600 bg-secondary px-4 py-3 text-red-600 shadow-lg',
         className,
       )}
     >
-      <XCircle className={cn('h-5 w-5 text-red-600', className)} />
-      <span className="font-medium  whitespace-nowrap">{message}</span>
+      <XCircle className="h-5 w-5 text-red-600" />
+      <span className="font-medium whitespace-nowrap">{message}</span>
     </div>
   ));
 }
