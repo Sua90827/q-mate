@@ -18,11 +18,21 @@ const categoryColors: Record<string, string> = {
 };
 
 export function Chart({ data }: { data: Chart }) {
-  const chartData = data.categories.map((item) => ({
-    category: item.categoryName,
-    visitors: item.likeCount,
-    fill: categoryColors[item.categoryName] ?? 'var(--chart-9)',
-  }));
+  const mergedCategories = Object.values(
+    data.categories.reduce((acc, item) => {
+      const name = item.categoryName;
+      if (!acc[name]) {
+        acc[name] = {
+          category: name,
+          visitors: item.likeCount,
+          fill: categoryColors[name] ?? 'var(--chart-9)',
+        };
+      } else {
+        acc[name].visitors += item.likeCount;
+      }
+      return acc;
+    }, {} as Record<string, { category: string; visitors: number; fill: string }>),
+  );
 
   const chartConfig = { visitors: { label: '좋아요' } } as const;
 
@@ -41,7 +51,7 @@ export function Chart({ data }: { data: Chart }) {
             <PieChart width={200} height={200}>
               <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
               <Pie
-                data={chartData}
+                data={mergedCategories}
                 dataKey="visitors"
                 nameKey="category"
                 innerRadius={60}
@@ -54,7 +64,7 @@ export function Chart({ data }: { data: Chart }) {
       </CardContent>
 
       <CardFooter className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm pb-8">
-        {chartData.map((item) => (
+        {mergedCategories.map((item) => (
           <div key={item.category} className="flex items-center gap-1">
             <div className="w-6 h-3" style={{ backgroundColor: item.fill }} />
             <span>{item.category}</span>

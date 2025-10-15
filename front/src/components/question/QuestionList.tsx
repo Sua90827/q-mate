@@ -110,7 +110,7 @@ export default function QuestionList() {
         <div className="flex-1 overflow-y-auto bg-secondary">
           <ul className="flex-1 overflow-y-auto flex flex-col divide-y divide-dash border-t border-gray ">
             {pagedInstances.map((instance) => {
-              const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
+              const isSelected = selectedQuestionInstanceId === String(instance.questionInstanceId);
 
               let itemClassName =
                 'text-16 py-7 cursor-pointer last:border-b last:border-dash last:border-gray px-4';
@@ -167,7 +167,7 @@ export default function QuestionList() {
         </div>
         <ul className="flex-1 overflow-y-auto flex flex-col divide-y divide-gray border-t border-gray">
           {pagedInstances.map((instance) => {
-            const isSelected = selectedQuestionInstanceId === instance.questionInstanceId;
+            const isSelected = selectedQuestionInstanceId === String(instance.questionInstanceId);
 
             let itemClassName =
               'py-5 cursor-pointer last:border-b last:border-gray last:border-solid px-4';

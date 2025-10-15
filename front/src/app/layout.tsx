@@ -26,6 +26,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="ko" className="h-full" data-theme={theme}>
       <body className="h-full">
+        <Toaster
+          position="top-center"
+          offset={80}
+          toastOptions={{
+            classNames: {
+              toast: 'max-w-[420px] mx-auto w-full flex justify-center',
+            },
+          }}
+        />
         <BodyWrapper>
           <LoadingProvider>
             <Providers>
@@ -36,7 +45,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     <Mocker>{children}</Mocker>
                   </main>
                   <ClientPushToast />
-                  <Toaster position="top-center" offset={100} visibleToasts={1} />
                 </AuthGuard>
               </div>
               <ServiceWorkerRegister />
