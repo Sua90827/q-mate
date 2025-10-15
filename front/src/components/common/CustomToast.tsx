@@ -26,7 +26,7 @@ export function ErrorToast(message?: string, className?: string) {
       )}
     >
       <XCircle className={cn('h-5 w-5 text-red-600', className)} />
-      <span className="font-medium  whitespace-nowrap">{message}</span>
+      <span className="font-medium whitespace-pre-line">{message}</span>
     </div>
   ));
 }
