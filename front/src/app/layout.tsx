@@ -10,6 +10,7 @@ import { Toaster } from '@/components/ui/sonner';
 import ServiceWorkerRegister from './ServiceWorker';
 import ClientPushToast from '@/components/common/ClientPushToast';
 import AuthGuard from '@/components/common/AuthGuard';
+import GlobalToaster from '@/components/common/GlobalToaster';
 
 export const metadata: Metadata = {
   title: 'Q-mate',
@@ -26,7 +27,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="ko" className="h-full" data-theme={theme}>
       <body className="h-full">
-        <Toaster position="top-center" offset={100} visibleToasts={1} />
+        <GlobalToaster />
         <BodyWrapper>
           <LoadingProvider>
             <Providers>
