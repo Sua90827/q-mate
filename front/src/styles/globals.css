@@ -95,36 +95,29 @@
   }
 }
 
-/* Toaster 전체를 중앙에 고정 */
 [data-sonner-toaster][data-position='top-center'],
 [data-sonner-toaster][data-y-position='top'][data-x-position='center'] {
   position: fixed !important;
   top: 80px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
+  left: 0 !important;
+  right: 0 !important;
+  transform: none !important;
+  width: 100% !important;
   display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
   justify-content: center !important;
+  align-items: center !important;
   gap: 8px !important;
   z-index: 9999 !important;
+  pointer-events: none;
 }
 
-/*내부 래퍼가 강제로 column 되어 있는 걸 덮어쓰기 */
+[data-sonner-toast] {
+  pointer-events: auto;
+}
+
 [data-sonner-toast-wrapper] {
   display: flex !important;
   flex-direction: row !important;
-  align-items: center !important;
   justify-content: center !important;
-  width: 100% !important;
-}
-
-/* 실제 toast 박스 */
-[data-sonner-toast] {
-  display: inline-flex !important;
-  flex-direction: row !important;
   align-items: center !important;
-  justify-content: center !important;
-  white-space: nowrap !important;
-  gap: 8px !important;
 }
