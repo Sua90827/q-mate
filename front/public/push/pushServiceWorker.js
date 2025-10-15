@@ -22,7 +22,7 @@ self.addEventListener('push', (event) => {
   const title = data.title ?? '알림이도착했습니다.';
   const options = {
     body: data.body ?? '',
-    icon: data.icon ?? '/favicon1.svg',
+    icon: '/favicon1.svg',
     data: data.data ?? {},
   };
 
