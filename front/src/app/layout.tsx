@@ -26,6 +26,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="ko" className="h-full" data-theme={theme}>
       <body className="h-full">
+        <Toaster position="top-center" offset={100} visibleToasts={1} />
         <BodyWrapper>
           <LoadingProvider>
             <Providers>
@@ -41,7 +42,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <ServiceWorkerRegister />
             </Providers>
           </LoadingProvider>
-          <Toaster position="top-center" offset={100} visibleToasts={1} />
         </BodyWrapper>
       </body>
     </html>
