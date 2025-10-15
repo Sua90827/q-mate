@@ -16,8 +16,8 @@ function ClientPushToast() {
       const payload = data.payload ?? {};
       const title = payload.title ?? '알림이도착했어요';
       const body = payload.body ?? '테스트용';
-
-      pushToast(title, body, () => router.push('/main'));
+      const icon = '/favicon1.svg';
+      pushToast(title, body, icon, () => router.push('/main'));
     };
 
     navigator.serviceWorker.addEventListener('message', handler);

@@ -30,7 +30,7 @@ export function ErrorToast(message?: string, className?: string) {
     </div>
   ));
 }
-export function pushToast(title?: string, body?: string, onClick?: () => void) {
+export function pushToast(title?: string, body?: string, icon?: string, onClick?: () => void) {
   return toast.custom(
     () => (
       <div
@@ -39,7 +39,7 @@ export function pushToast(title?: string, body?: string, onClick?: () => void) {
           'flex  items-center gap-4 rounded-lg border border-theme-primary bg-secondary px-4 py-3 text-theme-accent shadow-lg cursor-pointer',
         )}
       >
-        <Image src={'/favicon1.svg'} alt="logo" width={30} height={30} />
+        <Image src={icon || '/favicon2.svg'} alt="logo" width={30} height={30} />
 
         <div className="flex flex-col">
           <span className="font-bold text-16 whitespace-pre-line">{title}</span>
