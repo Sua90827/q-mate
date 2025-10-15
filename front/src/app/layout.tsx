@@ -36,12 +36,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     <Mocker>{children}</Mocker>
                   </main>
                   <ClientPushToast />
-                  <Toaster position="top-center" offset={100} visibleToasts={1} />
                 </AuthGuard>
               </div>
               <ServiceWorkerRegister />
             </Providers>
           </LoadingProvider>
+          <Toaster position="top-center" offset={100} visibleToasts={1} />
         </BodyWrapper>
       </body>
     </html>
