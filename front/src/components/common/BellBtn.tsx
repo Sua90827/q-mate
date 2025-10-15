@@ -62,7 +62,7 @@ export default function BellBtn() {
   if (isMobile) {
     return (
       <button
-        className="relative flex mr-7 w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center"
+        className="relative flex mr-7 w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center cursor-pointer"
         onClick={() => router.push('/notification')}
       >
         <Bell className="w-7 h-7" />
@@ -101,7 +101,7 @@ export default function BellBtn() {
   return (
     <Sheet modal={false}>
       <SheetTrigger asChild>
-        <div className="relative flex mr-7 w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center">
+        <div className="relative flex mr-7 w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center cursor-pointer">
           <Bell className="!w-8 !h-8" />
           {unread > 0 && (
             <div
@@ -162,7 +162,7 @@ export default function BellBtn() {
                     )}
                   </div>
                   <div
-                    className="flex h-full w-10 items-center"
+                    className="flex h-full w-10 items-center cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
                       deleteMutate(item.notificationId);
