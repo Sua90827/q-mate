@@ -29,7 +29,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 @Import({JpaConfig.class, QuerydslConfig.class})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-//@Tag("local")
+@Tag("local")
 class QuestionInstanceRepositoryTest {
 
   @Autowired

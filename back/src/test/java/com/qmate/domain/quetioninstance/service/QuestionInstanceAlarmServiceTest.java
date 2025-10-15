@@ -9,6 +9,8 @@ import com.qmate.domain.notification.repository.NotificationRepository;
 import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
 import com.qmate.domain.questioninstance.repository.QuestionInstanceRepository;
+import com.qmate.domain.questioninstance.repository.ReminderTargetRow;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -80,5 +82,102 @@ class QuestionInstanceAlarmServiceTest {
 
     // pushEnabled=true 인 user1 에 대해서만 실제 전송
     verify(pushSender, times(1)).send(any(Notification.class));
+  }
+
+  @Test
+  @DisplayName("리마인더: 6시간 전 같은 시(0~50) delivered & 미답변 대상 → 알림 생성, pushEnabled만 푸시")
+  void remindAfterSixHours_createNotiAndSendPushConditionally() {
+    // given
+    ZonedDateTime now = ZonedDateTime.of(2025, 1, 10, 17, 1, 0, 0, KST);
+    var expectedStart = now.minusHours(6).withMinute(0).withSecond(0).withNano(0).toLocalDateTime(); // 11:00
+    var expectedEnd = expectedStart.plusMinutes(50); // 11:50
+
+    // 리마인더 대상 프젝션 스텁
+    ReminderTargetRow rowPushOn = stubRow(1001L, 11L, 201L, true);
+    ReminderTargetRow rowPushOff = stubRow(1002L, 11L, 202L, false);
+
+    given(qiRepository.findReminderTargetsBetween(expectedStart, expectedEnd))
+        .willReturn(List.of(rowPushOn, rowPushOff));
+
+    // 중복 알림 없음
+    given(notificationRepository.existsByUserIdAndCodeAndResourceTypeAndResourceId(
+        anyLong(), any(), any(), anyLong())).willReturn(false);
+
+    // when
+    service.remindAfterSixHours(now);
+
+    // then
+    // 알림은 2건 모두 생성
+    ArgumentCaptor<Notification> notiCaptor = ArgumentCaptor.forClass(Notification.class);
+    verify(notificationRepository, times(2)).save(notiCaptor.capture());
+    assertThat(notiCaptor.getAllValues())
+        .extracting(Notification::getUserId)
+        .containsExactlyInAnyOrder(201L, 202L);
+
+    // pushEnabled=true 인 대상에게만 푸시 1회
+    verify(pushSender, times(1)).send(any(Notification.class));
+
+    // 시간창 파라미터 정확히 전달되었는지도 검증
+    verify(qiRepository).findReminderTargetsBetween(expectedStart, expectedEnd);
+  }
+
+  @Test
+  @DisplayName("리마인더: 동일 알림 존재 시 생성·전송 스킵")
+  void remindAfterSixHours_skipIfAlreadyNotified() {
+    // given
+    ZonedDateTime now = ZonedDateTime.of(2025, 1, 10, 17, 5, 0, 0, KST);
+    LocalDateTime start = now.minusHours(6).withMinute(0).withSecond(0).withNano(0).toLocalDateTime();
+    LocalDateTime end = start.plusMinutes(50);
+
+    ReminderTargetRow row = stubRow(1001L, 11L, 201L, true);
+    given(qiRepository.findReminderTargetsBetween(start, end))
+        .willReturn(List.of(row));
+
+    // 이미 같은 알림 있음
+    given(notificationRepository.existsByUserIdAndCodeAndResourceTypeAndResourceId(
+        eq(201L), any(), any(), eq(1001L))).willReturn(true);
+
+    // when
+    service.remindAfterSixHours(now);
+
+    // then
+    verify(notificationRepository, never()).save(any());
+    verify(pushSender, never()).send(any());
+  }
+
+  @Test
+  @DisplayName("리마인더: 푸시 전송 실패해도 예외 전파 없이 진행(알림 레코드는 유지)")
+  void remindAfterSixHours_pushFailureIsCaught() {
+    // given
+    ZonedDateTime now = ZonedDateTime.of(2025, 1, 10, 17, 10, 0, 0, KST);
+    LocalDateTime start = now.minusHours(6).withMinute(0).withSecond(0).withNano(0).toLocalDateTime();
+    LocalDateTime end = start.plusMinutes(50);
+
+    ReminderTargetRow row = stubRow(1001L, 11L, 201L, true);
+    given(qiRepository.findReminderTargetsBetween(start, end))
+        .willReturn(List.of(row));
+
+    given(notificationRepository.existsByUserIdAndCodeAndResourceTypeAndResourceId(anyLong(), any(), any(), anyLong()))
+        .willReturn(false);
+
+    // pushSender가 예외 던짐 → 테스트 대상 코드가 try-catch로 흡수해야 함
+    willThrow(new RuntimeException("push failed")).given(pushSender).send(any(Notification.class));
+
+    // when & then (예외 안터져야 함)
+    service.remindAfterSixHours(now);
+
+    // 알림은 저장되었고
+    verify(notificationRepository, times(1)).save(any(Notification.class));
+    // 푸시는 시도되었으나 실패 → 예외 전파 없음
+    verify(pushSender, times(1)).send(any(Notification.class));
+  }
+
+  private static ReminderTargetRow stubRow(Long qiId, Long matchId, Long userId, boolean pushEnabled) {
+    return new ReminderTargetRow() {
+      @Override public Long getQiId() { return qiId; }
+      @Override public Long getMatchId() { return matchId; }
+      @Override public Long getUserId() { return userId; }
+      @Override public Boolean getPushEnabled() { return pushEnabled; }
+    };
   }
 }
