@@ -40,6 +40,7 @@ export function useSettingsActions(matchId: number, closeModal: () => void) {
       const res = await restoreMatch(matchId);
       SuccessToast(res?.message);
       closeModal();
+      router.push('/main');
     } catch {
       ErrorToast('연결 복구에 실패했습니다');
     }
