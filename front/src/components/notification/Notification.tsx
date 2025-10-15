@@ -18,6 +18,7 @@ import CategoryIcons from './ui/CategoryIcons';
 export default function Notification() {
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const pendingItemRef = useRef<contentItemType | null>(null);
 
   const { data: detail, isLoading } = useNotificationDetail(selectedId ?? undefined);
 
@@ -45,7 +46,15 @@ export default function Notification() {
   }, [entry?.isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const clickHandler = async (item: contentItemType): Promise<void> => {
+    pendingItemRef.current = item;
     setSelectedId(item.notificationId);
+  };
+  useEffect(() => {
+    if (!selectedId) return;
+    if (isLoading || !detail) return;
+
+    const item = pendingItemRef.current;
+    if (!item || item.notificationId !== selectedId) return;
 
     let href = '/';
     switch (item.category) {
@@ -53,20 +62,21 @@ export default function Notification() {
         href = '/schedule';
         break;
       case 'QUESTION':
-        href = `/question/detail?id=${detail?.resourceId}`;
+        href = `/question/detail?id=${detail.resourceId}`;
         break;
       case 'MATCH':
         href = '/main';
         break;
     }
 
-    try {
-      await router.prefetch(href);
-    } catch (e) {
-      console.error(e);
-    }
-    router.push(href);
-  };
+    (async () => {
+      try {
+        await router.prefetch(href);
+      } catch {}
+      router.push(href);
+      pendingItemRef.current = null;
+    })();
+  }, [selectedId, isLoading, detail, router]);
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center sm:pt-0 pt-[70px]">
@@ -107,7 +117,7 @@ export default function Notification() {
           {items.map((item: contentItemType) => (
             <li
               key={item.notificationId}
-              onClick={() => setSelectedId(item.notificationId)}
+              // onClick={() => setSelectedId(item.notificationId)}
               className={cn(
                 `mx-3 p-3 flex items-center gap-4 ${
                   item.read === false ? 'bg-unread' : 'bg-read border-read-border border'
