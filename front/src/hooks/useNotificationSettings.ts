@@ -34,7 +34,7 @@ export const useNotificationSettings = () => {
           );
           if (res !== 'granted') {
             throw new Error(
-              '브라우저 알림 권한이 차단되어 있어요. 브라우저 설정(사이트 권한)에서 허용해 주세요.',
+              '브라우저 알림 권한이 차단되어 있어요.\n브라우저 설정(사이트 권한)에서 허용해 주세요.',
             );
           }
         }
