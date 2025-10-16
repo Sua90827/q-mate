@@ -21,7 +21,7 @@ export default function Nav() {
     <>
       {/* 모바일 (하단 고정) */}
       <nav className="sm:hidden fixed bottom-0 left-0 w-full h-[70px] bg-secondary flex justify-center items-center z-50 border-t-gray border-1 shadow-[0_-2px_6px_rgba(0,0,0,0.1)]">
-        <ul className="w-[320px] gap-10 flex">
+        <ul className="w-[320px] gap-10 flex items-center justify-evenly">
           {NAV_ITEMS.map(({ key, href, Icon, label }) => (
             <li key={key}>
               <Link
@@ -32,7 +32,7 @@ export default function Nav() {
               >
                 <Icon
                   aria-label={label}
-                  size={48}
+                  size={32}
                   className={`nav-item-mob ${selectedMenu === key ? 'active' : ''}`}
                 />
               </Link>
