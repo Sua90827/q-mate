@@ -13,7 +13,9 @@ export function SuccessToast(message?: string, className?: string) {
       )}
     >
       <CheckCircle className={cn('h-5 w-5 text-theme-accent', className)} />
-      <span className="font-medium  whitespace-nowrap">{message}</span>
+      <div className="flex flex-col">
+        <span className="font-medium text-16 whitespace-pre-line">{message}</span>
+      </div>
     </div>
   ));
 }
