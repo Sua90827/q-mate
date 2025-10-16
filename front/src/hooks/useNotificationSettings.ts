@@ -25,9 +25,6 @@ export const useNotificationSettings = () => {
           ? Notification.permission
           : 'denied';
 
-        // 권한이 'denied'면 대부분 브라우저에서 재요청 팝업이 뜨지 않지만,
-        // 일부 환경(iOS/Safari 등) 대비 한 번 더 시도해 본다.
-        // 여전히 허용되지 않으면 브라우저 설정 안내로 처리한다(서버 상태는 바꾸지 않음).
         if (currentPermission === 'denied') {
           const res = await Notification.requestPermission().catch(
             () => 'denied' as NotificationPermission,
