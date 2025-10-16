@@ -22,8 +22,8 @@ export function useSettingsActions(matchId: number, closeModal: () => void) {
 
   const handleDisconnect = async () => {
     try {
-      const res = await disconnectMatch();
-      SuccessToast(res?.message);
+      await disconnectMatch();
+      SuccessToast('연결이 해제되었습니다.');
       closeModal();
       router.push('/main');
     } catch {
@@ -37,8 +37,8 @@ export function useSettingsActions(matchId: number, closeModal: () => void) {
         ErrorToast('복구 가능한 매칭이 없습니다');
         return;
       }
-      const res = await restoreMatch(matchId);
-      SuccessToast(res?.message);
+      await restoreMatch(matchId);
+      SuccessToast('연결이 복구되었습니다.');
       closeModal();
       router.push('/main');
     } catch {
