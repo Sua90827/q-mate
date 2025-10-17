@@ -16,8 +16,7 @@ export const googleLogin = () => {
   authUrl.searchParams.set('response_type', 'code');
   authUrl.searchParams.set('scope', 'email profile openid');
   authUrl.searchParams.set('access_type', 'offline');
-  //자동로그인 방지
-  authUrl.searchParams.set('prompt', 'select_account');
+ 
   // 페이지 이동 (전체 리다이렉트)
   window.location.href = authUrl.toString();
 };
