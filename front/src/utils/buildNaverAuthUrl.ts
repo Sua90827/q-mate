@@ -20,7 +20,6 @@ export function buildNaverAuthorizeUrl(): string {
   url.searchParams.set('redirect_uri', redirectUri);
   url.searchParams.set('state', state);
   url.searchParams.set('scope', scope.join(' '));
-  //  자동 로그인 방지
-  url.searchParams.set('auth_type', 'reprompt');
+
   return url.toString();
 }
